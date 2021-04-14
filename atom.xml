@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://kangj118.github.io/</id>
+    <title>Gridea</title>
+    <updated>2021-04-14T03:31:39.020Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://kangj118.github.io/"/>
+    <link rel="self" href="https://kangj118.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://kangj118.github.io/images/avatar.png</logo>
+    <icon>https://kangj118.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, Gridea</rights>
+</feed>
