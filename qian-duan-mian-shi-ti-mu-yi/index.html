@@ -1,156 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://15254512401.github.io/</id>
-    <title>Gridea</title>
-    <updated>2021-04-14T05:46:48.148Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://15254512401.github.io/"/>
-    <link rel="self" href="https://15254512401.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
-    <logo>https://15254512401.github.io/images/avatar.png</logo>
-    <icon>https://15254512401.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, Gridea</rights>
-    <entry>
-        <title type="html"><![CDATA[前端面试题目（一）]]></title>
-        <id>https://15254512401.github.io/qian-duan-mian-shi-ti-mu-yi/</id>
-        <link href="https://15254512401.github.io/qian-duan-mian-shi-ti-mu-yi/">
-        </link>
-        <updated>2021-04-14T05:33:22.000Z</updated>
-        <summary type="html"><![CDATA[<p><strong>什么是闭包？</strong><br>
-指有权访问另一个函数作用域中变量的函数</p>
-<p><strong>null 和undefined的区别？</strong></p>
-<p>共同点：都是原始类型，保存在栈中变量本地<br>
-不同点：<br>
-undefined:表示变量声明但示被赋值。是所有未赋值变量的默认值，不主动使用<br>
-null:表示一个变量不再指向任何对象地址<br>
-表示变量可能指向一个对象，但目前暂时什么也没指向，一般用来主动释放指向对象的引用</p>
-<p>常见行内元素和块级元素有哪些，他们有什么区别？<br>
-行内元素：span img a u s i input select<br>
-块级元素：div ul ol li dt dd h1-h6<br>
-块级元素会单独占一行，行内元素会在一行显示。</p>
-<p><strong>什么是ajax？</strong><br>
-ajax是一种在不需要重新加载页面的情况下与服务器进行数据交换、实现页面局部更新的一种技术。<br>
-实质是使用核心对象XMLHttpRequest异步向服务器发送请求，实现页面局部数据刷新：<br>
-如何创建XMLHttpRequest请求步骤：<br>
-1、获取ajax对象<br>
-var xhr=new XMLHttpRequest();<br>
-2、创建请求:调用XMLHttpRequest对象的open方法<br>
-xhr.open(&quot;get/post&quot;,&quot;xx.php&quot;,true[是否为异步])<br>
-3、回调函数的处理<br>
-xhr.onreadystatechange=function(){<br>
-if(xhr.readyState<mark>4){<br>
-if(xhr.status</mark>200){<br>
-var txt=xhr.responseText/responseXML<br>
-}<br>
-}<br>
-}<br>
-4、发送请求<br>
-xhr.send(&quot;name=value$pwd=value&quot;);<br>
-readyState属性：<br>
-0=未初始化<br>
-1=正在加载<br>
-2=以加载<br>
-3=交互中<br>
-4=加载完成</p>
-<p>Ajax异步请求？<br>
-<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;}&#039;, got &#039;EOF&#039; at end of input: …e:&quot;post&quot;,
-data:'>.ajax(
-{
-url:&quot;destination.php&quot;,
-type:&quot;post&quot;,
-data:</span>(&quot;#id&quot;).val(),<br>
-dataType:&quot;json&quot;,<br>
-success:function(data){<br>
-console.log(data)<br>
-}<br>
-error:function(){<br>
-window.alert(&quot;error&quot;)<br>
-}<br>
-}<br>
-)</p>
-<p><strong>AJAX的优缺点？</strong><br>
-优点：<br>
-页面局部刷新，提高用户体验<br>
-减轻服务器负担<br>
-具有更迅速的响应能力<br>
-能被广泛支持</p>
-<p>缺点：<br>
-不支持浏览器后退按钮<br>
-安全问题<br>
-对搜索引擎支持比较弱</p>
-<p><strong>html中有哪些定位？</strong><br>
-static:默认规则定位。<br>
-absolute:绝对定位 ，如果他的父级设置成了除static之外的定位方式，就会相对于他的父级定位，如果都没有，会相对于body定位、不占页面空间<br>
-relative:相对定位，相对于初始位置定位/占页面空间<br>
-fixed:固定定位，相对于浏览器窗口</p>
-<p><strong>http</strong><br>
-建立TCP连接<br>
-发送请求命令<br>
-发送请求头部<br>
-服务器应答<br>
-服务器发送应答头部<br>
-服务器发送应答具体信息<br>
-关闭连接</p>
-<p><strong>如何居中DIV？</strong><br>
-给DIV设置一个宽度，再设置margin为:0 auto;</p>
-<p>如何居中一个浮动元素？<br>
-使用一个居中显示的DIV包含些浮动元素。</p>
-<pre><code>position:fixed;//固定定位
-    width: 200px;
-    height: 200px;
-    background: red;
-    margin-left:-100px;
-    margin-top: -100px;
-    left: 50%;
-    top: 50%;
-</code></pre>
-<p><strong>纯CSS实现一个三角形？</strong><br>
-width: 0;<br>
-height: 0;<br>
-border:25px solid transparent;<br>
-border-top-color: red;</p>
-<p><strong>重写trim()方法</strong><br>
-if(String.prototype.trim===undefined){<br>
-String.prototype.trim=function () {<br>
-return this.replace(/^\s+|\s+$/g)<br>
-}<br>
-}<br>
-var str=&quot; helloworld &quot;;<br>
-document.write(&quot;|&quot;+str+&quot;|<br>
-&quot;);<br>
-str=str.trim();<br>
-document.write(&quot;|&quot;+str+&quot;|&quot;);</p>
-<p>function trim(str){//同时去掉开头和结尾的空字符<br>
-var reg=/^\s+|\s+$/g;<br>
-return str.replace(reg,&quot;&quot;);<br>
-}<br>
-var str=&quot; zhang dong &quot;;<br>
-console.log(ltrim(str));//&quot;zhang dong &quot;<br>
-console.log(rtrim(str));//&quot; zhang dong&quot;<br>
-console.log(trim(str));//&quot;zhang dong&quot;</p>
-<p><strong>水仙花数</strong><br>
-var a,b,c<br>
-for(var i=100;i&lt;1000;i++){<br>
-a=parseInt(i%10);<br>
-b=parseInt((i/10)%10);<br>
-c=parseInt(i/100);<br>
-if(i==aaa+bbb+ccc){<br>
-console.log(i);<br>
-}<br>
-}</p>
-<p><strong>判断某一年是不是闰年</strong></p>
-<p>function isLeap(year){<br>
-console.log(year%4<mark>0&amp;&amp;year%100!=0||year%400</mark>0?&quot;闰年&quot;:&quot;平年&quot;);<br>
-}<br>
-isLeap(prompt(&quot;主输入年份&quot;));</p>
-<p><strong>在单词后面加上数字</strong><br>
-var str=&quot;one two three four&quot;;<br>
-var i=4;<br>
-var reg=/\b[a-z]+\b/g;<br>
-str=str.replace(reg,function(kw){<br>
-return kw+i++;</p>
-]]></summary>
-        <content type="html"><![CDATA[<p><strong>什么是闭包？</strong><br>
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>前端面试题目（一） | Gridea</title>
+<link rel="shortcut icon" href="https://15254512401.github.io//favicon.ico?v=1618379184458">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://15254512401.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="前端面试题目（一） | Gridea - Atom Feed" href="https://15254512401.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="什么是闭包？
+指有权访问另一个函数作用域中变量的函数
+null 和undefined的区别？
+共同点：都是原始类型，保存在栈中变量本地
+不同点：
+undefined:表示变量声明但示被赋值。是所有未赋值变量的默认值，不主动使用
+null:表..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://15254512401.github.io/">
+  <img class="avatar" src="https://15254512401.github.io//images/avatar.png?v=1618379184458" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              前端面试题目（一）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-04-14
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><strong>什么是闭包？</strong><br>
 指有权访问另一个函数作用域中变量的函数</p>
 <p><strong>null 和undefined的区别？</strong></p>
 <p>共同点：都是原始类型，保存在栈中变量本地<br>
@@ -368,6 +312,68 @@ visibility仍然占据空间</p>
 box-shadow<br>
 border-radius<br>
 text-shadow</p>
-]]></content>
-    </entry>
-</feed>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://15254512401.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
