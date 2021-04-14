@@ -1,100 +1,176 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>前端面试题目（一） | Gridea</title>
-<link rel="shortcut icon" href="https://15254512401.github.io//favicon.ico?v=1618379184458">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
-<link rel="stylesheet" href="https://15254512401.github.io//styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="前端面试题目（一） | Gridea - Atom Feed" href="https://15254512401.github.io//atom.xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>前端面试题目（一） | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="前端面试题目（一） | MyBlog » Feed"
+  href="https://kangjun.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjun.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
 
-    <meta name="description" content="什么是闭包？
-指有权访问另一个函数作用域中变量的函数
-null 和undefined的区别？
-共同点：都是原始类型，保存在栈中变量本地
-不同点：
-undefined:表示变量声明但示被赋值。是所有未赋值变量的默认值，不主动使用
-null:表..." />
-    <meta name="keywords" content="" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-  </head>
-  <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://15254512401.github.io/">
-  <img class="avatar" src="https://15254512401.github.io//images/avatar.png?v=1618379184458" alt="">
-  </a>
-  <h1 class="site-title">
-    Gridea
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/" class="menu">
-          首页
-        </a>
-      
-    
-      
-        <a href="/archives" class="menu">
-          归档
-        </a>
-      
-    
-      
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="前端面试题目（一）" />
+  <meta property="og:url" content="https://kangjun.github.io/qian-duan-mian-shi-ti-mu-yi/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjun.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/" target="_blank">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives" target="_blank">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags" target="_blank">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about" target="_blank">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618387540203"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjun.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/" target="_blank">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives" target="_blank">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags" target="_blank">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about" target="_blank">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618387540203"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-</div>
-
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              前端面试题目（一）
-            </h2>
-            <div class="post-info">
-              <span>
-                2021-04-14
+</nav>
+<header class="masthead" style="background-image: url('https://kangjun.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
               </span>
-              <span>
-                7 min read
+              <h1>前端面试题目（一）</h1>
+              <span class="meta">
+                Posted on
+                2021-04-14，7 min read
               </span>
-              
             </div>
-            
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <p><strong>什么是闭包？</strong><br>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p><strong>什么是闭包？</strong><br>
 指有权访问另一个函数作用域中变量的函数</p>
 <p><strong>null 和undefined的区别？</strong></p>
 <p>共同点：都是原始类型，保存在栈中变量本地<br>
@@ -102,7 +178,7 @@ null:表..." />
 undefined:表示变量声明但示被赋值。是所有未赋值变量的默认值，不主动使用<br>
 null:表示一个变量不再指向任何对象地址<br>
 表示变量可能指向一个对象，但目前暂时什么也没指向，一般用来主动释放指向对象的引用</p>
-<p>常见行内元素和块级元素有哪些，他们有什么区别？<br>
+<p><strong>常见行内元素和块级元素有哪些，他们有什么区别？</strong><br>
 行内元素：span img a u s i input select<br>
 块级元素：div ul ol li dt dd h1-h6<br>
 块级元素会单独占一行，行内元素会在一行显示。</p>
@@ -156,7 +232,7 @@ window.alert(&quot;error&quot;)<br>
 不支持浏览器后退按钮<br>
 安全问题<br>
 对搜索引擎支持比较弱</p>
-<p><strong>html中有哪些定位？</strong><br>
+<p>html中有哪些定位？<br>
 static:默认规则定位。<br>
 absolute:绝对定位 ，如果他的父级设置成了除static之外的定位方式，就会相对于他的父级定位，如果都没有，会相对于body定位、不占页面空间<br>
 relative:相对定位，相对于初始位置定位/占页面空间<br>
@@ -171,7 +247,7 @@ fixed:固定定位，相对于浏览器窗口</p>
 关闭连接</p>
 <p><strong>如何居中DIV？</strong><br>
 给DIV设置一个宽度，再设置margin为:0 auto;</p>
-<p>如何居中一个浮动元素？<br>
+<p><strong>如何居中一个浮动元素？</strong><br>
 使用一个居中显示的DIV包含些浮动元素。</p>
 <pre><code>position:fixed;//固定定位
     width: 200px;
@@ -212,13 +288,13 @@ for(var i=100;i&lt;1000;i++){<br>
 a=parseInt(i%10);<br>
 b=parseInt((i/10)%10);<br>
 c=parseInt(i/100);<br>
-if(i==aaa+bbb+ccc){<br>
+if(i<mark>aaa+bbb+ccc){<br>
 console.log(i);<br>
 }<br>
-}</p>
-<p><strong>判断某一年是不是闰年</strong></p>
-<p>function isLeap(year){<br>
-console.log(year%4<mark>0&amp;&amp;year%100!=0||year%400</mark>0?&quot;闰年&quot;:&quot;平年&quot;);<br>
+}<br>
+<strong>判断某一年是不是闰年</strong><br>
+function isLeap(year){<br>
+console.log(year%4</mark>0&amp;&amp;year%100!=0||year%400==0?&quot;闰年&quot;:&quot;平年&quot;);<br>
 }<br>
 isLeap(prompt(&quot;主输入年份&quot;));</p>
 <p><strong>在单词后面加上数字</strong><br>
@@ -226,9 +302,8 @@ var str=&quot;one two three four&quot;;<br>
 var i=4;<br>
 var reg=/\b[a-z]+\b/g;<br>
 str=str.replace(reg,function(kw){<br>
-return kw+i++;</p>
-<!-- more -->
-<p>})<br>
+return kw+i++;<br>
+})<br>
 console.log(str);</p>
 <p><strong>判断是不是数组</strong><br>
 var str=[]<br>
@@ -241,7 +316,7 @@ Array.isArray([])</p>
 <p><strong>什么是原型？</strong><br>
 每个函数都有一个prototype属性，该属性引用的就是原型对象，<br>
 原型对象就是保存共有属性和方法的对象</p>
-<p>window窗口的全局对象？<br>
+<p><strong>window窗口的全局对象？</strong><br>
 history<br>
 navigator<br>
 screen<br>
@@ -252,13 +327,13 @@ var frg=document.createDocumentFragment();<br>
 var m=document.createElement(&quot;div&quot;);<br>
 m.innerHTML=&quot;this is first page&quot;;<br>
 frg.appendChild(m);<br>
-document.body.appendChild(frg);</p>
-<p><strong>数组去重？</strong><br>
+document.body.appendChild(frg);<br>
+<strong>数组去重？</strong><br>
 var arr=[1,2,3,3,4,&quot;a&quot;,&quot;a&quot;,&quot;b&quot;]<br>
 function unique(arr){<br>
 for(var i=0,arr2={};i&lt;arr.length;i++){<br>
-arr2[arr[i]]===undefined&amp;&amp;(arr2[arr[i]]=1);<br>
-}</p>
+arr2[arr[i]]===undefined&amp;&amp;(arr2[arr[i]]=1);</p>
+<p>}</p>
 <p>var arr=[];<br>
 for(var key in arr2){<br>
 arr.push(key)<br>
@@ -282,7 +357,7 @@ console.log(arr1)</p>
 var arr=[[1,2,3],[1,3,2]];<br>
 var res=Array.prototype.concat.apply([],arr)<br>
 console.log(res);</p>
-<p>如何理解HTML语义化？<br>
+<p><strong>如何理解HTML语义化？</strong><br>
 可以让页面内容结构化，便于浏览器解析，提高代码的可维护度和可重用性<br>
 常用的语义化标签：</p>
 <p><strong>哪些属性可以继承？</strong><br>
@@ -292,12 +367,12 @@ color</p>
 <p>display:none和visibility:hidden的区别？<br>
 display不占据页面空间<br>
 visibility仍然占据空间</p>
-<p>css3伪类选择器<br>
+<p><strong>css3伪类选择器</strong><br>
 :enabled<br>
 :disabled<br>
 :checked<br>
 :firtt-child :last-child</p>
-<p>为什么建议在设置背景图像的同时还设置背景颜色？<br>
+<p><strong>为什么建议在设置背景图像的同时还设置背景颜色？</strong><br>
 如果因为各种原因图片无法加载的时候，页面会显示背景颜色。</p>
 <p><strong>CSS sprite的优缺点？</strong><br>
 把网页中的一些背景图片整合到一张图片中，再利用background-image/repeat/position进行图片定位<br>
@@ -308,72 +383,93 @@ visibility仍然占据空间</p>
 <p>缺点：<br>
 图片合成比较麻烦<br>
 背景设置时需要得到每一个图片的精确位置</p>
-<p><strong>CSS3新特性</strong><br>
+<p>CSS3新特性<br>
 box-shadow<br>
 border-radius<br>
 text-shadow</p>
 
-              </div>
-              <div class="toc-container">
-                
-              </div>
-            </div>
-          </article>
+          <div class="toc-container"></div>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
         </div>
-
-        
-
-        
-
-        <div class="site-footer">
-  
-  <a class="rss" href="https://15254512401.github.io//atom.xml" target="_blank">
-    <i class="ri-rss-line"></i> RSS
-  </a>
-</div>
-
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjun.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
       </div>
     </div>
-
-    <script>
-      hljs.initHighlightingOnLoad()
-
-      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
-
-      // This should probably be throttled.
-      // Especially because it triggers during smooth scrolling.
-      // https://lodash.com/docs/4.17.10#throttle
-      // You could do like...
-      // window.addEventListener("scroll", () => {
-      //    _.throttle(doThatStuff, 100);
-      // });
-      // Only not doing it here to keep this Pen dependency-free.
-
-      window.addEventListener("scroll", event => {
-        let fromTop = window.scrollY;
-
-        mainNavLinks.forEach((link, index) => {
-          let section = document.getElementById(decodeURI(link.hash).substring(1));
-          let nextSection = null
-          if (mainNavLinks[index + 1]) {
-            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-          }
-          if (section.offsetTop <= fromTop) {
-            if (nextSection) {
-              if (nextSection.offsetTop > fromTop) {
-                link.classList.add("current");
-              } else {
-                link.classList.remove("current");    
-              }
-            } else {
-              link.classList.add("current");
-            }
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjun.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjun.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
           } else {
-            link.classList.remove("current");
+            return bt.css('display', 'none')
           }
         });
-      });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjun.github.io//media/scripts/tocScript.js"></script>
+</body>
 
-    </script>
-  </body>
 </html>

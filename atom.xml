@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://15254512401.github.io/</id>
+    <id>https://kangjun.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-14T07:46:28.493Z</updated>
+    <updated>2021-04-14T08:05:48.141Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://15254512401.github.io/"/>
-    <link rel="self" href="https://15254512401.github.io/atom.xml"/>
+    <link rel="alternate" href="https://kangjun.github.io/"/>
+    <link rel="self" href="https://kangjun.github.io/atom.xml"/>
     <subtitle>我的博客</subtitle>
-    <logo>https://15254512401.github.io/images/avatar.png</logo>
-    <icon>https://15254512401.github.io/favicon.ico</icon>
+    <logo>https://kangjun.github.io/images/avatar.png</logo>
+    <icon>https://kangjun.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
     <entry>
         <title type="html"><![CDATA[前端面试题目（一）]]></title>
-        <id>https://15254512401.github.io/post/qian-duan-mian-shi-ti-mu-yi/</id>
-        <link href="https://15254512401.github.io/post/qian-duan-mian-shi-ti-mu-yi/">
+        <id>https://kangjun.github.io/qian-duan-mian-shi-ti-mu-yi/</id>
+        <link href="https://kangjun.github.io/qian-duan-mian-shi-ti-mu-yi/">
         </link>
         <updated>2021-04-14T06:47:35.000Z</updated>
         <content type="html"><![CDATA[<p><strong>什么是闭包？</strong><br>
