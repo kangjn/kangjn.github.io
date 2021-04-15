@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-15T07:09:19.676Z</updated>
+    <updated>2021-04-15T07:36:26.481Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,205 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[前端面试题目（二）]]></title>
+        <id>https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-er/</id>
+        <link href="https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-er/">
+        </link>
+        <updated>2021-04-15T07:20:09.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>解决HTML5新标签的兼容性：</strong></p>
+<p>&lt;![if lt IE 9]&gt;</p>
+<script src="html5shiv.js"></script>//解决IE6-8支持HTML5新元素
+<script src="respond.js"></script>//解决IE6-8对css Media Query//媒体查询
+<p>&lt;![endif]&gt;</p>
+<p><strong>a:hover，a:active失效的问题？(lvha)</strong></p>
+<p>现象：</p>
+<p>a标签的伪类选择器，在点击之后，一直保持为a:visited的样式。a:hover，a:active的css失效了。</p>
+<p>解决方式：</p>
+<p>a:link {color:black}</p>
+<p>a:visited{color:pink}</p>
+<p>a:hover {color: blue}</p>
+<p>a:active {color: green}</p>
+<p>将a:visited样式写在前面，一种顺序为：a:link{} a:visited{} a:hover{} a:active{}。</p>
+<p>如果写成这样：a:link{} a:hover{} a:active{} a:visited{} 可能是a:visited{}将a:hover{} a:active{}的样式给覆盖了。</p>
+<p>为了产生预期的效果，在CSS定义中，a:hover必须位于a:link和a:visited之后，a:active必须位于a:hover之后。</p>
+<p><strong>选择器优先级？</strong></p>
+<p>内联样式&gt;内部样式&gt;外部样式</p>
+<p>！important&gt;内联样式（1000）&gt;id(100)&gt;class(10)&gt;标签》继承样式</p>
+<p>注意：</p>
+<p>1、!important声明的样式优先级最高，如果冲突再进行计算。</p>
+<p>2、如果优先级相同，则选择最后出现的样式。</p>
+<p>3、继承得到的样式的优先级最低。</p>
+<p><strong>文本怎么自动换行？</strong></p>
+<p>word-wrap:允许对长的不可分割的单词进行分割并换行到下一行。</p>
+<p>word-wrap:normal</p>
+<p>word-wrap:break-word</p>
+<p>box-sizing模型？</p>
+<p>content-box:默认</p>
+<p>padding和border不包含在元素的宽度内，元素的实际宽度为：width+border+padding</p>
+<p>border-box:</p>
+<p>padding和border包含在元素的宽度内，元素的实际宽度为：width</p>
+<p>js中创建自定义对象 ?</p>
+<p>var f=function(){}</p>
+<p>new Object()</p>
+<p>function f()</p>
+<p><strong>this?</strong></p>
+<p>指向调用它的对象，如果没有，就指window</p>
+<p><strong>HTML5表单新元素？</strong></p>
+<p>date time color number range email url search</p>
+<p><strong>5种常见的HTTP状态码及意义？</strong></p>
+<p>200:请求成功</p>
+<p>301、302：永久重定向/暂时重定向</p>
+<p>400：请求格式错误</p>
+<p>404：找不到资源</p>
+<p>500：服务器内部错误</p>
+<p><strong>怎么让一个图片在一个DIV中垂直居中对齐？</strong></p>
+<p>父元素使用相对定位</p>
+<p>子元素使用绝对定位</p>
+<p><strong>怎么让文字垂直居中对齐？</strong></p>
+<p>一行文字父元素不固定：padding:20px</p>
+<p>父元素固定，多行文字：父元素：width:200px display:table 子元素:vertical-align:middle display:table-cell</p>
+<p><strong>如何让图片跟文字在居中显示：</strong></p>
+<p>父元素设置为vertical-align:middle</p>
+<p><strong>浏览器兼容？</strong></p>
+<p>1、不同的浏览器默认样式不一样：padding margin</p>
+<p>2、IE6低版本中，元素的调试包含内容，其他浏览器如果内容超出高度就会显示，可以设置overflow:hidden</p>
+<p>3、子元素设置上外边距的时候，父元素需要设置边框或者上外边距，IE显示正常，其他浏览器就会变成父元素的外边距</p>
+<p><strong>页面优化/站点优化？</strong></p>
+<p>1、CSS sprites:将多个背景图合并到一个图片上，再通过background-image 和background-position进行调整//会减少HTTP请求，加快页面显示速度</p>
+<p>2、代码压缩/css/js  yui compressor</p>
+<p>数组的方法：</p>
+<p>join concat</p>
+<p>push pop</p>
+<p>unshift shift</p>
+<p>slice</p>
+<p>splice</p>
+<p>正则表达式：</p>
+<p>\d数字</p>
+<p>\s空白字符</p>
+<p>\w数字、字母、下划线</p>
+<p>？ 0-1  或 改为懒惰模式</p>
+<ul>
+<li>0-n</li>
+</ul>
+<ul>
+<li>1-n</li>
+</ul>
+<p>^  开关</p>
+<p>$  结尾</p>
+<p>\b 边界</p>
+<p><strong>new 一个对象具体干了什么？</strong></p>
+<p>第一步是建立一个新对象；</p>
+<p>第二步将该对象内置的原型对象设置为构造函数prototype引用的那个原型对象；</p>
+<p>第三步就是将该对象作为this参数调用构造函数，完成成员设置等初始化工作。</p>
+<p><strong>如何判断一个对象是否为数组？</strong></p>
+<p>typeof &quot;sflkj&quot;</p>
+<p>typeof无法判断数组跟对象</p>
+<p>[] instanceof Array</p>
+<p>Array.prototype.isPrototypeOf([])</p>
+<p>Array.isArray([])</p>
+<p><strong>获取一个选项卡的值？</strong></p>
+<select name="sl" id="s1" onchange="showinfo()">
+<option value="1">aa</option>
+<option value="2">bb</option>
+  </select>
+<script>
+
+function showinfo(){
+
+var sel=document.getElementById("s1");
+
+var i=sel.selectedIndex;
+
+var result=sel.options[i].value;
+
+}
+
+</script>
+<p><strong>浏览器对象有哪些？</strong></p>
+<p>navigator</p>
+<p>history</p>
+<p>window</p>
+<p>location</p>
+<p>screen</p>
+<p>event</p>
+<p>document</p>
+<p><strong>window对象的常用方法？</strong></p>
+<p>alert</p>
+<p>confirm</p>
+<p>prompt</p>
+<p>close</p>
+<p><strong>js绑定事件：</strong></p>
+<p>btnObj.addEventListener(&quot;click&quot;,function(){})</p>
+<p>jquery 把变量$的控制权交给其他JS库</p>
+<p>jQuery.noConflict();</p>
+<p>jQuery(function($){})</p>
+<p>jQuery 遍历？（$.each()方法）</p>
+<ul>
+  <li>asdf</li>
+  <li>luili</li>
+  <li>234</li>
+  </ul>
+<script>
+
+var m=$("ul li");
+
+m.each(function(i){
+
+if(i==0){
+
+$(this).css("font-size","18px")
+
+}
+
+})
+
+</script>
+<p><strong>怎么把一个JSON字符串转换成一个js对象？</strong></p>
+<p>var jt='{&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}'</p>
+<p>var jsObj=JSON.parse(jt)//{&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}</p>
+<p>把一个js对象转换成一个josn字符吕？</p>
+<p>var jt={&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}</p>
+<p>var jsObj=JSON.stringify(jt)//'{&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}'</p>
+<p>表单序列化成字符串：serialize（）</p>
+<p>序列化成json对象：serializeArray()</p>
+<p><strong>手机端头部怎么写？</strong></p>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<p><strong>不通过插件实现自响应布局？</strong></p>
+<p>CSS＋宽度百分比＋浮动＋媒体查询技术就可以手动实现响应式布局</p>
+<p>CSS的媒体查询？</p>
+<p>@media screen and(min-width:990px){//(一个css文件内)</p>
+<p>#id{</p>
+<p>float:left</p>
+<p>}</p>
+<p>}</p>
+<p>@media screen and(min-width:700px) and (max-width:989px){</p>
+<p>#id{</p>
+<p>float:left</p>
+<p>}</p>
+<p>@media screen and(max-width:699px){</p>
+<p>}</p>
+<p><strong>angularjs？</strong></p>
+<p>采用MVC模式</p>
+<p>数据绑定</p>
+<p>依赖注入</p>
+<p>模块化设计</p>
+<p>初始化一个模型数据</p>
+<p>ng-bind=&quot;name&quot;</p>
+<p>ng-repeat=&quot;data in array&quot;</p>
+<html ng-app="myApp">
+<div ng-controller="myCtrl">
+</div>
+<p>angular.module(&quot;myApp&quot;,[&quot;ng&quot;]){</p>
+<p>.controller(&quot;myCtrl&quot;,function($scope){</p>
+<p>$scope.newsTitle=&quot;hello&quot;</p>
+<p>})</p>
+<p>}</p>
+<p><strong>什么是高内聚，低耦合？</strong></p>
+<p>高内聚：一个模块内的元素的关系赵紧密越好</p>
+<p>低耦合：不同模块间的关系尽量不要有关联</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[前端面试题目（一）]]></title>
         <id>https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-yi/</id>

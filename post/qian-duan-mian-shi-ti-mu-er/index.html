@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>前端面试题目（一） | MyBlog</title>
+<title>前端面试题目（二） | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="前端面试题目（一） | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="前端面试题目（二） | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="前端面试题目（一）" />
-  <meta property="og:url" content="https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-yi/" />
+  <meta property="og:description" content="前端面试题目（二）" />
+  <meta property="og:url" content="https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-er/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -152,10 +152,10 @@
               <span class="tags">
                 
               </span>
-              <h1>前端面试题目（一）</h1>
+              <h1>前端面试题目（二）</h1>
               <span class="meta">
                 Posted on
-                2021-04-14，7 min read
+                2021-04-15，6 min read
               </span>
             </div>
           
@@ -170,225 +170,208 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p><strong>什么是闭包？</strong><br>
-指有权访问另一个函数作用域中变量的函数</p>
-<p><strong>null 和undefined的区别？</strong></p>
-<p>共同点：都是原始类型，保存在栈中变量本地<br>
-不同点：<br>
-undefined:表示变量声明但示被赋值。是所有未赋值变量的默认值，不主动使用<br>
-null:表示一个变量不再指向任何对象地址<br>
-表示变量可能指向一个对象，但目前暂时什么也没指向，一般用来主动释放指向对象的引用</p>
-<p><strong>常见行内元素和块级元素有哪些，他们有什么区别？</strong><br>
-行内元素：span img a u s i input select<br>
-块级元素：div ul ol li dt dd h1-h6<br>
-块级元素会单独占一行，行内元素会在一行显示。</p>
-<p><strong>什么是ajax？</strong><br>
-ajax是一种在不需要重新加载页面的情况下与服务器进行数据交换、实现页面局部更新的一种技术。<br>
-实质是使用核心对象XMLHttpRequest异步向服务器发送请求，实现页面局部数据刷新：<br>
-如何创建XMLHttpRequest请求步骤：<br>
-1、获取ajax对象<br>
-var xhr=new XMLHttpRequest();<br>
-2、创建请求:调用XMLHttpRequest对象的open方法<br>
-xhr.open(&quot;get/post&quot;,&quot;xx.php&quot;,true[是否为异步])<br>
-3、回调函数的处理<br>
-xhr.onreadystatechange=function(){<br>
-if(xhr.readyState<mark>4){<br>
-if(xhr.status</mark>200){<br>
-var txt=xhr.responseText/responseXML<br>
-}<br>
-}<br>
-}<br>
-4、发送请求<br>
-xhr.send(&quot;name=value$pwd=value&quot;);<br>
-readyState属性：<br>
-0=未初始化<br>
-1=正在加载<br>
-2=以加载<br>
-3=交互中<br>
-4=加载完成</p>
-<p>Ajax异步请求？<br>
-<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;}&#039;, got &#039;EOF&#039; at end of input: …e:&quot;post&quot;,
-data:'>.ajax(
-{
-url:&quot;destination.php&quot;,
-type:&quot;post&quot;,
-data:</span>(&quot;#id&quot;).val(),<br>
-dataType:&quot;json&quot;,<br>
-success:function(data){<br>
-console.log(data)<br>
-}<br>
-error:function(){<br>
-window.alert(&quot;error&quot;)<br>
-}<br>
-}<br>
-)</p>
-<p><strong>AJAX的优缺点？</strong><br>
-优点：<br>
-页面局部刷新，提高用户体验<br>
-减轻服务器负担<br>
-具有更迅速的响应能力<br>
-能被广泛支持</p>
-<p>缺点：<br>
-不支持浏览器后退按钮<br>
-安全问题<br>
-对搜索引擎支持比较弱</p>
-<p>html中有哪些定位？<br>
-static:默认规则定位。<br>
-absolute:绝对定位 ，如果他的父级设置成了除static之外的定位方式，就会相对于他的父级定位，如果都没有，会相对于body定位、不占页面空间<br>
-relative:相对定位，相对于初始位置定位/占页面空间<br>
-fixed:固定定位，相对于浏览器窗口</p>
-<p><strong>http</strong><br>
-建立TCP连接<br>
-发送请求命令<br>
-发送请求头部<br>
-服务器应答<br>
-服务器发送应答头部<br>
-服务器发送应答具体信息<br>
-关闭连接</p>
-<p><strong>如何居中DIV？</strong><br>
-给DIV设置一个宽度，再设置margin为:0 auto;</p>
-<p><strong>如何居中一个浮动元素？</strong><br>
-使用一个居中显示的DIV包含些浮动元素。</p>
-<pre><code>position:fixed;//固定定位
-    width: 200px;
-    height: 200px;
-    background: red;
-    margin-left:-100px;
-    margin-top: -100px;
-    left: 50%;
-    top: 50%;
-</code></pre>
-<p><strong>纯CSS实现一个三角形？</strong><br>
-width: 0;<br>
-height: 0;<br>
-border:25px solid transparent;<br>
-border-top-color: red;</p>
-<p><strong>重写trim()方法</strong><br>
-if(String.prototype.trim===undefined){<br>
-String.prototype.trim=function () {<br>
-return this.replace(/^\s+|\s+$/g)<br>
-}<br>
-}<br>
-var str=&quot; helloworld &quot;;<br>
-document.write(&quot;|&quot;+str+&quot;|<br>
-&quot;);<br>
-str=str.trim();<br>
-document.write(&quot;|&quot;+str+&quot;|&quot;);</p>
-<p>function trim(str){//同时去掉开头和结尾的空字符<br>
-var reg=/^\s+|\s+$/g;<br>
-return str.replace(reg,&quot;&quot;);<br>
-}<br>
-var str=&quot; zhang dong &quot;;<br>
-console.log(ltrim(str));//&quot;zhang dong &quot;<br>
-console.log(rtrim(str));//&quot; zhang dong&quot;<br>
-console.log(trim(str));//&quot;zhang dong&quot;</p>
-<p><strong>水仙花数</strong><br>
-var a,b,c<br>
-for(var i=100;i&lt;1000;i++){<br>
-a=parseInt(i%10);<br>
-b=parseInt((i/10)%10);<br>
-c=parseInt(i/100);<br>
-if(i<mark>aaa+bbb+ccc){<br>
-console.log(i);<br>
-}<br>
-}<br>
-<strong>判断某一年是不是闰年</strong><br>
-function isLeap(year){<br>
-console.log(year%4</mark>0&amp;&amp;year%100!=0||year%400==0?&quot;闰年&quot;:&quot;平年&quot;);<br>
-}<br>
-isLeap(prompt(&quot;主输入年份&quot;));</p>
-<p><strong>在单词后面加上数字</strong><br>
-var str=&quot;one two three four&quot;;<br>
-var i=4;<br>
-var reg=/\b[a-z]+\b/g;<br>
-str=str.replace(reg,function(kw){<br>
-return kw+i++;<br>
-})<br>
-console.log(str);</p>
-<p><strong>判断是不是数组</strong><br>
-var str=[]<br>
-Array.prototype.isPrototypeOf(str);//true<br>
-Object.prototype.toString.call(str);//[Object Array];<br>
-str instanceof Array;<br>
-Array.isArray([])</p>
-<p><strong>什么是继承？</strong><br>
-父对象已有的成员，子对象不用重复定义，就可以直接使用</p>
-<p><strong>什么是原型？</strong><br>
-每个函数都有一个prototype属性，该属性引用的就是原型对象，<br>
-原型对象就是保存共有属性和方法的对象</p>
-<p><strong>window窗口的全局对象？</strong><br>
-history<br>
-navigator<br>
-screen<br>
-location<br>
-event</p>
-<p><strong>动态加载Dom?</strong><br>
-var frg=document.createDocumentFragment();<br>
-var m=document.createElement(&quot;div&quot;);<br>
-m.innerHTML=&quot;this is first page&quot;;<br>
-frg.appendChild(m);<br>
-document.body.appendChild(frg);<br>
-<strong>数组去重？</strong><br>
-var arr=[1,2,3,3,4,&quot;a&quot;,&quot;a&quot;,&quot;b&quot;]<br>
-function unique(arr){<br>
-for(var i=0,arr2={};i&lt;arr.length;i++){<br>
-arr2[arr[i]]===undefined&amp;&amp;(arr2[arr[i]]=1);</p>
+          <p><strong>解决HTML5新标签的兼容性：</strong></p>
+<p>&lt;![if lt IE 9]&gt;</p>
+<script src="html5shiv.js"></script>//解决IE6-8支持HTML5新元素
+<script src="respond.js"></script>//解决IE6-8对css Media Query//媒体查询
+<p>&lt;![endif]&gt;</p>
+<p><strong>a:hover，a:active失效的问题？(lvha)</strong></p>
+<p>现象：</p>
+<p>a标签的伪类选择器，在点击之后，一直保持为a:visited的样式。a:hover，a:active的css失效了。</p>
+<p>解决方式：</p>
+<p>a:link {color:black}</p>
+<p>a:visited{color:pink}</p>
+<p>a:hover {color: blue}</p>
+<p>a:active {color: green}</p>
+<p>将a:visited样式写在前面，一种顺序为：a:link{} a:visited{} a:hover{} a:active{}。</p>
+<p>如果写成这样：a:link{} a:hover{} a:active{} a:visited{} 可能是a:visited{}将a:hover{} a:active{}的样式给覆盖了。</p>
+<p>为了产生预期的效果，在CSS定义中，a:hover必须位于a:link和a:visited之后，a:active必须位于a:hover之后。</p>
+<p><strong>选择器优先级？</strong></p>
+<p>内联样式&gt;内部样式&gt;外部样式</p>
+<p>！important&gt;内联样式（1000）&gt;id(100)&gt;class(10)&gt;标签》继承样式</p>
+<p>注意：</p>
+<p>1、!important声明的样式优先级最高，如果冲突再进行计算。</p>
+<p>2、如果优先级相同，则选择最后出现的样式。</p>
+<p>3、继承得到的样式的优先级最低。</p>
+<p><strong>文本怎么自动换行？</strong></p>
+<p>word-wrap:允许对长的不可分割的单词进行分割并换行到下一行。</p>
+<p>word-wrap:normal</p>
+<p>word-wrap:break-word</p>
+<p>box-sizing模型？</p>
+<p>content-box:默认</p>
+<p>padding和border不包含在元素的宽度内，元素的实际宽度为：width+border+padding</p>
+<p>border-box:</p>
+<p>padding和border包含在元素的宽度内，元素的实际宽度为：width</p>
+<p>js中创建自定义对象 ?</p>
+<p>var f=function(){}</p>
+<p>new Object()</p>
+<p>function f()</p>
+<p><strong>this?</strong></p>
+<p>指向调用它的对象，如果没有，就指window</p>
+<p><strong>HTML5表单新元素？</strong></p>
+<p>date time color number range email url search</p>
+<p><strong>5种常见的HTTP状态码及意义？</strong></p>
+<p>200:请求成功</p>
+<p>301、302：永久重定向/暂时重定向</p>
+<p>400：请求格式错误</p>
+<p>404：找不到资源</p>
+<p>500：服务器内部错误</p>
+<p><strong>怎么让一个图片在一个DIV中垂直居中对齐？</strong></p>
+<p>父元素使用相对定位</p>
+<p>子元素使用绝对定位</p>
+<p><strong>怎么让文字垂直居中对齐？</strong></p>
+<p>一行文字父元素不固定：padding:20px</p>
+<p>父元素固定，多行文字：父元素：width:200px display:table 子元素:vertical-align:middle display:table-cell</p>
+<p><strong>如何让图片跟文字在居中显示：</strong></p>
+<p>父元素设置为vertical-align:middle</p>
+<p><strong>浏览器兼容？</strong></p>
+<p>1、不同的浏览器默认样式不一样：padding margin</p>
+<p>2、IE6低版本中，元素的调试包含内容，其他浏览器如果内容超出高度就会显示，可以设置overflow:hidden</p>
+<p>3、子元素设置上外边距的时候，父元素需要设置边框或者上外边距，IE显示正常，其他浏览器就会变成父元素的外边距</p>
+<p><strong>页面优化/站点优化？</strong></p>
+<p>1、CSS sprites:将多个背景图合并到一个图片上，再通过background-image 和background-position进行调整//会减少HTTP请求，加快页面显示速度</p>
+<p>2、代码压缩/css/js  yui compressor</p>
+<p>数组的方法：</p>
+<p>join concat</p>
+<p>push pop</p>
+<p>unshift shift</p>
+<p>slice</p>
+<p>splice</p>
+<p>正则表达式：</p>
+<p>\d数字</p>
+<p>\s空白字符</p>
+<p>\w数字、字母、下划线</p>
+<p>？ 0-1  或 改为懒惰模式</p>
+<ul>
+<li>0-n</li>
+</ul>
+<ul>
+<li>1-n</li>
+</ul>
+<p>^  开关</p>
+<p>$  结尾</p>
+<p>\b 边界</p>
+<p><strong>new 一个对象具体干了什么？</strong></p>
+<p>第一步是建立一个新对象；</p>
+<p>第二步将该对象内置的原型对象设置为构造函数prototype引用的那个原型对象；</p>
+<p>第三步就是将该对象作为this参数调用构造函数，完成成员设置等初始化工作。</p>
+<p><strong>如何判断一个对象是否为数组？</strong></p>
+<p>typeof &quot;sflkj&quot;</p>
+<p>typeof无法判断数组跟对象</p>
+<p>[] instanceof Array</p>
+<p>Array.prototype.isPrototypeOf([])</p>
+<p>Array.isArray([])</p>
+<p><strong>获取一个选项卡的值？</strong></p>
+<select name="sl" id="s1" onchange="showinfo()">
+<option value="1">aa</option>
+<option value="2">bb</option>
+  </select>
+<script>
+
+function showinfo(){
+
+var sel=document.getElementById("s1");
+
+var i=sel.selectedIndex;
+
+var result=sel.options[i].value;
+
+}
+
+</script>
+<p><strong>浏览器对象有哪些？</strong></p>
+<p>navigator</p>
+<p>history</p>
+<p>window</p>
+<p>location</p>
+<p>screen</p>
+<p>event</p>
+<p>document</p>
+<p><strong>window对象的常用方法？</strong></p>
+<p>alert</p>
+<p>confirm</p>
+<p>prompt</p>
+<p>close</p>
+<p><strong>js绑定事件：</strong></p>
+<p>btnObj.addEventListener(&quot;click&quot;,function(){})</p>
+<p>jquery 把变量$的控制权交给其他JS库</p>
+<p>jQuery.noConflict();</p>
+<p>jQuery(function($){})</p>
+<p>jQuery 遍历？（$.each()方法）</p>
+<ul>
+  <li>asdf</li>
+  <li>luili</li>
+  <li>234</li>
+  </ul>
+<script>
+
+var m=$("ul li");
+
+m.each(function(i){
+
+if(i==0){
+
+$(this).css("font-size","18px")
+
+}
+
+})
+
+</script>
+<p><strong>怎么把一个JSON字符串转换成一个js对象？</strong></p>
+<p>var jt='{&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}'</p>
+<p>var jsObj=JSON.parse(jt)//{&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}</p>
+<p>把一个js对象转换成一个josn字符吕？</p>
+<p>var jt={&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}</p>
+<p>var jsObj=JSON.stringify(jt)//'{&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:40}'</p>
+<p>表单序列化成字符串：serialize（）</p>
+<p>序列化成json对象：serializeArray()</p>
+<p><strong>手机端头部怎么写？</strong></p>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<p><strong>不通过插件实现自响应布局？</strong></p>
+<p>CSS＋宽度百分比＋浮动＋媒体查询技术就可以手动实现响应式布局</p>
+<p>CSS的媒体查询？</p>
+<p>@media screen and(min-width:990px){//(一个css文件内)</p>
+<p>#id{</p>
+<p>float:left</p>
 <p>}</p>
-<p>var arr=[];<br>
-for(var key in arr2){<br>
-arr.push(key)<br>
-}<br>
-return arr;<br>
-}<br>
-console.log(unique(arr));</p>
-<p>var arr1=[2,5,9,1,7]<br>
-function sort(arr){<br>
-for(var i=0;iarr[j+1]]){<br>
-var temp=arr[j];<br>
-arr[j]=arr[j+1];<br>
-arr[j+1]=temp;<br>
-}<br>
-}<br>
-}<br>
-}<br>
-sort(arr1);<br>
-console.log(arr1)</p>
-<p><strong>数组降维</strong><br>
-var arr=[[1,2,3],[1,3,2]];<br>
-var res=Array.prototype.concat.apply([],arr)<br>
-console.log(res);</p>
-<p><strong>如何理解HTML语义化？</strong><br>
-可以让页面内容结构化，便于浏览器解析，提高代码的可维护度和可重用性<br>
-常用的语义化标签：</p>
-<p><strong>哪些属性可以继承？</strong><br>
-font-size<br>
-font-family<br>
-color</p>
-<p>display:none和visibility:hidden的区别？<br>
-display不占据页面空间<br>
-visibility仍然占据空间</p>
-<p><strong>css3伪类选择器</strong><br>
-:enabled<br>
-:disabled<br>
-:checked<br>
-:firtt-child :last-child</p>
-<p><strong>为什么建议在设置背景图像的同时还设置背景颜色？</strong><br>
-如果因为各种原因图片无法加载的时候，页面会显示背景颜色。</p>
-<p><strong>CSS sprite的优缺点？</strong><br>
-把网页中的一些背景图片整合到一张图片中，再利用background-image/repeat/position进行图片定位<br>
-优点：<br>
-减少网页的http请求，提高性能<br>
-减少图片的大小<br>
-维护更方便，只需要在一张图片上修改就可以。</p>
-<p>缺点：<br>
-图片合成比较麻烦<br>
-背景设置时需要得到每一个图片的精确位置</p>
-<p>CSS3新特性<br>
-box-shadow<br>
-border-radius<br>
-text-shadow</p>
+<p>}</p>
+<p>@media screen and(min-width:700px) and (max-width:989px){</p>
+<p>#id{</p>
+<p>float:left</p>
+<p>}</p>
+<p>@media screen and(max-width:699px){</p>
+<p>}</p>
+<p><strong>angularjs？</strong></p>
+<p>采用MVC模式</p>
+<p>数据绑定</p>
+<p>依赖注入</p>
+<p>模块化设计</p>
+<p>初始化一个模型数据</p>
+<p>ng-bind=&quot;name&quot;</p>
+<p>ng-repeat=&quot;data in array&quot;</p>
+<html ng-app="myApp">
+<div ng-controller="myCtrl">
+</div>
+<p>angular.module(&quot;myApp&quot;,[&quot;ng&quot;]){</p>
+<p>.controller(&quot;myCtrl&quot;,function($scope){</p>
+<p>$scope.newsTitle=&quot;hello&quot;</p>
+<p>})</p>
+<p>}</p>
+<p><strong>什么是高内聚，低耦合？</strong></p>
+<p>高内聚：一个模块内的元素的关系赵紧密越好</p>
+<p>低耦合：不同模块间的关系尽量不要有关联</p>
 
           <div class="toc-container"></div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-yi/">
+              <span class="post-title">
+                前端面试题目（一）&rarr;
+              </span>
+            </a>
+          </p>
           
           <div class="comment" style="text-align: center;">
             
