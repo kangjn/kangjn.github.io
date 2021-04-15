@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-15T08:21:06.334Z</updated>
+    <updated>2021-04-15T09:10:19.975Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,919 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[RabbitMQ使用教程(五)]]></title>
+        <id>https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-wu/</id>
+        <link href="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-wu/">
+        </link>
+        <updated>2021-04-15T08:55:57.000Z</updated>
+        <content type="html"><![CDATA[<p>4.7.主题模式（通配符模式）<br>
+<img src="https://kangjn.github.io//post-images/1618477080812.png" alt="" loading="lazy"><br>
+<img src="https://kangjn.github.io//post-images/1618477088471.png" alt="" loading="lazy"><br>
+4.7.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618477096171.png" alt="" loading="lazy"><br>
+同一个消息被多个消费者获取。一个消费者队列可以有多个消费者实例，只有其中一个消费者实例会消费到消息。</p>
+<p>4.7.2.生产者</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Send {</p>
+<pre><code>private final static String EXCHANGE_NAME = &quot;test_exchange_topic&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明exchange
+    channel.exchangeDeclare(EXCHANGE_NAME, &quot;topic&quot;);
+
+    // 消息内容
+    String message = &quot;Hello World!!&quot;;
+    channel.basicPublish(EXCHANGE_NAME, &quot;routekey.1&quot;, null, message.getBytes());
+    System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+4.7.3.消费者1（前台系统）</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_topic_work_1&quot;;
+
+private final static String EXCHANGE_NAME = &quot;test_exchange_topic&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 绑定队列到交换机
+    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, &quot;routekey.*&quot;);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，手动返回完成
+    channel.basicConsume(QUEUE_NAME, false, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [Recv_x] Received '&quot; + message + &quot;'&quot;);
+        Thread.sleep(10);
+
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+4.7.4.消费者2（搜索系统）</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>public class Recv2 {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_topic_work_2&quot;;
+
+private final static String EXCHANGE_NAME = &quot;test_exchange_topic&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 绑定队列到交换机
+    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, &quot;*.*&quot;);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，手动返回完成
+    channel.basicConsume(QUEUE_NAME, false, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [Recv2_x] Received '&quot; + message + &quot;'&quot;);
+        Thread.sleep(10);
+
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+5.Springboot集成RabbitMQ</p>
+<pre><code>springboot集成RabbitMQ非常简单，如果只是简单的使用配置非常少，springboot提供了spring-boot-starter-amqp对消息各种支持。
+</code></pre>
+<p>5.1.简单队列</p>
+<p>1、配置pom文件，主要是添加spring-boot-starter-amqp的支持</p>
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+2、配置application.properties文件
+配置rabbitmq的安装地址、端口以及账户信息
+<p>spring.application.name=spirng-boot-rabbitmq<br>
+spring.rabbitmq.host=127.0.0.1<br>
+spring.rabbitmq.port=5672<br>
+spring.rabbitmq.username=admin<br>
+spring.rabbitmq.password=admin<br>
+3、配置队列</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.core.Queue;<br>
+import org.springframework.context.annotation.Bean;<br>
+import org.springframework.context.annotation.Configuration;</p>
+<p>@Configuration<br>
+public class RabbitConfig {<br>
+@Bean<br>
+public Queue queue() {<br>
+return new Queue(&quot;q_hello&quot;);<br>
+}<br>
+}<br>
+4、发送者</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.core.AmqpTemplate;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.stereotype.Component;</p>
+<p>import java.text.SimpleDateFormat;<br>
+import java.util.Date;</p>
+<p>@Component<br>
+public class HelloSender {<br>
+@Autowired<br>
+private AmqpTemplate rabbitTemplate;</p>
+<pre><code>public void send() {
+    String date = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;).format(new Date());//24小时制
+    String context = &quot;hello &quot; + date;
+    System.out.println(&quot;Sender : &quot; + context);
+    //简单对列的情况下routingKey即为Q名
+    this.rabbitTemplate.convertAndSend(&quot;q_hello&quot;, context);
+}
+</code></pre>
+<p>}<br>
+5、接收者</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_hello&quot;)<br>
+public class HelloReceiver {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver  : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+6、测试</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.junit.Test;<br>
+import org.junit.runner.RunWith;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.boot.test.context.SpringBootTest;<br>
+import org.springframework.test.context.junit4.SpringRunner;</p>
+<p>@RunWith(SpringRunner.class)<br>
+@SpringBootTest<br>
+public class RabbitMqHelloTest {</p>
+<pre><code>@Autowired
+private HelloSender helloSender;
+
+@Test
+public void hello() throws Exception {
+    helloSender.send();
+}
+</code></pre>
+<p>}<br>
+5.2.多对多使用（Work模式）</p>
+<p>注册两个Receiver:</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_hello&quot;)<br>
+public class HelloReceiver2 {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver2  : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+@Test<br>
+public void oneToMany() throws Exception {<br>
+for (int i=0;i&lt;100;i++){<br>
+helloSender.send(i);<br>
+Thread.sleep(300);<br>
+}<br>
+}<br>
+public void send(int i) {<br>
+String date = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;).format(new Date());//24小时制<br>
+String context = &quot;hello &quot; + i + &quot; &quot; + date;<br>
+System.out.println(&quot;Sender : &quot; + context);<br>
+//简单对列的情况下routingKey即为Q名<br>
+this.rabbitTemplate.convertAndSend(&quot;q_hello&quot;, context);<br>
+}<br>
+5.3.Topic Exchange（主题模式）</p>
+<pre><code>topic 是RabbitMQ中最灵活的一种方式，可以根据routing_key自由的绑定不同的队列
+</code></pre>
+<p>首先对topic规则配置，这里使用两个队列(消费者)来演示。<br>
+1)配置队列，绑定交换机</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.core.Binding;<br>
+import org.springframework.amqp.core.BindingBuilder;<br>
+import org.springframework.amqp.core.Queue;<br>
+import org.springframework.amqp.core.TopicExchange;<br>
+import org.springframework.context.annotation.Bean;<br>
+import org.springframework.context.annotation.Configuration;</p>
+<p>@Configuration<br>
+public class TopicRabbitConfig {</p>
+<pre><code>final static String message = &quot;q_topic_message&quot;;
+final static String messages = &quot;q_topic_messages&quot;;
+
+@Bean
+public Queue queueMessage() {
+    return new Queue(TopicRabbitConfig.message);
+}
+
+@Bean
+public Queue queueMessages() {
+    return new Queue(TopicRabbitConfig.messages);
+}
+
+/**
+ * 声明一个Topic类型的交换机
+ * @return
+ */
+@Bean
+TopicExchange exchange() {
+    return new TopicExchange(&quot;mybootexchange&quot;);
+}
+
+/**
+ * 绑定Q到交换机,并且指定routingKey
+ * @param queueMessage
+ * @param exchange
+ * @return
+ */
+@Bean
+Binding bindingExchangeMessage(Queue queueMessage, TopicExchange exchange) {
+    return BindingBuilder.bind(queueMessage).to(exchange).with(&quot;topic.message&quot;);
+}
+
+@Bean
+Binding bindingExchangeMessages(Queue queueMessages, TopicExchange exchange) {
+    return BindingBuilder.bind(queueMessages).to(exchange).with(&quot;topic.#&quot;);
+}
+</code></pre>
+<p>}<br>
+2)创建2个消费者<br>
+q_topic_message 和q_topic_messages</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_topic_message&quot;)<br>
+public class Receiver1 {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver1  : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_topic_messages&quot;)<br>
+public class Receiver2 {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver2 : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+3)消息发送者（生产者）</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.core.AmqpTemplate;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+public class MsgSender {</p>
+<pre><code>@Autowired
+private AmqpTemplate rabbitTemplate;
+
+public void send1() {
+    String context = &quot;hi, i am message 1&quot;;
+    System.out.println(&quot;Sender : &quot; + context);
+    this.rabbitTemplate.convertAndSend(&quot;mybootexchange&quot;, &quot;topic.message&quot;, context);
+}
+
+
+public void send2() {
+    String context = &quot;hi, i am messages 2&quot;;
+    System.out.println(&quot;Sender : &quot; + context);
+    this.rabbitTemplate.convertAndSend(&quot;mybootexchange&quot;, &quot;topic.messages&quot;, context);
+}
+</code></pre>
+<p>}<br>
+send1方法会匹配到topic.#和topic.message，两个Receiver都可以收到消息，发送send2只有topic.#可以匹配所有只有Receiver2监听到消息。<br>
+4)测试</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.junit.Test;<br>
+import org.junit.runner.RunWith;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.boot.test.context.SpringBootTest;<br>
+import org.springframework.test.context.junit4.SpringRunner;</p>
+<p>@RunWith(SpringRunner.class)<br>
+@SpringBootTest<br>
+public class RabbitTopicTest {</p>
+<pre><code>@Autowired
+private MsgSender msgSender;
+
+@Test
+public void send1() throws Exception {
+    msgSender.send1();
+}
+
+@Test
+public void send2() throws Exception {
+    msgSender.send2();
+}
+</code></pre>
+<p>}<br>
+5.4.Fanout Exchange（订阅模式）</p>
+<pre><code>Fanout 就是我们熟悉的广播模式或者订阅模式，给Fanout交换机发送消息，绑定了这个交换机的所有队列都收到这个消息。
+1)配置队列，绑定交换机
+</code></pre>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.core.Binding;<br>
+import org.springframework.amqp.core.BindingBuilder;<br>
+import org.springframework.amqp.core.FanoutExchange;<br>
+import org.springframework.amqp.core.Queue;<br>
+import org.springframework.context.annotation.Bean;<br>
+import org.springframework.context.annotation.Configuration;</p>
+<p>@Configuration<br>
+public class FanoutRabbitConfig {</p>
+<pre><code>@Bean
+public Queue aMessage() {
+    return new Queue(&quot;q_fanout_A&quot;);
+}
+
+@Bean
+public Queue bMessage() {
+    return new Queue(&quot;q_fanout_B&quot;);
+}
+
+@Bean
+public Queue cMessage() {
+    return new Queue(&quot;q_fanout_C&quot;);
+}
+
+@Bean
+FanoutExchange fanoutExchange() {
+    return new FanoutExchange(&quot;mybootfanoutExchange&quot;);
+}
+
+@Bean
+Binding bindingExchangeA(Queue aMessage, FanoutExchange fanoutExchange) {
+    return BindingBuilder.bind(aMessage).to(fanoutExchange);
+}
+
+@Bean
+Binding bindingExchangeB(Queue bMessage, FanoutExchange fanoutExchange) {
+    return BindingBuilder.bind(bMessage).to(fanoutExchange);
+}
+
+@Bean
+Binding bindingExchangeC(Queue cMessage, FanoutExchange fanoutExchange) {
+    return BindingBuilder.bind(cMessage).to(fanoutExchange);
+}
+</code></pre>
+<p>}<br>
+2）创建3个消费者</p>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_fanout_A&quot;)<br>
+public class ReceiverA {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;AReceiver  : &quot; + hello + &quot;/n&quot;);
+}
+</code></pre>
+<p>}<br>
+package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_fanout_B&quot;)<br>
+public class ReceiverB {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;BReceiver  : &quot; + hello + &quot;/n&quot;);
+}
+</code></pre>
+<p>}<br>
+package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_fanout_C&quot;)<br>
+public class ReceiverC {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;CReceiver  : &quot; + hello + &quot;/n&quot;);
+}
+</code></pre>
+<p>}</p>
+<p>3）生产者</p>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.core.AmqpTemplate;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+public class MsgSenderFanout {</p>
+<pre><code>@Autowired
+private AmqpTemplate rabbitTemplate;
+
+public void send() {
+    String context = &quot;hi, fanout msg &quot;;
+    System.out.println(&quot;Sender : &quot; + context);
+    this.rabbitTemplate.convertAndSend(&quot;mybootfanoutExchange&quot;,&quot;&quot;, context);
+}
+</code></pre>
+<p>}<br>
+4）测试</p>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.junit.Test;<br>
+import org.junit.runner.RunWith;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.boot.test.context.SpringBootTest;<br>
+import org.springframework.test.context.junit4.SpringRunner;</p>
+<p>@RunWith(SpringRunner.class)<br>
+@SpringBootTest<br>
+public class RabbitFanoutTest {</p>
+<pre><code>@Autowired
+private MsgSenderFanout msgSender;
+
+@Test
+public void send1() throws Exception {
+    msgSender.send();
+}
+</code></pre>
+<p>}<br>
+结果如下，三个消费者都收到消息：<br>
+AReceiver : hi, fanout msg<br>
+CReceiver : hi, fanout msg<br>
+BReceiver : hi, fanout msg<br>
+6.总结</p>
+<pre><code>使用MQ实现商品数据的同步优势：
+1、降低系统间耦合度
+2、便于管理数据的同步（数据一致性）
+</code></pre>
+<p>推荐阅读<br>
+《RabbitMQ详解》</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[RabbitMQ使用教程(四)]]></title>
+        <id>https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-si/</id>
+        <link href="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-si/">
+        </link>
+        <updated>2021-04-15T08:40:40.000Z</updated>
+        <content type="html"><![CDATA[<p>4.4.消息的确认模式</p>
+<p>消费者从队列中获取消息，服务端如何知道消息已经被消费呢？</p>
+<p>模式1：自动确认<br>
+只要消息从队列中获取，无论消费者获取到消息后是否成功消息，都认为是消息已经成功消费。<br>
+模式2：手动确认<br>
+消费者从队列中获取消息后，服务器会将该消息标记为不可用状态，等待消费者的反馈，如果消费者一直没有反馈，那么该消息将一直处于不可用状态。</p>
+<p>手动模式：<br>
+<img src="https://kangjn.github.io//post-images/1618476346645.png" alt="" loading="lazy"></p>
+<p>自动模式：<br>
+<img src="https://kangjn.github.io//post-images/1618476205553.png" alt="" loading="lazy"><br>
+4.5.订阅模式<br>
+<img src="https://kangjn.github.io//post-images/1618476386137.png" alt="" loading="lazy"><br>
+4.5.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618476431946.png" alt="" loading="lazy"></p>
+<p>解读：<br>
+1、1个生产者，多个消费者<br>
+2、每一个消费者都有自己的一个队列<br>
+3、生产者没有将消息直接发送到队列，而是发送到了交换机<br>
+4、每个队列都要绑定到交换机<br>
+5、生产者发送的消息，经过交换机，到达队列，实现，一个消息被多个消费者获取的目的<br>
+注意：一个消费者队列可以有多个消费者实例，只有其中一个消费者实例会消费<br>
+<img src="https://kangjn.github.io//post-images/1618476439883.png" alt="" loading="lazy"></p>
+<p>4.5.2.消息的生产者（看作是后台系统）<br>
+向交换机中发送消息。</p>
+<p>package com.zpc.rabbitmq.subscribe;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class Send {</p>
+<pre><code>private final static String EXCHANGE_NAME = &quot;test_exchange_fanout&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明exchange
+    channel.exchangeDeclare(EXCHANGE_NAME, &quot;fanout&quot;);
+
+    // 消息内容
+    String message = &quot;Hello World!&quot;;
+    channel.basicPublish(EXCHANGE_NAME, &quot;&quot;, null, message.getBytes());
+    System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+注意：消息发送到没有队列绑定的交换机时，消息将丢失，因为，交换机没有存储消息的能力，消息只能存在在队列中。<br>
+4.5.3.消费者1（看作是前台系统）</p>
+<p>package com.zpc.rabbitmq.subscribe;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work1&quot;;
+
+private final static String EXCHANGE_NAME = &quot;test_exchange_fanout&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 绑定队列到交换机
+    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, &quot;&quot;);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，手动返回完成
+    channel.basicConsume(QUEUE_NAME, false, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [Recv] Received '&quot; + message + &quot;'&quot;);
+        Thread.sleep(10);
+
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+4.5.4.消费者2（看作是搜索系统）</p>
+<p>package com.zpc.rabbitmq.subscribe;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv2 {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work2&quot;;
+
+private final static String EXCHANGE_NAME = &quot;test_exchange_fanout&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 绑定队列到交换机
+    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, &quot;&quot;);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，手动返回完成
+    channel.basicConsume(QUEUE_NAME, false, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [Recv2] Received '&quot; + message + &quot;'&quot;);
+        Thread.sleep(10);
+
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+4.5.5.测试<br>
+测试结果：<br>
+同一个消息被多个消费者获取。一个消费者队列可以有多个消费者实例，只有其中一个消费者实例会消费到消息。</p>
+<p>在管理工具中查看队列和交换机的绑定关系：<br>
+<img src="https://kangjn.github.io//post-images/1618476617492.png" alt="" loading="lazy"><br>
+4.6.路由模式<br>
+<img src="https://kangjn.github.io//post-images/1618476772382.png" alt="" loading="lazy"></p>
+<p>4.6.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618476797031.png" alt="" loading="lazy"></p>
+<p>4.6.2.生产者<br>
+<img src="https://kangjn.github.io//post-images/1618476806674.png" alt="" loading="lazy"><br>
+4.6.3.消费者1(假设是前台系统)<br>
+<img src="https://kangjn.github.io//post-images/1618476905097.png" alt="" loading="lazy"><br>
+4.6.4.消费2（假设是搜索系统）<br>
+<img src="https://kangjn.github.io//post-images/1618476911474.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[RabbitMQ使用教程(三)]]></title>
+        <id>https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-san/</id>
+        <link href="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-san/">
+        </link>
+        <updated>2021-04-15T08:23:31.000Z</updated>
+        <content type="html"><![CDATA[<p>4、学习五种队列<br>
+4.1 简单队列<br>
+4.1.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618475273831.png" alt="" loading="lazy"><br>
+P：消息的生产者<br>
+C：消息的消费者<br>
+红色：队列</p>
+<p>生产者将消息发送到队列，消费者从队列中获取消息。<br>
+4.1.2.导入RabbitMQ的客户端依赖</p>
+<dependency>
+   <groupId>com.rabbitmq</groupId>
+   <artifactId>amqp-client</artifactId>
+   <version>3.4.1</version>
+</dependency>
+<p>4.1.3.获取MQ的连接</p>
+<p>package com.zpc.rabbitmq.util;<br>
+import com.rabbitmq.client.ConnectionFactory;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class ConnectionUtil {</p>
+<pre><code>public static Connection getConnection() throws Exception {
+    //定义连接工厂
+    ConnectionFactory factory = new ConnectionFactory();
+    //设置服务地址
+    factory.setHost(&quot;localhost&quot;);
+    //端口
+    factory.setPort(5672);
+    //设置账号信息，用户名、密码、vhost
+    factory.setVirtualHost(&quot;testhost&quot;);
+    factory.setUsername(&quot;admin&quot;);
+    factory.setPassword(&quot;admin&quot;);
+    // 通过工程获取连接
+    Connection connection = factory.newConnection();
+    return connection;
+}
+</code></pre>
+<p>}</p>
+<p>4.1.4.生产者发送消息到队列</p>
+<p>package com.zpc.rabbitmq.simple;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class Send {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;q_test_01&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    // 从连接中创建通道
+    Channel channel = connection.createChannel();
+
+    // 声明（创建）队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 消息内容
+    String message = &quot;Hello World!&quot;;
+    channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes());
+    System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+    //关闭通道和连接
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+4.1.5.管理工具中查看消息<br>
+<img src="https://kangjn.github.io//post-images/1618475362118.png" alt="" loading="lazy"></p>
+<p>点击上面的队列名称，查询具体的队列中的信息：<br>
+<img src="https://kangjn.github.io//post-images/1618475394411.png" alt="" loading="lazy"><br>
+4.1.6.消费者从队列中获取消息</p>
+<p>package com.zpc.rabbitmq.simple;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;q_test_01&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    // 从连接中创建通道
+    Channel channel = connection.createChannel();
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+
+    // 监听队列
+    channel.basicConsume(QUEUE_NAME, true, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [x] Received '&quot; + message + &quot;'&quot;);
+    }
+}
+</code></pre>
+<p>}<br>
+4.2.Work模式<br>
+<img src="https://kangjn.github.io//post-images/1618475631375.png" alt="" loading="lazy"><br>
+4.2.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618475639907.png" alt="" loading="lazy"><br>
+一个生产者、2个消费者。</p>
+<p>一个消息只能被一个消费者获取。<br>
+4.2.2.消费者1</p>
+<p>package com.zpc.rabbitmq.work;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;<br>
+import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    //channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，false表示手动返回完成状态，true表示自动
+    channel.basicConsume(QUEUE_NAME, true, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [y] Received '&quot; + message + &quot;'&quot;);
+        //休眠
+        Thread.sleep(10);
+        // 返回确认状态，注释掉表示使用自动确认模式
+        //channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false)；
+      }
+}
+</code></pre>
+<p>}<br>
+4.2.3.消费者2</p>
+<p>package com.zpc.rabbitmq.work;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;<br>
+import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv2 {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    //channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，false表示手动返回完成状态，true表示自动
+    channel.basicConsume(QUEUE_NAME, true, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [x] Received '&quot; + message + &quot;'&quot;);
+        // 休眠1秒
+        Thread.sleep(1000);
+        //下面这行注释掉表示使用自动确认模式
+        //channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+4.2.4.生产者<br>
+向队列中发送100条消息。</p>
+<p>package com.zpc.rabbitmq.work;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class Send {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    for (int i = 0; i &lt; 100; i++) {
+        // 消息内容
+        String message = &quot;&quot; + i;
+        channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes());
+        System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+
+        Thread.sleep(i * 10);
+    }
+
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+4.2.5.测试<br>
+测试结果：<br>
+1、消费者1和消费者2获取到的消息内容是不同的，同一个消息只能被一个消费者获取。<br>
+2、消费者1和消费者2获取到的消息的数量是相同的，一个是消费奇数号消息，一个是偶数。</p>
+<pre><code>其实，这样是不合理的，因为消费者1线程停顿的时间短。应该是消费者1要比消费者2获取到的消息多才对。
+RabbitMQ 默认将消息顺序发送给下一个消费者，这样，每个消费者会得到相同数量的消息。即轮询（round-robin）分发消息。
+
+怎样才能做到按照每个消费者的能力分配消息呢？联合使用 Qos 和 Acknowledge 就可以做到。
+basicQos 方法设置了当前信道最大预获取（prefetch）消息数量为1。消息从队列异步推送给消费者，消费者的 ack 也是异步发送给队列，从队列的视角去看，总是会有一批消息已推送但尚未获得 ack 确认，Qos 的 prefetchCount 参数就是用来限制这批未确认消息数量的。设为1时，队列只有在收到消费者发回的上一条消息 ack 确认后，才会向该消费者发送下一条消息。prefetchCount 的默认值为0，即没有限制，队列会将所有消息尽快发给消费者。
+
+2个概念
+
+轮询分发 ：使用任务队列的优点之一就是可以轻易的并行工作。如果我们积压了好多工作，我们可以通过增加工作者（消费者）来解决这一问题，使得系统的伸缩性更加容易。在默认情况下，RabbitMQ将逐个发送消息到在序列中的下一个消费者(而不考虑每个任务的时长等等，且是提前一次性分配，并非一个一个分配)。平均每个消费者获得相同数量的消息。这种方式分发消息机制称为Round-Robin（轮询）。
+
+公平分发 ：虽然上面的分配法方式也还行，但是有个问题就是：比如：现在有2个消费者，所有的奇数的消息都是繁忙的，而偶数则是轻松的。按照轮询的方式，奇数的任务交给了第一个消费者，所以一直在忙个不停。偶数的任务交给另一个消费者，则立即完成任务，然后闲得不行。而RabbitMQ则是不了解这些的。这是因为当消息进入队列，RabbitMQ就会分派消息。它不看消费者为应答的数目，只是盲目的将消息发给轮询指定的消费者。
+</code></pre>
+<p>为了解决这个问题，我们使用basicQos( prefetchCount = 1)方法，来限制RabbitMQ只发不超过1条的消息给同一个消费者。当消息处理完毕后，有了反馈，才会进行第二次发送。<br>
+还有一点需要注意，使用公平分发，必须关闭自动应答，改为手动应答。<br>
+4.3.Work模式的“能者多劳”</p>
+<p>打开上述代码的注释：</p>
+<p>// 同一时刻服务器只会发一条消息给消费者<br>
+channel.basicQos(1);<br>
+//开启这行 表示使用手动确认模式<br>
+channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);<br>
+同时改为手动确认：</p>
+<p>// 监听队列，false表示手动返回完成状态，true表示自动<br>
+channel.basicConsume(QUEUE_NAME, false, consumer);</p>
+<p>测试：<br>
+消费者1比消费者2获取的消息更多。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[RabbitMQ使用教程(二)]]></title>
         <id>https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-er/</id>

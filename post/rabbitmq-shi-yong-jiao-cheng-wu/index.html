@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>RabbitMQ使用教程(五) | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="RabbitMQ使用教程(五) | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="RabbitMQ使用教程(五)" />
+  <meta property="og:url" content="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-wu/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618477736732"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618477736732"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+              </span>
+              <h1>RabbitMQ使用教程(五)</h1>
+              <span class="meta">
+                Posted on
+                2021-04-15，12 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>4.7.主题模式（通配符模式）<br>
+<img src="https://kangjn.github.io//post-images/1618477080812.png" alt="" loading="lazy"><br>
+<img src="https://kangjn.github.io//post-images/1618477088471.png" alt="" loading="lazy"><br>
+4.7.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618477096171.png" alt="" loading="lazy"><br>
+同一个消息被多个消费者获取。一个消费者队列可以有多个消费者实例，只有其中一个消费者实例会消费到消息。</p>
+<p>4.7.2.生产者</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Send {</p>
+<pre><code>private final static String EXCHANGE_NAME = &quot;test_exchange_topic&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明exchange
+    channel.exchangeDeclare(EXCHANGE_NAME, &quot;topic&quot;);
+
+    // 消息内容
+    String message = &quot;Hello World!!&quot;;
+    channel.basicPublish(EXCHANGE_NAME, &quot;routekey.1&quot;, null, message.getBytes());
+    System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+4.7.3.消费者1（前台系统）</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_topic_work_1&quot;;
+
+private final static String EXCHANGE_NAME = &quot;test_exchange_topic&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 绑定队列到交换机
+    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, &quot;routekey.*&quot;);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，手动返回完成
+    channel.basicConsume(QUEUE_NAME, false, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [Recv_x] Received '&quot; + message + &quot;'&quot;);
+        Thread.sleep(10);
+
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+4.7.4.消费者2（搜索系统）</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>public class Recv2 {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_topic_work_2&quot;;
+
+private final static String EXCHANGE_NAME = &quot;test_exchange_topic&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 绑定队列到交换机
+    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, &quot;*.*&quot;);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，手动返回完成
+    channel.basicConsume(QUEUE_NAME, false, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [Recv2_x] Received '&quot; + message + &quot;'&quot;);
+        Thread.sleep(10);
+
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+5.Springboot集成RabbitMQ</p>
+<pre><code>springboot集成RabbitMQ非常简单，如果只是简单的使用配置非常少，springboot提供了spring-boot-starter-amqp对消息各种支持。
+</code></pre>
+<p>5.1.简单队列</p>
+<p>1、配置pom文件，主要是添加spring-boot-starter-amqp的支持</p>
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+2、配置application.properties文件
+配置rabbitmq的安装地址、端口以及账户信息
+<p>spring.application.name=spirng-boot-rabbitmq<br>
+spring.rabbitmq.host=127.0.0.1<br>
+spring.rabbitmq.port=5672<br>
+spring.rabbitmq.username=admin<br>
+spring.rabbitmq.password=admin<br>
+3、配置队列</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.core.Queue;<br>
+import org.springframework.context.annotation.Bean;<br>
+import org.springframework.context.annotation.Configuration;</p>
+<p>@Configuration<br>
+public class RabbitConfig {<br>
+@Bean<br>
+public Queue queue() {<br>
+return new Queue(&quot;q_hello&quot;);<br>
+}<br>
+}<br>
+4、发送者</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.core.AmqpTemplate;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.stereotype.Component;</p>
+<p>import java.text.SimpleDateFormat;<br>
+import java.util.Date;</p>
+<p>@Component<br>
+public class HelloSender {<br>
+@Autowired<br>
+private AmqpTemplate rabbitTemplate;</p>
+<pre><code>public void send() {
+    String date = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;).format(new Date());//24小时制
+    String context = &quot;hello &quot; + date;
+    System.out.println(&quot;Sender : &quot; + context);
+    //简单对列的情况下routingKey即为Q名
+    this.rabbitTemplate.convertAndSend(&quot;q_hello&quot;, context);
+}
+</code></pre>
+<p>}<br>
+5、接收者</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_hello&quot;)<br>
+public class HelloReceiver {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver  : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+6、测试</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.junit.Test;<br>
+import org.junit.runner.RunWith;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.boot.test.context.SpringBootTest;<br>
+import org.springframework.test.context.junit4.SpringRunner;</p>
+<p>@RunWith(SpringRunner.class)<br>
+@SpringBootTest<br>
+public class RabbitMqHelloTest {</p>
+<pre><code>@Autowired
+private HelloSender helloSender;
+
+@Test
+public void hello() throws Exception {
+    helloSender.send();
+}
+</code></pre>
+<p>}<br>
+5.2.多对多使用（Work模式）</p>
+<p>注册两个Receiver:</p>
+<p>package com.zpc.rabbitmq;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_hello&quot;)<br>
+public class HelloReceiver2 {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver2  : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+@Test<br>
+public void oneToMany() throws Exception {<br>
+for (int i=0;i&lt;100;i++){<br>
+helloSender.send(i);<br>
+Thread.sleep(300);<br>
+}<br>
+}<br>
+public void send(int i) {<br>
+String date = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;).format(new Date());//24小时制<br>
+String context = &quot;hello &quot; + i + &quot; &quot; + date;<br>
+System.out.println(&quot;Sender : &quot; + context);<br>
+//简单对列的情况下routingKey即为Q名<br>
+this.rabbitTemplate.convertAndSend(&quot;q_hello&quot;, context);<br>
+}<br>
+5.3.Topic Exchange（主题模式）</p>
+<pre><code>topic 是RabbitMQ中最灵活的一种方式，可以根据routing_key自由的绑定不同的队列
+</code></pre>
+<p>首先对topic规则配置，这里使用两个队列(消费者)来演示。<br>
+1)配置队列，绑定交换机</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.core.Binding;<br>
+import org.springframework.amqp.core.BindingBuilder;<br>
+import org.springframework.amqp.core.Queue;<br>
+import org.springframework.amqp.core.TopicExchange;<br>
+import org.springframework.context.annotation.Bean;<br>
+import org.springframework.context.annotation.Configuration;</p>
+<p>@Configuration<br>
+public class TopicRabbitConfig {</p>
+<pre><code>final static String message = &quot;q_topic_message&quot;;
+final static String messages = &quot;q_topic_messages&quot;;
+
+@Bean
+public Queue queueMessage() {
+    return new Queue(TopicRabbitConfig.message);
+}
+
+@Bean
+public Queue queueMessages() {
+    return new Queue(TopicRabbitConfig.messages);
+}
+
+/**
+ * 声明一个Topic类型的交换机
+ * @return
+ */
+@Bean
+TopicExchange exchange() {
+    return new TopicExchange(&quot;mybootexchange&quot;);
+}
+
+/**
+ * 绑定Q到交换机,并且指定routingKey
+ * @param queueMessage
+ * @param exchange
+ * @return
+ */
+@Bean
+Binding bindingExchangeMessage(Queue queueMessage, TopicExchange exchange) {
+    return BindingBuilder.bind(queueMessage).to(exchange).with(&quot;topic.message&quot;);
+}
+
+@Bean
+Binding bindingExchangeMessages(Queue queueMessages, TopicExchange exchange) {
+    return BindingBuilder.bind(queueMessages).to(exchange).with(&quot;topic.#&quot;);
+}
+</code></pre>
+<p>}<br>
+2)创建2个消费者<br>
+q_topic_message 和q_topic_messages</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_topic_message&quot;)<br>
+public class Receiver1 {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver1  : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_topic_messages&quot;)<br>
+public class Receiver2 {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;Receiver2 : &quot; + hello);
+}
+</code></pre>
+<p>}<br>
+3)消息发送者（生产者）</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.springframework.amqp.core.AmqpTemplate;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+public class MsgSender {</p>
+<pre><code>@Autowired
+private AmqpTemplate rabbitTemplate;
+
+public void send1() {
+    String context = &quot;hi, i am message 1&quot;;
+    System.out.println(&quot;Sender : &quot; + context);
+    this.rabbitTemplate.convertAndSend(&quot;mybootexchange&quot;, &quot;topic.message&quot;, context);
+}
+
+
+public void send2() {
+    String context = &quot;hi, i am messages 2&quot;;
+    System.out.println(&quot;Sender : &quot; + context);
+    this.rabbitTemplate.convertAndSend(&quot;mybootexchange&quot;, &quot;topic.messages&quot;, context);
+}
+</code></pre>
+<p>}<br>
+send1方法会匹配到topic.#和topic.message，两个Receiver都可以收到消息，发送send2只有topic.#可以匹配所有只有Receiver2监听到消息。<br>
+4)测试</p>
+<p>package com.zpc.rabbitmq.topic;</p>
+<p>import org.junit.Test;<br>
+import org.junit.runner.RunWith;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.boot.test.context.SpringBootTest;<br>
+import org.springframework.test.context.junit4.SpringRunner;</p>
+<p>@RunWith(SpringRunner.class)<br>
+@SpringBootTest<br>
+public class RabbitTopicTest {</p>
+<pre><code>@Autowired
+private MsgSender msgSender;
+
+@Test
+public void send1() throws Exception {
+    msgSender.send1();
+}
+
+@Test
+public void send2() throws Exception {
+    msgSender.send2();
+}
+</code></pre>
+<p>}<br>
+5.4.Fanout Exchange（订阅模式）</p>
+<pre><code>Fanout 就是我们熟悉的广播模式或者订阅模式，给Fanout交换机发送消息，绑定了这个交换机的所有队列都收到这个消息。
+1)配置队列，绑定交换机
+</code></pre>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.core.Binding;<br>
+import org.springframework.amqp.core.BindingBuilder;<br>
+import org.springframework.amqp.core.FanoutExchange;<br>
+import org.springframework.amqp.core.Queue;<br>
+import org.springframework.context.annotation.Bean;<br>
+import org.springframework.context.annotation.Configuration;</p>
+<p>@Configuration<br>
+public class FanoutRabbitConfig {</p>
+<pre><code>@Bean
+public Queue aMessage() {
+    return new Queue(&quot;q_fanout_A&quot;);
+}
+
+@Bean
+public Queue bMessage() {
+    return new Queue(&quot;q_fanout_B&quot;);
+}
+
+@Bean
+public Queue cMessage() {
+    return new Queue(&quot;q_fanout_C&quot;);
+}
+
+@Bean
+FanoutExchange fanoutExchange() {
+    return new FanoutExchange(&quot;mybootfanoutExchange&quot;);
+}
+
+@Bean
+Binding bindingExchangeA(Queue aMessage, FanoutExchange fanoutExchange) {
+    return BindingBuilder.bind(aMessage).to(fanoutExchange);
+}
+
+@Bean
+Binding bindingExchangeB(Queue bMessage, FanoutExchange fanoutExchange) {
+    return BindingBuilder.bind(bMessage).to(fanoutExchange);
+}
+
+@Bean
+Binding bindingExchangeC(Queue cMessage, FanoutExchange fanoutExchange) {
+    return BindingBuilder.bind(cMessage).to(fanoutExchange);
+}
+</code></pre>
+<p>}<br>
+2）创建3个消费者</p>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_fanout_A&quot;)<br>
+public class ReceiverA {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;AReceiver  : &quot; + hello + &quot;/n&quot;);
+}
+</code></pre>
+<p>}<br>
+package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_fanout_B&quot;)<br>
+public class ReceiverB {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;BReceiver  : &quot; + hello + &quot;/n&quot;);
+}
+</code></pre>
+<p>}<br>
+package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.rabbit.annotation.RabbitHandler;<br>
+import org.springframework.amqp.rabbit.annotation.RabbitListener;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+@RabbitListener(queues = &quot;q_fanout_C&quot;)<br>
+public class ReceiverC {</p>
+<pre><code>@RabbitHandler
+public void process(String hello) {
+    System.out.println(&quot;CReceiver  : &quot; + hello + &quot;/n&quot;);
+}
+</code></pre>
+<p>}</p>
+<p>3）生产者</p>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.springframework.amqp.core.AmqpTemplate;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.stereotype.Component;</p>
+<p>@Component<br>
+public class MsgSenderFanout {</p>
+<pre><code>@Autowired
+private AmqpTemplate rabbitTemplate;
+
+public void send() {
+    String context = &quot;hi, fanout msg &quot;;
+    System.out.println(&quot;Sender : &quot; + context);
+    this.rabbitTemplate.convertAndSend(&quot;mybootfanoutExchange&quot;,&quot;&quot;, context);
+}
+</code></pre>
+<p>}<br>
+4）测试</p>
+<p>package com.zpc.rabbitmq.fanout;</p>
+<p>import org.junit.Test;<br>
+import org.junit.runner.RunWith;<br>
+import org.springframework.beans.factory.annotation.Autowired;<br>
+import org.springframework.boot.test.context.SpringBootTest;<br>
+import org.springframework.test.context.junit4.SpringRunner;</p>
+<p>@RunWith(SpringRunner.class)<br>
+@SpringBootTest<br>
+public class RabbitFanoutTest {</p>
+<pre><code>@Autowired
+private MsgSenderFanout msgSender;
+
+@Test
+public void send1() throws Exception {
+    msgSender.send();
+}
+</code></pre>
+<p>}<br>
+结果如下，三个消费者都收到消息：<br>
+AReceiver : hi, fanout msg<br>
+CReceiver : hi, fanout msg<br>
+BReceiver : hi, fanout msg<br>
+6.总结</p>
+<pre><code>使用MQ实现商品数据的同步优势：
+1、降低系统间耦合度
+2、便于管理数据的同步（数据一致性）
+</code></pre>
+<p>推荐阅读<br>
+《RabbitMQ详解》</p>
+
+          <div class="toc-container"></div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-si/">
+              <span class="post-title">
+                RabbitMQ使用教程(四)&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>RabbitMQ使用教程(三) | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="RabbitMQ使用教程(三) | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="RabbitMQ使用教程(三)" />
+  <meta property="og:url" content="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-san/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618477736732"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618477736732"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+              </span>
+              <h1>RabbitMQ使用教程(三)</h1>
+              <span class="meta">
+                Posted on
+                2021-04-15，9 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>4、学习五种队列<br>
+4.1 简单队列<br>
+4.1.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618475273831.png" alt="" loading="lazy"><br>
+P：消息的生产者<br>
+C：消息的消费者<br>
+红色：队列</p>
+<p>生产者将消息发送到队列，消费者从队列中获取消息。<br>
+4.1.2.导入RabbitMQ的客户端依赖</p>
+<dependency>
+   <groupId>com.rabbitmq</groupId>
+   <artifactId>amqp-client</artifactId>
+   <version>3.4.1</version>
+</dependency>
+<p>4.1.3.获取MQ的连接</p>
+<p>package com.zpc.rabbitmq.util;<br>
+import com.rabbitmq.client.ConnectionFactory;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class ConnectionUtil {</p>
+<pre><code>public static Connection getConnection() throws Exception {
+    //定义连接工厂
+    ConnectionFactory factory = new ConnectionFactory();
+    //设置服务地址
+    factory.setHost(&quot;localhost&quot;);
+    //端口
+    factory.setPort(5672);
+    //设置账号信息，用户名、密码、vhost
+    factory.setVirtualHost(&quot;testhost&quot;);
+    factory.setUsername(&quot;admin&quot;);
+    factory.setPassword(&quot;admin&quot;);
+    // 通过工程获取连接
+    Connection connection = factory.newConnection();
+    return connection;
+}
+</code></pre>
+<p>}</p>
+<p>4.1.4.生产者发送消息到队列</p>
+<p>package com.zpc.rabbitmq.simple;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class Send {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;q_test_01&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    // 从连接中创建通道
+    Channel channel = connection.createChannel();
+
+    // 声明（创建）队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 消息内容
+    String message = &quot;Hello World!&quot;;
+    channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes());
+    System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+    //关闭通道和连接
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+4.1.5.管理工具中查看消息<br>
+<img src="https://kangjn.github.io//post-images/1618475362118.png" alt="" loading="lazy"></p>
+<p>点击上面的队列名称，查询具体的队列中的信息：<br>
+<img src="https://kangjn.github.io//post-images/1618475394411.png" alt="" loading="lazy"><br>
+4.1.6.消费者从队列中获取消息</p>
+<p>package com.zpc.rabbitmq.simple;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;q_test_01&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    // 从连接中创建通道
+    Channel channel = connection.createChannel();
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+
+    // 监听队列
+    channel.basicConsume(QUEUE_NAME, true, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [x] Received '&quot; + message + &quot;'&quot;);
+    }
+}
+</code></pre>
+<p>}<br>
+4.2.Work模式<br>
+<img src="https://kangjn.github.io//post-images/1618475631375.png" alt="" loading="lazy"><br>
+4.2.1.图示<br>
+<img src="https://kangjn.github.io//post-images/1618475639907.png" alt="" loading="lazy"><br>
+一个生产者、2个消费者。</p>
+<p>一个消息只能被一个消费者获取。<br>
+4.2.2.消费者1</p>
+<p>package com.zpc.rabbitmq.work;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;<br>
+import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    //channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，false表示手动返回完成状态，true表示自动
+    channel.basicConsume(QUEUE_NAME, true, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [y] Received '&quot; + message + &quot;'&quot;);
+        //休眠
+        Thread.sleep(10);
+        // 返回确认状态，注释掉表示使用自动确认模式
+        //channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false)；
+      }
+}
+</code></pre>
+<p>}<br>
+4.2.3.消费者2</p>
+<p>package com.zpc.rabbitmq.work;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;<br>
+import com.rabbitmq.client.QueueingConsumer;<br>
+import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>public class Recv2 {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work&quot;;
+
+public static void main(String[] argv) throws Exception {
+
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    // 同一时刻服务器只会发一条消息给消费者
+    //channel.basicQos(1);
+
+    // 定义队列的消费者
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    // 监听队列，false表示手动返回完成状态，true表示自动
+    channel.basicConsume(QUEUE_NAME, true, consumer);
+
+    // 获取消息
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        System.out.println(&quot; [x] Received '&quot; + message + &quot;'&quot;);
+        // 休眠1秒
+        Thread.sleep(1000);
+        //下面这行注释掉表示使用自动确认模式
+        //channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+}
+</code></pre>
+<p>}<br>
+4.2.4.生产者<br>
+向队列中发送100条消息。</p>
+<p>package com.zpc.rabbitmq.work;</p>
+<p>import com.zpc.rabbitmq.util.ConnectionUtil;</p>
+<p>import com.rabbitmq.client.Channel;<br>
+import com.rabbitmq.client.Connection;</p>
+<p>public class Send {</p>
+<pre><code>private final static String QUEUE_NAME = &quot;test_queue_work&quot;;
+
+public static void main(String[] argv) throws Exception {
+    // 获取到连接以及mq通道
+    Connection connection = ConnectionUtil.getConnection();
+    Channel channel = connection.createChannel();
+
+    // 声明队列
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+    for (int i = 0; i &lt; 100; i++) {
+        // 消息内容
+        String message = &quot;&quot; + i;
+        channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes());
+        System.out.println(&quot; [x] Sent '&quot; + message + &quot;'&quot;);
+
+        Thread.sleep(i * 10);
+    }
+
+    channel.close();
+    connection.close();
+}
+</code></pre>
+<p>}<br>
+4.2.5.测试<br>
+测试结果：<br>
+1、消费者1和消费者2获取到的消息内容是不同的，同一个消息只能被一个消费者获取。<br>
+2、消费者1和消费者2获取到的消息的数量是相同的，一个是消费奇数号消息，一个是偶数。</p>
+<pre><code>其实，这样是不合理的，因为消费者1线程停顿的时间短。应该是消费者1要比消费者2获取到的消息多才对。
+RabbitMQ 默认将消息顺序发送给下一个消费者，这样，每个消费者会得到相同数量的消息。即轮询（round-robin）分发消息。
+
+怎样才能做到按照每个消费者的能力分配消息呢？联合使用 Qos 和 Acknowledge 就可以做到。
+basicQos 方法设置了当前信道最大预获取（prefetch）消息数量为1。消息从队列异步推送给消费者，消费者的 ack 也是异步发送给队列，从队列的视角去看，总是会有一批消息已推送但尚未获得 ack 确认，Qos 的 prefetchCount 参数就是用来限制这批未确认消息数量的。设为1时，队列只有在收到消费者发回的上一条消息 ack 确认后，才会向该消费者发送下一条消息。prefetchCount 的默认值为0，即没有限制，队列会将所有消息尽快发给消费者。
+
+2个概念
+
+轮询分发 ：使用任务队列的优点之一就是可以轻易的并行工作。如果我们积压了好多工作，我们可以通过增加工作者（消费者）来解决这一问题，使得系统的伸缩性更加容易。在默认情况下，RabbitMQ将逐个发送消息到在序列中的下一个消费者(而不考虑每个任务的时长等等，且是提前一次性分配，并非一个一个分配)。平均每个消费者获得相同数量的消息。这种方式分发消息机制称为Round-Robin（轮询）。
+
+公平分发 ：虽然上面的分配法方式也还行，但是有个问题就是：比如：现在有2个消费者，所有的奇数的消息都是繁忙的，而偶数则是轻松的。按照轮询的方式，奇数的任务交给了第一个消费者，所以一直在忙个不停。偶数的任务交给另一个消费者，则立即完成任务，然后闲得不行。而RabbitMQ则是不了解这些的。这是因为当消息进入队列，RabbitMQ就会分派消息。它不看消费者为应答的数目，只是盲目的将消息发给轮询指定的消费者。
+</code></pre>
+<p>为了解决这个问题，我们使用basicQos( prefetchCount = 1)方法，来限制RabbitMQ只发不超过1条的消息给同一个消费者。当消息处理完毕后，有了反馈，才会进行第二次发送。<br>
+还有一点需要注意，使用公平分发，必须关闭自动应答，改为手动应答。<br>
+4.3.Work模式的“能者多劳”</p>
+<p>打开上述代码的注释：</p>
+<p>// 同一时刻服务器只会发一条消息给消费者<br>
+channel.basicQos(1);<br>
+//开启这行 表示使用手动确认模式<br>
+channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);<br>
+同时改为手动确认：</p>
+<p>// 监听队列，false表示手动返回完成状态，true表示自动<br>
+channel.basicConsume(QUEUE_NAME, false, consumer);</p>
+<p>测试：<br>
+消费者1比消费者2获取的消息更多。</p>
+
+          <div class="toc-container"></div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-er/">
+              <span class="post-title">
+                RabbitMQ使用教程(二)&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
