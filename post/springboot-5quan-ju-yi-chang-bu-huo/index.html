@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>springboot-5.全局异常捕获 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="springboot-5.全局异常捕获 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="springboot-5.全局异常捕获" />
+  <meta property="og:url" content="https://kangjn.github.io/post/springboot-5quan-ju-yi-chang-bu-huo/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618558519520"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618558519520"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                
+              </span>
+              <h1>springboot-5.全局异常捕获</h1>
+              <span class="meta">
+                Posted on
+                2021.04.16，11 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h2 id="springboot-5全局异常捕获">springboot-5.全局异常捕获</h2>
+<p>在web应用中，请求处理时，出现异常是非常常见的。所以当应用出现各类异常时，进行异常的捕获或者二次处理(比如sql异常正常是不能外抛)是非常必要的，比如在开发对外api服务时，约定了响应的参数格式，如respCode、respMsg，调用方根据错误码进行自己的业务逻辑。</p>
+<p>1 浏览器访问异常时：<br>
+<a href="https://imgtu.com/i/cW5TOK"><img src="https://z3.ax1x.com/2021/04/16/cW5TOK.png" alt="cW5TOK.png" loading="lazy"></a></p>
+<p>2.postman访问异常时：<br>
+<a href="https://imgtu.com/i/cW5qTe"><img src="https://z3.ax1x.com/2021/04/16/cW5qTe.png" alt="cW5qTe.png" loading="lazy"></a></p>
+<p>显然，默认的异常页是对用户或者调用者而言都是不友好的，所以一般上我们都会进行实现自己业务的异常提示信息。</p>
+<h2 id="正文">正文</h2>
+<p><strong>1.自定义基础接口类+自定义枚举类</strong></p>
+<pre><code>public interface BaseErrorInfoInterface {
+    /** 错误码*/
+    String getResultCode();
+
+    /** 错误描述*/
+    String getResultMsg();
+
+    public enum CommonEnum implements BaseErrorInfoInterface {
+        // 数据操作错误定义
+        SUCCESS(&quot;200&quot;, &quot;成功!&quot;),
+        BODY_NOT_MATCH(&quot;400&quot;,&quot;请求的数据格式不符!&quot;),
+        SIGNATURE_NOT_MATCH(&quot;401&quot;,&quot;请求的数字签名不匹配!&quot;),
+        NOT_FOUND(&quot;404&quot;, &quot;未找到该资源!&quot;),
+        INTERNAL_SERVER_ERROR(&quot;500&quot;, &quot;服务器内部错误!&quot;),
+        SERVER_BUSY(&quot;503&quot;,&quot;服务器正忙，请稍后再试!&quot;)
+        ;
+
+        /** 错误码 */
+        private String resultCode;
+
+        /** 错误描述 */
+        private String resultMsg;
+
+        CommonEnum(String resultCode, String resultMsg) {
+            this.resultCode = resultCode;
+            this.resultMsg = resultMsg;
+        }
+
+        @Override
+        public String getResultCode() {
+            return resultCode;
+        }
+
+        @Override
+        public String getResultMsg() {
+            return resultMsg;
+        }
+    }
+}
+</code></pre>
+<p><strong>2.自定义异常类</strong></p>
+<pre><code>public class BizException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 错误码
+     */
+    protected String errorCode;
+    /**
+     * 错误信息
+     */
+    protected String errorMsg;
+
+    public BizException() {
+        super();
+    }
+
+    public BizException(BaseErrorInfoInterface errorInfoInterface) {
+        super(errorInfoInterface.getResultCode());
+        this.errorCode = errorInfoInterface.getResultCode();
+        this.errorMsg = errorInfoInterface.getResultMsg();
+    }
+
+    public BizException(BaseErrorInfoInterface errorInfoInterface, Throwable cause) {
+        super(errorInfoInterface.getResultCode(), cause);
+        this.errorCode = errorInfoInterface.getResultCode();
+        this.errorMsg = errorInfoInterface.getResultMsg();
+    }
+
+    public BizException(String errorMsg) {
+        super(errorMsg);
+        this.errorMsg = errorMsg;
+    }
+
+    public BizException(String errorCode, String errorMsg) {
+        super(errorCode);
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+    }
+
+    public BizException(String errorCode, String errorMsg, Throwable cause) {
+        super(errorCode, cause);
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+    }
+
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    public String getMessage() {
+        return errorMsg;
+    }
+
+    @Override
+    public Throwable fillInStackTrace() {
+        return this;
+    }
+}
+</code></pre>
+<p><strong>3.自定义数据格式</strong></p>
+<pre><code>public class ResultBody {
+    /**
+     * 响应代码
+     */
+    private String code;
+
+    /**
+     * 响应消息
+     */
+    private String message;
+
+    /**
+     * 响应结果
+     */
+    private Object result;
+
+    public ResultBody() {
+    }
+
+    public ResultBody(BaseErrorInfoInterface errorInfo) {
+        this.code = errorInfo.getResultCode();
+        this.message = errorInfo.getResultMsg();
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Object getResult() {
+        return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+    }
+
+    /**
+     * 成功
+     * 
+     * @return
+     */
+    public static ResultBody success() {
+        return success(null);
+    }
+
+    /**
+     * 成功
+     * @param data
+     * @return
+     */
+    public static ResultBody success(Object data) {
+        ResultBody rb = new ResultBody();
+        rb.setCode(CommonEnum.SUCCESS.getResultCode());
+        rb.setMessage(CommonEnum.SUCCESS.getResultMsg());
+        rb.setResult(data);
+        return rb;
+    }
+
+    /**
+     * 失败
+     */
+    public static ResultBody error(BaseErrorInfoInterface errorInfo) {
+        ResultBody rb = new ResultBody();
+        rb.setCode(errorInfo.getResultCode());
+        rb.setMessage(errorInfo.getResultMsg());
+        rb.setResult(null);
+        return rb;
+    }
+
+    /**
+     * 失败
+     */
+    public static ResultBody error(String code, String message) {
+        ResultBody rb = new ResultBody();
+        rb.setCode(code);
+        rb.setMessage(message);
+        rb.setResult(null);
+        return rb;
+    }
+
+    /**
+     * 失败
+     */
+    public static ResultBody error( String message) {
+        ResultBody rb = new ResultBody();
+        rb.setCode(&quot;-1&quot;);
+        rb.setMessage(message);
+        rb.setResult(null);
+        return rb;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
+    }
+}
+</code></pre>
+<p><strong>4.自定义全局异常处理类</strong></p>
+<pre><code>@RestControllerAdvice
+public class GlobalExceptionHandler {
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    public static final String Demo_View =  &quot;error&quot;;
+    /**
+     * 处理自定义的业务异常
+     * @param req
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BizException.class)
+    public  Object bizExceptionHandler(HttpServletRequest request,HttpServletRequest req, BizException e){
+        if(isAjax(request))
+        {
+            return ResultBody.error(e.getMessage());
+        }
+        else
+        {
+            ModelAndView mav = new ModelAndView();
+            mav.addObject(&quot;exception&quot;,e);
+            mav.addObject(&quot;status&quot;,e.getErrorCode());
+            mav.setViewName(Demo_View);
+            return mav;
+        }
+    }
+
+    /**
+     * 处理空指针的异常
+     * @param req
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value =NullPointerException.class)
+    @ResponseBody
+    public ResultBody exceptionHandler(HttpServletRequest req, NullPointerException e){
+        logger.error(&quot;发生空指针异常！原因是:&quot;,e);
+        return ResultBody.error(BaseErrorInfoInterface.CommonEnum.BODY_NOT_MATCH);
+    }
+
+
+    /**
+     * 处理其他异常
+     * @param req
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value =Exception.class)
+    public Object exceptionHandler(HttpServletRequest request,HttpServletRequest req, Exception e){
+        if(isAjax(request))
+        {
+            return ResultBody.error(e.getMessage());
+        }
+        else
+        {
+            ModelAndView mav = new ModelAndView();
+            mav.addObject(&quot;exception&quot;,e);
+            mav.addObject(&quot;status&quot;,INTERNAL_SERVER_ERROR);
+            mav.setViewName(Demo_View);
+            return mav;
+        }
+    }
+
+    //判断是否是ajax请求
+    public static boolean isAjax(HttpServletRequest httpRequest)
+    {
+        return(httpRequest.getHeader(&quot;X-Requested-With&quot;)!=null
+                &amp;&amp;&quot;XMLHttpRequest&quot;.equals(httpRequest.getHeader(&quot;X-Requested-With&quot;).toString()));
+    }
+}
+</code></pre>
+<p><strong>5.编写前端异常显示页面</strong><br>
+ps:名称对应步骤4里的String Demo_View<br>
+为了测试，快速建立一个html</p>
+<pre><code>&lt;!doctype html&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot;
+          content=&quot;width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0&quot;&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div th:text=&quot;${url}&quot;&gt;&lt;/div&gt;
+&lt;div th:text=&quot;${exception.message}&quot;&gt;&lt;/div&gt;
+&lt;div th:text=&quot;${status}&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>此时全局异常捕获已经建立完毕，接下来进行测试</p>
+<h2 id="测试">测试</h2>
+<p>1.web页面跳转</p>
+<pre><code>@Controller
+@RequestMapping(&quot;/err&quot;)
+public class errorController {
+    @RequestMapping(&quot;/error&quot;)
+    public String error()
+    {
+        int a = 1 / 0; //除以0，产生异常
+        return &quot;error&quot;;
+    }
+}
+</code></pre>
+<p>此时访问web页面：<br>
+<a href="https://imgtu.com/i/cWo0K0"><img src="https://z3.ax1x.com/2021/04/16/cWo0K0.png" alt="cWo0K0.png" loading="lazy"></a></p>
+<p>2.ajax形式跳转<br>
+更改controller文件</p>
+<pre><code>@Controller
+@RequestMapping(&quot;/err&quot;)
+public class errorController {
+    @RequestMapping(&quot;&quot;)
+    public String err()
+    {
+        return &quot;thymeleaf/ajaxerror&quot;;
+    }
+    @RequestMapping(&quot;getAjaxError&quot;)
+    public jsonResult ajaxError()
+    {
+        int a = 1/0;
+        return jsonResult.ok(200);
+    }
+}
+</code></pre>
+<p>新建一个ajaxerror.html文件于thymeleaf文件夹下</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;ajax测试&lt;/title&gt;
+&lt;/head&gt;
+&lt;script src=&quot;https://code.jquery.com/jquery-3.1.1.min.js&quot;&gt;&lt;/script&gt;
+&lt;body&gt;
+&lt;input id=&quot;test&quot; value=&quot;测试&quot; type=&quot;submit&quot;&gt;
+&lt;/body&gt;
+&lt;script th:src=&quot;@{/static/js/ajaxjs.js}&quot;&gt;&lt;/script&gt;
+&lt;/html&gt;
+</code></pre>
+<p>新建一个ajax.js文件编写ajax请求</p>
+<pre><code>$(&quot;#test&quot;).click(function() {
+    $.ajax({
+        url: &quot;/err/getAjaxError&quot;,
+        type: &quot;POST&quot;,
+        async: false,
+        success: function (data) {
+            if (data.status == 200 &amp;&amp; data.msg == 'OK') {
+                alert(&quot;success&quot;);
+            } else {
+                alert(&quot;发生异常&quot; + data.msg);
+            }
+        },
+        error: function (response, ajaxOption, thrownError) {
+            alert(&quot;error&quot;);
+        }
+    });
+});
+</code></pre>
+<p>记得在application文件夹添加静态文件路径配置</p>
+<pre><code>  mvc:
+    static-path-pattern: /static/**
+</code></pre>
+<p>此时访问<br>
+<a href="https://imgtu.com/i/cWoDbT"><img src="https://z3.ax1x.com/2021/04/16/cWoDbT.png" alt="cWoDbT.png" loading="lazy"></a><br>
+<a href="https://imgtu.com/i/cWoR2R"><img src="https://z3.ax1x.com/2021/04/16/cWoR2R.png" alt="cWoR2R.png" loading="lazy"></a></p>
+<p>3.测试自定义异常<br>
+新建一个controller文件</p>
+<pre><code>@Controller
+@RequestMapping(value = &quot;/api&quot;)
+public class UserRestController {
+    @RequestMapping(&quot;&quot;)
+    public String api(ModelMap map)
+    {
+        User u = new User();
+        map.addAttribute(&quot;user&quot;,u);
+        return &quot;thymeleaf/api&quot;;
+    }
+
+    @PostMapping(&quot;/user&quot;)
+    public boolean insert(User user) {
+        System.out.println(&quot;开始新增...&quot;);
+        //如果姓名为空就手动抛出一个自定义的异常！
+        if (user.getUsername() == null) {
+            throw new BizException(&quot;-1&quot;, &quot;用户姓名不能为空！&quot;);
+        }
+        return true;
+    }
+}
+</code></pre>
+<p>新建一个api.html文件</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form action=&quot;/api/user&quot; th:method=&quot;post&quot;&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;${user.username}&quot; th:name=&quot;${user.username}&quot; th:value=&quot;${user.username}&quot;&gt;
+    &lt;input type=&quot;submit&quot;&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>访问<br>
+<a href="https://imgtu.com/i/cWoxqf"><img src="https://z3.ax1x.com/2021/04/16/cWoxqf.png" alt="cWoxqf.png" loading="lazy"></a></p>
+<p>3.测试自定义异常</p>
+<pre><code>    @RequestMapping(&quot;/error&quot;)
+    public String error()
+    {
+        throw new BizException(&quot;400&quot;, &quot;这是400错误&quot;);
+    }
+</code></pre>
+<h2 id="尾言">尾言</h2>
+<p>按照步骤添加即可完成操作~<br>
+User类自行添加或者浏览前文即可。</p>
+<h2 id="其他">其他</h2>
+<p>1.SpringBoot异常处理-自定义错误页面</p>
+<p><strong>(1) 在Spring Boot中一共提供了几种处理异常的方式？</strong></p>
+<p>SpringBoot 中对于异常处理提供了五种处理方式：</p>
+<p>自定义错误页面；</p>
+<p>@ExceptionHandle 注解处理异常；</p>
+<p>@ControllerAdvice+@ExceptionHandler 注解处理异常；</p>
+<p>配置 SimpleMappingExceptionResolver 处理异常；</p>
+<p>自定义 HandlerExceptionResolver 类处理异常</p>
+<p><strong>(2) 什么是自定义错误页面方式？</strong></p>
+<p>SpringBoot 默认的处理异常的机制：SpringBoot 默认的已经提供了一套处理异常的机制。一旦程序中出现了异常  SpringBoot 会像/error 的 url 发送请求。在 springBoot 中提供了一个叫  BasicExceptionController 来处理/error 请求，然后跳转到默认显示异常的页面来展示异常信息。</p>
+<p><strong>(3) 自义定错误页面应该放到项目的什么位置？</strong></p>
+<p>放在一般网页资源存放的位置 即src/main/resources/templates</p>
+<p>2.SpringBoot异常处理-@ControlleAdvice</p>
+<p><strong>(1) @ControllerAdvice注解的作用是什么？</strong></p>
+<p>需要创建一个能够处理异常的全局异常类。 在该类上需要添加@ControllerAdvice 注解。</p>
+<p><strong>(2) @ControllerAdvice+@ExceptionHandler注解处理异常有什么特点？</strong></p>
+<p>是一个处理异常的全局异常类，整个项目只要产生了该类方法捕获的异常都会被捕获处理。缺点是要根据异常类型不同规定很多的异常处理方法，也就是@ExceptionHandler方法，代码冗余而且没有规定的异常类型无法捕获还是会走SpringBoot默认的异常处理方法。</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#springboot-5%E5%85%A8%E5%B1%80%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7">springboot-5.全局异常捕获</a></li>
+<li><a href="#%E6%AD%A3%E6%96%87">正文</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95">测试</a></li>
+<li><a href="#%E5%B0%BE%E8%A8%80">尾言</a></li>
+<li><a href="#%E5%85%B6%E4%BB%96">其他</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/springboot-4mo-ban-yin-qing/">
+              <span class="post-title">
+                springboot-4.模板引擎&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>springboot-文件上传/下载 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="springboot-文件上传/下载 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="springboot-文件上传/下载" />
+  <meta property="og:url" content="https://kangjn.github.io/post/springboot-wen-jian-shang-chuan-xia-zai/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618558519520"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618558519520"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                
+              </span>
+              <h1>springboot-文件上传/下载</h1>
+              <span class="meta">
+                Posted on
+                2021.04.16，6 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h2 id="springboot-文件上传下载">springboot-文件上传/下载</h2>
+<h2 id="代码">代码</h2>
+<p>application.yml</p>
+<pre><code>spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB  #上传文件最大大小
+      max-request-size: 50MB  #单次请求最大大小
+
+# 自定义文件上传路径
+web:
+  upload-path: C:/Users/Ericam/Desktop/JustCoding/src/main/resources/static/photos/
+</code></pre>
+<p><strong>ps : 路径中不能包含中文，不然无法读取</strong></p>
+<p>FileUtils (文件上传工具类)</p>
+<pre><code>package cn.justcoding.util;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * 文件上传工具包
+ */
+public class FileUtils {
+
+    /**
+     *
+     * @param file 文件
+     * @param path 文件存放路径
+     * @param fileName 源文件名
+     * @return
+     */
+    public static boolean upload(MultipartFile file, String path, String fileName){
+
+        //使用原文件名
+        String realPath = path + &quot;/&quot; +fileName;
+
+        File dest = new File(realPath);
+
+        //判断文件父目录是否存在
+        if(!dest.getParentFile().exists()){
+            dest.getParentFile().mkdir();
+        }
+
+        try {
+            //保存文件
+            file.transferTo(dest);
+            return true;
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
+</code></pre>
+<p>TestController(进行测试)</p>
+<pre><code>@Controller
+public class TestController {
+
+    private final ResourceLoader resourceLoader;
+
+    @Value(&quot;${web.upload-path}&quot;)
+    private String path;
+
+    @Autowired
+    public TestController(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
+    /**
+     * 跳转到文件上传页面
+     * @return
+     */
+    @RequestMapping(&quot;test&quot;)
+    public String toUpload(){
+        return &quot;freemarker/test&quot;;
+    }
+
+    /**
+     *
+     * @param file 要上传的文件
+     * @return
+     */
+    @RequestMapping(&quot;fileUpload&quot;)
+    public String upload(@RequestParam(&quot;fileName&quot;) MultipartFile file, Map&lt;String, Object&gt; map){
+
+        // 要上传的目标文件存放路径
+//        String localPath = &quot;/src/main/resources/static/photos&quot;;
+        // 上传成功或者失败的提示
+        String msg = &quot;&quot;;
+
+        if (FileUtils.upload(file, path, file.getOriginalFilename())){
+            // 上传成功，给出页面提示
+            msg = &quot;上传成功！&quot;;
+        }else {
+            msg = &quot;上传失败！&quot;;
+
+        }
+
+        // 显示图片
+        map.put(&quot;msg&quot;, msg);
+        map.put(&quot;fileName&quot;, file.getOriginalFilename());
+        return &quot;forward:/test&quot;;
+    }
+
+    /**
+     * 显示单张图片
+     * @return
+     */
+    @RequestMapping(&quot;show&quot;)
+    public ResponseEntity showPhotos(String fileName){
+        try {
+            // 由于是读取本机的文件，file是一定要加上的， path是在application配置文件中的路径
+//            System.out.println(fileName);
+            return ResponseEntity.ok(resourceLoader.getResource(&quot;file:&quot; + path + fileName));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @RequestMapping(&quot;batch&quot;)
+    public String handleFileUpload(HttpServletRequest request, Map&lt;String, Object&gt; map) {
+        List&lt;MultipartFile&gt; files = ((MultipartHttpServletRequest) request).getFiles(&quot;file&quot;);
+        MultipartFile file = null;
+        BufferedOutputStream stream = null;
+        String msg = &quot;&quot;;
+        for (int i = 0; i &lt; files.size(); ++i) {
+            file = files.get(i);
+            if (!file.isEmpty()) {
+                try {
+                    byte[] bytes = file.getBytes();
+                    stream = new BufferedOutputStream(new FileOutputStream(
+                            new File(path + file.getOriginalFilename())));//设置文件路径及名字
+                    stream.write(bytes);// 写入
+                    stream.close();
+                } catch (Exception e) {
+                    stream = null;
+                    msg= &quot;第 &quot; + i + &quot; 个文件上传失败 ==&gt; &quot;
+                            + e.getMessage();
+                }
+            } else {
+                msg= &quot;第 &quot; + i
+                        + &quot; 个文件上传失败因为文件为空&quot;;
+            }
+        }
+        msg= &quot;上传成功&quot;;
+        map.put(&quot;msg&quot;, msg);
+        return &quot;forward:/test&quot;;
+    }
+
+    @RequestMapping(&quot;/download&quot;)
+    public String downloadFile(HttpServletRequest request, String fileName,HttpServletResponse response,Map&lt;String, Object&gt; map) {
+        String msg = &quot;&quot;;
+        if (fileName != null) {
+            //设置文件路径
+            File file = new File(path+fileName);
+            //File file = new File(realPath , fileName);
+            if (file.exists()) {
+                response.setContentType(&quot;application/force-download&quot;);// 设置强制下载不打开
+                response.addHeader(&quot;Content-Disposition&quot;, &quot;attachment;fileName=&quot; + fileName);// 设置文件名
+                byte[] buffer = new byte[1024];
+                FileInputStream fis = null;
+                BufferedInputStream bis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    bis = new BufferedInputStream(fis);
+                    OutputStream os = response.getOutputStream();
+                    int i = bis.read(buffer);
+                    while (i != -1) {
+                        os.write(buffer, 0, i);
+                        i = bis.read(buffer);
+                    }
+                    msg = &quot;下载成功&quot;;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        msg =  &quot;下载失败&quot;;
+        map.put(&quot;msg&quot;, msg);
+        return &quot;forward:/test&quot;;
+    }
+}
+</code></pre>
+<p>test.ytl (简易freemarker测试模板)</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot; /&gt;
+    &lt;title&gt;图片上传Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1 &gt;图片上传Demo&lt;/h1&gt;
+&lt;form action=&quot;fileUpload&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+    &lt;p&gt;选择文件: &lt;input type=&quot;file&quot; name=&quot;fileName&quot;/&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;&lt;/p&gt;
+&lt;/form&gt;
+&lt;#--判断是否上传文件--&gt;
+&lt;#if msg??&gt;
+    &lt;span&gt;${msg}&lt;/span&gt;&lt;br&gt;
+&lt;#else &gt;
+    &lt;span&gt;${msg!(&quot;文件未上传&quot;)}&lt;/span&gt;&lt;br&gt;
+&lt;/#if&gt;
+&lt;#--显示图片，一定要在img中的src发请求给controller，否则直接跳转是乱码--&gt;
+&lt;#if fileName??&gt;
+    &lt;img src=&quot;/show?fileName=${fileName}&quot; style=&quot;width: 200px&quot;/&gt;
+&lt;#else&gt;
+    &lt;img src=&quot;/show&quot; style=&quot;width: 100px&quot;/&gt;
+&lt;/#if&gt;
+
+&lt;hr/&gt;
+&lt;p&gt;多文件上传&lt;/p&gt;
+&lt;form method=&quot;POST&quot; enctype=&quot;multipart/form-data&quot; action=&quot;batch&quot;&gt;
+    &lt;p&gt;文件1：&lt;input type=&quot;file&quot; name=&quot;file&quot;/&gt;&lt;/p&gt;
+    &lt;p&gt;文件2：&lt;input type=&quot;file&quot; name=&quot;file&quot;/&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type=&quot;submit&quot; value=&quot;上传&quot;/&gt;&lt;/p&gt;
+&lt;/form&gt;
+&lt;hr/&gt;
+&lt;p&gt;文件下载&lt;/p&gt;
+&lt;a href=&quot;download?fileName=${fileName}&quot;&gt;下载文件&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#springboot-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD">springboot-文件上传/下载</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81">代码</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/springboot-7kuai-su-shang-shou-redis/">
+              <span class="post-title">
+                springboot-7.快速上手redis&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>

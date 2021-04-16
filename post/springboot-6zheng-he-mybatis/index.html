@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>RabbitMQ使用教程(一) | MyBlog</title>
+<title>springboot-6.整合Mybatis | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="RabbitMQ使用教程(一) | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="springboot-6.整合Mybatis | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="RabbitMQ使用教程(一)" />
-  <meta property="og:url" content="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-yi/" />
+  <meta property="og:description" content="springboot-6.整合Mybatis" />
+  <meta property="og:url" content="https://kangjn.github.io/post/springboot-6zheng-he-mybatis/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -151,13 +151,13 @@
             <div class="post-heading">
               <span class="tags">
                 
-                <a href="https://kangjn.github.io/tag/LZaoQPnlh/" class="tag">RabbitMQ</a>
+                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
                 
               </span>
-              <h1>RabbitMQ使用教程(一)</h1>
+              <h1>springboot-6.整合Mybatis</h1>
               <span class="meta">
                 Posted on
-                2021.04.15，2 min read
+                2021.04.16，5 min read
               </span>
             </div>
           
@@ -172,42 +172,197 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <p>1.什么是MQ</p>
-<pre><code>消息队列（Message Queue，简称MQ），从字面意思上看，本质是个队列，FIFO先入先出，只不过队列中存放的内容是message而已。
-其主要用途：不同进程Process/线程Thread之间通信。
+          <h2 id="springboot-6整合mybatis">springboot-6.整合Mybatis</h2>
+<h2 id="一-解析java框架中entity层mapper层service层各层作用">一 .解析Java框架中entity层，mapper层，service层各层作用</h2>
+<p>（1）entity层<br>
+别名： model层 ，domain层。<br>
+用途： 实体层，用于存放我们的实体类，与数据库中的属性值基本保持一致，实现set和get的方法。一般数据库一张表对应一个实体类，类属性同表字段一一对应<br>
+简单例子：user表的实体User</p>
+<pre><code>public class User {
+    private int id;//id
+    private String username;//用户名
+    //……省略set,get方法
+}
 </code></pre>
-<p>为什么会产生消息队列？有几个原因：</p>
-<pre><code>不同进程（process）之间传递消息时，两个进程之间耦合程度过高，改动一个进程，引发必须修改另一个进程，为了隔离这两个进程，在两进程间抽离出一层（一个模块），所有两进程之间传递的消息，都必须通过消息队列来传递，单独修改某一个进程，不会影响另一个；
-
-不同进程（process）之间传递消息时，为了实现标准化，将消息的格式规范化了，并且，某一个进程接受的消息太多，一下子无法处理完，并且也有先后顺序，必须对收到的消息进行排队，因此诞生了事实上的消息队列；
-
-关于消息队列的详细介绍请参阅：
-《Java帝国之消息队列》
-《一个故事告诉你什么是消息队列》
-《到底什么时候该使用MQ》
-
-MQ框架非常之多，比较流行的有RabbitMq、ActiveMq、ZeroMq、kafka，以及阿里开源的RocketMQ。本文主要介绍RabbitMq。
-2.RabbitMQ
+<p>（2）mapper层<br>
+别名： dao层<br>
+用途： 对数据库进行数据持久化操作，针对数据库操作的，主要实现增删改查操作<br>
+简单例子：</p>
+<pre><code>@Mapper
+public interface UserMapper {
+    public User selectUserById(int id);
+}
 </code></pre>
-<p>2.1.RabbitMQ的简介<br>
-<img src="https://kangjn.github.io//post-images/1618473530111.png" alt="" loading="lazy"></p>
-<p>开发语言：Erlang – 面向并发的编程语言。<br>
-<img src="https://kangjn.github.io//post-images/1618473637764.png" alt="" loading="lazy"></p>
-<p>2.1.1.AMQP<br>
-AMQP是消息队列的一个协议。<br>
-<img src="https://kangjn.github.io//post-images/1618473691679.png" alt="" loading="lazy"></p>
-<p>2.2.官网<br>
-<img src="https://kangjn.github.io//post-images/1618473710782.png" alt="" loading="lazy"><br>
-2.3.MQ的其他产品<br>
-<img src="https://kangjn.github.io//post-images/1618473783159.png" alt="" loading="lazy"></p>
+<p>(3) service层<br>
+业务逻辑层，调用dao层接口，接收dao层返回的数据，完成项目的基本功能设计。<br>
+封装Service层的业务逻辑有利于业务逻辑的独立性和重复利用性。<br>
+作用：为controller层的类提供接口进行调用。<br>
+简单例子：</p>
+<pre><code>public interface UserService extends Service&lt;User&gt; {
 
-          <div class="toc-container"></div>
+}
+</code></pre>
+<h2 id="二快速使用">二.快速使用</h2>
+<p>（1）添加依赖项</p>
+<pre><code> &lt;!--mybatis--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+            &lt;version&gt;2.1.1&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--通用mapper--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
+            &lt;version&gt;1.1.5&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--druid数据源--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
+            &lt;version&gt;1.1.10 &lt;/version&gt;
+        &lt;/dependency&gt;
+
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.18&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
+            &lt;version&gt;1.1.10 &lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>（2）配置application.yml</p>
+<pre><code>spring:
+  #数据源配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/customer_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC
+    username: root
+    password: ******
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    connectionProperties: druid.stat.mergeSql=true
+
+#为mybatis配置，生产环境可删除
+restart:
+  include:
+    mapper: /mapper-[\\w-\\.]+jar
+    pagehelper: /pagehelper-[\\w-\\.]+jar
+
+pagehelper:
+  auto-dialect: msyql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+</code></pre>
+<p>(3)编写User.java【entity层】</p>
+<pre><code>public class User {
+    private String id;
+    private String username;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+}
+</code></pre>
+<p>(4)编写UserMapper.java(dao层)</p>
+<pre><code>@Mapper
+public interface UserMapper {
+    @Select(&quot;select * from user where id = #{id}&quot;)
+    public User selectUserById(int id);
+
+    @Select(&quot;select * from user where username = #{username}&quot;)
+    public List&lt;User&gt; selectUserByName(String userName);
+
+    @Insert(&quot;insert into user(id,username) values (#{id},#{username})&quot;)
+    public void addUser(User user);
+
+    @Update(&quot;update user set username=#{username} where id=#{id}&quot;)
+    public void updateUser(User user);
+
+    @Delete(&quot;delete from user where id=#{id}&quot;)
+    public void deleteUser(int id);
+}
+</code></pre>
+<p>(5)编写userController.java</p>
+<pre><code>@RestController
+@RequestMapping(&quot;/user&quot;)
+public class userController {
+
+    @Autowired
+    UserMapper userMapper;
+
+    @RequestMapping(value={&quot;/selectUserById&quot;}, method=RequestMethod.GET)
+    public User selectUserById(String id){
+        User user = userMapper.selectUserById(Integer.parseInt(id));
+        return user;
+    }
+
+    @RequestMapping(value={&quot;/selectUserByName&quot;}, method=RequestMethod.GET)
+    public List&lt;User&gt; selectUserByName(String userName){
+        return userMapper.selectUserByName(userName);
+    }
+
+    @RequestMapping(value={&quot;/addUser&quot;}, method=RequestMethod.POST)
+    public void addUser(User user){
+        userMapper.addUser(user);
+    }
+
+    @RequestMapping(value={&quot;/updateUser&quot;}, method=RequestMethod.POST)
+    public void updateUser(User user){
+        userMapper.updateUser(user);
+    }
+
+    @RequestMapping(value={&quot;/deleteUser&quot;}, method=RequestMethod.POST)
+    public void deleteUser(String id){
+        userMapper.deleteUser(Integer.parseInt(id));
+    }
+}
+</code></pre>
+<p>此时便已经全部配置结束<br>
+为了方便测试，忽略了service层，直接调用了mapper层</p>
+<p>（6）测试<br>
+1.<br>
+<a href="https://imgtu.com/i/cW7Rnx"><img src="https://z3.ax1x.com/2021/04/16/cW7Rnx.png" alt="cW7Rnx.png" loading="lazy"></a></p>
+<ol start="2">
+<li></li>
+</ol>
+<figure data-type="image" tabindex="1"><a href="https://imgtu.com/i/cW74AO"><img src="https://z3.ax1x.com/2021/04/16/cW74AO.png" alt="cW74AO.png" loading="lazy"></a></figure>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#springboot-6%E6%95%B4%E5%90%88mybatis">springboot-6.整合Mybatis</a></li>
+<li><a href="#%E4%B8%80-%E8%A7%A3%E6%9E%90java%E6%A1%86%E6%9E%B6%E4%B8%ADentity%E5%B1%82mapper%E5%B1%82service%E5%B1%82%E5%90%84%E5%B1%82%E4%BD%9C%E7%94%A8">一 .解析Java框架中entity层，mapper层，service层各层作用</a></li>
+<li><a href="#%E4%BA%8C%E5%BF%AB%E9%80%9F%E4%BD%BF%E7%94%A8">二.快速使用</a></li>
+</ul>
+</li>
+</ul>
+</div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/qian-duan-mian-shi-ti-mu-er/">
+            <a href="https://kangjn.github.io/post/springboot-5quan-ju-yi-chang-bu-huo/">
               <span class="post-title">
-                前端面试题目（二）&rarr;
+                springboot-5.全局异常捕获&rarr;
               </span>
             </a>
           </p>

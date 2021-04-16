@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>springboot-4.模板引擎 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="springboot-4.模板引擎 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="springboot-4.模板引擎" />
+  <meta property="og:url" content="https://kangjn.github.io/post/springboot-4mo-ban-yin-qing/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618558519520"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618558519520"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                
+              </span>
+              <h1>springboot-4.模板引擎</h1>
+              <span class="meta">
+                Posted on
+                2021.04.16，9 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h2 id="springboot-4模板引擎">springboot-4.模板引擎</h2>
+<h2 id="前言">前言</h2>
+<p>关于freemarker和thymeleaf的介绍自行查阅，本文只讲快速入门使用。</p>
+<h2 id="freemarker">freemarker</h2>
+<p>(1)在pom文件中添加依赖项</p>
+<pre><code>        &lt;!-- freemarker 依赖 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-freemarker&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>(2)在application.yml文件中添加freemarker相关配置</p>
+<pre><code>spring:
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+  freemarker:
+    allow-request-override: false
+    cache: false
+    check-template-location: true
+    charset: UTF-8
+    content-type: text/html; charset=utf-8
+    expose-request-attributes: false
+    expose-session-attributes: false
+    expose-spring-macro-helpers: false
+    suffix: .ftl
+    template-loader-path: classpath:/templates
+</code></pre>
+<p>(3)在templates文件夹下新建一个freemarker文件夹，然后再在该文件夹下新建文件center.ftl<br>
+文件树结构：<br>
+<a href="https://imgtu.com/i/cW4luT"><img src="https://z3.ax1x.com/2021/04/16/cW4luT.png" alt="cW4luT.png" loading="lazy"></a><br>
+快速创建一个网页模板进行测试，内容如下：</p>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot;
+          content=&quot;width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0&quot;&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div&gt;${host}&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>ps：其中host的值通过后台读取。</p>
+<p>（4）在controller文件夹下新建一个freemarkerController.java文件</p>
+<pre><code>@Controller
+   public class freemarkerController {
+        @RequestMapping(&quot;/&quot;)
+        public String index(ModelMap map) {
+            map.addAttribute(&quot;host&quot;,&quot;ericam&quot;);
+            return &quot;freemarker/center&quot;;
+        }
+   }
+</code></pre>
+<p>ps: 通过map将字符串ericam赋值给host，然后返回前端页面（可以不用写后缀ftl）<br>
+(5)预览<br>
+此时打开浏览器可以看到如下内容：<br>
+<a href="https://imgtu.com/i/cW4dv6"><img src="https://z3.ax1x.com/2021/04/16/cW4dv6.png" alt="cW4dv6.png" loading="lazy"></a></p>
+<p>接下来着重介绍thymeleaf，它在日常项目中使用更加广泛。（ps:项目中可以同时使用freemarker和thymeleaf）</p>
+<h2 id="thymeleaf">Thymeleaf</h2>
+<h3 id="一-快速入门使用">一. 快速入门使用</h3>
+<p>（1）在pom文件夹添加项目依赖</p>
+<pre><code>            &lt;!-- ThymeLeaf 依赖 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>(2)在application.yml文件中添加themeleaf相关配置</p>
+<pre><code>spring:
+    thymeleaf:
+        cache: false # 开发时关闭缓存,不然没法看到实时页面
+        mode: HTML # 用非严格的 HTML
+        encoding: UTF-8
+        servlet:
+        content-type: text/html
+</code></pre>
+<p>(3)<br>
+在templates文件夹下新建一个themeleaf文件夹，然后再新建一个test.html<br>
+文件树：<br>
+<a href="https://imgtu.com/i/cW428I"><img src="https://z3.ax1x.com/2021/04/16/cW428I.png" alt="cW428I.png" loading="lazy"></a><br>
+新建一个User.java文件<br>
+文件树：<br>
+<a href="https://imgtu.com/i/cW4WxP"><img src="https://z3.ax1x.com/2021/04/16/cW4WxP.png" alt="cW4WxP.png" loading="lazy"></a><br>
+(4)编写User.java文件<br>
+为了方便测试，用户具备如下属性：</p>
+<ul>
+<li>id</li>
+<li>用户名</li>
+<li>年龄</li>
+<li>创建时间</li>
+<li>用户简介</li>
+</ul>
+<pre><code>public class User {
+    private String id;
+    private int age;
+    private String username;
+    private Date createTime;
+    private String desc;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+//请读者自行补充 构造器和 get/set方法..
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+}
+</code></pre>
+<p>(5)新建一个themeleafController.java进行测试</p>
+<pre><code>@Controller
+public class themeleafController {
+    @RequestMapping(&quot;/test&quot;)
+    public String test(ModelMap map)
+    {
+        User u = new User();
+        u.setId(&quot;123&quot;);
+        u.setUsername(&quot;fwf&quot;);
+        u.setCreateTime(new Date(2020-1900,6-1,12));
+        u.setDesc(&quot;&lt;p&gt;ssssssssssss&lt;/p&gt;&quot;);
+        u.setAge(18);
+        map.addAttribute(&quot;user&quot;,u);   //这里的user对应html里的user
+        return &quot;thymeleaf/test&quot;;
+    }
+}
+</code></pre>
+<p>(6)最后我们进行编写test.html文件</p>
+<pre><code>&lt;div&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;${user.id}&quot; th:name=&quot;${user.id}&quot;th:value=&quot;${user.id}&quot;/&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;${user.username}&quot; th:name=&quot;${user.username}&quot; th:value=&quot;${user.username}&quot;&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;${user.age}&quot; th:name=&quot;${user.age}&quot; th:value=&quot;${user.age}&quot;&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;${user.createTime}&quot; th:name=&quot;${user.createTime}&quot; th:value=&quot;${#dates.format(user.createTime,'dd/MM/yyyy')}&quot;&gt;
+    &lt;span th:utext=&quot;${user.desc}&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+</code></pre>
+<p>ps: th:utext可以将内容作为html格式输出，而th:text则是直接输出文本。<br>
+(7)预览<br>
+<a href="https://imgtu.com/i/cW475j"><img src="https://z3.ax1x.com/2021/04/16/cW475j.png" alt="cW475j.png" loading="lazy"></a></p>
+<h3 id="二thymeleaf常用标签-方法">二.Thymeleaf常用标签-方法</h3>
+<p>（1）上述test.html的等同写法</p>
+<pre><code>&lt;div th:object=&quot;${user}&quot;&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;*{id}&quot; th:name=&quot;*{id}&quot;th:value=&quot;*{id}&quot;/&gt;
+    &lt;input type=&quot;text&quot; th:id=&quot;*{username}&quot; th:name=&quot;*{username}&quot; th:value=&quot;*{username}&quot;&gt;
+&lt;/div&gt;
+</code></pre>
+<p>这样可以简化内容，使用更加广泛。</p>
+<p>（2）表单的提交<br>
+我们在test.html里添加如下内容</p>
+<pre><code>&lt;div&gt;
+    &lt;form th:action=&quot;@{/postform}&quot; th:object=&quot;${user}&quot; method=&quot;post&quot; th:method=&quot;post&quot;&gt;
+        &lt;input type=&quot;text&quot; th:field=&quot;*{username}&quot;/&gt;
+        &lt;input type=&quot;submit&quot;/&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+</code></pre>
+<p>ps:提交地址为 url/postform ,提交方法为post，提交的内容为user.username<br>
+接着在themeleafController添加如下内容</p>
+<pre><code>    @PostMapping(&quot;/postform&quot;)
+    public String postform(User u)  //前端传入了一个User对象
+    {
+        System.out.println(u.getUsername());
+        return &quot;redirect:/test&quot;;   //重定向（等于转向/test地址
+    }
+</code></pre>
+<p>（3）th:if标签</p>
+<pre><code>&lt;div th:if=&quot;${user.age}==18&quot;&gt;1&lt;/div&gt; &lt;!--等于18，显示该标签--&gt;
+&lt;div th:if=&quot;${user.age} gt 18&quot;&gt;2&lt;/div&gt;&lt;!--大于18，显示该标签--&gt;
+&lt;div th:if=&quot;${user.age} lt 18&quot;&gt;3&lt;/div&gt;&lt;!--小于18，显示该标签--&gt;
+&lt;div th:if=&quot;${user.age} ge 18&quot;&gt;4&lt;/div&gt;&lt;!--大于等于18，显示该标签--&gt;
+&lt;div th:if=&quot;${user.age} le 18&quot;&gt;5&lt;/div&gt;&lt;!--小于等于18，显示该标签--&gt;
+</code></pre>
+<p>利用if判断变量是否为空，非空时显示</p>
+<pre><code class="language-html">&lt;span th:if=&quot;${msg}&quot; th:text=&quot;${msg}&quot;&gt;&lt;/span&gt;&lt;br&gt;
+</code></pre>
+<p>if / else 的实现</p>
+<pre><code>&lt;span th:if=&quot;${msg}&quot; th:text=&quot;${msg}&quot;&gt;&lt;/span&gt;&lt;br&gt;
+&lt;span th:unless=&quot;${msg}&quot; th:text=&quot;&quot;&gt;&lt;/span&gt;&lt;br&gt;
+</code></pre>
+<p>(4)th:selected标签</p>
+<pre><code>&lt;select&gt;
+    &lt;option &gt;选择框&lt;/option&gt;
+    &lt;option th:selected=&quot;${user.username eq 'fwf'}&quot;&gt;fwf&lt;/option&gt;
+&lt;/select&gt;
+</code></pre>
+<p>(5)table表单</p>
+<pre><code>&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;id&lt;/th&gt;
+        &lt;th&gt;姓名&lt;/th&gt;
+        &lt;th&gt;年龄&lt;/th&gt;
+        &lt;th&gt;创建时间&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr th:each=&quot;person:${userlist}&quot;&gt;
+        &lt;td th:text=&quot;${person.id}&quot;&gt;&lt;/td&gt;
+        &lt;td th:text=&quot;${person.username}&quot;&gt;&lt;/td&gt;
+        &lt;td th:text=&quot;${person.age gt 18}?大:小&quot;&gt;&lt;/td&gt;
+        &lt;td th:text=&quot;${#dates.format(person.createTime,'yyyy-MM-dd')}&quot;&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+</code></pre>
+<p>在这里我们需要修改下themeleafController文件，为其添加一个userlist。</p>
+<pre><code>    @RequestMapping(&quot;/test&quot;)
+    public String test(ModelMap map)
+    {
+        User u = new User();
+        u.setId(&quot;123&quot;);
+        u.setUsername(&quot;fwf&quot;);
+        u.setCreateTime(new Date(2020-1900,6-1,12));
+        u.setDesc(&quot;&lt;p&gt;ssssssssssss&lt;/p&gt;&quot;);
+        u.setAge(18);
+        map.addAttribute(&quot;user&quot;,u);
+        List&lt;User&gt; userlist = new ArrayList&lt;&gt;();  //添加一个userlist
+        userlist.add(u);
+        u = new User();
+        u.setId(&quot;234&quot;);
+        u.setUsername(&quot;ericam&quot;);
+        u.setCreateTime(new Date(2020-1900,5-1,12));
+        u.setAge(3);
+        userlist.add(u);
+        map.addAttribute(&quot;userlist&quot;,userlist);
+        return &quot;thymeleaf/test&quot;;
+    }
+</code></pre>
+<figure data-type="image" tabindex="1"><a href="https://imgtu.com/i/cW4jMV"><img src="https://z3.ax1x.com/2021/04/16/cW4jMV.png" alt="cW4jMV.png" loading="lazy"></a></figure>
+<p>(6)th:switch</p>
+<pre><code>&lt;div th:switch=&quot;${user.username}&quot;&gt;
+    &lt;p th:case=&quot;'fwf'&quot;&gt;111&lt;/p&gt;
+    &lt;p&gt;&lt;/p&gt;
+&lt;/div&gt;
+</code></pre>
+<p>备注：常用标签的效果可以自行去测试</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#springboot-4%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E">springboot-4.模板引擎</a></li>
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#freemarker">freemarker</a></li>
+<li><a href="#thymeleaf">Thymeleaf</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8">一. 快速入门使用</a></li>
+<li><a href="#%E4%BA%8Cthymeleaf%E5%B8%B8%E7%94%A8%E6%A0%87%E7%AD%BE-%E6%96%B9%E6%B3%95">二.Thymeleaf常用标签-方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/springboot-3zi-yuan-wen-jian-shu-xing-pei-zhi/">
+              <span class="post-title">
+                springboot-3.资源文件属性配置&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
