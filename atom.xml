@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-19T02:45:03.479Z</updated>
+    <updated>2021-04-19T02:50:32.194Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,112 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[计算机网络 — TCP的三次握手、四次挥手]]></title>
+        <id>https://kangjn.github.io/post/ji-suan-ji-wang-luo-tcp-de-san-ci-wo-shou-si-ci-hui-shou/</id>
+        <link href="https://kangjn.github.io/post/ji-suan-ji-wang-luo-tcp-de-san-ci-wo-shou-si-ci-hui-shou/">
+        </link>
+        <updated>2021-04-19T02:49:04.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="tcp-头部标识符意义解读">TCP 头部标识符意义解读</h2>
+<ol>
+<li>SYN：建立连接</li>
+</ol>
+<pre><code class="language-js">SYN=1，ACK=0  表示一个连接请求  
+SYN=1，ACK=1  表示同意建立一个连接
+ 
+</code></pre>
+<ol>
+<li>FIN：关闭连接</li>
+</ol>
+<pre><code class="language-js">FIN=1 表示发端完成发送任务
+注意：表明发送方已经没有数据发送 但不代表之前的数据发送完毕
+ 
+</code></pre>
+<ol>
+<li>ACK：置1时表示确认</li>
+<li>seq：发送序列号</li>
+<li>ack (number)：确认码</li>
+</ol>
+<p>更多关于TCP 和 UDP 的详细内容见 计算机网络系列 -- TCP和UDP</p>
+<h2 id="tcp-三次握手">TCP 三次握手</h2>
+<h4 id="过程通俗理解">过程通俗理解</h4>
+<pre><code>A—&gt;B
+B收到，B—&gt;A
+A收到
+ 
+</code></pre>
+<p><a href="https://imgtu.com/i/coGDaT"><img src="https://z3.ax1x.com/2021/04/19/coGDaT.png" alt="coGDaT.png" loading="lazy"></a>](https://www.pipipi.net/wp-content/uploads/front-end-baike/92a3befa8a194e928795be19641d8e63~tplv-k3u1fbpfcp-watermark.png)</p>
+<h4 id="过程的详细解读">过程的详细解读</h4>
+<p>（1） 第一次握手：客户端发送【SYN = 1，随机序列号seq = x】的数据包到服务器,服务器由【SYN = 1】知道客户端要建立连接；<code>此时客户端进入已发送状态，等待服务器确认</code></p>
+<p>（2） 第二次握手：服务器向客户端发送标【SYN = 1，ACK = 1】和【随机序列号seq = y, 确认码ack number = x+1】的数据包；<code>此时服务器进入已收到状态</code></p>
+<p>（3） 第三次握手：客户端收到后判断【ACK=1】和【收的ack number =发的seq+1】；<br>
+若正确，客户端发送标识位【ACK = 1、seq = x + 1】和【确认码ack number = y + 1】（服务器发送的seq+1）到服务器；</p>
+<p>服务器收到后判断【ACK=1】和【收的ack number =发的seq+1】是否正确；<br>
+若正确则完成建立连接，此包发送完毕。<code>此时客户端和服务器进入已连接状态，完成三次握手，客户端与服务器开始传送数据</code></p>
+<h4 id="tcp-三次握手的目的">TCP 三次握手的目的</h4>
+<ol>
+<li>建立客户端和服务器之间的连接，确认各自的收发能力是否正常</li>
+<li>对准好 TCP 包的序号问题，为保证可靠传送</li>
+<li>如果是 https 协议，还会进行解密加密</li>
+</ol>
+<p>HTTPS解密解密过程见 计算机网络系列 -- HTTPS加密解密过程</p>
+<h4 id="为什么要三次握手而不是两次">为什么要三次握手而不是两次？</h4>
+<p>这句话可以转化为第三次握手的意义是什么？</p>
+<pre><code class="language-js">第三次握手的意义在于：`让服务器知道客户端也收到了自己的同步信号`
+ 
+</code></pre>
+<p>通俗理解</p>
+<pre><code class="language-js">两次握手只能保证`单向`：只知道A能向B发送数据
+三次握手能保证`双向`：保证A也能收到B发送的数据
+ 
+</code></pre>
+<h4 id="第三次握手失败了怎么办">第三次握手失败了怎么办？</h4>
+<p>server端发送了SYN+ACK报文后就会启动一个<strong>定时器</strong>，等待client返回的ACK报文。如果第三次握手失败的话client给server返回了ACK报文，<code>server并不能收到这个ACK报文</code>。那么server端就会启动超时重传机制，超过规定时间后<code>重新发送SYN+ACK</code>，重传次数默认是5次。如果重传指定次数到了后，仍然<code>未收到ACK应答</code>，那么一段时间后，<code>server自动关闭这个连接。但是client认为这个连接已经建立</code>，如果client端向server写数据，server端将<strong>发送RTS报文段</strong>，以防止syn洪泛攻击。</p>
+<p>syn洪泛攻击</p>
+<pre><code class="language-js">通俗的理解是：当第三次握手没有发送确认信息时，等待一段时间后，主机就会断开之前的半开连接并回收资源，这为dos（deny of service）攻击埋下隐患，当主动方主动发送大量的syn数据包，但并不做出第三次握手响应，server就会为这些syn包分配资源（但并未使用），就会使server占用大量内存，使server连接环境耗尽，这就是syn洪泛攻击
+ 
+</code></pre>
+<h4 id="为什么要三次握手而不是四次">为什么要三次握手而不是四次？</h4>
+<p>四次握手的过程：</p>
+<ol>
+<li>第一次：客户端发送【SYN = 1，随机序列号seq = u】到服务器，用来请求开启客户A到服务器B的数据传送；</li>
+<li>第二次：服务器B收到这个SYN，它发回【ACK = 1、确认序号ack=u+1】表示同意；</li>
+<li>第三次：服务器开启与客户端的连接，发回标识位【SYN = 1，ACK = 1,，确认码ack =u+1】给客户端；</li>
+<li>第四次：客户端发送【ACK = 1，确认码ack number=w+1】到服务器。</li>
+</ol>
+<p>很明显，第二次和第三次没有分开的必要，可以合并，而且还能<code>提高建立连接时的效率</code></p>
+<h2 id="tcp-四次挥手">TCP 四次挥手</h2>
+<h4 id="过程通俗理解-2">过程通俗理解</h4>
+<pre><code>A：B 啊，我不想玩了
+B：好，知道了，等一下哈，我这边还没好
+【注意】这时，只是A不想玩了，即不再发送数据。但是B可能还有未发送完的数据，所以需要等待B也主动关闭
+B：好的，我弄完了，我也不玩了，拜拜
+A：好的，拜拜
+ 
+</code></pre>
+<p>[<a href="https://imgtu.com/i/coGgz9"><img src="https://z3.ax1x.com/2021/04/19/coGgz9.png" alt="coGgz9.png" loading="lazy"></a>](https://www.pipipi.net/wp-content/uploads/front-end-baike/a3c8d5d638f54726b309ac405e646fd5~tplv-k3u1fbpfcp-watermark.png)</p>
+<h4 id="过程的详细解读-2">过程的详细解读</h4>
+<p>（1）第一次挥手：客户端发送【FIN = 1，随机序列号seq = u】到服务器，用来主动关闭客户A到服务器B的数据传送；<code>客户机A进入FIN-WAIT-1状态，等待服务器B发送FIN</code></p>
+<p>（2）第二次挥手：服务器B收到这个FIN，它发回【ACK = 1、确认序号ack number=u+1】表示同意；<code>客户端进入FIN-WAIT-2状态，稍后关闭连接，服务器B进入CLOSE_WAIT，等待关闭连接;</code></p>
+<p>（3）第三次挥手：服务器关闭与客户端的连接，发回标识位【FIN = 1，ACK = 1,，确认码ack number=u+1】给客户端；<code>服务器进入LAST_ACK，等待最后一次ACK确认</code></p>
+<p>（4）第四次挥手：客户端发送【ACK = 1，确认码ack number=w+1】到服务器。<code>客户端进入TIME-WAIT等待2MAL后进入CLOSE可用状态，服务器B进入CLOSE可用状态</code></p>
+<h4 id="tcp-四次挥手的目的">TCP 四次挥手的目的</h4>
+<p>保证客户端、服务器真正断开连接</p>
+<h4 id="为什么挥手要四次而握手只要三次">为什么挥手要四次？而握手只要三次？</h4>
+<p>B表示收到A的报文之后，可能有未发送完的数据，所以需要把数据全部发送完毕后再来告诉A说可以断开了，所以多了一次</p>
+<h4 id="2msl是什么目的是什么">2MSL是什么？目的是什么？</h4>
+<p>MSL是时间单位 —— 任何报文在网络上存在的最长时间</p>
+<p>2MSL目的：保证第四次挥手正常进行</p>
+<ol>
+<li>若第4次挥手的报文段丢失了</li>
+<li>服务器就会超时重传第3次挥手的报文段</li>
+<li>客户端就会重新给服务器发送第4次挥手的报文</li>
+<li>最后，客户端、服务器才真正断开连接</li>
+</ol>
+<p>为什么客户端关闭后不能再发一下就行？</p>
+<p>不能保证新、老连接端口号一致</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[算法小记]]></title>
         <id>https://kangjn.github.io/post/suan-fa-xiao-ji/</id>
@@ -2909,176 +3015,6 @@ public class helloController {
     servlet:
         context-path: /demo   #配置路径，此后访问http://localhost:****/demo/****
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[springboot-2.利用接口返回数据（json）]]></title>
-        <id>https://kangjn.github.io/post/springboot-2li-yong-jie-kou-fan-hui-shu-ju-json/</id>
-        <link href="https://kangjn.github.io/post/springboot-2li-yong-jie-kou-fan-hui-shu-ju-json/">
-        </link>
-        <updated>2021-04-16T06:04:22.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="springboot-2利用接口返回数据json">springboot-2.利用接口返回数据（json）</h2>
-<h2 id="前言">前言</h2>
-<p>项目前后台交互存在两种方式<br>
-一种普通整体页面提交，比如form提交；<br>
-还有一种局部刷新，或者叫做异步刷新，ajax提交；<br>
-@Controller就是整体页面刷新提交的处理注解</p>
-<p>@RestController就是ajax提交，一般返回json格式，相当于我们经常使用的@ResponseBody+@Controller组合</p>
-<h2 id="正文">正文</h2>
-<p>新建文件夹controller<br>
-然后在该文件夹下新建 控制类.java文件<br>
-<a href="https://imgtu.com/i/cWWn9x"><img src="https://z3.ax1x.com/2021/04/16/cWWn9x.png" alt="cWWn9x.png" loading="lazy"></a></p>
-<h3 id="1最简单的数据返回">1.最简单的数据返回</h3>
-<pre><code>@RestController
-public class helloController {
-    @RequestMapping(&quot;/&quot;)
-    public String hello()
-    {
-        return &quot;hello&quot;;
-    }
-}
-</code></pre>
-<p>【@RequestMapping作用】<br>
-<strong>处理请求地址的映射<br>
-用于类和方法上，类上的 “请求地址” 是方法上的 “请求地址” 的父地址</strong><br>
-<a href="https://imgtu.com/i/cWWgCq"><img src="https://z3.ax1x.com/2021/04/16/cWWgCq.png" alt="cWWgCq.png" loading="lazy"></a></p>
-<h3 id="2返回类对象信息">2.返回类对象信息</h3>
-<p>为了演示，我们新建一个文件夹User，然后在该文件夹下新建一个文件User.java<br>
-<a href="https://imgtu.com/i/cWWWvT"><img src="https://z3.ax1x.com/2021/04/16/cWWWvT.png" alt="cWWWvT.png" loading="lazy"></a><br>
-内容如下：</p>
-<pre><code>public class User {
-    private String name;
-    private String sex;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-}
-</code></pre>
-<p><strong>然后在controller文件夹下新建一个userController.java文件</strong><br>
-(记得自行import需要的文件)<br>
-<a href="https://imgtu.com/i/cWfMin"><img src="https://z3.ax1x.com/2021/04/16/cWfMin.png" alt="cWfMin.png" loading="lazy"></a></p>
-<pre><code>@RestController
-public class userController {
-    @RequestMapping(&quot;/getUser&quot;)
-    public User getUser() {
-        User u = new User();
-        u.setName(&quot;x&quot;);
-        u.setSex(&quot;nan&quot;);
-        return u;
-
-    }
-}
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://z3.ax1x.com/2021/04/16/cWWgCq.png" alt="cWWgCq.png" loading="lazy"></figure>
-<h3 id="3返回封装的类对象信息">3.返回封装的类对象信息</h3>
-<p>解释一下该处和2处的区别：<br>
-@Description: 自定义响应数据结构这个类是提供给门户，ios，安卓，微信商城用的门户接受此类数据后需要使用本类的方法转换成对于的数据类型格式（类，或者list）其他自行处理</p>
-<ul>
-<li>
-<p>200：表示成功</p>
-</li>
-<li>
-<p>500：表示错误，错误信息在msg字段中</p>
-</li>
-<li>
-<p>501：bean验证错误，不管多少个错误都以map形式返回</p>
-</li>
-<li>
-<p>502：拦截器拦截到用户token出错</p>
-</li>
-<li>
-<p>555：异常抛出信息<br>
-简单来说，就是当前台提交用户信息给后台时，后台会返回一个json数据，其中包含状态码（200等），message（“ok”或者“failure”），然后再包含一个用户信息列表。</p>
-<p><strong>首先，在pom文件中添加依赖项</strong></p>
-</li>
-<li>
-<p>jackson-databind</p>
-</li>
-<li>
-<p>jackson-core<br>
-新建一个jsonResult.java文件</p>
-</li>
-</ul>
-<pre><code>package cn.ericam.nndemo.Json;
-public class jsonResult {
-    // 响应业务状态
-    private Integer status;
-    // 响应消息
-    private String msg;
-    // 响应中的数据
-    private Object data;
-    public static jsonResult ok(Object data) {
-        return new jsonResult(data);
-    }
-    //类含参初始化1
-    public jsonResult(Integer status, String msg, Object data) {
-        this.status = status;
-        this.msg = msg;
-        this.data = data;
-    }
-
-    //类含参初始化2
-    public jsonResult(Object data) {
-        this.status = 200;
-        this.msg = &quot;OK&quot;;
-        this.data = data;
-    }
-
-    //get和set方法
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
-}
-</code></pre>
-<p>然后在userController.java下修改为如下代码：</p>
-<pre><code>@RestController
-public class userController {
-    @RequestMapping(&quot;/getUser&quot;)
-    
-    public jsonResult getUser()
-    {
-        User u = new User();
-        u.setName(&quot;x&quot;);
-        u.setSex(&quot;nan&quot;);
-        return  jsonResult.ok(u);
-    }
-}
-</code></pre>
-<p><a href="https://imgtu.com/i/cWfyLD"><img src="https://z3.ax1x.com/2021/04/16/cWfyLD.png" alt="cWfyLD.png" loading="lazy"></a><br>
-<strong>【ps：IDEA利用ctrl+insert可以快速生成get和set方法】</strong></p>
 ]]></content>
     </entry>
 </feed>

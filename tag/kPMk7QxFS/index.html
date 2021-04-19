@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>RabbitMQ使用教程(二) | MyBlog</title>
+<title>计算机网络 | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="RabbitMQ使用教程(二) | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="计算机网络 | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,66 +30,9 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="RabbitMQ使用教程(二)" />
-  <meta property="og:url" content="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-er/" />
-  <meta property="og:locale" content="zh-CN" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="MyBlog" />
-  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-  <div class="container">
-    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
-      aria-label="Toggle navigation">
-      Menu
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav ml-auto">
-        
-        <li class="nav-item">
-          
-          <a class="nav-link" href="/">首页</a>
-          
-        </li>
-        
-        <li class="nav-item">
-          
-          <a class="nav-link" href="/archives">归档</a>
-          
-        </li>
-        
-        <li class="nav-item">
-          
-          <a class="nav-link" href="/tags">标签</a>
-          
-        </li>
-        
-        <li class="nav-item">
-          
-          <a class="nav-link" href="/about">关于</a>
-          
-        </li>
-        
-        <li class="nav-item">
-          <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
-              action="/search/index.html">
-              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
-              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
-            </form>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-  <!-- Page Header -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
   <div class="container">
     <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
@@ -147,18 +90,9 @@
         
           <!-- 没Title为其他页面Header -->
           
-            <!-- 没Title并且有headerType为Post：文章Header -->
-            <div class="post-heading">
-              <span class="tags">
-                
-                <a href="https://kangjn.github.io/tag/LZaoQPnlh/" class="tag">RabbitMQ</a>
-                
-              </span>
-              <h1>RabbitMQ使用教程(二)</h1>
-              <span class="meta">
-                Posted on
-                2021.04.15，3 min read
-              </span>
+            <!-- 其他页面（archives、tags、about...）Header -->
+            <div class="sub-site-heading">
+              <h1 class="tag-tl">#计算机网络</h1>
             </div>
           
         
@@ -166,95 +100,55 @@
     </div>
   </div>
 </header>
-  <!-- Post Content -->
-  <article id="post-content-article">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
-          
-          <p>2.4.学习5种队列<br>
-<img src="https://kangjn.github.io//post-images/1618473879189.png" alt="" loading="lazy"></p>
-<p>2.5.安装文档<br>
-<img src="https://kangjn.github.io//post-images/1618473885597.png" alt="" loading="lazy"></p>
-<p>3.搭建RabbitMQ环境<br>
-3.1.下载</p>
-<p>下载地址：http://www.rabbitmq.com/download.html<br>
-3.2.windows下安装</p>
-<p>3.2.1.安装Erlang<br>
-下载：http://www.erlang.org/download/otp_win64_17.3.exe 后 安装</p>
-<p>3.2.2.安装RabbitMQ<br>
-3.2.3.启用管理工具<br>
-<img src="https://kangjn.github.io//post-images/1618474136752.png" alt="" loading="lazy"><br>
-1、双击<br>
-2、进入C:\Program Files (x86)\RabbitMQ Server\rabbitmq_server-3.4.1\sbin输入命令：<br>
-rabbitmq-plugins enable rabbitmq_management<br>
-<img src="https://kangjn.github.io//post-images/1618474162617.png" alt="" loading="lazy"><br>
-这样就启动了管理工具，可以试一下命令：<br>
-停止：net stop RabbitMQ<br>
-启动：net start RabbitMQ</p>
-<p>3、在浏览器中输入地址查看：http://127.0.0.1:15672/<br>
-<img src="https://kangjn.github.io//post-images/1618474216700.png" alt="" loading="lazy"><br>
-4、使用默认账号登录：guest/ guest<br>
-3.3.Linux下安装</p>
-<p>3.3.1.安装Erlang<br>
-3.3.2.添加yum支持<br>
-cd /usr/local/src/<br>
-mkdir rabbitmq<br>
-cd rabbitmq</p>
-<p>wget http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm<br>
-rpm -Uvh erlang-solutions-1.0-1.noarch.rpm</p>
-<p>rpm --import http://packages.erlang-solutions.com/rpm/erlang_solutions.asc</p>
-<p>使用yum安装：<br>
-sudo yum install erlang</p>
-<p><img src="https://kangjn.github.io//post-images/1618474485653.png" alt="" loading="lazy"><br>
-3.3.3.安装RabbitMQ<br>
-上传rabbitmq-server-3.4.1-1.noarch.rpm文件到/usr/local/src/rabbitmq/<br>
-安装：<br>
-rpm -ivh rabbitmq-server-3.4.1-1.noarch.rpm</p>
-<p>3.3.4.启动、停止<br>
-service rabbitmq-server start<br>
-service rabbitmq-server stop<br>
-service rabbitmq-server restart<br>
-3.3.5.设置开机启动<br>
-chkconfig rabbitmq-server on<br>
-3.3.6.设置配置文件<br>
-cd /etc/rabbitmq<br>
-cp /usr/share/doc/rabbitmq-server-3.4.1/rabbitmq.config.example /etc/rabbitmq/</p>
-<p>mv rabbitmq.config.example rabbitmq.config<br>
-3.3.7.开启用户远程访问<br>
-vi /etc/rabbitmq/rabbitmq.config<br>
-<img src="https://kangjn.github.io//post-images/1618474539694.png" alt="" loading="lazy"><br>
-注意要去掉后面的逗号。<br>
-3.3.8.开启web界面管理工具<br>
-rabbitmq-plugins enable rabbitmq_management<br>
-service rabbitmq-server restart<br>
-3.3.9.防火墙开放15672端口<br>
-/sbin/iptables -I INPUT -p tcp --dport 15672 -j ACCEPT<br>
-/etc/rc.d/init.d/iptables save<br>
-3.4.安装的注意事项</p>
-<p>1、推荐使用默认的安装路径<br>
-2、系统用户名必须是英文</p>
-
-          <div class="toc-container"></div>
-          
-          <hr />
-          <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/rabbitmq-shi-yong-jiao-cheng-yi/">
-              <span class="post-title">
-                RabbitMQ使用教程(一)&rarr;
-              </span>
+  <div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+      
+      <!-- 每行的总容器 -->
+      <div class="post-row-container">
+        <!-- 第0层；标题 -->
+        <div class="title-floor">
+          <div class="post-title-container">
+            
+            <a href="https://kangjn.github.io/post/ji-suan-ji-wang-luo-tcp-de-san-ci-wo-shou-si-ci-hui-shou/">
+              <h2 class="post-title">
+                计算机网络 — TCP的三次握手、四次挥手
+              </h2>
             </a>
-          </p>
-          
-          <div class="comment" style="text-align: center;">
-            
-
-            
-            
           </div>
         </div>
+        <!-- 第一层：包含文章描述、时间信息、封面图 -->
+        <div class="post-row-first-floor">
+          <div class="post-preview">
+            <h3 class="post-subtitle">
+              
+            </h3>
+            <p class="post-meta">
+              <span class="time"> Posted on 2021.04.19</span>
+              <span>,</span>
+              <span class="post-stats">7 min read</span>
+            </p>
+          </div>
+          
+        </div>
+        <!-- 第二层：下划线、占位标签、tags -->
+        <div class="post-row-sec-floor">
+          <hr>
+          <div class="clearfix"></div>
+          
+          <a href="https://kangjn.github.io/tag/kPMk7QxFS/" class="post-tag">
+            计算机网络
+          </a>
+          
+        </div>
       </div>
-  </article>
+      </>
+      
+      <!-- 
+       -->
+    </div>
+  </div>
+</div>
   <!-- Footer -->
   <footer>
     <div class="container">
@@ -325,7 +219,6 @@ service rabbitmq-server restart<br>
     }
   })(this));</script>
   
-  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
 </body>
 
 </html>
