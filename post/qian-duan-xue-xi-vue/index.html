@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>springboot-1.简约版创建第一个应用 | MyBlog</title>
+<title>前端学习-Vue | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="springboot-1.简约版创建第一个应用 | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="前端学习-Vue | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="springboot-1.简约版创建第一个应用" />
-  <meta property="og:url" content="https://kangjn.github.io/post/springboot-1jian-yue-ban-chuang-jian-di-yi-ge-ying-yong/" />
+  <meta property="og:description" content="前端学习-Vue" />
+  <meta property="og:url" content="https://kangjn.github.io/post/qian-duan-xue-xi-vue/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -151,13 +151,13 @@
             <div class="post-heading">
               <span class="tags">
                 
-                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                <a href="https://kangjn.github.io/tag/HaOubp_AF/" class="tag">前端开发</a>
                 
               </span>
-              <h1>springboot-1.简约版创建第一个应用</h1>
+              <h1>前端学习-Vue</h1>
               <span class="meta">
                 Posted on
-                2021.04.16，3 min read
+                2021.04.19，5 min read
               </span>
             </div>
           
@@ -172,74 +172,198 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h2 id="springboot-1简约版创建第一个应用">springboot-1.简约版创建第一个应用</h2>
-<figure data-type="image" tabindex="1"><a href="https://imgtu.com/i/cWgyU1"><img src="https://z3.ax1x.com/2021/04/16/cWgyU1.md.png" alt="cWgyU1.md.png" loading="lazy"></a></figure>
-<p><strong>勾选依赖项</strong></p>
-<p>由于只是体验搭建一个springboot项目，因此依赖项只需要勾选一个spring web</p>
-<figure data-type="image" tabindex="2"><a href="https://imgtu.com/i/cW2ZqJ"><img src="https://z3.ax1x.com/2021/04/16/cW2ZqJ.md.png" alt="cW2ZqJ.md.png" loading="lazy"></a></figure>
-<p><strong>创建成功后项目列表如下图所示</strong></p>
-<p><a href="https://imgtu.com/i/cW21xO"><img src="https://z3.ax1x.com/2021/04/16/cW21xO.png" alt="cW21xO.png" loading="lazy"></a><br>
-其中</p>
+          <h2 id="核心特性">核心特性</h2>
+<h3 id="数据驱动视图">数据驱动视图</h3>
 <ul>
-<li><strong>DemoApplication.java:关键的启动类（程序的入口）</strong></li>
-<li><strong>pom.xml:Maven构建说明文件</strong></li>
-<li><strong>DemoApplicationTests.java:一个空的Junit测试类，它加载了一个使用Spring Boot字典配置功能的Spring应用程序上下文</strong></li>
-<li><strong>application.properties:一个空的properties文件，根据需要添加配置属性</strong></li>
+<li>数据变化会自动更新到对应元素中，无需手动操作 DOM，这种行为称作单向数据绑定。</li>
+<li>对于输入框等可输入元素，可设置双向数据绑定。<br>
+双向数据绑定是在数据绑定基础上，可自动将元素输入内容更新给数据， 实现数据与元素内容的双向绑定。</li>
+<li>Vue.js 的数据驱动视图是基于 MVVM 模型实现的。</li>
+<li>MVVM (Model – View – ViewModel )是一种软件开发思想<br>
+Model 层，代表数据<br>
+View 层， 代表视图模板<br>
+ViewModel 层，代表业务逻辑处理代码</li>
+<li>基于MVVM 模型实现的数据驱动视图解放了DOM操作</li>
+<li>View 与 Model 处理分离，降低代码耦合度</li>
+<li>但双向绑定时的 Bug 调试难度增大</li>
+<li>大型项目的 View 与 Model 过多，维护成本高</li>
 </ul>
-<p>为了演示简单，不再新建控制类，而是直接在这个入口类(DemoApplication.java)中编写，添加@RestController以及index方法，如下：<br>
-<strong>红色框内 内容需要添加</strong><br>
-<a href="https://imgtu.com/i/cW2NdA"><img src="https://z3.ax1x.com/2021/04/16/cW2NdA.png" alt="cW2NdA.png" loading="lazy"></a><br>
-ps:@RestController注解等价于@Controller+@ResponseBody的结合，使用这个注解的类里面的方法都以json格式输出。</p>
-<h3 id="运行项目">运行项目</h3>
-<p>浏览器访问http://localhost:8080/<br>
-<a href="https://imgtu.com/i/cW2oyF"><img src="https://z3.ax1x.com/2021/04/16/cW2oyF.png" alt="cW2oyF.png" loading="lazy"></a><br>
-<strong>至此第一个springboot项目已经创建完毕</strong></p>
-<h3 id="端口被占用">端口被占用</h3>
-<p>由于项目需要运行在端口8080，当端口被占用时，需要杀死该端口上运行的进程<br>
-进入命令行</p>
-<pre><code class="language-c">netstat -o -n -a | findstr :8080
-# TCP    0.0.0.0:3000      0.0.0.0:0              LISTENING       3116
-taskkill /F /PID 3116
+<h3 id="组件化开发">组件化开发</h3>
+<ul>
+<li>组件化开发，允许我们将网页功能封装为自定义 HTML 标签，复用时书写自定义标签名即可。</li>
+<li>组件不仅可以封装结构，还可以封装样式与逻辑代码，大大提交 了开发效率与可维护性。</li>
+</ul>
+<h2 id="基础语法">基础语法</h2>
+<h3 id="vue-实例">Vue 实例</h3>
+<ul>
+<li>通过 Vue 函数创建的对象，是使用 Vue 功能的基础。</li>
+</ul>
+<pre><code class="language-js">new Vue({
+  //选项对象
+});
+ 
 </code></pre>
-<h3 id="实现热启动">实现热启动</h3>
-<p>热启动：修改代码保存时会自动重新启动项目</p>
-<p><strong>1.修改pom.xml文件(添加spring-boot-devtools包)</strong></p>
-<pre><code class="language-java">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
-    &lt;scope&gt;true&lt;/scope&gt;
-    &lt;optional&gt;true&lt;/optional&gt;
-&lt;/dependency&gt;
+<h3 id="el-选项">el 选项</h3>
+<ul>
+<li>用于选取一个 DOM 元素作为 Vue 实例的挂载目标。</li>
+<li>只有挂载元素内部才会被 Vue 进行处理，外部为普通 HTML 元素。</li>
+<li>代表 MVVM 中的 View 层(视图)。</li>
+<li>可以为 CSS 选择器格式的字符串 或 HTMLElement 实例，但不能为 html 或 body。</li>
+</ul>
+<pre><code class="language-js">var vm = new Vue({
+   el: '#app'
+});
+
+var app = document.querySelector('#app');
+var vm = new Vue({
+    el: app
+});
+ 
 </code></pre>
-<p>修改spring-boot-maven-plugin插件</p>
-<pre><code class="language-java">&lt;plugin&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-         &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-            &lt;configuration&gt;
-                &lt;!--fork:设置True，否则可能devtools不会起作用--&gt;
-                &lt;fork&gt;true&lt;/fork&gt;
-            &lt;/configuration&gt;
- &lt;/plugin&gt;
+<ul>
+<li>挂载完毕后，可以通过 vm.$el 进行访问。</li>
+</ul>
+<pre><code class="language-js">var vm = new Vue({
+    el: '#app'
+});
+
+console.log(vm.$el);
+ 
 </code></pre>
-<p><strong>2.修改IDEA配置</strong></p>
-<pre><code>打开 File -&gt; Settings -&gt;Build,Executions,Deployment -&gt; Compiler ，勾选
+<ul>
+<li>未设置 el 的 vue 实例，也可以通过 vm.$mount() 进行挂载，参数形式与 el 规则相同。</li>
+</ul>
+<pre><code class="language-js">var app = document.getElementById('app');
+var vm = new Vue({});
+vm.$mount(app);
+ 
 </code></pre>
-<figure data-type="image" tabindex="3"><a href="https://imgtu.com/i/cWREfP"><img src="https://z3.ax1x.com/2021/04/16/cWREfP.png" alt="cWREfP.png" loading="lazy"></a></figure>
-<pre><code>然后，Ctrl + Shift + Alt + / 打开
+<h3 id="插值表达式">插值表达式</h3>
+<ul>
+<li>挂载元素可以使用 Vue.js 的模板语法，模板中可以通过插值表达式为元素进行动态内容设置，写法为 {{ }}。</li>
+</ul>
+<pre><code class="language-html">&lt;li&gt;第一段示例内容：{{ 10 + 20 + 30 }}&lt;/li&gt;
+&lt;li&gt;第二段示例内容：{{ 22 &gt; 3 ? '22比3大' : '3比22大' }}&lt;/li&gt;
+
+&lt;!-- 错误写法 --&gt;
+&lt;!-- &lt;li id=&quot;{{ 1 + 2 }}&quot;&gt;&lt;/li&gt; --&gt;
+&lt;!-- &lt;li&gt;{{ var num = 100; }}&lt;/li&gt; --&gt;
+ 
 </code></pre>
-<p><a href="https://imgtu.com/i/cWR3Yq"><img src="https://z3.ax1x.com/2021/04/16/cWR3Yq.png" alt="cWR3Yq.png" loading="lazy"></a><br>
-<strong>勾选该选项</strong><br>
-<a href="https://imgtu.com/i/cWRam4"><img src="https://z3.ax1x.com/2021/04/16/cWRam4.png" alt="cWRam4.png" loading="lazy"></a><br>
-热更新完成！</p>
+<p>注意点:</p>
+<ul>
+<li>插值表达式只能书写在标签内容区域，可以与其它内容混合。</li>
+<li>内部只能书写 JavaScript 表达式，不能书写语句。</li>
+</ul>
+<h3 id="data-选项">data 选项</h3>
+<ul>
+<li>用于存储 Vue 实例需要使用的数据，值为对象类型。</li>
+<li>data 中的数据可以通过 vm.$data.数据 或 vm.数据 访问。</li>
+</ul>
+<pre><code class="language-js">var vm = new Vue({
+    el: '#app',
+    data: {
+      title: '标题文本'
+    }
+});
+
+console.log(vm.$data.title);
+console.log(vm.title);
+ 
+</code></pre>
+<ul>
+<li>data 中的数据可以直接在视图中通过插值表达式访问。</li>
+<li>data 中的数据为响应式数据，在发生改变时，视图会自动更新。</li>
+</ul>
+<pre><code class="language-js">&lt;div id=&quot;app&quot;&gt;
+    &lt;p&gt;{{ title }}&lt;/p&gt;    
+&lt;/div&gt;
+
+&lt;script&gt;
+   var vm = new Vue({
+    el: '#app',
+    data: {
+      title: '标题文本',
+    }
+});
+
+vm.title = '新的标题内容';
+&lt;/script&gt;
+ 
+</code></pre>
+<ul>
+<li>data 中存在数组时，索引操作与 length 操作无法自动更新视图， 这时可以借助 Vue.set() 方法替代操作。</li>
+</ul>
+<pre><code class="language-js">var vm = new Vue({
+    el: '#app',
+    data: {
+      arr: ['内容1', '内容2', '内容3']
+    }
+});
+
+Vue.set(vm.arr, 0, '新内容');
+ 
+</code></pre>
+<h3 id="methods-选项">methods 选项</h3>
+<ul>
+<li>用于存储需要在 Vue 实例中使用的函数。</li>
+<li>methods 中的方法可以通过 vm.方法名 访问。</li>
+<li>方法中的 this 为 vm 实例，可以便捷的访问 vm 数据等功能。</li>
+</ul>
+<pre><code class="language-js"> &lt;div id=&quot;app&quot;&gt;
+    &lt;p&gt;{{ fn(title1) }}&lt;/p&gt;
+    &lt;p&gt;{{ fn(title2) }}&lt;/p&gt;
+    
+    &lt;p&gt;{{ title1.split('-').join('') }}&lt;/p&gt;
+    &lt;p&gt;{{ title2.split('-').join('') }}&lt;/p&gt;
+ &lt;/div&gt;
+ 
+&lt;script&gt;
+var vm = new Vue({
+  el: '#app',
+  data: {
+    prefix: '处理的结果为：',
+    title1: 'a-b-c-d-e',
+    title2: 'x-y-z'
+  },
+  methods: {
+    fn (value) {
+      // console.log(this);
+      this.fn1();
+      this.fn2();
+      return this.prefix + value.split('-').join('');
+    },
+    fn1 () {
+      console.log('执行了 fn1 的代码');
+    },
+    fn2 () {
+      console.log('执行了 fn2 的代码');
+    }
+  }
+});
+
+// console.log(vm)
+&lt;/script&gt;
+ 
+ 
+</code></pre>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#springboot-1%E7%AE%80%E7%BA%A6%E7%89%88%E5%88%9B%E5%BB%BA%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%BA%94%E7%94%A8">springboot-1.简约版创建第一个应用</a>
+<li><a href="#%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7">核心特性</a>
 <ul>
-<li><a href="#%E8%BF%90%E8%A1%8C%E9%A1%B9%E7%9B%AE">运行项目</a></li>
-<li><a href="#%E7%AB%AF%E5%8F%A3%E8%A2%AB%E5%8D%A0%E7%94%A8">端口被占用</a></li>
-<li><a href="#%E5%AE%9E%E7%8E%B0%E7%83%AD%E5%90%AF%E5%8A%A8">实现热启动</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E8%A7%86%E5%9B%BE">数据驱动视图</a></li>
+<li><a href="#%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91">组件化开发</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95">基础语法</a>
+<ul>
+<li><a href="#vue-%E5%AE%9E%E4%BE%8B">Vue 实例</a></li>
+<li><a href="#el-%E9%80%89%E9%A1%B9">el 选项</a></li>
+<li><a href="#%E6%8F%92%E5%80%BC%E8%A1%A8%E8%BE%BE%E5%BC%8F">插值表达式</a></li>
+<li><a href="#data-%E9%80%89%E9%A1%B9">data 选项</a></li>
+<li><a href="#methods-%E9%80%89%E9%A1%B9">methods 选项</a></li>
 </ul>
 </li>
 </ul>
@@ -249,9 +373,9 @@ taskkill /F /PID 3116
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/git-ming-ling-xing-chang-yong-zhi-ling/">
+            <a href="https://kangjn.github.io/post/springboot-wen-jian-shang-chuan-xia-zai/">
               <span class="post-title">
-                git命令行常用指令&rarr;
+                springboot-文件上传/下载&rarr;
               </span>
             </a>
           </p>

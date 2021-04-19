@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>学习笔记：promise | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="学习笔记：promise | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="学习笔记：promise" />
+  <meta property="og:url" content="https://kangjn.github.io/post/xue-xi-bi-ji-promise/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618800299817"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618800299817"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/HaOubp_AF/" class="tag">前端开发</a>
+                
+              </span>
+              <h1>学习笔记：promise</h1>
+              <span class="meta">
+                Posted on
+                2021.04.19，8 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <ol>
+<li>then接收两个参数, onFulfilled 和 onRejected</li>
+<li>检查并处理参数, 如果参数不是function就忽略(原样返回value或者reason)</li>
+</ol>
+<p>class MyPromise {<br>
+constructor(fn) {<br>
+// 初始状态为pending<br>
+this.status = PENDING;//状态<br>
+this.value = null;//成功的值<br>
+this.reason = null;//失败的值<br>
+try {<br>
+fn(this.resolve.bind(this), this.reject.bind(this));<br>
+} catch (e) {<br>
+this.reject(e);<br>
+}<br>
+}<br>
+resolve(value) {<br>
+if (this.status === PENDING) {<br>
+//这层判断是因为fulfilled状态只可以由pending状态改变而来<br>
+this.status = FULFILLED;<br>
+this.value = value;<br>
+}<br>
+}<br>
+reject(reason) {<br>
+if (this.status === PENDING) {<br>
+//同理这层判断是因为rejected状态只可以由pending状态改变而来<br>
+this.status = REJECTED;<br>
+this.reason = reason;<br>
+}<br>
+}<br>
+then(onFulfilled, onRejected) {<br>
+const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
+const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
+throw reason<br>
+};<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+}<br>
+3. 根据当前promise的状态, 调用不同的函数<br>
+class MyPromise {<br>
+.....<br>
+//这时候then函数被调用会瞬间就会执行switch判断，那这时候如果status可能还没变成fulfilled或者rejected，很有可能还是pending<br>
+then(onFulfilled, onRejected) {<br>
+const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
+const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
+throw reason<br>
+};<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+fulFilledFn(this.value);<br>
+break;<br>
+}<br>
+case REJECTED: {<br>
+rejectedFn(this.reason);<br>
+break;<br>
+}<br>
+}<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+}<br>
+4、首先要拿到所有的回调, 然后在某个时机去执行他. 需要新建两个数组, 分别存储成功和失败的回调, 调用then的时候, 如果还是pending就存入数组.<br>
+class MyPromise {<br>
+FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
+REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
+.....<br>
+then(onFulfilled, onRejected) {<br>
+const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
+const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
+throw reason<br>
+};<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+fulFilledFn(this.value);<br>
+break;<br>
+}<br>
+case REJECTED: {<br>
+rejectedFn(this.reason);<br>
+break;<br>
+}<br>
+case PENDING: {<br>
+this.FULFILLED_CALLBACK_LIST.push(fulFilledFn);<br>
+this.REJECTED_CALLBACK_LIST.push(rejectedFn);<br>
+break;<br>
+}<br>
+}<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+}<br>
+5、在status状态发生变化的时候调用数组里所有的函数<br>
+class MyPromise {<br>
+FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
+REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
+.....<br>
+resolve(value) {<br>
+if (this.status === PENDING) {<br>
+//这层判断是因为fulfilled状态只可以由pending状态改变而来<br>
+this.status = FULFILLED;<br>
+this.value = value;<br>
+//执行存储的函数<br>
+this.FULFILLED_CALLBACK_LIST.forEach(callback =&gt; {<br>
+callback(this.value);<br>
+});<br>
+}<br>
+}<br>
+reject(reason) {<br>
+if (this.status === PENDING) {<br>
+//同理这层判断是因为rejected状态只可以由pending状态改变而来<br>
+this.status = REJECTED;<br>
+this.reason = reason;<br>
+//执行存储的函数<br>
+this.REJECTED_CALLBACK_LIST.forEach(callback =&gt; {<br>
+callback(this.reason);<br>
+});<br>
+}<br>
+}<br>
+then(onFulfilled, onRejected) {<br>
+const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
+const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
+throw reason<br>
+};<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+fulFilledFn(this.value);<br>
+break;<br>
+}<br>
+case REJECTED: {<br>
+rejectedFn(this.reason);<br>
+break;<br>
+}<br>
+case PENDING: {<br>
+this.FULFILLED_CALLBACK_LIST.push(fulFilledFn);<br>
+this.REJECTED_CALLBACK_LIST.push(rejectedFn);<br>
+break;<br>
+}<br>
+}<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+}<br>
+7、then的返回值<br>
+情况1：如果 onFulfilled 或者 onRejected 抛出一个异常 e ，则新promise必须reject e<br>
+class MyPromise {<br>
+FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
+REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
+.....<br>
+then(onFulfilled, onRejected) {<br>
+const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
+const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
+throw reason<br>
+};<br>
+const fulFilledFnWithCatch = (resolve, reject) =&gt; {<br>
+try {<br>
+fulFilledFn(this.value);<br>
+} catch (e) {<br>
+reject(e)<br>
+}<br>
+};<br>
+const rejectedFnWithCatch = (resolve, reject) =&gt; {<br>
+try {<br>
+rejectedFn(this.reason);<br>
+} catch (e) {<br>
+reject(e);<br>
+}<br>
+}<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+return new MyPromise(fulFilledFnWithCatch);<br>
+}<br>
+case REJECTED: {<br>
+return new MyPromise(rejectedFnWithCatch);<br>
+}<br>
+case PENDING: {<br>
+return new MyPromise((resolve, reject) =&gt; {<br>
+this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject));<br>
+this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject));<br>
+});<br>
+}<br>
+}<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+}<br>
+情况2：如果onFulfilled不是函数且promise成功执行，那么新的promise必须返回同样的状态和val<br>
+情况3：如果onRejected不是函数且promise拒绝执行，那么新的promise必须返回同样的状态和reason<br>
+class MyPromise {<br>
+FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
+REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
+.....<br>
+then(onFulfilled, onRejected) {<br>
+const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
+const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
+throw reason<br>
+};<br>
+const fulFilledFnWithCatch = (resolve, reject) =&gt; {<br>
+try {<br>
+fulFilledFn(this.value);<br>
+resolve(this.value);<br>
+} catch (e) {<br>
+reject(e)<br>
+}<br>
+};<br>
+const rejectedFnWithCatch = (resolve, reject) =&gt; {<br>
+try {<br>
+rejectedFn(this.reason);<br>
+if (this.isFunction(onRejected)) {<br>
+resolve();<br>
+}<br>
+} catch (e) {<br>
+reject(e);<br>
+}<br>
+}<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+return new MyPromise(fulFilledFnWithCatch);<br>
+}<br>
+case REJECTED: {<br>
+return new MyPromise(rejectedFnWithCatch);<br>
+}<br>
+case PENDING: {<br>
+return new MyPromise((resolve, reject) =&gt; {<br>
+this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject));<br>
+this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject));<br>
+});<br>
+}<br>
+}<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+}<br>
+情况4:如果onFulfilled或者onRejected 返回一个值 x ，则运行resolvePromise方法<br>
+class MyPromise {<br>
+FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
+REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
+.....<br>
+const fulFilledFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
+try {<br>
+if (!this.isFunction(onFulfilled)) {<br>
+resolve(this.value);<br>
+} else {<br>
+const x = fulFilledFn(this.value);<br>
+this.resolvePromise(newPromise, x, resolve, reject);<br>
+}<br>
+} catch (e) {<br>
+reject(e)<br>
+}<br>
+};<br>
+const rejectedFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
+try {<br>
+if (!this.isFunction(onRejected)) {<br>
+reject(this.reason);<br>
+} else {<br>
+const x = rejectedFn(this.reason);<br>
+this.resolvePromise(newPromise, x, resolve, reject);<br>
+}<br>
+} catch (e) {<br>
+reject(e);<br>
+}<br>
+}<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+const newPromise = new MyPromise((resolve, reject) =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
+return newPromise;<br>
+}<br>
+case REJECTED: {<br>
+const newPromise = new MyPromise((resolve, reject) =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
+return newPromise;<br>
+}<br>
+case PENDING: {<br>
+const newPromise = new MyPromise((resolve, reject) =&gt; {<br>
+this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
+this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
+});<br>
+return newPromise;<br>
+}<br>
+}<br>
+//检验是否为function<br>
+isFunction(param) {<br>
+return typeof param === 'function';<br>
+}<br>
+resolvePromise(newPromise, x, resolve, reject){}<br>
+}<br>
+8、resolvePromise<br>
+resolvePromise(newPromise, x, resolve, reject) {<br>
+// 防止死循环<br>
+if (newPromise === x) {<br>
+return reject(new TypeError('The promise and the return value are the same'));<br>
+}<br>
+if (x instanceof MPromise) {<br>
+x.then((y) =&gt; {<br>
+resolvePromise(newPromise, y, resolve, reject);<br>
+}, reject);<br>
+} else if (typeof x === 'object' || this.isFunction(x)) {<br>
+if (x === null) {<br>
+return resolve(x);<br>
+}<br>
+let then = null;<br>
+try {<br>
+then = x.then;<br>
+} catch (error) {<br>
+return reject(error);<br>
+}<br>
+// 如果 then 是函数<br>
+if (this.isFunction(then)) {<br>
+let called = false;<br>
+try {<br>
+then.call(<br>
+x,<br>
+(y) =&gt; {<br>
+if (called) return;<br>
+called = true;<br>
+resolvePromise(promise, y, resolve, reject);<br>
+},<br>
+(r) =&gt; {<br>
+if (called) return;<br>
+called = true;<br>
+reject(r);<br>
+});<br>
+} catch (error) {<br>
+if (called) return;<br>
+reject(error);<br>
+}<br>
+} else {<br>
+resolve(x);<br>
+}<br>
+} else {<br>
+resolve(x);<br>
+}<br>
+}<br>
+9、onFulfilled 和 onRejected 是微任务<br>
+then(onFulfilled, onRejected) {<br>
+...<br>
+const fulFilledFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
+queueMicrotask(() =&gt; {<br>
+try {<br>
+if (!this.isFunction(onFulfilled)) {<br>
+resolve(this.value);<br>
+} else {<br>
+const x = fulFilledFn(this.value);<br>
+this.resolvePromise(newPromise, x, resolve, reject);<br>
+}<br>
+} catch (e) {<br>
+reject(e)<br>
+}<br>
+})<br>
+};<br>
+const rejectedFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
+queueMicrotask(() =&gt; {<br>
+try {<br>
+if (!this.isFunction(onRejected)) {<br>
+reject(this.reason);<br>
+} else {<br>
+const x = rejectedFn(this.reason);<br>
+this.resolvePromise(newPromise, x, resolve, reject);<br>
+}<br>
+} catch (e) {<br>
+reject(e);<br>
+}<br>
+})<br>
+}<br>
+switch (this.status) {<br>
+case FULFILLED: {<br>
+const newPromise = new MPromise((resolve, reject) =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
+return newPromise;<br>
+}<br>
+case REJECTED: {<br>
+const newPromise = new MPromise((resolve, reject) =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
+return newPromise;<br>
+}<br>
+case PENDING: {<br>
+const newPromise = new MPromise((resolve, reject) =&gt; {<br>
+this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
+this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
+});<br>
+return newPromise;<br>
+}<br>
+}<br>
+}<br>
+10. catch方法<br>
+catch (onRejected) {<br>
+return this.then(null, onRejected);<br>
+}<br>
+11. promise.resolve(静态方法)<br>
+将现有对象转为Promise对象，如果 Promise.resolve 方法的参数，不是具有 then 方法的对象（又称 thenable 对象），则返回一个新的 Promise 对象，且它的状态为fulfilled。<br>
+static resolve(param) {<br>
+if (param instanceof MyPromise) {<br>
+return param;<br>
+}<br>
+return new MyPromise(function (resolve) {<br>
+resolve(param);<br>
+});<br>
+}<br>
+12. promise.reject(静态方法)<br>
+返回一个新的Promise实例，该实例的状态为rejected。Promise.reject方法的参数reason，会被传递给实例的回调函数。<br>
+static reject(reason) {<br>
+return new MPromise((resolve, reject) =&gt; {<br>
+reject(reason);<br>
+});<br>
+}</p>
+
+          <div class="toc-container"></div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/qian-duan-xue-xi-vue/">
+              <span class="post-title">
+                前端学习-Vue&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
