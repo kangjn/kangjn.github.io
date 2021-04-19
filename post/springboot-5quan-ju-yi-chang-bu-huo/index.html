@@ -78,7 +78,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -128,7 +128,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -175,9 +175,9 @@
           <h2 id="springboot-5全局异常捕获">springboot-5.全局异常捕获</h2>
 <p>在web应用中，请求处理时，出现异常是非常常见的。所以当应用出现各类异常时，进行异常的捕获或者二次处理(比如sql异常正常是不能外抛)是非常必要的，比如在开发对外api服务时，约定了响应的参数格式，如respCode、respMsg，调用方根据错误码进行自己的业务逻辑。</p>
 <p>1 浏览器访问异常时：<br>
-<a href="https://imgtu.com/i/cW5TOK"><img src="https://z3.ax1x.com/2021/04/16/cW5TOK.png" alt="cW5TOK.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW5TOK.png" alt="cW5TOK.png" loading="lazy"></p>
 <p>2.postman访问异常时：<br>
-<a href="https://imgtu.com/i/cW5qTe"><img src="https://z3.ax1x.com/2021/04/16/cW5qTe.png" alt="cW5qTe.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW5qTe.png" alt="cW5qTe.png" loading="lazy"></p>
 <p>显然，默认的异常页是对用户或者调用者而言都是不友好的，所以一般上我们都会进行实现自己业务的异常提示信息。</p>
 <h2 id="正文">正文</h2>
 <p><strong>1.自定义基础接口类+自定义枚举类</strong></p>
@@ -511,7 +511,7 @@ public class errorController {
 }
 </code></pre>
 <p>此时访问web页面：<br>
-<a href="https://imgtu.com/i/cWo0K0"><img src="https://z3.ax1x.com/2021/04/16/cWo0K0.png" alt="cWo0K0.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWo0K0.png" alt="cWo0K0.png" loading="lazy"></p>
 <p>2.ajax形式跳转<br>
 更改controller文件</p>
 <pre><code>@Controller
@@ -569,8 +569,8 @@ public class errorController {
     static-path-pattern: /static/**
 </code></pre>
 <p>此时访问<br>
-<a href="https://imgtu.com/i/cWoDbT"><img src="https://z3.ax1x.com/2021/04/16/cWoDbT.png" alt="cWoDbT.png" loading="lazy"></a><br>
-<a href="https://imgtu.com/i/cWoR2R"><img src="https://z3.ax1x.com/2021/04/16/cWoR2R.png" alt="cWoR2R.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWoDbT.png" alt="cWoDbT.png" loading="lazy"><br>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWoR2R.png" alt="cWoR2R.png" loading="lazy"></p>
 <p>3.测试自定义异常<br>
 新建一个controller文件</p>
 <pre><code>@Controller
@@ -612,7 +612,7 @@ public class UserRestController {
 &lt;/html&gt;
 </code></pre>
 <p>访问<br>
-<a href="https://imgtu.com/i/cWoxqf"><img src="https://z3.ax1x.com/2021/04/16/cWoxqf.png" alt="cWoxqf.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWoxqf.png" alt="cWoxqf.png" loading="lazy"></p>
 <p>3.测试自定义异常</p>
 <pre><code>    @RequestMapping(&quot;/error&quot;)
     public String error()

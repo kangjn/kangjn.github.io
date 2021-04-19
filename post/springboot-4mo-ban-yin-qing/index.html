@@ -78,7 +78,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -128,7 +128,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -203,7 +203,7 @@
 </code></pre>
 <p>(3)在templates文件夹下新建一个freemarker文件夹，然后再在该文件夹下新建文件center.ftl<br>
 文件树结构：<br>
-<a href="https://imgtu.com/i/cW4luT"><img src="https://z3.ax1x.com/2021/04/16/cW4luT.png" alt="cW4luT.png" loading="lazy"></a><br>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW4luT.png" alt="cW4luT.png" loading="lazy"><br>
 快速创建一个网页模板进行测试，内容如下：</p>
 <pre><code>&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
@@ -233,7 +233,7 @@
 <p>ps: 通过map将字符串ericam赋值给host，然后返回前端页面（可以不用写后缀ftl）<br>
 (5)预览<br>
 此时打开浏览器可以看到如下内容：<br>
-<a href="https://imgtu.com/i/cW4dv6"><img src="https://z3.ax1x.com/2021/04/16/cW4dv6.png" alt="cW4dv6.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW4dv6.png" alt="cW4dv6.png" loading="lazy"></p>
 <p>接下来着重介绍thymeleaf，它在日常项目中使用更加广泛。（ps:项目中可以同时使用freemarker和thymeleaf）</p>
 <h2 id="thymeleaf">Thymeleaf</h2>
 <h3 id="一-快速入门使用">一. 快速入门使用</h3>
@@ -256,10 +256,10 @@
 <p>(3)<br>
 在templates文件夹下新建一个themeleaf文件夹，然后再新建一个test.html<br>
 文件树：<br>
-<a href="https://imgtu.com/i/cW428I"><img src="https://z3.ax1x.com/2021/04/16/cW428I.png" alt="cW428I.png" loading="lazy"></a><br>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master" alt="cW428I.png" loading="lazy"><br>
 新建一个User.java文件<br>
 文件树：<br>
-<a href="https://imgtu.com/i/cW4WxP"><img src="https://z3.ax1x.com/2021/04/16/cW4WxP.png" alt="cW4WxP.png" loading="lazy"></a><br>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW4WxP.png" alt="cW4WxP.png" loading="lazy"><br>
 (4)编写User.java文件<br>
 为了方便测试，用户具备如下属性：</p>
 <ul>
@@ -346,7 +346,7 @@ public class themeleafController {
 </code></pre>
 <p>ps: th:utext可以将内容作为html格式输出，而th:text则是直接输出文本。<br>
 (7)预览<br>
-<a href="https://imgtu.com/i/cW475j"><img src="https://z3.ax1x.com/2021/04/16/cW475j.png" alt="cW475j.png" loading="lazy"></a></p>
+<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW475j.png" alt="cW475j.png" loading="lazy"></p>
 <h3 id="二thymeleaf常用标签-方法">二.Thymeleaf常用标签-方法</h3>
 <p>（1）上述test.html的等同写法</p>
 <pre><code>&lt;div th:object=&quot;${user}&quot;&gt;
@@ -432,7 +432,7 @@ public class themeleafController {
         return &quot;thymeleaf/test&quot;;
     }
 </code></pre>
-<figure data-type="image" tabindex="1"><a href="https://imgtu.com/i/cW4jMV"><img src="https://z3.ax1x.com/2021/04/16/cW4jMV.png" alt="cW4jMV.png" loading="lazy"></a></figure>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cW4jMV.png" alt="cW4jMV.png" loading="lazy"></figure>
 <p>(6)th:switch</p>
 <pre><code>&lt;div th:switch=&quot;${user.username}&quot;&gt;
     &lt;p th:case=&quot;'fwf'&quot;&gt;111&lt;/p&gt;

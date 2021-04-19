@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>Node–异步I/O解析 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="Node–异步I/O解析 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="Node–异步I/O解析" />
+  <meta property="og:url" content="https://kangjn.github.io/post/node-yi-bu-io-jie-xi/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/HaOubp_AF/" class="tag">前端开发</a>
+                
+              </span>
+              <h1>Node–异步I/O解析</h1>
+              <span class="meta">
+                Posted on
+                2021.04.19，11 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>“异步”这个名词其实在Node之前就已经诞生了。但是在绝大多数高级编程语言中，异步并不多见。在众多高级语言或运行平台中，将异步作为主要编程方式和设计理念的，Node是首个。</p>
+<p>异步I/O、事件驱动和单线程构成了Node的基调，而Nginx与Node的事件驱动、异步I/O设计理念比较相近。Nginx采用纯C编写，性能表现非常优异，具备面向客户端管理连接的强大能力，但是它的背后依然受限于各种同步方式的编程语言。但Node是全方位的，既可以作为服务器端去处理客户端带来的大量并发请求，也能作为客户端向网络中的各个应用进行并发请求。</p>
+<h2 id="为什么要异步io">为什么要异步I/O</h2>
+<p>为什么异步I/O在Node中如此重要，这是因为Node面向网络设计，在跨网络的结构下，并发已经是现代编程中的标准配备了。</p>
+<h3 id="用户体验">用户体验</h3>
+<p>《高性能JavaScript》中提到过，如果脚本的执行时间超过100毫秒，用户就会感到页面卡顿，以为页面停止响应。而在B/S模型中，网络速度的限制给网页的实时体验造成很大的麻烦。</p>
+<p>如果网页临时需要获取一个资源，通过同步的方式获取，那么JavaScript则需要等待资源完全从服务器端获取后才能继续执行，这期间UI停顿，不响应用户的交互行为。这样用户体验将会极差。而采用异步请求，在下载资源期间，JavaScript和UI的执行都不会处于等待状态，可以继续响应用户的交互行为。</p>
+<p>同理，前端通过异步可以消除掉UI阻塞现象，但是前端获取资源的速度也取决于后端的响应速度。假如一个资源来自于两个不同位置的数据的返回，第一个资源消耗M毫秒，第二个资源消耗N毫秒。如果采用同步的方式，获取两个资源消耗的的时间为M+N毫秒。而采用异步的方式，第一个资源的获取并不会阻塞第二个资源的获取，消耗的时间为max(M,N)。</p>
+<p>随着网站或应用不断膨胀，M与N的值会线性增长，那么异步的性能将比同步更加优越。</p>
+<h3 id="资源分配">资源分配</h3>
+<p>假设业务场景中有一组互不相关的任务需要完成，有以下两种主流的方法：</p>
+<ul>
+<li>单线程串行一次执行</li>
+<li>多线程并行完成</li>
+</ul>
+<p>如果创建多线程的开销小于并行执行，那么多线程是首选的，但是多线程在创建线程和执行期线程上下文切换的开销较大，而且多线程编程经常面临锁、状态同步等问题。</p>
+<p>单线程顺序执行任务的缺点在于性能，任意一个略慢的任务都会导致后续执行代码被阻塞。在计算机资源中，通常I/O与CPU计算之间是可以并行执行的，但是同步的编程模型导致I/O的进行会让后续任务等待，造成资源不能被更好的利用。</p>
+<p>Node利用单线程，远离多线程死锁、状态同步等问题；利用异步I/O，让单线程远离阻塞，更好的利用CPU。</p>
+<h2 id="异步io实现">异步I/O实现</h2>
+<p>异步I/O在Node中应用最为广泛，但是它并不是Node的原创。</p>
+<h3 id="异步io与非阻塞io">异步I/O与非阻塞I/O</h3>
+<p>对于计算机内核I/O而言，异步/同步和阻塞/非阻塞是两码事。</p>
+<p>操作系统对于I/O只有两种方式：阻塞和非阻塞。在调用阻塞I/O时，应用程序需要等待I/O完成才返回结果。</p>
+<p>阻塞I/O的一个特点是调用之后一定要等到系统内核层面完成所有操作之后，调用才结束。阻塞I/O造成CPU等待I/O，浪费等待时间，CPU的处理能力不能得到充分利用。</p>
+<p>为了提高性能，内核提供了非阻塞I/O。非阻塞I/O跟阻塞I/O的差别为调用之后会立即返回，非阻塞I/O返回之后，CPU的时间片可以用来处理其他事物，此时提升性能是明显的，但是由于完成的I/O并没有完成，立即返回的并不是业务层期望的数据，而仅仅是当前的调用状态。</p>
+<p>为了获取完整的数据，应用程序需要重复调用I/O操作来确认是否完成。这种重复调用判断操作是否完成的技术叫做<strong>轮询</strong>。</p>
+<p>现存的轮询技术主要有read、select、poll、epoll和kqueue。这里只讲一下epoll的轮询原理。</p>
+<p>epoll是Linux下效率最高的I/O事件通知机制，在进入轮询的时候，如果没有检查到I/O事件，将会进行休眠，直到事件发生将它唤醒。它是真实利用了事件的通知、执行回调的方式，而不是遍历查询，所以不会浪费CPU，执行效率较高。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/k3u1fbpfcp1.png" alt="image.png" loading="lazy"></figure>
+<p>轮询技术满足了非阻塞I/O确保获取完整数据的需求，但是对于程序而言，它仍然算是一种同步，因为应用程序仍然需要等待I/O完全返回，依旧花费了很多时间等待。等待期间，CPU要么用于遍历文件描述符，要么用于休眠等待时间发生。</p>
+<h3 id="现实的异步io">现实的异步I/O</h3>
+<p>通过让部分线程进行阻塞I/O或者非阻塞I/O加轮询技术来完成数据获取，让一个线程进行计算处理，通过线程之间的通信将I/O得到的数据进行传递，这就轻松实现了异步I/O（虽然这是模拟的）</p>
+<p>但是最初，Node在*nix 平台下采用了libeio配合libev实现I/O部分，实现了异步I/O。在Node v0.9.3中，自行实现了线程池来完成异步I/O。</p>
+<p>而Windows下的IOCP在某种程度上提供了理想的异步I/O：调用异步方法，等待I/O完成之后的通知，执行回调，用户无需考虑轮询。但是它的内部其实依然是线程池原理，不同之处在于这些线程池有系统内核接手管理。</p>
+<p>由于Windows平台和*nix平台的差异，Node提供了libuv作为抽象封装层，使得所有平台兼容性的判断都由这一层来完成，并保证上层的Node与下层的自定义线程池及IOCP之间个字独立。</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/k3u1fbpfcp2.png" alt="image.png" loading="lazy"></figure>
+<p>我们时常提到Node是单线程的，这里的单线程仅仅只是JavaScript执行在单线程中。在Node中，无论是*nix还是Windows平台，内部完成I/O任务的另有线程池。</p>
+<h2 id="node的异步io">Node的异步I/O</h2>
+<p>完成整个异步I/O环节的有事件循环、观察者和请求对象等。</p>
+<h3 id="事件循环">事件循环</h3>
+<p>事件循环是Node自身的执行模型，正式它使得回调函数十分普遍。</p>
+<p>在进程启动时，Node便会创建一个类似于while(true)的循环，每执行一次循环体的过程我们称为Tick。每个Tick的过程就是查看是否有事件待处理，如果有就取出事件及其相关的回调函数。如果存在关联的回调函数，就执行他们。然后进入下个循环，如果不再有事件处理，就退出进程。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coJll9.png" alt="coJll9.png" loading="lazy"></figure>
+<h3 id="观察者">观察者</h3>
+<p>每个事件循环中有一个或者多个观察者，而判断是否有事件要处理的过程就是向这些观察者询问是否有要处理的事件。</p>
+<p>在Node中，事件主要来源于网络请求、文件I/O等，这些时间对应的观察者有文件I/O观察者、网络I/O观察者等。观察者将事件进行了分类。</p>
+<p>事件循环是一个典型的生产者/消费者模型。异步I/O、网络请求等则是事件的生产者，不断为Node提供不同类型的事件，这些事件被传递到对应的观察者那里，事件循环则从观察者那里取出事件并处理。</p>
+<h3 id="请求对象">请求对象</h3>
+<p>对于Node的异步I/O调用而言，回调函数不由开发者来调用。从JavaScript发起调用到内核执行完I/O操作的过渡过程中，存在一种产物，叫做<strong>请求对象</strong></p>
+<p>下面用fs.open()方法作为一个小小的例子。</p>
+<pre><code class="language-js">fs.open = function(path,flags,mode,callback){
+    //...
+    binding.open(pathModule._makeLong(path),
+                    stringToFlags(flags),
+                    mode,
+                    callback);
+}
+ 
+</code></pre>
+<p>fs.open()的作用是根据指定路径和参数去打开一个文件，从而得到一个文件描述符，这是后续所有I/O操作的初试操作。JavaScript层面的代码通过调用C++核心模块进行下层的操作。</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coJ3O1.png" alt="coJ3O1.png" loading="lazy"></figure>
+<p>从事JavaScript调用Node的核心模块，核心模块调用C++模块，内建模块通过libuv进行系统调用，这里是Node里经典的调用方式。这里libuv作为封装层，有两个平台的实现，实质上是调用了uv_fs_open()方法。在uv_fs_open()的调用过程中，将从JavaScript层传入的参数和当前方法都封装在一个请求对象中，回调函数则被设置在这个对象的属性上。对象包装完毕后，将对象推入线程池等待执行。</p>
+<p>至此，JavaScript调用立即返回，由JavaScript层面发起的异步调用的第一阶段就此结束。JavaScript线程可以继续执行当前任务的后续操作。</p>
+<p>请求对象是异步I/O过程中的重要中间产物，所有的状态都保存在这个对象中，包括送入线程池等待执行以及I/O操作完毕后的回调处理。</p>
+<h3 id="执行回调">执行回调</h3>
+<p>组装好请求对象、送入I/O线程池等待执行，只是完成一部I/O的第一部分，回调通知是第二部分。</p>
+<p>线程池中的I/O操作调用完毕之后，会将获取的结果存储在req-&gt;result属性上，然后调用PostQueueCompletionStatus()通知IOCP，告知当前对象操作已经完成。</p>
+<p>至此，整个异步I/O的流程完全结束。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coJYTK.png" alt="coJYTK.png" loading="lazy"></figure>
+<p>事件循环、观察者、请求对象、I/O线程池这四者共同构成了Node异步I/O模型的基本要素。</p>
+<h3 id="小结">小结</h3>
+<p>整理下来，我们可以提取异步I/O的几个关键词：单线程、事件循环、观察者和I/O线程池。单线程和线程池看起来有些悖论的样子。因为JavaScript是单线程的，所以很容易理解为它不能充分利用多核CPU。实际上，在Node中，除了JavaScript是单线程外，Node自身其实是多线程的，只是I/O线程使用的CPU较少。还有就是除了用户代码无法并行执行外，所有的I/O（磁盘I/O和网络I/O等）都是可以并行起来的。</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%82%E6%AD%A5io">为什么要异步I/O</a>
+<ul>
+<li><a href="#%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C">用户体验</a></li>
+<li><a href="#%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D">资源分配</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E6%AD%A5io%E5%AE%9E%E7%8E%B0">异步I/O实现</a>
+<ul>
+<li><a href="#%E5%BC%82%E6%AD%A5io%E4%B8%8E%E9%9D%9E%E9%98%BB%E5%A1%9Eio">异步I/O与非阻塞I/O</a></li>
+<li><a href="#%E7%8E%B0%E5%AE%9E%E7%9A%84%E5%BC%82%E6%AD%A5io">现实的异步I/O</a></li>
+</ul>
+</li>
+<li><a href="#node%E7%9A%84%E5%BC%82%E6%AD%A5io">Node的异步I/O</a>
+<ul>
+<li><a href="#%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF">事件循环</a></li>
+<li><a href="#%E8%A7%82%E5%AF%9F%E8%80%85">观察者</a></li>
+<li><a href="#%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1">请求对象</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8C%E5%9B%9E%E8%B0%83">执行回调</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/ji-suan-ji-wang-luo-tcp-de-san-ci-wo-shou-si-ci-hui-shou/">
+              <span class="post-title">
+                计算机网络 — TCP的三次握手、四次挥手&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>

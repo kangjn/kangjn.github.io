@@ -78,7 +78,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -128,7 +128,7 @@
         
         <li class="nav-item">
           <div class="gridea-search-container">
-            <form id="gridea-search-form" style="position: relative" data-update="1618800618636"
+            <form id="gridea-search-form" style="position: relative" data-update="1618814527306"
               action="/search/index.html">
               <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
               <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -200,7 +200,7 @@ B收到，B—&gt;A
 A收到
  
 </code></pre>
-<p><a href="https://imgtu.com/i/coGDaT"><img src="https://z3.ax1x.com/2021/04/19/coGDaT.png" alt="coGDaT.png" loading="lazy"></a>](https://www.pipipi.net/wp-content/uploads/front-end-baike/92a3befa8a194e928795be19641d8e63~tplv-k3u1fbpfcp-watermark.png)</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coGDaT.png" alt="coGDaT.png" loading="lazy"></figure>
 <h4 id="过程的详细解读">过程的详细解读</h4>
 <p>（1） 第一次握手：客户端发送【SYN = 1，随机序列号seq = x】的数据包到服务器,服务器由【SYN = 1】知道客户端要建立连接；<code>此时客户端进入已发送状态，等待服务器确认</code></p>
 <p>（2） 第二次握手：服务器向客户端发送标【SYN = 1，ACK = 1】和【随机序列号seq = y, 确认码ack number = x+1】的数据包；<code>此时服务器进入已收到状态</code></p>
@@ -249,7 +249,7 @@ B：好的，我弄完了，我也不玩了，拜拜
 A：好的，拜拜
  
 </code></pre>
-<p>[<a href="https://imgtu.com/i/coGgz9"><img src="https://z3.ax1x.com/2021/04/19/coGgz9.png" alt="coGgz9.png" loading="lazy"></a>](https://www.pipipi.net/wp-content/uploads/front-end-baike/a3c8d5d638f54726b309ac405e646fd5~tplv-k3u1fbpfcp-watermark.png)</p>
+<p>[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coGgz9.png" alt="coGgz9.png" loading="lazy"></p>
 <h4 id="过程的详细解读-2">过程的详细解读</h4>
 <p>（1）第一次挥手：客户端发送【FIN = 1，随机序列号seq = u】到服务器，用来主动关闭客户A到服务器B的数据传送；<code>客户机A进入FIN-WAIT-1状态，等待服务器B发送FIN</code></p>
 <p>（2）第二次挥手：服务器B收到这个FIN，它发回【ACK = 1、确认序号ack number=u+1】表示同意；<code>客户端进入FIN-WAIT-2状态，稍后关闭连接，服务器B进入CLOSE_WAIT，等待关闭连接;</code></p>
