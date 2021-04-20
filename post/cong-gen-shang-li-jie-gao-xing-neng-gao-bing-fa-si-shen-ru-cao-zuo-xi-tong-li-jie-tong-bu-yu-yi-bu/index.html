@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>从根上理解高性能、高并发(四)：深入操作系统，理解同步与异步 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="从根上理解高性能、高并发(四)：深入操作系统，理解同步与异步 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="从根上理解高性能、高并发(四)：深入操作系统，理解同步与异步" />
+  <meta property="og:url" content="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-si-shen-ru-cao-zuo-xi-tong-li-jie-tong-bu-yu-yi-bu/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618896328869"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618896328869"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/hqJ3wVip6/" class="tag">高性能、高并发</a>
+                
+              </span>
+              <h1>从根上理解高性能、高并发(四)：深入操作系统，理解同步与异步</h1>
+              <span class="meta">
+                Posted on
+                2021.04.20，11 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h1 id="1-编程中的同步调用">1、编程中的同步调用</h1>
+<p>我们先说同步调用，这是程序员最熟悉的场景。</p>
+<p><strong>一般的函数调用都是同步的，就像这样：</strong></p>
+<blockquote>
+<p>funcA() {</p>
+<p>// 等待函数funcB执行完成</p>
+<p>funcB();</p>
+<p>// 继续接下来的流程</p>
+<p>}</p>
+</blockquote>
+<p>funcA调用funcB，那么在funcB执行完前，funcA中的后续代码都不会被执行，也就是说funcA必须等待funcB执行完成。</p>
+<p><strong>就像下图这样：</strong></p>
+<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1105631014.png" alt="img" loading="lazy"><br>
+从上图中我们可以看到，在funcB运行期间funcA什么都做不了，这就是典型的同步。</p>
+<p>注意：一般来说，像这种同步调用，funcA和funcB是运行在同一个线程中的，这是最为常见的情况。</p>
+<p>**但值得注意的是：**即使运行在两个不能线程中的函数也可以进行同步调用，像我们进行IO操作时实际上底层是通过系统调用的方式向操作系统发出请求的，比如磁盘文件读取：</p>
+<blockquote>
+<p>read(file, buf);</p>
+</blockquote>
+<p>这就是我们在《深入操作系统，理解I/O与零拷贝技术》中描述的阻塞式I/O，在read函数返回前程序是无法继续向前推进的：</p>
+<blockquote>
+<p>read(file, buf);</p>
+<p>// 程序暂停运行，</p>
+<p>// 等待文件读取完成后继续运行</p>
+</blockquote>
+<p><strong>如下图所示：</strong></p>
+<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1671658766.png" alt="img" loading="lazy"><br>
+只有当read函数返回后程序才可以被继续执行。</p>
+<p>**注意：**和上面的同步调用不同的是，函数和被调函数运行在不同的线程中。</p>
+<p>**因此：**我们可以得出结论，同步调用和函数与被调函数是否运行在同一个线程是没有关系的。</p>
+<p>在这里我们还要再次强调：同步方式下函数和被调函数无法同时进行。</p>
+<p>同步编程对程序员来说是最自然最容易理解的。</p>
+<p>但容易理解的代价就是在一些场景下，同步并不是高效的，原因很简单，因为任务没有办法同时进行。</p>
+<p>接下来我们看异步调用。</p>
+<h1 id="2-编程中的异步调用">2、编程中的异步调用</h1>
+<p>有同步调用就有异步调用。</p>
+<p>如果你真的理解了本节到目前为止的内容的话，那么异步调用对你来说不是问题。</p>
+<p>**一般来说：**异步调用总是和I/O操作等耗时较高的任务如影随形，像磁盘文件读写、网络数据的收发、数据库操作等。</p>
+<p>我们还是以磁盘文件读取为例。</p>
+<p>在read函数的同步调用方式下，文件读取完之前调用方是无法继续向前推进的，但如果read函数可以异步调用情况就不一样了。</p>
+<p>假如read函数可以异步调用的话，即使文件还没有读取完成，read函数也可以立即返回。</p>
+<blockquote>
+<p>read(file, buff);</p>
+<p>// read函数立即返回</p>
+<p>// 不会阻塞当前程序</p>
+</blockquote>
+<p><strong>就像下图这样：</strong></p>
+<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/933885230.png" alt="img" loading="lazy"></p>
+<p>**可以看到：**在异步这种调用方式下，调用方不会被阻塞，函数调用完成后可以立即执行接下来的程序。</p>
+<p>这时异步的重点就在于：调用方接下来的程序执行可以和文件读取同时进行，从上图中我们也能看出这一点，这就是异步的高效之处。</p>
+<p>**但是：**请注意，异步调用对于程序员来说在理解上是一种负担，代码编写上更是一种负担，总的来说，上帝在为你打开一扇门的时候会适当的关上一扇窗户。</p>
+<p>有的可能会问，在同步调用下，调用方不再继续执行而是暂停等待，被调函数执行完后很自然的就是调用方继续执行，那么异步调用下调用方怎知道被调函数是否执行完成呢？</p>
+<p><strong>这就分为了两种情况：</strong></p>
+<ul>
+<li>1）调用方根本就不关心执行结果；</li>
+<li>2）调用方需要知道执行结果。</li>
+</ul>
+<p>第一种情况比较简单，无需讨论。</p>
+<p><strong>第二种情况下就比较有趣了，通常有两种实现方式：</strong></p>
+<ul>
+<li>1）一种是通知机制：当任务执行完成后发送信号来通知调用方任务完成（这里的信号有很多实现方式：Linux中的signal，或使用信号量等机制都可实现）；</li>
+<li>2）一种是回调机制：也就是我们常说的callback（关于回调我们将在下一篇文章中重点讲解，本篇会有简短的讨论）。</li>
+</ul>
+<p>接下来我们用一个具体的例子讲解一下同步调用与异步调用。</p>
+<h1 id="3-具体的编程例子中理解同步和异步">3、具体的编程例子中理解同步和异步</h1>
+<h3 id="31-一个具体的示例">3.1 一个具体的示例</h3>
+<p>我们以常见的Web服务来举例说明这一问题。</p>
+<p>一般来说Web  Server接收到用户请求后会有一些典型的处理逻辑，最常见的就是数据库查询（当然，你也可以把这里的数据库查询换成其它I/O操作，比如磁盘读取、网络通信等），在这里我们假定处理一次用户请求需要经过步骤A、B、C，然后读取数据库，数据库读取完成后需要经过步骤D、E、F。</p>
+<p><strong>就像这样：</strong></p>
+<blockquote>
+<p># 处理一次用户请求需要经过的步骤：</p>
+<p>A;</p>
+<p>B;</p>
+<p>C;</p>
+<p>数据库读取;</p>
+<p>D；</p>
+<p>E；</p>
+<p>F；</p>
+</blockquote>
+<p>**其中：**步骤A、B、C和D、E、F不需要任何I/O，也就是说这六个步骤不需要读取文件、网络通信等，涉及到I/O操作的只有数据库查询这一步。</p>
+<p>**一般来说：**这样的Web Server有两个典型的线程：主线程和数据库处理线程（注意：这讨论的只是典型的场景，具体业务实际上可会有差别，但这并不影响我们用两个线程来说明问题）。</p>
+<p>首先我们来看下最简单的实现方式，也就是同步。</p>
+<p><strong>这种方式最为自然也最为容易理解：</strong></p>
+<blockquote>
+<p>// 主线程</p>
+<p>main_thread() {</p>
+<p>A;</p>
+<p>B;</p>
+<p>C;</p>
+<p>发送数据库查询请求;</p>
+<p>D;</p>
+<p>E;</p>
+<p>F;</p>
+<p>}</p>
+<p>// 数据库线程</p>
+<p>DataBase_thread() {</p>
+<p>while(1) {</p>
+<p>​    处理数据库读取请求;</p>
+<p>​    返回结果;</p>
+<p>}</p>
+<p>}</p>
+</blockquote>
+<p>这就是最为典型的同步方法：主线程在发出数据库查询请求后就会被阻塞而暂停运行，直到数据库查询完毕后面的D、E、F才可以继续运行。</p>
+<p><strong>就像下图这样：</strong></p>
+<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/2106811704.png" alt="img" loading="lazy"></p>
+<p>**从上图中我们可以看到：**主线程中会有“空隙”，这个空隙就是主线程的“休闲时光”，主线程在这段休闲时光中需要等待数据库查询完成才能继续后续处理流程。</p>
+<p>在这里主线程就好比监工的老板，数据库线程就好比苦逼搬砖的程序员，在搬完砖前老板什么都不做只是紧紧的盯着你，等你搬完砖后才去忙其它事情。</p>
+<p>**显然：**高效的程序员是不能容忍主线程偷懒的。</p>
+<p>是时候祭出大杀器了，这就是异步：</p>
+<p>在异步这种实现方案下主线程根本不去等待数据库是否查询完成，而是发送完数据库读写请求后直接处理下一个请求。</p>
+<p>**有的同学可能会有疑问：**一个请求需要经过A、B、C、数据库查询、D、E、F这七个步骤，如果主线程在完成A、B、C、数据库查询后直接进行处理接下来的请求，那么上一个请求中剩下的D、E、F几个步骤怎么办呢？</p>
+<p>如果大家还没有忘记上一小节内容的话应该知道，这有两种情况，我们来分别讨论。</p>
+<h3 id="32-异步情况1主线程不关心数据库操作结果">3.2 异步情况1：主线程不关心数据库操作结果</h3>
+<p>在这种情况下，主线程根本就不关心数据库是否查询完毕，数据库查询完毕后自行处理接下来的D、E、F三个步骤。</p>
+<p><strong>就像下图这样：</strong></p>
+<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/437487319.png" alt="img" loading="lazy"></p>
+<p>我们说过一个请求需要经过七个步骤，其中前三个是在主线程中完成的，后四个是在数据库线程中完成的，那么数据库线程是怎么知道查完数据库后要处理D、E、F这几个步骤呢？</p>
+<p>这时，我们的另一个主角回调函数就开始登场啦。</p>
+<p>没错，回调函数就是用来解决这一问题的。</p>
+<p>我们可以将处理D、E、F这几个步骤封装到一个函数中，假定将该函数命名为handle_DEF_after_DB_query。</p>
+<p><strong>伪码如下：</strong></p>
+<blockquote>
+<p>void handle_DEF_after_DB_query () {</p>
+<p>D;</p>
+<p>E;</p>
+<p>F;</p>
+<p>}</p>
+</blockquote>
+<p><strong>这样主线程在发送数据库查询请求的同时将该函数一并当做参数传递过去：</strong></p>
+<blockquote>
+<p>DB_query(request, handle_DEF_after_DB_query);</p>
+</blockquote>
+<p>数据库线程处理完后直接调用handle_DEF_after_DB_query就可以了，这就是回调函数的作用。</p>
+<p>也有的同学可能会有疑问，为什么这个函数要传递给数据库线程而不是数据库线程自己定义自己调用呢？</p>
+<p>因为从软件组织结构上讲，这不是数据库线程该做的工作。</p>
+<p>数据库线程需要做的仅仅就是查询数据库、然后调用一个处理函数，至于这个处理函数做了些什么数据库线程根本就不关心，也不应该关心。</p>
+<p>**你可以传入各种各样的回调函数：**也就是说数据库系统可以针对回调函数这一抽象的函数变量来编程，从而更好的应对变化，因为回调函数的内容改变不会影响到数据库线程的逻辑，而如果数据库线程自己定义处理函数那么这种设计就没有灵活性可言了。</p>
+<p>**而从软件开发的角度看：**假设数据库线程逻辑封装为了库提供给其它团队，当数据库团队在研发时怎么可能知道数据库查询后该做什么呢？</p>
+<p>显**然：**只有使用方才知道查询完数据库后该做些什么，因此使用方在使用时简单的传入这个回调函数就可以了。</p>
+<p>这样复杂数据库的团队就和使用方团队实现了所谓的解耦。</p>
+<p>现在你应该明白回调函数的作用了吧。</p>
+<p>**另外：**仔细观察上面两张图，你能看出为什么异步比同步高效吗？</p>
+<p>原因很简单，这也是我们在本篇提到过的，异步天然就无需等待，无依赖。</p>
+<p>主线程处理请求和数据库处理查询请求可以同时进行，因此从系统性能上看，这样的设计能更加充分的利用系统资源，更加快速的处理请求；从用户的角度看，系统的响应也会更加迅速。</p>
+<p>这就是异步的高效之处。</p>
+<p>**但我们应该也可以看出：**异步编程并不如同步来的容易理解，系统可维护性上也不如同步模式。</p>
+<p>那么有没有一种方法既能结合同步模式的容易理解又能结合异步模式的高效呢？答案是肯定的。</p>
+<p>接下来我们看第二种情况，那就是主线程需要关心数据库查询结果。</p>
+<h3 id="33-异步情况2主线程关心数据库操作结果">3.3 异步情况2：主线程关心数据库操作结果</h3>
+<p>在这种情况下，数据库线程需要将查询结果利用通知机制发送给主线程，主线程在接收到消息后继续处理上一个请求的后半部分。</p>
+<p><strong>就像下图这样：</strong></p>
+<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1240741043.png" alt="img" loading="lazy"></p>
+<p>**从这里我们可以看到：**ABCDEF几个步骤全部在主线中处理，同时主线程同样也没有了“休闲时光”，只不过在这种情况下数据库线程是比较清闲的，从这里并没有上一种方法高效，但是依然要比同步模式下要高效。</p>
+<p>**最后需要注意的是：**并不是所有的情况下异步都一定比同步高效，还需要结合具体业务以及IO的复杂度具体情况具体分析。</p>
+<h1 id="4-本文小结">4、本文小结</h1>
+<p>在这篇文章中我们从各种场景分析了同步与异步这两个概念，但是不管在什么场景下，同步往往意味着双方要相互等待、相互依赖，而异步意味着双方相互独立、各行其是。</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li><a href="#1-%E7%BC%96%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%90%8C%E6%AD%A5%E8%B0%83%E7%94%A8">1、编程中的同步调用</a></li>
+<li><a href="#2-%E7%BC%96%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8">2、编程中的异步调用</a></li>
+<li><a href="#3-%E5%85%B7%E4%BD%93%E7%9A%84%E7%BC%96%E7%A8%8B%E4%BE%8B%E5%AD%90%E4%B8%AD%E7%90%86%E8%A7%A3%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5">3、具体的编程例子中理解同步和异步</a><br>
+*
+<ul>
+<li><a href="#31-%E4%B8%80%E4%B8%AA%E5%85%B7%E4%BD%93%E7%9A%84%E7%A4%BA%E4%BE%8B">3.1 一个具体的示例</a></li>
+<li><a href="#32-%E5%BC%82%E6%AD%A5%E6%83%85%E5%86%B51%E4%B8%BB%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%85%B3%E5%BF%83%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C%E7%BB%93%E6%9E%9C">3.2 异步情况1：主线程不关心数据库操作结果</a></li>
+<li><a href="#33-%E5%BC%82%E6%AD%A5%E6%83%85%E5%86%B52%E4%B8%BB%E7%BA%BF%E7%A8%8B%E5%85%B3%E5%BF%83%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C%E7%BB%93%E6%9E%9C">3.3 异步情况2：主线程关心数据库操作结果</a></li>
+</ul>
+</li>
+<li><a href="#4-%E6%9C%AC%E6%96%87%E5%B0%8F%E7%BB%93">4、本文小结</a></li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-san-shen-ru-cao-zuo-xi-tong-che-di-li-jie-io-duo-lu-fu-yong/">
+              <span class="post-title">
+                从根上理解高性能、高并发(三)：深入操作系统，彻底理解I/O多路复用&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
