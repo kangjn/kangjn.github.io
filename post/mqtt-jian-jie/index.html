@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>MQTT简介 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="MQTT简介 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="MQTT简介" />
+  <meta property="og:url" content="https://kangjn.github.io/post/mqtt-jian-jie/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618905703815"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618905703815"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/kPMk7QxFS/" class="tag">计算机网络</a>
+                
+              </span>
+              <h1>MQTT简介</h1>
+              <span class="meta">
+                Posted on
+                2021.04.20，13 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h2 id="1-简述">1 简述</h2>
+<p>MQTT（Message Queuing  Telemetry  Transport，消息队列遥测传输协议），是一种基于发布/订阅（publish/subscribe）模式的&quot;轻量级&quot;通讯协议，该协议构建于TCP/IP协议上，由IBM在1999年发布。MQTT最大优点在于，可以以极少的代码和有限的带宽，为连接远程设备提供实时可靠的消息服务。作为一种低开销、低带宽占用的即时通讯协议，使其在物联网、小型设备、移动应用等方面有较广泛的应用。</p>
+<p>MQTT是一个基于客户端-服务器的消息发布/订阅传输协议。MQTT协议是轻量、简单、开放和易于实现的，这些特点使它适用范围非常广泛。在很多情况下，包括受限的环境中，如：机器与机器（M2M）通信和物联网（IoT）。其在，通过卫星链路通信传感器、偶尔拨号的医疗设备、智能家居、及一些小型化设备中已广泛使用。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/59a771.JPEG" alt="img" loading="lazy"></figure>
+<h2 id="2-设计规范">2 设计规范</h2>
+<p>由于物联网的环境是非常特别的，所以MQTT遵循以下设计原则：</p>
+<ul>
+<li>精简，不添加可有可无的功能；</li>
+<li>发布/订阅（Pub/Sub）模式，方便消息在传感器之间传递；</li>
+<li>允许用户动态创建主题，零运维成本；</li>
+<li>把传输量降到最低以提高传输效率；</li>
+<li>把低带宽、高延迟、不稳定的网络等因素考虑在内；</li>
+<li>支持连续的会话控制；</li>
+<li>理解客户端计算能力可能很低；</li>
+<li>提供服务质量管理；</li>
+<li>假设数据不可知，不强求传输数据的类型与格式，保持灵活性。</li>
+</ul>
+<h2 id="3-主要特性">3 主要特性</h2>
+<p>MQTT协议工作在低带宽、不可靠的网络的远程传感器和控制设备通讯而设计的协议，它具有以下主要的几项特性：</p>
+<ul>
+<li>使用发布/订阅消息模式，提供一对多的消息发布，解除应用程序耦合。这一点很类似于XMPP，但是MQTT的信息冗余远小于XMPP，因为XMPP使用XML格式文本来传递数据。</li>
+<li>对负载内容屏蔽的消息传输。</li>
+<li>使用TCP/IP提供网络连接。主流的MQTT是基于TCP连接进行数据推送的，但是同样有基于UDP的版本，叫做MQTT-SN。这两种版本由于基于不同的连接方式，优缺点自然也就各有不同了。</li>
+<li>有三种消息发布服务质量QoS (Quality of Service)：
+<ul>
+<li>At Most Once  至多一次，消息发布完全依赖底层TCP/IP网络。会发生消息丢失或重复。这一级别可用于如下情况，环境传感器数据，丢失一次读记录无所谓，因为不久后还会有第二次发送。这一种方式主要普通APP的推送，倘若你的智能设备在消息推送时未联网，推送过去没收到，再次联网也就收不到了。</li>
+<li>At Least Once 至少一次，确保消息到达，但消息重复可能会发生。</li>
+<li>Exactly Once 有且仅有一次，确保消息到达一次。在一些要求比较严格的计费系统中，可以使用此级别。在计费系统中，消息重复或丢失会导致不正确的结果。这种最高质量的消息发布服务还可以用于即时通讯类的APP的推送，确保用户收到且只会收到一次。</li>
+</ul>
+</li>
+<li>小型传输，开销很小（固定长度的头部是2字节），协议交换最小化，以降低网络流量。这就是为什么在介绍里说它非常适合&quot;在物联网领域，传感器与服务器的通信，信息的收集&quot;，要知道嵌入式设备的运算能力和带宽都相对薄弱，使用这种协议来传递消息再适合不过了。</li>
+<li>使用Last Will和Testament特性通知有关各方客户端异常中断的机制。
+<ul>
+<li>Last Will：即遗言机制，用于通知同一主题下的其他设备发送遗言的设备已经断开了连接。</li>
+<li>Testament：遗嘱机制，功能类似于Last Will。</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-mqtt协议原理">4 MQTT协议原理</h2>
+<h3 id="41-mqtt协议实现方式">4.1 MQTT协议实现方式</h3>
+<p>实现MQTT协议需要客户端和服务器端通讯完成，在通讯过程中，MQTT协议中有三种身份：发布者（Publish）、代理（Broker）、订阅者（Subscribe）。其中，消息的发布者和订阅者都是客户端，消息代理是服务器，消息发布者可以同时是订阅者。</p>
+<p>MQTT传输的消息分为：主题（Topic）和负载（Payload）两部分：</p>
+<ul>
+<li>Topic，可以理解为消息的类型，订阅者订阅（Subscribe）后，就会收到该主题的消息内容（Payload）；</li>
+<li>Payload，可以理解为消息的内容，是指订阅者具体要使用的内容。</li>
+</ul>
+<h3 id="42-网络传输与应用消息">4.2 网络传输与应用消息</h3>
+<p>MQTT会构建底层网络传输：它将建立客户端到服务器的连接，提供两者之间的一个有序的、无损的、基于字节流的双向传输。</p>
+<p>当应用数据通过MQTT网络发送时，MQTT会把与之相关的服务质量（QoS）和主题名（Topic）相关连。</p>
+<h3 id="43-mqtt客户端">4.3 MQTT客户端</h3>
+<p>一个使用MQTT协议的应用程序或者设备，它总是建立到服务器的网络连接。客户端可以：</p>
+<ul>
+<li>发布其他客户端可能会订阅的信息；</li>
+<li>订阅其它客户端发布的消息；</li>
+<li>退订或删除应用程序的消息；</li>
+<li>断开与服务器连接。</li>
+</ul>
+<h3 id="44-mqtt服务器">4.4 MQTT服务器</h3>
+<p>MQTT服务器以称为&quot;消息代理&quot;（Broker），可以是一个应用程序或一台设备。它位于消息发布者和订阅者之间，它可以：</p>
+<ul>
+<li>接受来自客户的网络连接；</li>
+<li>接受客户发布的应用信息；</li>
+<li>处理来自客户端的订阅和退订请求；</li>
+<li>向订阅的客户转发应用程序消息。</li>
+</ul>
+<h3 id="45-mqtt协议中的订阅-主题-会话">4.5 MQTT协议中的订阅、主题、会话</h3>
+<h4 id="451-订阅subscription">4.5.1 订阅（Subscription）</h4>
+<p>订阅包含主题筛选器（Topic Filter）和最大服务质量（QoS）。订阅会与一个会话（Session）关联。一个会话可以包含多个订阅。每一个会话中的每个订阅都有一个不同的主题筛选器。</p>
+<h4 id="452-会话session">4.5.2 会话（Session）</h4>
+<p>每个客户端与服务器建立连接后就是一个会话，客户端和服务器之间有状态交互。会话存在于一个网络之间，也可能在客户端和服务器之间跨越多个连续的网络连接。</p>
+<h4 id="453-主题名topic-name">4.5.3 主题名（Topic Name）</h4>
+<p>连接到一个应用程序消息的标签，该标签与服务器的订阅相匹配。服务器会将消息发送给订阅所匹配标签的每个客户端。</p>
+<h4 id="454-主题筛选器topic-filter">4.5.4 主题筛选器（Topic Filter）</h4>
+<p>一个对主题名通配符筛选器，在订阅表达式中使用，表示订阅所匹配到的多个主题。</p>
+<h4 id="455-负载payload">4.5.5 负载（Payload）</h4>
+<p>消息订阅者所具体接收的内容。</p>
+<h3 id="46-mqtt协议中的方法">4.6 MQTT协议中的方法</h3>
+<p>MQTT协议中定义了一些方法（也被称为动作），来于表示对确定资源所进行操作。这个资源可以代表预先存在的数据或动态生成数据，这取决于服务器的实现。通常来说，资源指服务器上的文件或输出。主要方法有：</p>
+<ul>
+<li>Connect：等待与服务器建立连接。</li>
+<li>Disconnect：等待MQTT客户端完成所做的工作，并与服务器断开TCP/IP会话。</li>
+<li>Subscribe：等待完成订阅。</li>
+<li>UnSubscribe：等待服务器取消客户端的一个或多个topics订阅。</li>
+<li>Publish：MQTT客户端发送消息请求，发送完成后返回应用程序线程。</li>
+</ul>
+<h2 id="5-mqtt协议数据包结构">5 MQTT协议数据包结构</h2>
+<p>在MQTT协议中，一个MQTT数据包由：固定头（Fixed header）、可变头（Variable header）、消息体（payload）三部分构成。</p>
+<ul>
+<li>固定头（Fixed header）：存在于所有MQTT数据包中，表示数据包类型及数据包的分组类标识。</li>
+<li>可变头（Variable header）：存在于部分MQTT数据包中，数据包类型决定了可变头是否存在及其具体内容。</li>
+<li>消息体（Payload）：存在于部分MQTT数据包中，表示客户端收到的具体内容。</li>
+</ul>
+<h3 id="51-mqtt固定头">5.1 MQTT固定头</h3>
+<p>固定头存在于所有MQTT数据包中，包含两部分内容：首字节(Byte 1) 和 剩余消息报文长度(1-4字节)</p>
+<ul>
+<li>Byte 1 首字节：
+<ul>
+<li>Bit 7 6 5 4 高四位无符号值，用于表示MQTT消息的报文类型(MQTT Control Packet type)，总共可以表示2^4=16种协议类型。</li>
+<li>Bit 3 2 1 0 低四位无符号值，用作某些报文的特殊标记(Flags specific to each MQTT Control Packet type)。</li>
+</ul>
+</li>
+<li>Byte 2… Remaining Length 剩余消息报文长度</li>
+</ul>
+<h4 id="511-mqtt数据包类型-mqtt-control-packet-type">5.1.1 MQTT数据包类型 MQTT Control Packet type</h4>
+<p>位于 首字节的高四位，即Byte 1中的 bits 7-4，相于一个4位的无符号值。用于确定报文类型。共有2^4=16种，其中0000和1111是保留字段。具体如下：</p>
+<table>
+<thead>
+<tr>
+<th>报文类型</th>
+<th>字段值</th>
+<th>数据方向</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保留</td>
+<td>0</td>
+<td>禁用</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>1</td>
+<td>Client -&gt; Server</td>
+<td>客户端连接到服务器</td>
+</tr>
+<tr>
+<td>CONNACK</td>
+<td>2</td>
+<td>Server -&gt; Client</td>
+<td>连接确认</td>
+</tr>
+<tr>
+<td>PUBLISH</td>
+<td>3</td>
+<td>Client &lt;-&gt; Server</td>
+<td>发布消息</td>
+</tr>
+<tr>
+<td>PUBACK</td>
+<td>4</td>
+<td>Client &lt;-&gt; Server</td>
+<td>发布确认</td>
+</tr>
+<tr>
+<td>PUBREC</td>
+<td>5</td>
+<td>Client &lt;-&gt; Server</td>
+<td>消息已接收(QoS2第一阶段)</td>
+</tr>
+<tr>
+<td>PUBREL</td>
+<td>6</td>
+<td>Client &lt;-&gt; Server</td>
+<td>消息释放(QoS2第二阶段)</td>
+</tr>
+<tr>
+<td>PUBCOMP</td>
+<td>7</td>
+<td>Client &lt;-&gt; Server</td>
+<td>发布结束(QoS2第三阶段)</td>
+</tr>
+<tr>
+<td>SUBSCRIBE</td>
+<td>8</td>
+<td>Client -&gt; Server</td>
+<td>客户端订阅请求</td>
+</tr>
+<tr>
+<td>SUBACK</td>
+<td>9</td>
+<td>Server -&gt; Client</td>
+<td>服务端订阅确认</td>
+</tr>
+<tr>
+<td>UNSUBACRIBE</td>
+<td>10</td>
+<td>Client -&gt; Server</td>
+<td>客户端取消订阅</td>
+</tr>
+<tr>
+<td>UNSUBACK</td>
+<td>11</td>
+<td>Server -&gt; Client</td>
+<td>服务端取消订阅确认</td>
+</tr>
+<tr>
+<td>PINGREQ</td>
+<td>12</td>
+<td>Client -&gt; Server</td>
+<td>客户端发送心跳</td>
+</tr>
+<tr>
+<td>PINGRESP</td>
+<td>13</td>
+<td>Server -&gt; Client</td>
+<td>服务端回复心跳</td>
+</tr>
+<tr>
+<td>DISCONNECT</td>
+<td>14</td>
+<td>Client -&gt; Server</td>
+<td>客户端断开连接请求</td>
+</tr>
+<tr>
+<td>保留</td>
+<td>15</td>
+<td>禁用</td>
+<td>保留</td>
+</tr>
+</tbody>
+</table>
+<h4 id="512-标识位-flags-specific-to-each-mqtt-control-packet-type">5.1.2 标识位 Flags specific to each MQTT Control Packet type</h4>
+<p>位于首字节的低四位，即Byte 1中bits 3-0。表示某些报文类型的控制字段，实际上只有少数报文类型有控制位。</p>
+<p>在不使用标识位的消息类型中，标识位被作为保留位。如果收到无效的标志时，接收端必须关闭网络连接：</p>
+<ul>
+<li>DUP：发布消息的副本。用来在保证消息的可靠传输，如果设置为1，则在下面的变长中增加MessageId，并且需要回复确认，以保证消息传输完成，但不能用于检测消息重复发送。</li>
+<li>QoS：发布消息的服务质量，即：保证消息传递的次数。</li>
+</ul>
+<pre><code>Ø00：最多一次，即：&lt;=1
+
+Ø01：至少一次，即：&gt;=1
+
+Ø10：一次，即：=1
+
+Ø11：预留
+</code></pre>
+<ul>
+<li>RETAIN： 发布保留标识，表示服务器要保留这次推送的信息，如果有新的订阅者出现，就把这消息推送给它，如果设有那么推送至当前订阅者后释放。</li>
+</ul>
+<p>5.1.3 剩余长度（Remaining Length）</p>
+<p>用来保存变长头部(Variable  Header)和消息体(Payload)的总大小。从第二字节(Byte  2)开始，最长可达4字节，所以剩余长度范围是Byte[2-5]。那么怎样确定其长度到底是1字节还是4字节呢？它先用从低位Bit 0到Bit  6来存储，当发现不够时，则将 最高位Bit 7(默认都是高字节在前)置为  1，表示长度不足，需要使用下一个字节继续保存，就继续计算字节长度；如果是0，那么就不再计算字节长度。</p>
+<p>消息长度可以简单理解为128进制的数据，4位长度最大可以表示128, 128*,* 128*128Byte=256MB。但是这个长度的计算有些特别，就是低位在前，高位在后(因为正常的表示方法是高位在前，低位在后)，字节最高位Bit7用于标记是否需要继续计算消息长度。以下是消息长度的长度范围：</p>
+<table>
+<thead>
+<tr>
+<th>字节数</th>
+<th>长度最小值</th>
+<th>长度最大值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0(0x00)</td>
+<td>127(0x7F)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>128 (0x80, 0x01)</td>
+<td>16 383 (0xFF, 0x7F)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>16 384 (0x80, 0x80, 0x01)</td>
+<td>2 097 151 (0xFF, 0xFF, 0x7F)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2 097 152 (0x80, 0x80, 0x80, 0x01)</td>
+<td>268 435 455 (0xFF, 0xFF, 0xFF, 0x7F)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-mqtt可变头">5.2 MQTT可变头</h3>
+<p>MQTT数据包中包含一个可变头，它驻位于固定的头和负载之间。可变头的内容因数据包类型而不同，较常的应用是作为包的标识：</p>
+<p>很多类型数据包中都包括一个2字节的数据包标识字段，这些类型的包有：PUBLISH (QoS &gt; 0)、PUBACK、PUBREC、PUBREL、PUBCOMP、SUBSCRIBE、SUBACK、UNSUBSCRIBE、UNSUBACK。</p>
+<h3 id="53-payload消息体">5.3 Payload消息体</h3>
+<p>Payload消息体位MQTT数据包的第三部分，包含CONNECT、SUBSCRIBE、SUBACK、UNSUBSCRIBE四种类型的消息：</p>
+<ul>
+<li>CONNECT，消息体内容主要是：客户端的ClientID、订阅的Topic、Message以及用户名和密码。</li>
+<li>SUBSCRIBE，消息体内容是一系列的要订阅的主题以及QoS。</li>
+<li>SUBACK，消息体内容是服务器对于SUBSCRIBE所申请的主题及QoS进行确认和回复。</li>
+<li>UNSUBSCRIBE，消息体内容是要订阅的主题。</li>
+</ul>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1-%E7%AE%80%E8%BF%B0">1 简述</a></li>
+<li><a href="#2-%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83">2 设计规范</a></li>
+<li><a href="#3-%E4%B8%BB%E8%A6%81%E7%89%B9%E6%80%A7">3 主要特性</a></li>
+<li><a href="#4-mqtt%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86">4 MQTT协议原理</a>
+<ul>
+<li><a href="#41-mqtt%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">4.1 MQTT协议实现方式</a></li>
+<li><a href="#42-%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93%E4%B8%8E%E5%BA%94%E7%94%A8%E6%B6%88%E6%81%AF">4.2 网络传输与应用消息</a></li>
+<li><a href="#43-mqtt%E5%AE%A2%E6%88%B7%E7%AB%AF">4.3 MQTT客户端</a></li>
+<li><a href="#44-mqtt%E6%9C%8D%E5%8A%A1%E5%99%A8">4.4 MQTT服务器</a></li>
+<li><a href="#45-mqtt%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E8%AE%A2%E9%98%85-%E4%B8%BB%E9%A2%98-%E4%BC%9A%E8%AF%9D">4.5 MQTT协议中的订阅、主题、会话</a>
+<ul>
+<li><a href="#451-%E8%AE%A2%E9%98%85subscription">4.5.1 订阅（Subscription）</a></li>
+<li><a href="#452-%E4%BC%9A%E8%AF%9Dsession">4.5.2 会话（Session）</a></li>
+<li><a href="#453-%E4%B8%BB%E9%A2%98%E5%90%8Dtopic-name">4.5.3 主题名（Topic Name）</a></li>
+<li><a href="#454-%E4%B8%BB%E9%A2%98%E7%AD%9B%E9%80%89%E5%99%A8topic-filter">4.5.4 主题筛选器（Topic Filter）</a></li>
+<li><a href="#455-%E8%B4%9F%E8%BD%BDpayload">4.5.5 负载（Payload）</a></li>
+</ul>
+</li>
+<li><a href="#46-mqtt%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95">4.6 MQTT协议中的方法</a></li>
+</ul>
+</li>
+<li><a href="#5-mqtt%E5%8D%8F%E8%AE%AE%E6%95%B0%E6%8D%AE%E5%8C%85%E7%BB%93%E6%9E%84">5 MQTT协议数据包结构</a>
+<ul>
+<li><a href="#51-mqtt%E5%9B%BA%E5%AE%9A%E5%A4%B4">5.1 MQTT固定头</a>
+<ul>
+<li><a href="#511-mqtt%E6%95%B0%E6%8D%AE%E5%8C%85%E7%B1%BB%E5%9E%8B-mqtt-control-packet-type">5.1.1 MQTT数据包类型 MQTT Control Packet type</a></li>
+<li><a href="#512-%E6%A0%87%E8%AF%86%E4%BD%8D-flags-specific-to-each-mqtt-control-packet-type">5.1.2 标识位 Flags specific to each MQTT Control Packet type</a></li>
+</ul>
+</li>
+<li><a href="#52-mqtt%E5%8F%AF%E5%8F%98%E5%A4%B4">5.2 MQTT可变头</a></li>
+<li><a href="#53-payload%E6%B6%88%E6%81%AF%E4%BD%93">5.3 Payload消息体</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/vue20-typescript-xiang-mu-da-jian/">
+              <span class="post-title">
+                Vue2.0 + TypeScript 项目搭建&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
