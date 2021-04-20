@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-20T05:25:32.832Z</updated>
+    <updated>2021-04-20T05:43:25.686Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -11,7 +11,242 @@
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
     <entry>
-        <title type="html"><![CDATA[从根上理解高性能、高并发(六)：通俗易懂，高性能服务器到底是如何实现的]]></title>
+        <title type="html"><![CDATA[理解高性能、高并发(七)：深入操作系统，一文读懂进程、线程、协程]]></title>
+        <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-qi-shen-ru-cao-zuo-xi-tong-yi-wen-du-dong-jin-cheng-xian-cheng-xie-cheng/</id>
+        <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-qi-shen-ru-cao-zuo-xi-tong-yi-wen-du-dong-jin-cheng-xian-cheng-xie-cheng/">
+        </link>
+        <updated>2021-04-20T05:39:41.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="1-什么是进程">1、什么是进程？</h1>
+<h3 id="11-基本常识">1.1 基本常识</h3>
+<p><strong>我们需要明确一下几个常识：</strong></p>
+<ul>
+<li>1）计算机的核心是CPU，它承担了所有的计算任务；</li>
+<li>2）操作系统是计算机的管理者，它负责任务的调度、资源的分配和管理，统领整个计算机硬件；</li>
+<li>3）应用程序则是具有某种功能的程序，程序是运行于操作系统之上的。</li>
+</ul>
+<p>进程是一个具有一定独立功能的程序在一个数据集上的一次动态执行的过程，是操作系统进行资源分配和调度的一个独立单位，是应用程序运行的载体。进程是一种抽象的概念，从来没有统一的标准定义。</p>
+<p><strong>进程一般由程序、数据集合和进程控制块三部分组成：</strong></p>
+<ul>
+<li>1）程序用于描述进程要完成的功能，是控制进程执行的指令集；</li>
+<li>2）数据集合是程序在执行时所需要的数据和工作区；</li>
+<li>3）程序控制块(Program Control Block，简称PCB)，包含进程的描述信息和控制信息，是进程存在的唯一标志。</li>
+</ul>
+<p><strong>进程具有的特征：</strong></p>
+<ul>
+<li>1）动态性：进程是程序的一次执行过程，是临时的，有生命期的，是动态产生，动态消亡的；</li>
+<li>2）并发性：任何进程都可以同其他进程一起并发执行；</li>
+<li>3）独立性：进程是系统进行资源分配和调度的一个独立单位；</li>
+<li>4）结构性：进程由程序、数据和进程控制块三部分组成。</li>
+</ul>
+<h3 id="12-为什么要有多进程">1.2 为什么要有多进程？</h3>
+<p>多进程目的：提高cpu的使用率。</p>
+<p>**一个例子：**一个用户现在既想使用打印机，又想玩游戏。</p>
+<p>*<strong>假设只有一个进程（先不谈多线程）：*</strong></p>
+<p><strong>从操作系统的层面看，我们使用打印机的步骤有如下：</strong></p>
+<ul>
+<li>1）使用CPU执行程序，去硬盘读取需要打印的文件，然后CPU会长时间的等待，直到硬盘读写完成；</li>
+<li>2）使用CPU执行程序，让打印机打印这些内容，然后CPU会长时间的等待，等待打印结束。</li>
+</ul>
+<p>**在这样的情况下：**其实CPU的使用率其实非常的低。</p>
+<p>打印一个文件从头到尾需要的时间可能是1分钟，而cpu使用的时间总和可能加起来只有几秒钟。而后面如果单进程执行游戏的程序的时候，CPU也同样会有大量的空闲时间。</p>
+<p>*<strong>使用多进程后：*</strong></p>
+<p>当CPU在等待硬盘读写文件，或者在等待打印机打印的时候，CPU可以去执行游戏的程序，这样CPU就能尽可能高的提高使用率。</p>
+<p>再具体一点说，其实也提高了效率。因为在等待打印机的时候，这时候显卡也是闲置的，如果用多进程并行的话，游戏进程完全可以并行使用显卡，并且与打印机之间也不会互相影响。</p>
+<h3 id="13-小结一下">1.3 小结一下</h3>
+<p>**进程，直观点说：**保存在硬盘上的程序运行以后，会在内存空间里形成一个独立的内存体，这个内存体有自己独立的地址空间，有自己的堆，上级挂靠单位是操作系统。</p>
+<p>操作系统会以进程为单位，分配系统资源（CPU时间片、内存等资源），进程是资源分配的最小单位。</p>
+<h1 id="2-什么是线程">2、什么是线程？</h1>
+<h3 id="21-基本常识">2.1 基本常识</h3>
+<p>早期：操作系统中并没有线程的概念，进程是能拥有资源和独立运行的最小单位，也是程序执行的最小单位。任务调度采用的是时间片轮转的抢占式调度方式，而进程是任务调度的最小单位，每个进程有各自独立的一块内存，使得各个进程之间内存地址相互隔离。</p>
+<p>后来：随着计算机的发展，对CPU的要求越来越高，进程之间的切换开销较大，已经无法满足越来越复杂的程序的要求了。于是就发明了线程。</p>
+<p><strong>线程是程序执行中一个单一的顺序控制流程：</strong></p>
+<ul>
+<li>1）是程序执行流的最小单元；</li>
+<li>2）是处理器调度和分派的基本单位。</li>
+</ul>
+<p>一个进程可以有一个或多个线程，各个线程之间共享程序的内存空间（也就是所在进程的内存空间）。一个标准的线程由线程ID、当前指令指针（PC）、寄存器和堆栈组成。而进程由内存空间（代码、数据、进程空间、打开的文件）和一个或多个线程组成。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/c67e75.png" alt="img" loading="lazy"></figure>
+<p>**如上图所示：**在任务管理器的进程一栏里，有道词典和有道云笔记就是进程，而在进程下又有着多个执行不同任务的线程。</p>
+<h3 id="22-任务调度">2.2 任务调度</h3>
+<p>线程是什么？要理解这个概念，需要先了解一下操作系统的一些相关概念。</p>
+<p>大部分操作系统（如Windows、Linux）的任务调度是采用时间片轮转的抢占式调度方式。</p>
+<p>**在一个进程中：**当一个线程任务执行几毫秒后，会由操作系统的内核（负责管理各个任务）进行调度，通过硬件的计数器中断处理器，让该线程强制暂停并将该线程的寄存器放入内存中，通过查看线程列表决定接下来执行哪一个线程，并从内存中恢复该线程的寄存器，最后恢复该线程的执行，从而去执行下一个任务。</p>
+<p>**上述过程中：**任务执行的那一小段时间叫做时间片，任务正在执行时的状态叫运行状态，被暂停的线程任务状态叫做就绪状态，意为等待下一个属于它的时间片的到来。</p>
+<p>这种方式保证了每个线程轮流执行，由于CPU的执行效率非常高，时间片非常短，在各个任务之间快速地切换，给人的感觉就是多个任务在“同时进行”，这也就是我们所说的并发（别觉得并发有多高深，它的实现很复杂，但它的概念很简单，就是一句话：多个任务同时执行）。</p>
+<p><strong>多任务运行过程的示意图如下：</strong></p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/0e56f7.png" alt="img" loading="lazy"></figure>
+<p>▲ 操作系统中的任务调度</p>
+<h3 id="23-进程与线程的区别">2.3 进程与线程的区别</h3>
+<p>前面讲了进程与线程，但可能你还觉得迷糊，感觉他们很类似。的确，进程与线程有着千丝万缕的关系。</p>
+<p><strong>下面就让我们一起来理一理：</strong></p>
+<ul>
+<li>1）线程是程序执行的最小单位，而进程是操作系统分配资源的最小单位；</li>
+<li>2）一个进程由一个或多个线程组成，线程是一个进程中代码的不同执行路线；</li>
+<li>3）进程之间相互独立，但同一进程下的各个线程之间共享程序的内存空间（包括代码段、数据集、堆等）及一些进程级的资源（如打开文件和信号），某进程内的线程在其它进程不可见；</li>
+<li>4）线程上下文切换比进程上下文切换要快得多。</li>
+</ul>
+<p>以下线程与进程关系的示意图。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/0027827.png" alt="img" loading="lazy"></figure>
+<p>▲ 进程与线程的资源共享关系</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/0491ed.png" alt="img" loading="lazy"></figure>
+<p>▲ 单线程与多线程的关系</p>
+<p>**总之：**线程和进程都是一种抽象的概念，线程是一种比进程更小的抽象，线程和进程都可用于实现并发。</p>
+<p>在早期的操作系统中并没有线程的概念，进程是能拥有资源和独立运行的最小单位，也是程序执行的最小单位。它相当于一个进程里只有一个线程，进程本身就是线程。所以线程有时被称为轻量级进程（Lightweight Process，LWP）。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/8702f4.png" alt="img" loading="lazy"></figure>
+<p>▲ 早期的操作系统只有进程，没有线程</p>
+<p>后来：随着计算机的发展，对多个任务之间上下文切换的效率要求越来越高，就抽象出一个更小的概念——线程，一般一个进程会有多个（也可以是一个）线程。</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/9b19c5.png" alt="img" loading="lazy"></figure>
+<p>▲ 线程的出现，使得一个进程可以有多个线程</p>
+<h3 id="24-多线程与多核">2.4 多线程与多核</h3>
+<p>上面提到的时间片轮转的调度方式说一个任务执行一小段时间后强制暂停去执行下一个任务，每个任务轮流执行。很多操作系统的书都说“同一时间点只有一个任务在执行”。</p>
+<p>那有人可能就要问双核处理器呢？难道两个核不是同时运行吗？</p>
+<p><strong>其实：</strong>“同一时间点只有一个任务在执行”这句话是不准确的，至少它是不全面的。那多核处理器的情况下，线程是怎样执行呢？这就需要了解内核线程。</p>
+<p>***多核(心)处理器是指：***在一个处理器上集成多个运算核心从而提高计算能力，也就是有多个真正并行计算的处理核心，每一个处理核心对应一个内核线程。</p>
+<p>内核线程（Kernel Thread，KLT）：就是直接由操作系统内核支持的线程，这种线程由内核来完成线程切换，内核通过操作调度器对线程进行调度，并负责将线程的任务映射到各个处理器上。</p>
+<p>一般一个处理核心对应一个内核线程，比如单核处理器对应一个内核线程，双核处理器对应两个内核线程，四核处理器对应四个内核线程。</p>
+<p>现在的电脑一般是双核四线程、四核八线程，是采用超线程技术将一个物理处理核心模拟成两个逻辑处理核心，对应两个内核线程，所以在操作系统中看到的CPU数量是实际物理CPU数量的两倍，如你的电脑是双核四线程，打开“任务管理器 -&gt; 性能”可以看到4个CPU的监视器，四核八线程可以看到8个CPU的监视器。</p>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/c110644.png" alt="img" loading="lazy"></figure>
+<p>▲ 双核四线程在Windows8下查看的结果</p>
+<p>超线程技术：就是利用特殊的硬件指令，把一个物理芯片模拟成两个逻辑处理核心，让单个处理器都能使用线程级并行计算，进而兼容多线程操作系统和软件，减少了CPU的闲置时间，提高的CPU的运行效率。这种超线程技术（如双核四线程）由处理器硬件的决定，同时也需要操作系统的支持才能在计算机中表现出来。</p>
+<p>程序一般不会直接去使用内核线程，而是去使用内核线程的一种高级接口——轻量级进程（Lightweight Process，LWP），轻量级进程就是我们通常意义上所讲的线程，也被叫做用户线程。</p>
+<p>由于每个轻量级进程都由一个内核线程支持，因此只有先支持内核线程，才能有轻量级进程。</p>
+<p><strong>用户线程与内核线程的对应关系有三种模型：</strong></p>
+<ul>
+<li>1）一对一模型；</li>
+<li>2）多对一模型；</li>
+<li>3）多对多模型。</li>
+</ul>
+<p>在下面的文字中，将以4个内核线程、3个用户线程为例对三种模型进行说明。</p>
+<h3 id="25-一对一模型">2.5 一对一模型</h3>
+<p>**对于一对一模型来说：**一个用户线程就唯一地对应一个内核线程（反过来不一定成立，一个内核线程不一定有对应的用户线程）。</p>
+<p>**这样：**如果CPU没有采用超线程技术（如四核四线程的计算机），一个用户线程就唯一地映射到一个物理CPU的内核线程，线程之间的并发是真正的并发。</p>
+<p>一对一模型使用户线程具有与内核线程一样的优点：一个线程因某种原因阻塞时其他线程的执行不受影响（此处，一对一模型也可以让多线程程序在多处理器的系统上有更好的表现）。</p>
+<p><strong>但一对一模型也有两个缺点：</strong></p>
+<ul>
+<li>1）许多操作系统限制了内核线程的数量，因此一对一模型会使用户线程的数量受到限制；</li>
+<li>2）许多操作系统内核线程调度时，上下文切换的开销较大，导致用户线程的执行效率下降。</li>
+</ul>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/b1e1d7.png" alt="img" loading="lazy"></figure>
+<p>▲ 一对一模型</p>
+<h3 id="26-多对一模型">2.6 多对一模型</h3>
+<p>多对一模型将多个用户线程映射到一个内核线程上，线程之间的切换由用户态的代码来进行，系统内核感受不到线程的实现方式。用户线程的建立、同步、销毁等都在用户态中完成，不需要内核的介入。</p>
+<p><strong>因此，相对一对一模型：</strong></p>
+<ul>
+<li>1）多对一模型的线程上下文切换速度要快许多；</li>
+<li>2）多对一模型对用户线程的数量几乎无限制。</li>
+</ul>
+<p><strong>但多对一模型也有两个缺点：</strong></p>
+<ul>
+<li>1）如果其中一个用户线程阻塞，那么其它所有线程都将无法执行，因为此时内核线程也随之阻塞了；</li>
+<li>2）在多处理器系统上，处理器数量的增加对多对一模型的线程性能不会有明显的增加，因为所有的用户线程都映射到一个处理器上了。</li>
+</ul>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/52a2a8.png" alt="img" loading="lazy"></figure>
+<p>▲ 多对一模型</p>
+<h3 id="27-多对多模型">2.7 多对多模型</h3>
+<p>多对多模型结合了一对一模型和多对一模型的优点：将多个用户线程映射到多个内核线程上，由线程库负责在可用的可调度实体上调度用户线程。</p>
+<p>这使得线程的上下文切换非常快：因为它避免了系统调用。但是增加了复杂性和优先级倒置的可能性，以及在用户态调度程序和内核调度程序之间没有广泛（且高昂）协调的次优调度。</p>
+<p><strong>多对多模型的优点有：</strong></p>
+<ul>
+<li>1）一个用户线程的阻塞不会导致所有线程的阻塞，因为此时还有别的内核线程被调度来执行；</li>
+<li>2）多对多模型对用户线程的数量没有限制；</li>
+<li>3）在多处理器的操作系统中，多对多模型的线程也能得到一定的性能提升，但提升的幅度不如一对一模型的高。</li>
+</ul>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/e78399.png" alt="img" loading="lazy"></figure>
+<p>▲ 多对多模型</p>
+<p>在现在流行的操作系统中，大都采用多对多的模型。</p>
+<h3 id="28-查看进程与线程">2.8 查看进程与线程</h3>
+<p>一个应用程序可能是多线程的，也可能是多进程的，如何查看呢？</p>
+<p>在Windows下我们只须打开任务管理器就能查看一个应用程序的进程和线程数。按“<em>Ctrl+Alt+Del</em>”或右键快捷工具栏打开任务管理器。</p>
+<p><strong>查看进程数和线程数：</strong></p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/224aae2.png" alt="img" loading="lazy"></figure>
+<p>在“进程”选项卡下，我们可以看到一个应用程序包含的线程数。</p>
+<p>如果一个应用程序有多个进程，我们能看到每一个进程，如在上图中，Google的Chrome浏览器就有多个进程。</p>
+<p>同时，如果打开了一个应用程序的多个实例也会有多个进程，如上图中我打开了两个cmd窗口，就有两个cmd进程。如果看不到线程数这一列，可以再点击“查看 -&gt; 选择列”菜单，增加监听的列。</p>
+<p>查看CPU和内存的使用率：在性能选项卡中，我们可以查看CPU和内存的使用率，根据CPU使用记录的监视器的个数还能看出逻辑处理核心的个数，如我的双核四线程的计算机就有四个监视器。</p>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/dd1123cc.png" alt="img" loading="lazy"></figure>
+<p>▲ 查看CPU和内存的使用率</p>
+<h3 id="29-线程的生命周期">2.9 线程的生命周期</h3>
+<p>当线程的数量小于处理器的数量时，线程的并发是真正的并发，不同的线程运行在不同的处理器上。</p>
+<p>但当线程的数量大于处理器的数量时，线程的并发会受到一些阻碍，此时并不是真正的并发，因为此时至少有一个处理器会运行多个线程。</p>
+<p>在单个处理器运行多个线程时，并发是一种模拟出来的状态。操作系统采用时间片轮转的方式轮流执行每一个线程。现在，几乎所有的现代操作系统采用的都是时间片轮转的抢占式调度方式，如我们熟悉的Unix、Linux、Windows及macOS等流行的操作系统。</p>
+<p>我们知道线程是程序执行的最小单位，也是任务执行的最小单位。在早期只有进程的操作系统中，进程有五种状态，创建、就绪、运行、阻塞(等待)、退出。早期的进程相当于现在的只有单个线程的进程，那么现在的多线程也有五种状态，现在的多线程的生命周期与早期进程的生命周期类似。</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/47098e.png" alt="img" loading="lazy"></figure>
+<p>▲ 早期进程的生命周期</p>
+<p>进程在运行过程有三种状态：就绪、运行、阻塞，创建和退出状态描述的是进程的创建过程和退出过程。</p>
+<p><strong>早期进程的生命周期详细说明如下：</strong></p>
+<blockquote>
+<ul>
+<li>创建：进程正在创建，还不能运行。操作系统在创建进程时要进行的工作包括分配和建立进程控制块表项、建立资源表格并分配资源、加载程序并建立地址空间；</li>
+<li>就绪：时间片已用完，此线程被强制暂停，等待下一个属于它的时间片到来；</li>
+<li>运行：此线程正在执行，正在占用时间片；</li>
+<li>阻塞：也叫等待状态，等待某一事件(如IO或另一个线程)执行完；</li>
+<li>退出：进程已结束，所以也称结束状态，释放操作系统分配的资源。</li>
+</ul>
+</blockquote>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/17539e.png" alt="img" loading="lazy"></figure>
+<p>▲ 线程的生命周期</p>
+<p><strong>线程的生命周期跟进程很类似：</strong></p>
+<blockquote>
+<ul>
+<li>创建：一个新的线程被创建，等待该线程被调用执行；</li>
+<li>就绪：时间片已用完，此线程被强制暂停，等待下一个属于它的时间片到来；</li>
+<li>运行：此线程正在执行，正在占用时间片；</li>
+<li>阻塞：也叫等待状态，等待某一事件(如IO或另一个线程)执行完；</li>
+<li>退出：一个线程完成任务或者其他终止条件发生，该线程终止进入退出状态，退出状态释放该线程所分配的资源。</li>
+</ul>
+</blockquote>
+<h1 id="3-什么是协程">3、什么是协程？</h1>
+<h3 id="31-基本常识">3.1 基本常识</h3>
+<p>协程：英文Coroutines，是一种基于线程之上，但又比线程更加轻量级的存在，这种由程序员自己写程序来管理的轻量级线程叫做“用户空间线程”，具有对内核来说不可见的特性。</p>
+<p>因为是自主开辟的异步任务，所以很多人也更喜欢叫它们纤程（Fiber），或者绿色线程（GreenThread）。</p>
+<p>正如一个进程可以拥有多个线程一样，一个线程也可以拥有多个协程。</p>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cd5225.png" alt="img" loading="lazy"></figure>
+<h3 id="32-协程的目的">3.2 协程的目的</h3>
+<p>对于Java程序员来说，在传统的J2EE系统中都是基于每个请求占用一个线程去完成完整的业务逻辑（包括事务）。所以系统的吞吐能力取决于每个线程的操作耗时。</p>
+<p>如果遇到很耗时的I/O行为，则整个系统的吞吐立刻下降，因为这个时候线程一直处于阻塞状态，如果线程很多的时候，会存在很多线程处于空闲状态（等待该线程执行完才能执行），造成了资源应用不彻底。</p>
+<p>最常见的例子就是JDBC（它是同步阻塞的），这也是为什么很多人都说数据库是瓶颈的原因。这里的耗时其实是让CPU一直在等待I/O返回，说白了线程根本没有利用CPU去做运算，而是处于空转状态。而另外过多的线程，也会带来更多的ContextSwitch开销。</p>
+<p>对于上述问题：现阶段行业里的比较流行的解决方案之一就是单线程加上异步回调。其代表派是 [node.js]以及 Java 里的新秀 [Vert.x]。</p>
+<p>而协程的目的就是当出现长时间的I/O操作时，通过让出目前的协程调度，执行下一个任务的方式，来消除ContextSwitch上的开销。</p>
+<h3 id="33-协程的特点">3.3 协程的特点</h3>
+<p><strong>协程的特点总结一下就是：</strong></p>
+<ul>
+<li>1）线程的切换由操作系统负责调度，协程由用户自己进行调度，因此减少了上下文切换，提高了效率；</li>
+<li>2）线程的默认Stack大小是1M，而协程更轻量，接近1K。因此可以在相同的内存中开启更多的协程；</li>
+<li>3）由于在同一个线程上，因此可以避免竞争关系而使用锁；</li>
+<li>4）适用于被阻塞的，且需要大量并发的场景。但不适用于大量计算的多线程，遇到此种情况，更好实用线程去解决。</li>
+</ul>
+<h3 id="34-协程的原理">3.4 协程的原理</h3>
+<p>当出现IO阻塞的时候，由协程的调度器进行调度，通过将数据流立刻yield掉（主动让出），并且记录当前栈上的数据，阻塞完后立刻再通过线程恢复栈，并把阻塞的结果放到这个线程上去跑。</p>
+<p>这样看上去好像跟写同步代码没有任何差别，这整个流程可以称为coroutine，而跑在由coroutine负责调度的线程称为Fiber。比如：Golang里的 go关键字其实就是负责开启一个Fiber，让func逻辑跑在上面。</p>
+<p>由于协程的暂停完全由程序控制，发生在用户态上；而线程的阻塞状态是由操作系统内核来进行切换，发生在内核态上。</p>
+<p>**因此：**协程的开销远远小于线程的开销，也就没有了ContextSwitch上的开销。</p>
+<h3 id="35-协程和线程的比较">3.5 协程和线程的比较</h3>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/5e7ad5.png" alt="img" loading="lazy"></figure>
+<h1 id="4-总结一下">4、总结一下</h1>
+<p>我们总结一下。</p>
+<p><strong>进程和线程的区别就是：</strong></p>
+<ul>
+<li>1）调度：线程作为调度和分配的基本单位，进程作为拥有资源的基本单位；</li>
+<li>2）并发性：不仅进程之间可以并发执行，同一个进程的多个线程之间也可并发执行；</li>
+<li>3）拥有资源：进程是拥有资源的一个独立单位，线程不拥有系统资源，但可以访问隶属于进程的资源；</li>
+<li>4）系统开销：在创建或撤消进程时，由于系统都要为之分配和回收资源，导致系统的开销明显大于创建或撤消线程时的开销。</li>
+</ul>
+<p><strong>进程和线程之间的联系就是：</strong></p>
+<ul>
+<li>1）一个线程只能属于一个进程，而一个进程可以有多个线程，但至少有一个线程；</li>
+<li>2）资源分配给进程，同一进程的所有线程共享该进程的所有资源；</li>
+<li>3）处理机分给线程，即真正在处理机上运行的是线程；</li>
+<li>4）线程在执行过程中，需要协作同步。不同进程的线程间要利用消息通信的办法实现同步。</li>
+</ul>
+<p>*<strong>那么，既然有了线程，为啥还要有协程？*</strong></p>
+<p><strong>考虑这一样一种场景：</strong></p>
+<p>开发者在每个线程中只做非常轻量的操作，比如访问一个极小的文件，下载一张极小的图片，加载一段极小的文本等。但是，这样”轻量的操作“的量却非常多。</p>
+<p>在有大量这样的轻量操作的场景下，即使可以通过使用线程池来避免创建与销毁的开销，但是线程切换的开销也会非常大，甚至于接近操作本身的开销。</p>
+<p>对于这些场景，就非常需要一种可以减少这些开销的方式。于是，协程就应景而出，非常适合这样的场景。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[理解高性能、高并发(六)：通俗易懂，高性能服务器到底是如何实现的]]></title>
         <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-liu-tong-su-yi-dong-gao-xing-neng-fu-wu-qi-dao-di-shi-ru-he-shi-xian-de/</id>
         <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-liu-tong-su-yi-dong-gao-xing-neng-fu-wu-qi-dao-di-shi-ru-he-shi-xian-de/">
         </link>
@@ -110,7 +345,7 @@
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[从根上理解高性能、高并发(五)：深入操作系统，理解高并发中的协程]]></title>
+        <title type="html"><![CDATA[理解高性能、高并发(五)：深入操作系统，理解高并发中的协程]]></title>
         <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-wu-shen-ru-cao-zuo-xi-tong-li-jie-gao-bing-fa-zhong-de-xie-cheng/</id>
         <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-wu-shen-ru-cao-zuo-xi-tong-li-jie-gao-bing-fa-zhong-de-xie-cheng/">
         </link>
@@ -297,7 +532,7 @@ b
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[从根上理解高性能、高并发(四)：深入操作系统，理解同步与异步]]></title>
+        <title type="html"><![CDATA[理解高性能、高并发(四)：深入操作系统，理解同步与异步]]></title>
         <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-si-shen-ru-cao-zuo-xi-tong-li-jie-tong-bu-yu-yi-bu/</id>
         <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-si-shen-ru-cao-zuo-xi-tong-li-jie-tong-bu-yu-yi-bu/">
         </link>
@@ -461,7 +696,7 @@ b
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[从根上理解高性能、高并发(三)：深入操作系统，彻底理解I/O多路复用]]></title>
+        <title type="html"><![CDATA[理解高性能、高并发(三)：深入操作系统，彻底理解I/O多路复用]]></title>
         <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-san-shen-ru-cao-zuo-xi-tong-che-di-li-jie-io-duo-lu-fu-yong/</id>
         <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-san-shen-ru-cao-zuo-xi-tong-che-di-li-jie-io-duo-lu-fu-yong/">
         </link>
@@ -595,7 +830,7 @@ b
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[从根上理解高性能、高并发(二)：深入操作系统，理解I/O与零拷贝技术]]></title>
+        <title type="html"><![CDATA[理解高性能、高并发(二)：深入操作系统，理解I/O与零拷贝技术]]></title>
         <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-er-shen-ru-cao-zuo-xi-tong-li-jie-io-yu-ling-kao-bei-ji-zhu/</id>
         <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-er-shen-ru-cao-zuo-xi-tong-li-jie-io-yu-ling-kao-bei-ji-zhu/">
         </link>
@@ -688,7 +923,7 @@ b
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[从根上理解高性能、高并发(一)：深入计算机底层，理解线程与线程池]]></title>
+        <title type="html"><![CDATA[理解高性能、高并发(一)：深入计算机底层，理解线程与线程池]]></title>
         <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-yi-shen-ru-ji-suan-ji-di-ceng-li-jie-xian-cheng-yu-xian-cheng-chi/</id>
         <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-yi-shen-ru-ji-suan-ji-di-ceng-li-jie-xian-cheng-yu-xian-cheng-chi/">
         </link>
@@ -1316,427 +1551,6 @@ function reverseObj(obj){
 
  
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[学习笔记：promise]]></title>
-        <id>https://kangjn.github.io/post/xue-xi-bi-ji-promise/</id>
-        <link href="https://kangjn.github.io/post/xue-xi-bi-ji-promise/">
-        </link>
-        <updated>2021-04-19T02:28:54.000Z</updated>
-        <content type="html"><![CDATA[<ol>
-<li>then接收两个参数, onFulfilled 和 onRejected</li>
-<li>检查并处理参数, 如果参数不是function就忽略(原样返回value或者reason)</li>
-</ol>
-<p>class MyPromise {<br>
-constructor(fn) {<br>
-// 初始状态为pending<br>
-this.status = PENDING;//状态<br>
-this.value = null;//成功的值<br>
-this.reason = null;//失败的值<br>
-try {<br>
-fn(this.resolve.bind(this), this.reject.bind(this));<br>
-} catch (e) {<br>
-this.reject(e);<br>
-}<br>
-}<br>
-resolve(value) {<br>
-if (this.status === PENDING) {<br>
-//这层判断是因为fulfilled状态只可以由pending状态改变而来<br>
-this.status = FULFILLED;<br>
-this.value = value;<br>
-}<br>
-}<br>
-reject(reason) {<br>
-if (this.status === PENDING) {<br>
-//同理这层判断是因为rejected状态只可以由pending状态改变而来<br>
-this.status = REJECTED;<br>
-this.reason = reason;<br>
-}<br>
-}<br>
-then(onFulfilled, onRejected) {<br>
-const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
-const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
-throw reason<br>
-};<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-}<br>
-3. 根据当前promise的状态, 调用不同的函数<br>
-class MyPromise {<br>
-.....<br>
-//这时候then函数被调用会瞬间就会执行switch判断，那这时候如果status可能还没变成fulfilled或者rejected，很有可能还是pending<br>
-then(onFulfilled, onRejected) {<br>
-const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
-const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
-throw reason<br>
-};<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-fulFilledFn(this.value);<br>
-break;<br>
-}<br>
-case REJECTED: {<br>
-rejectedFn(this.reason);<br>
-break;<br>
-}<br>
-}<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-}<br>
-4、首先要拿到所有的回调, 然后在某个时机去执行他. 需要新建两个数组, 分别存储成功和失败的回调, 调用then的时候, 如果还是pending就存入数组.<br>
-class MyPromise {<br>
-FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
-REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
-.....<br>
-then(onFulfilled, onRejected) {<br>
-const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
-const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
-throw reason<br>
-};<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-fulFilledFn(this.value);<br>
-break;<br>
-}<br>
-case REJECTED: {<br>
-rejectedFn(this.reason);<br>
-break;<br>
-}<br>
-case PENDING: {<br>
-this.FULFILLED_CALLBACK_LIST.push(fulFilledFn);<br>
-this.REJECTED_CALLBACK_LIST.push(rejectedFn);<br>
-break;<br>
-}<br>
-}<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-}<br>
-5、在status状态发生变化的时候调用数组里所有的函数<br>
-class MyPromise {<br>
-FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
-REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
-.....<br>
-resolve(value) {<br>
-if (this.status === PENDING) {<br>
-//这层判断是因为fulfilled状态只可以由pending状态改变而来<br>
-this.status = FULFILLED;<br>
-this.value = value;<br>
-//执行存储的函数<br>
-this.FULFILLED_CALLBACK_LIST.forEach(callback =&gt; {<br>
-callback(this.value);<br>
-});<br>
-}<br>
-}<br>
-reject(reason) {<br>
-if (this.status === PENDING) {<br>
-//同理这层判断是因为rejected状态只可以由pending状态改变而来<br>
-this.status = REJECTED;<br>
-this.reason = reason;<br>
-//执行存储的函数<br>
-this.REJECTED_CALLBACK_LIST.forEach(callback =&gt; {<br>
-callback(this.reason);<br>
-});<br>
-}<br>
-}<br>
-then(onFulfilled, onRejected) {<br>
-const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
-const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
-throw reason<br>
-};<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-fulFilledFn(this.value);<br>
-break;<br>
-}<br>
-case REJECTED: {<br>
-rejectedFn(this.reason);<br>
-break;<br>
-}<br>
-case PENDING: {<br>
-this.FULFILLED_CALLBACK_LIST.push(fulFilledFn);<br>
-this.REJECTED_CALLBACK_LIST.push(rejectedFn);<br>
-break;<br>
-}<br>
-}<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-}<br>
-7、then的返回值<br>
-情况1：如果 onFulfilled 或者 onRejected 抛出一个异常 e ，则新promise必须reject e<br>
-class MyPromise {<br>
-FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
-REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
-.....<br>
-then(onFulfilled, onRejected) {<br>
-const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
-const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
-throw reason<br>
-};<br>
-const fulFilledFnWithCatch = (resolve, reject) =&gt; {<br>
-try {<br>
-fulFilledFn(this.value);<br>
-} catch (e) {<br>
-reject(e)<br>
-}<br>
-};<br>
-const rejectedFnWithCatch = (resolve, reject) =&gt; {<br>
-try {<br>
-rejectedFn(this.reason);<br>
-} catch (e) {<br>
-reject(e);<br>
-}<br>
-}<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-return new MyPromise(fulFilledFnWithCatch);<br>
-}<br>
-case REJECTED: {<br>
-return new MyPromise(rejectedFnWithCatch);<br>
-}<br>
-case PENDING: {<br>
-return new MyPromise((resolve, reject) =&gt; {<br>
-this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject));<br>
-this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject));<br>
-});<br>
-}<br>
-}<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-}<br>
-情况2：如果onFulfilled不是函数且promise成功执行，那么新的promise必须返回同样的状态和val<br>
-情况3：如果onRejected不是函数且promise拒绝执行，那么新的promise必须返回同样的状态和reason<br>
-class MyPromise {<br>
-FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
-REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
-.....<br>
-then(onFulfilled, onRejected) {<br>
-const fulFilledFn = this.isFunction(onFulfilled) ? onFulfilled : (value) =&gt; value<br>
-const rejectedFn = this.isFunction(onRejected) ? onRejected : (reason) =&gt; {<br>
-throw reason<br>
-};<br>
-const fulFilledFnWithCatch = (resolve, reject) =&gt; {<br>
-try {<br>
-fulFilledFn(this.value);<br>
-resolve(this.value);<br>
-} catch (e) {<br>
-reject(e)<br>
-}<br>
-};<br>
-const rejectedFnWithCatch = (resolve, reject) =&gt; {<br>
-try {<br>
-rejectedFn(this.reason);<br>
-if (this.isFunction(onRejected)) {<br>
-resolve();<br>
-}<br>
-} catch (e) {<br>
-reject(e);<br>
-}<br>
-}<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-return new MyPromise(fulFilledFnWithCatch);<br>
-}<br>
-case REJECTED: {<br>
-return new MyPromise(rejectedFnWithCatch);<br>
-}<br>
-case PENDING: {<br>
-return new MyPromise((resolve, reject) =&gt; {<br>
-this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject));<br>
-this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject));<br>
-});<br>
-}<br>
-}<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-}<br>
-情况4:如果onFulfilled或者onRejected 返回一个值 x ，则运行resolvePromise方法<br>
-class MyPromise {<br>
-FULFILLED_CALLBACK_LIST = [] //存储成功回调<br>
-REJECTED_CALLBACK_LIST = [] //存储失败回调<br>
-.....<br>
-const fulFilledFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
-try {<br>
-if (!this.isFunction(onFulfilled)) {<br>
-resolve(this.value);<br>
-} else {<br>
-const x = fulFilledFn(this.value);<br>
-this.resolvePromise(newPromise, x, resolve, reject);<br>
-}<br>
-} catch (e) {<br>
-reject(e)<br>
-}<br>
-};<br>
-const rejectedFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
-try {<br>
-if (!this.isFunction(onRejected)) {<br>
-reject(this.reason);<br>
-} else {<br>
-const x = rejectedFn(this.reason);<br>
-this.resolvePromise(newPromise, x, resolve, reject);<br>
-}<br>
-} catch (e) {<br>
-reject(e);<br>
-}<br>
-}<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-const newPromise = new MyPromise((resolve, reject) =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
-return newPromise;<br>
-}<br>
-case REJECTED: {<br>
-const newPromise = new MyPromise((resolve, reject) =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
-return newPromise;<br>
-}<br>
-case PENDING: {<br>
-const newPromise = new MyPromise((resolve, reject) =&gt; {<br>
-this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
-this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
-});<br>
-return newPromise;<br>
-}<br>
-}<br>
-//检验是否为function<br>
-isFunction(param) {<br>
-return typeof param === 'function';<br>
-}<br>
-resolvePromise(newPromise, x, resolve, reject){}<br>
-}<br>
-8、resolvePromise<br>
-resolvePromise(newPromise, x, resolve, reject) {<br>
-// 防止死循环<br>
-if (newPromise === x) {<br>
-return reject(new TypeError('The promise and the return value are the same'));<br>
-}<br>
-if (x instanceof MPromise) {<br>
-x.then((y) =&gt; {<br>
-resolvePromise(newPromise, y, resolve, reject);<br>
-}, reject);<br>
-} else if (typeof x === 'object' || this.isFunction(x)) {<br>
-if (x === null) {<br>
-return resolve(x);<br>
-}<br>
-let then = null;<br>
-try {<br>
-then = x.then;<br>
-} catch (error) {<br>
-return reject(error);<br>
-}<br>
-// 如果 then 是函数<br>
-if (this.isFunction(then)) {<br>
-let called = false;<br>
-try {<br>
-then.call(<br>
-x,<br>
-(y) =&gt; {<br>
-if (called) return;<br>
-called = true;<br>
-resolvePromise(promise, y, resolve, reject);<br>
-},<br>
-(r) =&gt; {<br>
-if (called) return;<br>
-called = true;<br>
-reject(r);<br>
-});<br>
-} catch (error) {<br>
-if (called) return;<br>
-reject(error);<br>
-}<br>
-} else {<br>
-resolve(x);<br>
-}<br>
-} else {<br>
-resolve(x);<br>
-}<br>
-}<br>
-9、onFulfilled 和 onRejected 是微任务<br>
-then(onFulfilled, onRejected) {<br>
-...<br>
-const fulFilledFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
-queueMicrotask(() =&gt; {<br>
-try {<br>
-if (!this.isFunction(onFulfilled)) {<br>
-resolve(this.value);<br>
-} else {<br>
-const x = fulFilledFn(this.value);<br>
-this.resolvePromise(newPromise, x, resolve, reject);<br>
-}<br>
-} catch (e) {<br>
-reject(e)<br>
-}<br>
-})<br>
-};<br>
-const rejectedFnWithCatch = (resolve, reject, newPromise) =&gt; {<br>
-queueMicrotask(() =&gt; {<br>
-try {<br>
-if (!this.isFunction(onRejected)) {<br>
-reject(this.reason);<br>
-} else {<br>
-const x = rejectedFn(this.reason);<br>
-this.resolvePromise(newPromise, x, resolve, reject);<br>
-}<br>
-} catch (e) {<br>
-reject(e);<br>
-}<br>
-})<br>
-}<br>
-switch (this.status) {<br>
-case FULFILLED: {<br>
-const newPromise = new MPromise((resolve, reject) =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
-return newPromise;<br>
-}<br>
-case REJECTED: {<br>
-const newPromise = new MPromise((resolve, reject) =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
-return newPromise;<br>
-}<br>
-case PENDING: {<br>
-const newPromise = new MPromise((resolve, reject) =&gt; {<br>
-this.FULFILLED_CALLBACK_LIST.push(() =&gt; fulFilledFnWithCatch(resolve, reject, newPromise));<br>
-this.REJECTED_CALLBACK_LIST.push(() =&gt; rejectedFnWithCatch(resolve, reject, newPromise));<br>
-});<br>
-return newPromise;<br>
-}<br>
-}<br>
-}<br>
-10. catch方法<br>
-catch (onRejected) {<br>
-return this.then(null, onRejected);<br>
-}<br>
-11. promise.resolve(静态方法)<br>
-将现有对象转为Promise对象，如果 Promise.resolve 方法的参数，不是具有 then 方法的对象（又称 thenable 对象），则返回一个新的 Promise 对象，且它的状态为fulfilled。<br>
-static resolve(param) {<br>
-if (param instanceof MyPromise) {<br>
-return param;<br>
-}<br>
-return new MyPromise(function (resolve) {<br>
-resolve(param);<br>
-});<br>
-}<br>
-12. promise.reject(静态方法)<br>
-返回一个新的Promise实例，该实例的状态为rejected。Promise.reject方法的参数reason，会被传递给实例的回调函数。<br>
-static reject(reason) {<br>
-return new MPromise((resolve, reject) =&gt; {<br>
-reject(reason);<br>
-});<br>
-}</p>
 ]]></content>
     </entry>
 </feed>
