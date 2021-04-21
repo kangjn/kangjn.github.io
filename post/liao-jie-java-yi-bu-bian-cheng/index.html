@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>了解Java异步编程 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="了解Java异步编程 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="了解Java异步编程" />
+  <meta property="og:url" content="https://kangjn.github.io/post/liao-jie-java-yi-bu-bian-cheng/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618990470147"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618990470147"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/UVCPskwcm/" class="tag">java</a>
+                
+              </span>
+              <h1>了解Java异步编程</h1>
+              <span class="meta">
+                Posted on
+                2021.04.21，19 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h3 id="了解java异步编程">了解Java异步编程</h3>
+<p>随着<code>RxJava</code>、<code>Reactor</code>等异步框架的流行，异步编程受到了越来越多的关注，尤其是在IO密集型的业务场景中，相比传统的同步开发模式，异步编程的优势越来越明显。</p>
+<p>那到底什么是异步编程？异步化真正的好处又是什么？如何选择适合自己团队的异步技术？在实施异步框架落地的过程中有哪些需要注意的地方？</p>
+<ol>
+<li>使用RxJava异步改造后的效果</li>
+<li>什么是异步编程？异步实现原理</li>
+<li>异步技术选型参考</li>
+<li>异步化真正的好处是什么？</li>
+<li>异步化落地的难点及解决方案</li>
+<li>扩展:异步其他解决方案-协程</li>
+</ol>
+<h2 id="使用rxjava异步改造后的效果">使用RxJava异步改造后的效果</h2>
+<p>下图是我们后端java项目使用RxJava改造成异步前后的RT(响应时长)效果对比：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/164025.png" alt="img" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/164040.png" alt="img" loading="lazy"></figure>
+<p>统计数据基于App端的gateway，以75线为准，还有80、85、90、99线，从图中可以看出改成异步后接口整体的平均响应时长降低了**40%**左右。</p>
+<p>(响应时间是以发送请求到收到后端接口响应数据的时长，上图改造的这个后端java接口内部流程比较复杂，因为公司都是微服务架构，该接口内部又调用了6个其他服务的接口，最后把这些接口的数据汇总在一起返回给前端)</p>
+<p>这张图是同步接口和改造成异步接口前后的CPU负载情况对比</p>
+<p>改造前cpu load : 35.46</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/165003.png" alt="img" loading="lazy"></figure>
+<p>改造后cpu load : 14.25</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/165002.png" alt="img" loading="lazy"></figure>
+<p>改成异步后CPU的负载情况也有明显下降，但CPU使用率并无影响(一般情况下异步化后cpu的利用率会有所提高，但要看具体的业务场景)</p>
+<p>CPU LoadAverage是指：一段时间内处于可运行状态和不可中断状态的进程平均数量。(可运行分为正在运行进程和正在等待CPU的进程；<strong>不可中断则是它正在做某些工作不能被中断比如等待磁盘IO、网络IO等</strong>)</p>
+<p>而我们的服务业务场景大部分都是IO密集型业务，功能实现很多需要依赖底层接口，会进行频繁的IO操作。</p>
+<p>下图是2019年在全球架构师峰会上<strong>阿里</strong>分享的异步化改造后的RT和QPS效果：</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/170052.png" alt="img" loading="lazy"></figure>
+<h2 id="什么是异步编程">什么是异步编程？</h2>
+<h3 id="响应式编程-nio">响应式编程 + NIO</h3>
+<h3 id="1-异步和同步的区别">1. 异步和同步的区别：</h3>
+<p>我们先从<strong>I/O</strong>的角度看下同步模式下接口A调用接口B的交互流程:</p>
+<p>下图是传统的同步模式下io线程的交互流程，可以看出io是阻塞的，即bio的运行模式</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/171309.png" alt="img" loading="lazy"></figure>
+<p>接口A发起调用接口B后，这段时间什么事情也不能做，主线程阻塞一直等到接口B数据返回，然后才能进行其他操作，可想而知如果接口A调用的接口不止B的话(A-&gt;B-&gt;C-&gt;D-&gt;E。。。)，那么等待的时间也是递增的，而且<strong>这期间CPU也要一直占用着</strong>，白白浪费资源，也就是上图看到的 cpu load 高的原因。</p>
+<p>而且还有一个隐患就是如果调用的其他服务中的接口比如C超时，或接口C挂掉了，那么对调用方服务A来说，剩余的接口比如D、E都会无限等待下去。。。</p>
+<p>其实大部分情况下我们收到数据后内部的处理逻辑耗时都很短，这个可以通过埋点执行时间统计，<strong>大部分时间都浪费在了IO等待上</strong>。</p>
+<p>下面这个视频演示了同步模式下我们线上环境真实的接口调用情况，即接口调用的线程执行和变化情况，(使用的工具是JDK自带的jvisual来监控线程变化情况)</p>
+<p>这里先交代下大致背景：服务端api接口A内部一共调用了6个其他服务的接口，大致交互是这样的：</p>
+<p>A接口（B -&gt; C -&gt; D -&gt; E -&gt; F -&gt; G）返回聚合数据</p>
+<p>背景：使用Jemter测试工具压测100个线程并发请求接口，以观察线程的运行情况（可以全屏观看）：</p>
+<p><code>http-nio-8080-exec*</code>开头的是tomcat线程池中的线程，即前端请求我们后端接口时要通过tomcat服务器接收和转发的线程，因为我们后端api接口内部又调用了其他服务的6个接口（B、C、D、E、F、G），同步模式下需要等待上一个接口返回数据才能继续调用下一个接口，所以可以从视频中看出，大部分的http线程耗时都在8秒以上(绿色线条代表线程是”运行中”状态，8秒包括等待接口返回的时间和我们内部逻辑处理的总时间，因为是本地环境测试，受机器和网络影响较大)</p>
+<p>然后我们再看下异步模式的交互流程，即nio方式：</p>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/182257.png" alt="img" loading="lazy"></figure>
+<p>大致流程就是接口A发起调用接口B的请求后就立即返回，而不用阻塞等待接口B响应，这样的好处是<code>http-nio-8080-exec*</code>线程可以<strong>马上得到复用，接着处理下一个前端请求的任务</strong>，如果接口B处理完返回数据后，会有一个回调线程池处理真正的响应，即这种模式下我们的业务流程是<strong>http线程只处理请求，回调线程处理接口响应</strong>。</p>
+<p>nio模式下虽然<code>http-nio-8080-exec*</code>线程和回调线程<code>AsfThread-executor-*</code>的运行时间都很短，但是从http线程开始到asf回调处理完返回给前端结果的时间和bio即同步模式下的时间差异不大（在相同的逻辑流程下），并不是nio模式下服务响应的整体时间就会缩短，而是<strong>会提升****CPU的利用率</strong>，因为CPU不再会阻塞等待（不可中断状态减少），这样<strong>CPU就能有更多的资源来处理其他的请求任务</strong>，相同单位时间内能处理更多的任务，所以nio模式带来的好处是：</p>
+<ul>
+<li><strong>提升QPS（用更少的线程资源实现更高的并发能力）</strong></li>
+<li><strong>降低CPU负荷,提高利用率</strong></li>
+</ul>
+<h3 id="2-nio原理">2. Nio原理</h3>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/161708.png" alt="img" loading="lazy"></figure>
+<p>结合上面的接口交互图可知，接口B通过网络返回数据给调用方(接口A)这一过程，对应底层实现就是网卡接收到返回数据后，通过自身的DMA（直接内存访问）将数据拷贝到内核缓冲区，这一步不需要CPU参与操作，也就是把原先CPU等待的事情交给了底层网卡去处理，这样<strong>CPU就可以专注于我们的应用程序即接口内部的逻辑运算</strong>。</p>
+<h3 id="3-nio-in-java">3. Nio In Java</h3>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/212141.png" alt="img" loading="lazy"></figure>
+<p>nio在java里的实现主要是上图中的几个核心组件：<code>channel</code>、<code>buffer</code>、<code>selector</code>，这些组件组合起来即实现了上面所讲的<strong>多路复用机制</strong>，如下图所示：</p>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/212733.png" alt="img" loading="lazy"></figure>
+<h2 id="响应式编程">响应式编程</h2>
+<h3 id="1-什么是响应式编程它和传统的编程方式有什么区别">1. 什么是响应式编程？它和传统的编程方式有什么区别？</h3>
+<p>响应式可以简单的理解为收到某个事件或通知后采取的一系列动作，如上文中所说的响应操作系统的网络数据通知，然后以<strong>回调的方式</strong>处理数据。</p>
+<p>传统的命令式编程主要由：顺序、分支、循环 等控制流来完成不同的行为</p>
+<p>响应式编程的特点是：</p>
+<ul>
+<li><strong>以逻辑为中心转换为以数据为中心</strong></li>
+<li><strong>从命令式到声明式的转换</strong></li>
+</ul>
+<h3 id="2-javautilconcurrentfuture">2. Java.Util.Concurrent.Future</h3>
+<p>在Java使用nio后无法立即拿到真实的数据，而且先得到一个”<code>future</code>“，可以理解为邮戳或快递单，为了获悉真正的数据我们需要不停的通过快递单号查询快递进度，所以 <strong>J.U.C 中的 Future 是Java对异步编程的第一个解决方案</strong>，通常和线程池结合使用，伪代码形式如下：</p>
+<pre><code>ExecutorService executor = Executors.newCachedThreadPool(); // 线程池
+Future&lt;String&gt; future = executor.submit(() -&gt;{
+    Thread.sleep(200); // 模拟接口调用，耗时200ms
+    return &quot;hello world&quot;;
+});
+// 在输出下面异步结果时主线程可以不阻塞的做其他事情
+// TODO 其他业务逻辑
+
+System.out.println(&quot;异步结果:&quot;+future.get()); //主线程获取异步结果
+</code></pre>
+<p><code>Future</code>的缺点很明显：</p>
+<ul>
+<li>无法方便得知任务何时完成</li>
+<li>无法方便获得任务结果</li>
+<li>在主线程获得任务结果会导致主线程阻塞</li>
+</ul>
+<h3 id="3-listenablefuture">3. ListenableFuture</h3>
+<p>Google并发包下的<code>listenableFuture</code>对Java原生的future做了扩展，顾名思义就是使用监听器模式实现的<strong>回调机制</strong>，所以叫可监听的future。</p>
+<pre><code>Futures.addCallback(listenableFuture, new FutureCallback&lt;String&gt;() {
+    @Override
+    public void onSuccess(String result) {
+        System.out.println(&quot;异步结果:&quot; + result);
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        t.printStackTrace();
+    }
+}, executor);
+</code></pre>
+<p>回调机制的最大问题是：<strong>Callback Hell（回调地狱）</strong></p>
+<ul>
+<li>代码的字面形式和其所表达的业务含义不匹配</li>
+<li>业务的先后关系在代码层面变成了包含和被包含的关系</li>
+<li>大量使用 Callback 机制，使应该是先后的业务逻辑在代码形式上表现为层层嵌套,这会导致代码难以理解和维护。</li>
+</ul>
+<p>那么如何解决 Callback Hell 问题呢？</p>
+<p><strong>响应式编程</strong></p>
+<p>其实主要是以下两种解决方式：</p>
+<ul>
+<li>事件驱动机制</li>
+<li>链式调用(Lambda)</li>
+</ul>
+<h3 id="4-completablefuture">4. CompletableFuture</h3>
+<p>Java8里的<code>CompletableFuture</code>和Java9的<code>Flow Api</code>勉强算是上面问题的解决方案：</p>
+<pre><code>CompletableFuture&lt;String&gt; f1 = CompletableFuture.supplyAsync(() -&gt;
+    &quot;hello&quot;
+);
+// f2依赖f1的结果做转换
+CompletableFuture&lt;String&gt; f2 = f1.thenApplyAsync(t -&gt;
+    t + &quot; world&quot;
+);
+System.out.println(&quot;异步结果:&quot; + f2.get());
+</code></pre>
+<p>但<code>CompletableFuture</code>处理简单的任务可以使用，但并不是一个完整的反应式编程解决方案，在服务调用复杂的情况下，存在服务编排、上下文传递、柔性限流(背压)方面的不足</p>
+<p>如果使用<code>CompletableFuture</code>面对这些问题可能需要自己额外造一些轮子，Java9的<code>Flow</code>虽然是基于 <strong>Reactive Streams</strong> 规范实现的，但没有RxJava、Project Reactor这些异步框架丰富和强大和完整的解决方案。</p>
+<p>当然如果接口逻辑比较简单，完全可以使用<code>listenableFuture</code>或<code>CompletableFuture</code></p>
+<h3 id="5-reactive-streams">5. Reactive Streams</h3>
+<p>在网飞推出RxJava1.0并在Android端普及流行开后，响应式编程的规范也呼之欲出：</p>
+<p>包括后来的RxJava2.0、Project Reactor都是基于Reactive Streams规范实现的。</p>
+<p>关于他们和<code>listenableFuture</code>、 <code>CompletableFuture</code>的区别通过下面的例子大家应该就会清楚。</p>
+<p>比如下面的基于回调的代码示例：获取用户的5个收藏列表功能</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/225236.png" alt="img" loading="lazy"></figure>
+<p>图中标注序号的步骤对应如下：</p>
+<ol>
+<li>根据uid调用用户收藏列表接口<code>userService.getFavorites</code></li>
+<li>成功的回调逻辑</li>
+<li>如果用户收藏列表为空</li>
+<li>调用推荐服务<code>suggestionService.getSuggestions</code></li>
+<li>推荐服务成功后的回调逻辑</li>
+<li>取前5条推荐并展示(<code>Java8 Stream api</code>)</li>
+<li>推荐服务失败的回调,展示错误信息</li>
+<li>如果用户收藏列表有数据返回</li>
+<li>取前5条循环调用详情接口<code>favoriteService.getDetails</code> 成功回调则展示详情,失败回调则展示错误信息</li>
+</ol>
+<p>可以看出主要逻辑都是在回调函数（<code>onSuccess()</code>、<code>onError()</code>）中处理的，在可读性和后期维护成本上比较大。</p>
+<p>基于Reactive Streams规范实现的响应式编程解决方案如下：</p>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/225814.png" alt="img" loading="lazy"></figure>
+<ol>
+<li>调用用户收藏列表接口</li>
+<li>压平数据流调用详情接口</li>
+<li>如果收藏列表为空调用推荐接口</li>
+<li>取前5条</li>
+<li>切换成异步线程处理上述声明接口返回结果)</li>
+<li>成功则展示正常数据,错误展示错误信息</li>
+</ol>
+<p>可以看出因为这些异步框架提供了丰富的api，所以我们可以把主要精力<strong>放在数据的流转上，而不是原来的逻辑控制上。这也是异步编程带来的思想上的转变。</strong></p>
+<p>下图是RxJava的<code>operator api</code>：</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/230605.png" alt="img" loading="lazy"></figure>
+<p>（如果这些操作符满足不了你的需求，你也可以自定义操作符）</p>
+<p>所以说<strong>异步最吸引人的地方在于资源的充分利用，不把资源浪费在等待的时间上(nio)，代价是增加了程序的复杂度，而Reactive Program封装了这些复杂性，使其变得简单。</strong></p>
+<p>所以我们无论使用哪种异步框架，尽量使用框架提供的api，而不是像上图那种基于回调业务的代码，把业务逻辑都写在onSuccess、onError等回调方法里，这样无法发挥异步框架的真正作用：</p>
+<blockquote>
+<p>Codes Like Sync，Works Like Async</p>
+</blockquote>
+<p>即以<strong>同步的方式编码，达到异步的效果与性能,兼顾可维护性与可伸缩性</strong>。</p>
+<h2 id="异步框架技术选型">异步框架技术选型</h2>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/231752.png" alt="img" loading="lazy"></figure>
+<p>如果是我个人更愿意选择Project Reactor作为首选异步框架，，还有一点是因为Netflix推出的开源产品渐渐都不维护了，而且Project Reactor提供了<code>reactor-adapter</code>组件，可以方便的和RxJava的api转换。</p>
+<p>其实还有<strong>Vert.x</strong>也算异步框架 (底层使用netty实现nio, 最新版已支持reactive stream规范)</p>
+<h2 id="异步化真正的好处">异步化真正的好处</h2>
+<h3 id="scalability">Scalability</h3>
+<p>伸缩性主要体现在以下两个方面：</p>
+<ul>
+<li><strong>elastic 弹性</strong></li>
+<li><strong>resilient 容错性</strong></li>
+</ul>
+<p>（异步化在平时<strong>不会明显降低 RT、提高 QPS</strong>，文章开头的数据也是在大促这种流量高峰下的体现出的异步效果）</p>
+<p>从架构和应用等更高纬度看待异步带来的好处则会提升系统的两大能力：<strong>弹性</strong> 和 <strong>容错性</strong></p>
+<p>前者反映了系统应对压力的表现，后者反映了系统应对故障的表现</p>
+<h4 id="1-容错性">1. 容错性</h4>
+<p>像RxJava，Reactor这些异步框架处理回调数据时一般会切换线程上下文，其实就是使用不同的线程池来隔离不同的数据流处理逻辑，下图说明了这一特性的好处：</p>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/225922.png" alt="img" loading="lazy"></figure>
+<p>即利用异步框架支持线程池切换的特性实现<strong>服务/接口隔离</strong>，进而提高系统的<strong>高可用</strong>。</p>
+<h4 id="2-弹性">2. 弹性</h4>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/134231.png" alt="img" loading="lazy"></figure>
+<p>back-pressure是一种重要的反馈机制，相比于传统的熔断限流等方式，是一种更加<strong>柔性的自适应限流</strong>。使得系统得以优雅地响应负载，而不是在负载下崩溃。</p>
+<h2 id="异步化落地的难点及解决方案">异步化落地的难点及解决方案</h2>
+<p>还是先看下淘宝总结的异步改造中难点问题：</p>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/130202.png" alt="img" loading="lazy"></figure>
+<p>中间件全异步牵涉到到公司中台化战略或框架部门的支持，包括公司内部常用的中间件比如MQ、redis、dal等。</p>
+<p>这里主要说下上下文传递和阻塞检测的问题：</p>
+<h3 id="1-上下文传递">1. 上下文传递</h3>
+<p>改造成异步服务后，不能再使用<code>ThreadLocal</code>传递上下文context，因为异步框架比如RxJava一般在收到通知后会先调用<code>observeOn()</code>方法切换成另外一个线程处理回调，比如我们在请求接口时在<code>ThreadLocal</code>的context里设置了一个值，在回调线程里从context里取不到这个值的，因为此时已经不是同一个<code>ThreadLocal</code>了，所以需要我们手动在切换上下文的时候传递context从一个线程到另一个线程环境，伪代码如下：</p>
+<pre><code>Context context = ThreadLocalUtils.get(); // 获取当前线程的上下文
+single.observeOn(scheduler).doOnEvent((data, error) -&gt; ThreadLocalUtils.set(context)); // 切换线程后在doOnEvent里重新给新的线程赋值context
+</code></pre>
+<p>在<code>observeOn()</code>方法切换成另外一个线程后调用<code>doOnEvent</code>方法将原来的context赋给新的线程<code>ThreadLocal</code></p>
+<p><strong>注意</strong>：这里的代码只是提供一种解决思路，实际在使用前和使用后还要考虑清空<code>ThreadLocal</code>，因为线程有可能会回收到线程池下次复用，而不是立即清理，<strong>这样就会污染上下文环境</strong>。</p>
+<p>可以将传递上下文的方法封装成公共方法，不需要每次都手动切换。</p>
+<h3 id="2-阻塞检测">2. 阻塞检测</h3>
+<p>阻塞检测主要是要能及时发现我们某个异步任务长时间阻塞的发生，比如异步线程执行时间过长进而影响整个接口的响应，原来同步场景下我们的日志都是串行记录到ES或Cat上的，现在改成异步后，每次处理接口数据的逻辑可能在不同的线程中完成，这样记录的日志就需要我们主动去合并（依据具体的业务场景而定），如果日志无法关联起来，对我们排查问题会增加很多难度。所幸的是随着异步的流行，现在很多日志和监控系统都已支持异步了。</p>
+<p>Project Reactor 自己也有阻塞检测功能</p>
+<h3 id="3-其他问题">3. 其他问题</h3>
+<p>除了上面提到的两个问题外，还有一些比如RxJava2.0之后不支持返回null，如果我们原来的代码或编程习惯所致返回结果有null的情况，可以考虑使用java8的<code>Optional.ofNullable()</code>包装一下，然后返回的RxJava类型是这样的：<code>Single&lt;Optional&gt;</code>，其他异步框架如果有类似的问题同理。</p>
+<h2 id="异步其他解决方案纤程协程">异步其他解决方案：纤程/协程</h2>
+<ul>
+<li>Quasar</li>
+<li>Kilim</li>
+<li>Kotlin</li>
+<li>Open JDK Loom</li>
+<li>AJDK wisp2</li>
+</ul>
+<p>协程并不是什么新技术，它在很多语言中都有实现，比如 <code>Python</code>、<code>Lua</code>、<code>Go</code> 都支持协程。</p>
+<p>协程与线程不同之处在于，<strong>线程由内核调度，而协程的调度是进程自身完成的</strong>。这样就可以不受操作系统对线程数量的限制，一个线程内部可以创建成千上万个协程。因为上文讲到的异步技术都是基于线程的操作和封装，Java中的线程概念对应的就是操作系统的线程。</p>
+<h3 id="1-quasar-kilim">1. Quasar、Kilim</h3>
+<p>开源的Java轻量级线程（协程）框架，通过利用<code>Java instrument</code>技术对字节码进行修改，使方法挂起前后可以保存和恢复JVM栈帧，方法内部已执行到的字节码位置也通过增加状态机的方式记录，在下次恢复执行可直接跳转至最新位置。</p>
+<h3 id="2-kotlin">2. Kotlin</h3>
+<p>Kotlin Coroutine 协程库，因为 Kotlin 的运行依赖于 JVM，不能对 JVM  进行修改，因此Kotlin不能在底层支持协程。同时Kotlin 是一门编程语言，需要在语言层面支持协程，所以Kotlin  对协程支持最核心的部分是在编译器中完成，这一点其实和Quasar、Kilim实现原理类似，都是在<strong>编译期通过修改字节码</strong>的方式实现协程</p>
+<h3 id="3-project-loom">3. Project Loom</h3>
+<p>Project Loom 发起的原因是因为长期以来Java 的线程是与操作系统的线程一一对应的，这限制了 Java 平台并发能力提升，Project Loom 是<strong>从 JVM 层面对多线程技术进行彻底的改变</strong>。</p>
+<p>OpenJDK 在2018年创建了 Loom 项目，目标是在JVM上实现轻量级的线程，并解除JVM线程与内核线程的映射。其实 Loom  项目的核心开发人员正是从Quasar项目过来的，目的也很明确，就是要将这项技术集成到底层JVM里，所以Quasar项目目前已经不维护了。。。</p>
+<h3 id="4-ajdk-wisp2">4. AJDK Wisp2</h3>
+<p>Alibaba Dragonwell 是阿里巴巴的 Open JDK 发行版，提供长期支持。dragonwell8已开源协程功能（之前的版本是不支持的），开启jvm命令：<code>-XX:+UseWisp2</code> 即支持协程。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>Future 在异步方面支持有限</li>
+<li>Callback 在编排能力方面有 Callback Hell 的短板</li>
+<li>Project Loom 最新支持的Open JDK版本是16，目前还在测试中</li>
+<li>AJDK wisp2 需要换掉整个JVM，需要考虑改动成本和收益比</li>
+</ul>
+<p>所以目前实现异步化比较成熟的方案是 <strong>Reactive Streams</strong></p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BA%86%E8%A7%A3java%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B">了解Java异步编程</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BD%BF%E7%94%A8rxjava%E5%BC%82%E6%AD%A5%E6%94%B9%E9%80%A0%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C">使用RxJava异步改造后的效果</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B">什么是异步编程？</a>
+<ul>
+<li><a href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B-nio">响应式编程 + NIO</a></li>
+<li><a href="#1-%E5%BC%82%E6%AD%A5%E5%92%8C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8C%BA%E5%88%AB">1. 异步和同步的区别：</a></li>
+<li><a href="#2-nio%E5%8E%9F%E7%90%86">2. Nio原理</a></li>
+<li><a href="#3-nio-in-java">3. Nio In Java</a></li>
+</ul>
+</li>
+<li><a href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B">响应式编程</a>
+<ul>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%AE%83%E5%92%8C%E4%BC%A0%E7%BB%9F%E7%9A%84%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB">1. 什么是响应式编程？它和传统的编程方式有什么区别？</a></li>
+<li><a href="#2-javautilconcurrentfuture">2. Java.Util.Concurrent.Future</a></li>
+<li><a href="#3-listenablefuture">3. ListenableFuture</a></li>
+<li><a href="#4-completablefuture">4. CompletableFuture</a></li>
+<li><a href="#5-reactive-streams">5. Reactive Streams</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E6%AD%A5%E6%A1%86%E6%9E%B6%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B">异步框架技术选型</a></li>
+<li><a href="#%E5%BC%82%E6%AD%A5%E5%8C%96%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%A5%BD%E5%A4%84">异步化真正的好处</a>
+<ul>
+<li><a href="#scalability">Scalability</a>
+<ul>
+<li><a href="#1-%E5%AE%B9%E9%94%99%E6%80%A7">1. 容错性</a></li>
+<li><a href="#2-%E5%BC%B9%E6%80%A7">2. 弹性</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E6%AD%A5%E5%8C%96%E8%90%BD%E5%9C%B0%E7%9A%84%E9%9A%BE%E7%82%B9%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">异步化落地的难点及解决方案</a>
+<ul>
+<li><a href="#1-%E4%B8%8A%E4%B8%8B%E6%96%87%E4%BC%A0%E9%80%92">1. 上下文传递</a></li>
+<li><a href="#2-%E9%98%BB%E5%A1%9E%E6%A3%80%E6%B5%8B">2. 阻塞检测</a></li>
+<li><a href="#3-%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98">3. 其他问题</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E6%AD%A5%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E7%BA%A4%E7%A8%8B%E5%8D%8F%E7%A8%8B">异步其他解决方案：纤程/协程</a>
+<ul>
+<li><a href="#1-quasar-kilim">1. Quasar、Kilim</a></li>
+<li><a href="#2-kotlin">2. Kotlin</a></li>
+<li><a href="#3-project-loom">3. Project Loom</a></li>
+<li><a href="#4-ajdk-wisp2">4. AJDK Wisp2</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/jie-xi-springcloud-fen-bu-shi-wei-fu-wu-de-shi-xian/">
+              <span class="post-title">
+                解析springcloud分布式微服务的实现&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
