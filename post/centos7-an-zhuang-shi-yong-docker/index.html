@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>springboot-2.利用接口返回数据（json） | MyBlog</title>
+<title>CentOS7安装使用Docker | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="springboot-2.利用接口返回数据（json） | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="CentOS7安装使用Docker | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="springboot-2.利用接口返回数据（json）" />
-  <meta property="og:url" content="https://kangjn.github.io/post/springboot-2li-yong-jie-kou-fan-hui-shu-ju-json/" />
+  <meta property="og:description" content="CentOS7安装使用Docker" />
+  <meta property="og:url" content="https://kangjn.github.io/post/centos7-an-zhuang-shi-yong-docker/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -151,13 +151,13 @@
             <div class="post-heading">
               <span class="tags">
                 
-                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                <a href="https://kangjn.github.io/tag/xyYfRRBrB/" class="tag">docker</a>
                 
               </span>
-              <h1>springboot-2.利用接口返回数据（json）</h1>
+              <h1>CentOS7安装使用Docker</h1>
               <span class="meta">
                 Posted on
-                2021.04.16，4 min read
+                2021.04.21，3 min read
               </span>
             </div>
           
@@ -172,179 +172,147 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h2 id="springboot-2利用接口返回数据json">springboot-2.利用接口返回数据（json）</h2>
-<h2 id="前言">前言</h2>
-<p>项目前后台交互存在两种方式<br>
-一种普通整体页面提交，比如form提交；<br>
-还有一种局部刷新，或者叫做异步刷新，ajax提交；<br>
-@Controller就是整体页面刷新提交的处理注解</p>
-<p>@RestController就是ajax提交，一般返回json格式，相当于我们经常使用的@ResponseBody+@Controller组合</p>
-<h2 id="正文">正文</h2>
-<p>新建文件夹controller<br>
-然后在该文件夹下新建 控制类.java文件<br>
-[![cWWn9x.png]((https://gitee.com/kangjun/MyBlogImage/raw/master/cWWn9x.png)</p>
-<h3 id="1最简单的数据返回">1.最简单的数据返回</h3>
-<pre><code>@RestController
-public class helloController {
-    @RequestMapping(&quot;/&quot;)
-    public String hello()
-    {
-        return &quot;hello&quot;;
-    }
-}
+          <h2 id="安装">安装</h2>
+<p>Docker 官方为了简化安装流程，提供了一套安装脚本，CentOS 系统上可以使用这套脚本安装：</p>
+<pre><code>curl -sSL https://get.docker.com/ | sh
 </code></pre>
-<p>【@RequestMapping作用】<br>
-<strong>处理请求地址的映射<br>
-用于类和方法上，类上的 “请求地址” 是方法上的 “请求地址” 的父地址</strong><br>
-[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWWgCq.png" alt="cWWgCq.png" loading="lazy"></p>
-<h3 id="2返回类对象信息">2.返回类对象信息</h3>
-<p>为了演示，我们新建一个文件夹User，然后在该文件夹下新建一个文件User.java<br>
-[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWWWvT.png" alt="cWWWvT.png" loading="lazy"><br>
-内容如下：</p>
-<pre><code>public class User {
-    private String name;
-    private String sex;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-}
+<p>执行这个命令后，脚本就会自动的将一切准备工作做好，并且把 Docker 安装在系统中。</p>
+<p>不过，由于伟大的墙的原因，在国内使用这个脚本可能会出现某些下载出现错误的情况。国内的一些云服务商提供了这个脚本的修改版本，使其使用国内的 Docker 软件源镜像安装，这样就避免了墙的干扰。</p>
+<h3 id="阿里云安装脚本">阿里云安装脚本</h3>
+<pre><code>curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh 
 </code></pre>
-<p><strong>然后在controller文件夹下新建一个userController.java文件</strong><br>
-(记得自行import需要的文件)<br>
-[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWfMin.png" alt="cWfMin.png" loading="lazy"></p>
-<pre><code>@RestController
-public class userController {
-    @RequestMapping(&quot;/getUser&quot;)
-    public User getUser() {
-        User u = new User();
-        u.setName(&quot;x&quot;);
-        u.setSex(&quot;nan&quot;);
-        return u;
-
-    }
-}
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWWgCq.png" alt="cWWgCq.png" loading="lazy"></figure>
-<h3 id="3返回封装的类对象信息">3.返回封装的类对象信息</h3>
-<p>解释一下该处和2处的区别：<br>
-@Description: 自定义响应数据结构这个类是提供给门户，ios，安卓，微信商城用的门户接受此类数据后需要使用本类的方法转换成对于的数据类型格式（类，或者list）其他自行处理</p>
+<hr>
+<h2 id="镜像">镜像</h2>
+<h3 id="选择国内镜像">选择国内镜像</h3>
 <ul>
 <li>
-<p>200：表示成功</p>
-</li>
-<li>
-<p>500：表示错误，错误信息在msg字段中</p>
-</li>
-<li>
-<p>501：bean验证错误，不管多少个错误都以map形式返回</p>
-</li>
-<li>
-<p>502：拦截器拦截到用户token出错</p>
-</li>
-<li>
-<p>555：异常抛出信息<br>
-简单来说，就是当前台提交用户信息给后台时，后台会返回一个json数据，其中包含状态码（200等），message（“ok”或者“failure”），然后再包含一个用户信息列表。</p>
-<p><strong>首先，在pom文件中添加依赖项</strong></p>
-</li>
-<li>
-<p>jackson-databind</p>
-</li>
-<li>
-<p>jackson-core<br>
-新建一个jsonResult.java文件</p>
+<h4 id="官方中国区加速器">官方中国区加速器</h4>
 </li>
 </ul>
-<pre><code>package cn.ericam.nndemo.Json;
-public class jsonResult {
-    // 响应业务状态
-    private Integer status;
-    // 响应消息
-    private String msg;
-    // 响应中的数据
-    private Object data;
-    public static jsonResult ok(Object data) {
-        return new jsonResult(data);
-    }
-    //类含参初始化1
-    public jsonResult(Integer status, String msg, Object data) {
-        this.status = status;
-        this.msg = msg;
-        this.data = data;
-    }
-
-    //类含参初始化2
-    public jsonResult(Object data) {
-        this.status = 200;
-        this.msg = &quot;OK&quot;;
-        this.data = data;
-    }
-
-    //get和set方法
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
-}
+<pre><code>sudo echo &quot;DOCKER_OPTS=\&quot;--registry-mirror=https://registry.docker-cn.com\&quot;&quot; &gt;&gt; /etc/default/docker
 </code></pre>
-<p>然后在userController.java下修改为如下代码：</p>
-<pre><code>@RestController
-public class userController {
-    @RequestMapping(&quot;/getUser&quot;)
-    
-    public jsonResult getUser()
-    {
-        User u = new User();
-        u.setName(&quot;x&quot;);
-        u.setSex(&quot;nan&quot;);
-        return  jsonResult.ok(u);
-    }
-}
+<p>推荐使用官方加速器。</p>
+<ul>
+<li>
+<h4 id="网易163">网易163</h4>
+</li>
+</ul>
+<pre><code>sudo echo &quot;DOCKER_OPTS=\&quot;--registry-mirror=http://hub-mirror.c.163.com\&quot;&quot; &gt;&gt; /etc/default/docker
 </code></pre>
-<p>[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWfyLD.png" alt="cWfyLD.png" loading="lazy"><br>
-<strong>【ps：IDEA利用ctrl+insert可以快速生成get和set方法】</strong></p>
+<p>目前网易镜像已经比较稳定。</p>
+<p>修改完默认镜像仓库后需要重启docker才能生效：</p>
+<pre><code>service docker restart
+</code></pre>
+<h3 id=""></h3>
+<hr>
+<h2 id="使用">使用</h2>
+<h3 id="启动docker">启动Docker</h3>
+<pre><code>service docker start
+</code></pre>
+<h3 id="开机自启动">开机自启动</h3>
+<pre><code>sudo chkconfig docker on
+</code></pre>
+<h3 id="停止docker">停止Docker</h3>
+<pre><code>service docker stop
+</code></pre>
+<h3 id="本地镜像列表">本地镜像列表</h3>
+<pre><code>docker images
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/903154571.png" alt="img" loading="lazy"></figure>
+<p>使用images命令查看发现当前本地没有任何镜像</p>
+<h3 id="搜索">搜索</h3>
+<pre><code>docker search hello
+</code></pre>
+<p>以下结果是我们搜索到的与&quot;hello&quot;相关的所有镜像</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1217719435.png" alt="img" loading="lazy"></figure>
+<h3 id="拉取镜像">拉取镜像</h3>
+<pre><code>docker pull hello-world
+</code></pre>
+<p>我们尝试从仓库中拉取名为“hello-world”的镜像</p>
+<p>拉取成功后使用docker images命令查看，发现该镜像已被拉取到本地。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/234797084.png" alt="img" loading="lazy"></figure>
+<h3 id="运行镜像">运行镜像</h3>
+<pre><code>docker run hello-world
+</code></pre>
+<p>运行后该镜像会输出如下信息：</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/78870000.png" alt="img" loading="lazy"></figure>
+<h3 id="查看运行中的镜像">查看运行中的镜像</h3>
+<pre><code>docker ps
+</code></pre>
+<h3 id="镜像重命名">镜像重命名</h3>
+<pre><code>docker tag hello-world hw
+</code></pre>
+<p>我们将之前下载的“hello_world”镜像重命名为“hw”，使用images命令查看会发现列表中已经多了一个名为“hw”的镜像。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1341420741.png" alt="img" loading="lazy"></figure>
+<h3 id="删除镜像">删除镜像</h3>
+<pre><code>docker rmi hello-world
+</code></pre>
+<p>我们删除了名为“hello_world”的镜像，rmi后面的参数也可以是 <code>镜像短 ID</code>、<code>镜像长 ID</code>、<code>镜像名</code> 或者 <code>镜像摘要。</code></p>
+<hr>
+<h2 id="卸载">卸载</h2>
+<ul>
+<li>
+<h4 id="列出安装包">列出安装包</h4>
+</li>
+</ul>
+<pre><code>yum list installed | grep docker
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/214283262.png" alt="img" loading="lazy"></figure>
+<ul>
+<li>
+<h4 id="删除安装包">删除安装包</h4>
+</li>
+</ul>
+<pre><code>yum -y remove docker-engine.x86_64
+yum -y remove docker-engine-selinux.noarch
+</code></pre>
+<ul>
+<li>
+<h4 id="删除镜像容器等">删除镜像/容器等</h4>
+</li>
+</ul>
+<pre><code>rm -rf /var/lib/docker
+</code></pre>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#springboot-2%E5%88%A9%E7%94%A8%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AEjson">springboot-2.利用接口返回数据（json）</a></li>
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E6%AD%A3%E6%96%87">正文</a>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a>
 <ul>
-<li><a href="#1%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%94%E5%9B%9E">1.最简单的数据返回</a></li>
-<li><a href="#2%E8%BF%94%E5%9B%9E%E7%B1%BB%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AF">2.返回类对象信息</a></li>
-<li><a href="#3%E8%BF%94%E5%9B%9E%E5%B0%81%E8%A3%85%E7%9A%84%E7%B1%BB%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AF">3.返回封装的类对象信息</a></li>
+<li><a href="#%E9%98%BF%E9%87%8C%E4%BA%91%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC">阿里云安装脚本</a></li>
+</ul>
+</li>
+<li><a href="#%E9%95%9C%E5%83%8F">镜像</a>
+<ul>
+<li><a href="#%E9%80%89%E6%8B%A9%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F">选择国内镜像</a>
+<ul>
+<li><a href="#%E5%AE%98%E6%96%B9%E4%B8%AD%E5%9B%BD%E5%8C%BA%E5%8A%A0%E9%80%9F%E5%99%A8">官方中国区加速器</a></li>
+<li><a href="#%E7%BD%91%E6%98%93163">网易163</a></li>
+</ul>
+</li>
+<li></li>
+</ul>
+</li>
+<li><a href="#%E4%BD%BF%E7%94%A8">使用</a>
+<ul>
+<li><a href="#%E5%90%AF%E5%8A%A8docker">启动Docker</a></li>
+<li><a href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8">开机自启动</a></li>
+<li><a href="#%E5%81%9C%E6%AD%A2docker">停止Docker</a></li>
+<li><a href="#%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F%E5%88%97%E8%A1%A8">本地镜像列表</a></li>
+<li><a href="#%E6%90%9C%E7%B4%A2">搜索</a></li>
+<li><a href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F">拉取镜像</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E9%95%9C%E5%83%8F">运行镜像</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%BF%90%E8%A1%8C%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F">查看运行中的镜像</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E9%87%8D%E5%91%BD%E5%90%8D">镜像重命名</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F">删除镜像</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8D%B8%E8%BD%BD">卸载</a><br>
+*
+<ul>
+<li><a href="#%E5%88%97%E5%87%BA%E5%AE%89%E8%A3%85%E5%8C%85">列出安装包</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E5%AE%89%E8%A3%85%E5%8C%85">删除安装包</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F%E5%AE%B9%E5%99%A8%E7%AD%89">删除镜像/容器等</a></li>
 </ul>
 </li>
 </ul>
@@ -354,9 +322,9 @@ public class userController {
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/springboot-1jian-yue-ban-chuang-jian-di-yi-ge-ying-yong/">
+            <a href="https://kangjn.github.io/post/spring-boot-yu-docker-bu-shu/">
               <span class="post-title">
-                springboot-1.简约版创建第一个应用&rarr;
+                Spring Boot与Docker部署&rarr;
               </span>
             </a>
           </p>

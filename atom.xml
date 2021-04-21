@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-20T08:19:59.665Z</updated>
+    <updated>2021-04-21T03:46:31.458Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,1009 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[深入理解Java8]]></title>
+        <id>https://kangjn.github.io/post/shen-ru-li-jie-java8/</id>
+        <link href="https://kangjn.github.io/post/shen-ru-li-jie-java8/">
+        </link>
+        <updated>2021-04-21T03:27:20.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="lambda的基本语法">Lambda的基本语法</h3>
+<p>(parm1,parm1,parm1) -&gt;{<br>
+};</p>
+<blockquote>
+<p>lambda表达式结构</p>
+</blockquote>
+<ul>
+<li>一个lambda表达式可以有零个或多个参数</li>
+<li>参数的类型既可以明确声明，也可以根据上下文来推断</li>
+<li>所有参数需包含在圆括号内，参数之间用逗号相隔</li>
+<li>空圆括号代表参数集为空</li>
+<li>当只有一个参数，且其类型可推导时，圆括号()可省略</li>
+<li>Lambda表达式的主体可包含零条或多条语句</li>
+<li>如果Lambda表达式的主题只有一条语句，花括号{}可以省略。匿名函数的返回类型与该主体表达式一致</li>
+<li>如果Lambda表达式的主题包含一条以上语句，则表达式必须包含再花括号{}中。匿名函数的返回类型与代码块的返回类型一致，若没有则返回为空</li>
+</ul>
+<blockquote>
+<p>函数式接口</p>
+</blockquote>
+<ul>
+<li>一个接口中只有一个抽象的方法</li>
+<li>声明函数式接口时，在接口上添加<code>@FunctionalInterface</code>注解，这样编译器会按照函数式接口去验证</li>
+<li>一个接口中只有一个抽象方法时，编译器会默认这个接口为函数式接口</li>
+<li>接口中定义的方法为定级父类Object类中的方法时，接口可以拥有两个及以上的方法。因为接口的实现类也会继承Object,所以编译器会认为接口中只有一个方法</li>
+</ul>
+<blockquote>
+<p>注意点</p>
+</blockquote>
+<ul>
+<li>在Python、JavaScript等语言中lambda为函数，在java中lambda为对象</li>
+<li>在java8中，接口中可以有具体方法的实现，必须是<code>default meathod</code></li>
+<li>在java中可以使用静态方法</li>
+</ul>
+<h3 id="函数式接口如何实例">函数式接口如何实例</h3>
+<blockquote>
+<p>函数式方法的声明</p>
+</blockquote>
+<ol>
+<li>采用lambda表达式的方式进行声明一个接口实例<br>
+package funcationdemo;</li>
+</ol>
+<p>import java.util.Arrays;<br>
+import java.util.List;</p>
+<p>/**</p>
+<ul>
+<li>
+<p>描述:</p>
+</li>
+<li>
+<p>lambda表达式练习<br>
+*/<br>
+public class Test01 {<br>
+public static void main(String[] args) {<br>
+List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 7);<br>
+MyInterface myInterface = i -&gt; {<br>
+return i;<br>
+};<br>
+list.forEach(i -&gt; System.out.println(myInterface.printElement(i)));</p>
+<p>}<br>
+}<br>
+@FunctionalInterface<br>
+interface MyInterface{<br>
+Integer printElement(Integer i);<br>
+}</p>
+</li>
+</ul>
+<ol>
+<li>采用方法引用的方式进行声明<br>
+public class Test01 {<br>
+public static void main(String[] args) {<br>
+List<String> list2 = Arrays.asList(&quot;hello&quot;,&quot;world&quot;,&quot;hello world&quot;);<br>
+list2.forEach(String::toUpperCase);<br>
+}<br>
+}</li>
+<li>采用构造方法的方式进行声明<br>
+package funcationdemo;</li>
+</ol>
+<p>/**</p>
+<ul>
+<li>描述:</li>
+<li>lambda表达式练习<br>
+*/<br>
+public class Test01 {<br>
+public static void main(String[] args) {<br>
+MyInterface myInterface = Person::new;<br>
+System.out.println(myInterface.getPerson(&quot;李华&quot;));<br>
+}<br>
+}</li>
+</ul>
+<p>@FunctionalInterface<br>
+interface MyInterface {<br>
+Person getPerson(String name);<br>
+}</p>
+<p>class Person {<br>
+private String name;</p>
+<pre><code>public Person(String name) {
+    this.name = name;
+}
+
+public String getName() {
+    return name;
+}
+
+public void setName(String name) {
+    this.name = name;
+}
+
+@Override
+public String toString() {
+    return &quot;Person{&quot; +
+        &quot;name='&quot; + name + '\'' +
+        '}';
+}
+</code></pre>
+<p>}</p>
+<h3 id="函数式接口四种类型">函数式接口四种类型</h3>
+<p>函数式接口	方法	参数类型	返回类型	作用<br>
+Consumer消费型接口	void accept(T t)	T	void	对T类型的参数进行操作<br>
+Supplier供给型接口	T get()	无	T	操作数据，返回T类型的结果<br>
+Function函数型接口	R apply(T t)	T	R	对T类型参数进行操作，并返回R类型的结果<br>
+Predicate 断定型接口	boolean test(T t)	T	boolean	确定T类型参数是否满足某约束，并返回boolean值</p>
+<h3 id="lambda表达式的作用">Lambda表达式的作用</h3>
+<ul>
+<li>传递行为，而不仅仅是值</li>
+<li>提升抽象层次</li>
+<li>API重用性更好</li>
+<li>更加灵活</li>
+</ul>
+<h3 id="function接口">Function接口</h3>
+<blockquote>
+<p><strong>函数式接口中，可以进行传值，也可以进行行为的传递，可以让方法的使用者传递方法所需要实现的行为，方法本身做更加抽象的逻辑实现</strong><br>
+package funcationdemo;</p>
+</blockquote>
+<p>import java.util.function.Function;</p>
+<p>/**</p>
+<ul>
+<li>
+<p>描述:</p>
+</li>
+<li>
+<p>function 函数实现*<br>
+*/<br>
+public class FunctionTest {<br>
+public static void main(String[] args) {<br>
+FunctionTest functionTest = new FunctionTest();<br>
+System.out.println(functionTest.compute(3, value -&gt; value * value));<br>
+}</p>
+<p>public int compute(int a, Function&lt;Integer, Integer&gt; function) {<br>
+return function.apply(a);<br>
+}<br>
+}</p>
+</li>
+</ul>
+<h4 id="bifunction接口">BiFunction接口</h4>
+<p>package funcationdemo;</p>
+<p>import java.util.function.BiFunction;<br>
+import java.util.function.Function;</p>
+<p>/****************************************</p>
+<ul>
+<li>描述:</li>
+<li>BiFunction函数接口练习</li>
+<li>Interface BiFunction&lt;T,U,R&gt;</li>
+<li>
+<pre><code> T - 函数的第一个参数类型
+</code></pre>
+</li>
+<li>
+<pre><code> U - 函数的第二个参数类型
+</code></pre>
+</li>
+<li>
+<pre><code> R - 函数结果的类型
+</code></pre>
+</li>
+<li></li>
+<li>
+<pre><code> 表示接受两个参数并产生结果的函数。
+</code></pre>
+</li>
+<li>
+<pre><code> 是Function函数有两个参数的展现方式
+</code></pre>
+</li>
+<li></li>
+</ul>
+<p>****************************************/<br>
+public class BiFunctionTest {<br>
+public static void main(String[] args) {<br>
+BiFunctionTest test = new BiFunctionTest();<br>
+//        求两个数之和<br>
+System.out.println(test.compute(3, 4, Integer::sum));</p>
+<p>//        System.out.println(test.compute2(3, 4, Integer::sum, item -&gt; item * item));<br>
+//        等价于<br>
+System.out.println(test.compute2(3, 4, (num1, num2) -&gt; num1 * num2, value -&gt; value * value));</p>
+<pre><code>}
+
+/**
+ * public interface BiFunction&lt;T, U, R&gt; {
+ * &lt;p&gt;
+ * R apply(T t, U u);
+ * &lt;p&gt;
+ * &lt;p&gt;
+ * }
+ */
+public int compute(int num1, int num2, BiFunction&lt;Integer, Integer, Integer&gt; function) {
+    return function.apply(num1, num2);
+}
+
+
+/****
+ *  default &lt;V&gt; BiFunction&lt;T, U, V&gt; andThen(Function&lt;? super R, ? extends V&gt; after) {
+ *         Objects.requireNonNull(after);
+ *         return (T t, U u) -&gt; after.apply(apply(t, u));
+ *     }
+ * @param num1 计算的值
+ * @param num2 计算的值
+ * @param function 需要求和函数参数（函数参数指的是需要函数执行的行为）
+ * @param function2 需要返回函数参数
+ * @return 计算后返回的值
+ */
+public int compute2(int num1, int num2,
+                    BiFunction&lt;Integer, Integer, Integer&gt; function,
+                    Function&lt;Integer, Integer&gt; function2) {
+    return function.andThen(function2).apply(num1, num2);
+}
+</code></pre>
+<p>}</p>
+<h4 id="binaryoperator接口">BinaryOperator接口</h4>
+<p>package funcationdemo;</p>
+<p>import java.util.Comparator;<br>
+import java.util.function.BinaryOperator;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>BinaryOperator</li>
+<li>表示对同一类型的两个操作数的操作，产生与操作数相同的结果。</li>
+<li>对于操作数和结果都是相同类型的情况</li>
+<li>是BiFunction的专业化</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class BinaryOperatorTest {<br>
+public static void main(String[] args) {<br>
+BinaryOperatorTest test = new BinaryOperatorTest();<br>
+System.out.println(test.compute(3, 4, Integer::sum));<br>
+System.out.println(test.minByComparator(5, 6, Comparator.comparingInt(num -&gt; num)));<br>
+}</p>
+<pre><code>/****
+ *
+ * 继承 BiFunction&lt;T,T,T&gt; ,也拥有 apply()方法
+ * 三个参数必须是同类型的
+ *
+ * public interface BinaryOperator&lt;T&gt; extends BiFunction&lt;T,T,T&gt; {
+ *
+ * }
+ *
+ *
+ * @param num1
+ * @param num2
+ * @param function
+ * @return
+ */
+public int compute(int num1, int num2, BinaryOperator&lt;Integer&gt; function) {
+    return function.apply(num1, num2);
+}
+
+/***
+ *
+ *     public static &lt;T&gt; BinaryOperator&lt;T&gt; minBy(Comparator&lt;? super T&gt; comparator) {
+ *         Objects.requireNonNull(comparator);
+ *         return (a, b) -&gt; comparator.compare(a, b) &lt;= 0 ? a : b;
+ *     }
+ *
+ * @param num1 比较参数1
+ * @param num2 比较数字2
+ * @param comparator 比较器
+ * @return 返回比较的结果
+ */
+
+public int minByComparator(int num1, int num2, Comparator&lt;Integer&gt; comparator) {
+    return BinaryOperator.minBy(comparator).apply(num1, num2);
+}
+</code></pre>
+<p>}</p>
+<h3 id="consumer接口">Consumer接口</h3>
+<p>package funcationdemo;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;<br>
+import java.util.Optional;<br>
+import java.util.function.Consumer;</p>
+<p>/*********************************************************</p>
+<ul>
+<li>描述:</li>
+<li>Consumer函数</li>
+<li>表示接受单个输入参数并且不返回结果的操作</li>
+<li></li>
+</ul>
+<p>********************************************************/<br>
+public class ConsumerTest {<br>
+public static void main(String[] args) {<br>
+List<String> list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);<br>
+list.forEach(str-&gt;{<br>
+String strParam = str;<br>
+Optional<String> optional = Optional.ofNullable(strParam);<br>
+String rtn = optional.map(strParam1 -&gt; strParam1.toUpperCase()).orElse(&quot;&quot;);<br>
+System.out.println(rtn);<br>
+});</p>
+<pre><code>}
+</code></pre>
+<p>}</p>
+<h3 id="predicate接口">Predicate接口</h3>
+<h4 id="结合stream流使用">结合Stream流使用</h4>
+<p>package funcationdemo;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;<br>
+import java.util.Optional;<br>
+import java.util.function.Consumer;<br>
+import java.util.function.Function;<br>
+import java.util.function.Predicate;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>Predicate</li>
+<li>
+<pre><code> 表示一个参数的谓词
+</code></pre>
+</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class PredicateTest {<br>
+public static void main(String[] args) {<br>
+PredicateTest test = new PredicateTest();<br>
+System.out.println(test.isTrueOfStr(&quot;hell0&quot;, str -&gt; str.length() &gt; 4));<br>
+List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);<br>
+//      Predicate 接口使用<br>
+Predicate<Integer> predicate = i -&gt; i % 2 == 0;<br>
+//       Optional 使用的函数<br>
+Function&lt;Integer, Integer&gt; function = integer -&gt; {<br>
+Optional<Integer> integerOptional = Optional.of(integer);<br>
+Integer rtn = integerOptional.map(ele -&gt; 2 * ele).get();<br>
+return rtn;<br>
+};<br>
+//      输出参数<br>
+Consumer<Integer> consumer = param -&gt; {<br>
+Optional<Integer> integer = Optional.ofNullable(param);<br>
+Integer rtn = integer.map(function).get();<br>
+System.out.println(rtn);<br>
+};<br>
+test.conditionFilter(list, predicate, consumer);<br>
+}</p>
+<pre><code>public boolean isTrueOfStr(String str, Predicate&lt;String&gt; funciton) {
+    return funciton.test(str);
+}
+
+public void conditionFilter(List&lt;Integer&gt; list, Predicate&lt;Integer&gt; predicate, Consumer&lt;Integer&gt; consumer) {
+    list.stream().filter(predicate).forEach(consumer);
+}
+</code></pre>
+<p>}</p>
+<h3 id="supplier接口">Supplier接口</h3>
+<p>package funcationdemo;</p>
+<p>import java.util.function.Supplier;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>Supplier</li>
+<li>代表结果供应商，没有要求每次调用供应商时都会返回新的或不同的结果</li>
+<li>不接受参数，返回一个结果。泛型就是需要返回结果的类型</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class SupplierTest {<br>
+public static void main(String[] args) {<br>
+Supplier<String> supplier = String::new;<br>
+String str = supplier.get();<br>
+str = &quot;hello world&quot;;<br>
+System.out.println(str);<br>
+}<br>
+}</p>
+<h3 id="methodreference">MethodReference</h3>
+<blockquote>
+<p><strong>方法引用是用来直接访问类或者实例的已经存在的方法或者构造方法。<code>方法引用提供了一种引用而不执行方法的方式</code>，它需要由兼容的函数式接口构成的目标类型上下文。计算时，方法引用会创建函数式接口的一个实例。</strong></p>
+</blockquote>
+<h4 id="引用静态方法containingclassstaticmethodname">引用静态方法：ContainingClass::staticMethodName</h4>
+<p>package methodreference;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>MethodReference</li>
+<li>方法引用</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class MethodReferenceTest {</p>
+<pre><code>static void toUpperCaseByStr(String str) {
+    System.out.println(str.toUpperCase());
+}
+
+public static void main(String[] args) {
+    List&lt;String&gt; list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);
+</code></pre>
+<p>//        ContainingClass::staticMethodName 引用静态方法<br>
+list.forEach(MethodReferenceTest::toUpperCaseByStr);<br>
+}<br>
+}</p>
+<h4 id="引用某个对象的实例方法containingobjectinstancemethodname">引用某个对象的实例方法：containingObject::instanceMethodName</h4>
+<p>package methodreference;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>MethodReference</li>
+<li>方法引用</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class MethodReferenceTest {</p>
+<pre><code>void toUpperCaseByStr(String str) {
+    System.out.println(str.toUpperCase());
+}
+
+public static void main(String[] args) {
+    List&lt;String&gt; list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);
+    //      引用某个对象的实例方法
+    MethodReferenceTest test = new MethodReferenceTest();
+    list.forEach(test::toUpperCaseByStr);
+}
+</code></pre>
+<p>}</p>
+<h4 id="引用某个类型的任意对象的实例方法containingtypemethodname">引用某个类型的任意对象的实例方法：ContainingType::methodName</h4>
+<p>package methodreference;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;<br>
+import java.util.function.Consumer;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>MethodReference</li>
+<li>方法引用</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class MethodReferenceTest{</p>
+<pre><code>public static void main(String[] args) {
+    /*引用某个类型的任意对象的实例方法*/
+    List&lt;String&gt; list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);
+    list.sort(String::compareTo);
+    list.forEach(System.out::println);
+}
+</code></pre>
+<p>}</p>
+<h4 id="引用构造方法classnamenew">引用构造方法：ClassName::new</h4>
+<pre><code>package methodreference;
+
+import java.util.function.Supplier;
+
+/**************************************************************
+ * 描述:
+ *    MethodReference
+ *    方法引用
+ *
+ **************************************************************/
+public class MethodReferenceTest{
+
+    public MethodReferenceTest() {
+    }
+
+    public String getString(Supplier&lt;String&gt; supplier){
+        return supplier.get() +&quot;test&quot;;
+    }
+    public static void main(String[] args) {
+        MethodReferenceTest test = new MethodReferenceTest();
+        System.out.println(test.getString(String::new));
+    }
+}
+</code></pre>
+<h4 id="超类上的实例方法引用">超类上的实例方法引用</h4>
+<p>**组成语法格式：super::methodName</p>
+<p>方法的名称由methodName指定，通过使用<strong>super</strong>，可以引用方法的超类版本。</p>
+<p>还可以捕获this 指针，this :: equals 等价于lambda表达式 x -&gt; this.equals(x);</p>
+<h4 id="数组构造方法引用">数组构造方法引用</h4>
+<p>**组成语法格式：TypeName[]::new</p>
+<p>例子：</p>
+<p>int[]::new 是一个含有一个参数的构造器引用，这个参数就是数组的长度。等价于lambda表达式 x -&gt; new int[x]。</p>
+<p>假想存在一个接收int参数的数组构造方法</p>
+<p>IntFunction arrayMaker =int[]::new;int[] array = arrayMaker.apply(10)// 创建数组 int[10]</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Docker 教程（三）：Docker 命令]]></title>
+        <id>https://kangjn.github.io/post/docker-jiao-cheng-san-docker-ming-ling/</id>
+        <link href="https://kangjn.github.io/post/docker-jiao-cheng-san-docker-ming-ling/">
+        </link>
+        <updated>2021-04-21T03:10:11.000Z</updated>
+        <content type="html"><![CDATA[<p>我们通过 Docker 命令与操作 Docker 服务，可以构建 Docker 镜像、运行 Docker 容器、将 Docker 镜像推送到远程等。本文主要介绍一些常用的 Docker 命令。</p>
+<p>请注意，根据在 Linux 系统上安装 Docker 的方式，可能需要在所有命令前面加上sudo，使用 root 权限运行他们。比如：</p>
+<p>sudo docker build .</p>
+<p>… 而不仅仅是：</p>
+<p>docker build .</p>
+<p>Docker 命令行工具</p>
+<p>在 Linux 系统中安装 Docker 时，会安装一个名为docker的命令行工具，可以在 Linux 命令行执行。</p>
+<p>docker有很多的参数，不同的参数作用不同，可以指挥 Docker 做出不同的行为，可以认为是给 Docker 的命令。以下是docker命令示例：</p>
+<p>docker build .</p>
+<p>这个示例中包含三部分：docker命令、参数build、参数.。</p>
+<p>参数build是一个 Docker 命令，换句话说，是一个给 docker 可执行命令行的命令。通常，docker 命令行的第一个参数都是 Docker 命令。</p>
+<p>参数.是build命令的参数。<br>
+docker build</p>
+<p>docker build命令是调用 Docker 从 Dockerfile 文件构建 docker 镜像，要使用docker build命令，必须告诉它从哪个 Dockerfile 文件生成镜像。关于 Dockerfile 的内容，可以查看 这里。以下是docker build命令示例：</p>
+<p>docker build .</p>
+<p>参数.表示从当前目录找到 Dockerfile 文件。<br>
+docker images</p>
+<p>docker images命令是列出本机的 Docker 镜像，以下是docker images命令示例：</p>
+<p>docker images</p>
+<p>运行上述命令会输出类似下面的内容：</p>
+<p>REPOSITORY       TAG        IMAGE ID        CREATED          SIZE<br>
+hello-world      latest     fce289e99eb9    9 months ago     1.84kB</p>
+<p>docker run</p>
+<p>docker run命令用来基于给定的 Docker 镜像运行 Docker 容器，docker run的参数，可以是 Docker 镜像的名称或 ID，以下是运行 Docker 容器的示例：</p>
+<p>docker run hello-world</p>
+<p>这个例子会基于hello-world镜像运行 Docker 容器。</p>
+<p>我们还可以通过 Docker 镜像 ID 运行 Docker 容器，命令如下：</p>
+<p>docker run fce289e99eb9</p>
+<p>docker ps</p>
+<p>docker ps命令用于显示当前系统中正在运行的 Docker 容器，示例如下：</p>
+<p>docker ps</p>
+<p>注意，一些 Docker 容器会在完成任务后立即关闭，在docker ps的结果列表中，这种 Docker 容器很有可能会很长时间都不可见。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Docker 教程（二）：Dockerfile]]></title>
+        <id>https://kangjn.github.io/post/lesslessdocker-jiao-cheng-greatergreater-er-dockerfile/</id>
+        <link href="https://kangjn.github.io/post/lesslessdocker-jiao-cheng-greatergreater-er-dockerfile/">
+        </link>
+        <updated>2021-04-21T03:07:15.000Z</updated>
+        <content type="html"><![CDATA[<p>Dockerfile包含一组关于如何构建Docker镜像的说明，通过<code>docker build</code>命令执行Dockerfile文件，可以构建一个Docker镜像，本文介绍了如何编写Dockerfile文件以及构建一个Docker镜像。</p>
+<h2 id="dockerfile的好处">Dockerfile的好处</h2>
+<p>Dockerfile文件以书面形式说明了如何构建一个Docker镜像，Docker镜像通常包含如下内容：</p>
+<ul>
+<li>首先需要一个基本的Docker镜像，在这个基础Docker镜像上构建自己的Docker镜像。</li>
+<li>一组需要安装在Docker镜像中的工具和应用。</li>
+<li>一组需要复制到Docker镜像中的文件（比如配置文件）。</li>
+<li>可能需要在防火墙中打开的网络（TPC/UDP）端口或其他。</li>
+<li>等等。。。</li>
+</ul>
+<p>首先，在Dockerfile文件中以书面形式说明这些，就意味着，我们不用特意记住应用程序如何安装，包括操作系统什么要求、需要安装的应用程序、需要赋值的文件、需要打开的网络端口等，这些内容都被记录在Dockerfile中。</p>
+<p>另外，通过Dockerfile文件构建Docker镜像，我们不需要手动执行这些繁琐重复且容易出错的工作。Docker会自动做这些事情，简单、快速、且不容易出错。</p>
+<p>第三，我们很容易和其他人分享Dockerfile文件，并且他们可以自己构建Docker镜像。</p>
+<p>第四，Dockerfile很容易存储在Git这样的版本控制器中，这样就可以跟踪Dockerfile（服务器、应用配置）的变更记录。版本控制器也可以很容易的让人们协同合作，比如在Dockerfile上，以及分享Dockerfile。</p>
+<h2 id="dockerfile的结构">Dockerfile的结构</h2>
+<p>Dockerfile包含一组指令，每个指令有一个命令和参数组成，类似于命令行可执行文件。下面是一个Dockerfile简单示例：</p>
+<pre><code class="language-dockerfile"># 基础镜像
+FROM ubuntu:latest
+
+# 这里可以有更多安装软件和复制文件到镜像中的说明。
+COPY    /myapp/target/myapp.jar    /myapp/myapp.jar
+
+# 在Docker容器中执行的命令。
+CMD echo Starting Docker Container
+</code></pre>
+<h2 id="docker基础镜像">Docker基础镜像</h2>
+<p>Docker镜像是由层组成，每一层都会为最终的Docker镜像添加一些内容。每一个层实际上都是一个单独的Docker镜像，所以说，Docker镜像是由一个或多个层镜像组成，我们可以在其上添加自己的层。</p>
+<p>当通过Dockerfile文件指定自己的Docker镜像时，通常是从一个Docker基础镜像开始。这是另一个Docker镜像，可以在其上构建自己的Docker镜像。这个Docker基础镜像本身可能也包含多个层，并且是基于另一个基础镜像构建的。</p>
+<p>我们可以使用<code>From</code>命令在Dockerfile文件中指定Docker镜像作为基础镜像，如下节所述。</p>
+<h2 id="maintainer">MAINTAINER</h2>
+<p><code>MAINTAINER</code>命令用于说明谁在维护这个Dockerfile文件。比如：</p>
+<pre><code class="language-dockerfile">MAINTAINER   Joe Blocks &lt;joe@blocks.com&gt;
+</code></pre>
+<p><code>MAINTAINER</code>命令并不常用，因为这类信息在Git存储或其他地方有了。</p>
+<h2 id="from">FROM</h2>
+<p><code>FROM</code>命令用于指定Docker基础镜像，如果是从原始Linux镜像开始，可以使用如下命令：</p>
+<pre><code class="language-dockerfile"># 基础镜像
+FROM ubuntu:latest
+</code></pre>
+<h2 id="cmd">CMD</h2>
+<p><code>CMD</code>命令用于指定启动Docker容器是需要执行的命令，该容器是基于此Dockerfile构建的Docker镜像，下面是一些Dockerfile的<code>CMD</code>示例：</p>
+<pre><code class="language-dockerfile">CMD echo Docker container started.
+</code></pre>
+<p>本例是打印“Docker container started”这行文本。</p>
+<p>下一个<code>CMD</code>示例是启动一个java应用：</p>
+<pre><code class="language-dockerfile">CMD java -cp /myapp/myapp.jar com.jenkov.myapp.MainClass arg1 arg2 arg3
+</code></pre>
+<h2 id="copy">COPY</h2>
+<p><code>COPY</code>命令将一个或多个文件从主机（从Dockerfile文件构建Docker镜像的机器）复制到Docker镜像中，可以复制的内容包括文件或目录，下面是一个示例：</p>
+<pre><code class="language-dockerfile">COPY    /myapp/target/myapp.jar    /myapp/myapp.jar
+</code></pre>
+<p>这个例子是把主机的/myapp/target/myapp.jar文件复制到Docker进行中的/myapp/myapp.jar文件。第一个参数是主机路径（从哪里来），第二个参数是Docker镜像的路径（到哪里去）。</p>
+<p>我们还可以复制一个目录到Docker镜像中，比如：</p>
+<pre><code class="language-dockerfile">COPY    /myapp/config/prod    /myapp/config
+</code></pre>
+<p>这个例子是把主机的/myapp/config/prod目录复制到Docker镜像中的/myapp/config目录。</p>
+<p>我们还可以复制多个文件到Docker镜像中的一个目录中，比如：</p>
+<pre><code class="language-dockerfile">COPY    /myapp/config/prod/conf1.cfg   /myapp/config/prod/conf2.cfg   /myapp/config/
+</code></pre>
+<p>这个例子是将主机的/myapp/config/prod/conf1.cfg文件和/myapp/conig/prod/conf2.cfg文件复制到Docker镜像中的/myapp/config/目录中。注意，目标目录必须以/（斜杠）结束才能工作。</p>
+<h2 id="add">ADD</h2>
+<p><code>ADD</code>命令与<code>COPY</code>命令工作方式相同，只有一些细微的差别：</p>
+<ul>
+<li><code>ADD</code>命令可以复制并提取TAR文件到Docker镜像中。</li>
+<li><code>ADD</code>命令可以通过HTTP下载文件，并复制到Docker镜像中。</li>
+</ul>
+<p>下是一些示例：</p>
+<pre><code class="language-dockerfile">ADD    myapp.tar    /myapp/
+</code></pre>
+<p>这个例子是将指定的TAR文件解压缩并提取到Docker镜像的/myapp/目录中。</p>
+<p>下面是另一个例子：</p>
+<pre><code class="language-dockerfile">ADD    http://jenkov.com/myapp.jar    /myapp/
+</code></pre>
+<h2 id="env">ENV</h2>
+<p><code>ENV</code>命令是在Docker镜像中设置环境变量，此环境变量可用于<code>CMD</code>命令在Docker镜像内部启动应用程序。举个例子：</p>
+<pre><code class="language-dockerfile">ENV    MY_VAR   123
+</code></pre>
+<p>本例将环境变量<code>MY_VAR</code>设置为值123。</p>
+<h2 id="run">RUN</h2>
+<p><code>RUN</code>可以在Docker镜像中执行命令行指令，执行时机是Docker镜像构建过程中，所以<code>RUN</code>命令只会执行一次。<code>RUN</code>命令可用于在Docker镜像中安装应用程序、提取文件或其他命令行功能，这些操作只需要执行一次，以供Docker镜像后续使用。</p>
+<pre><code class="language-dockerfile">RUN apt-get install some-needed-app
+</code></pre>
+<h2 id="arg">ARG</h2>
+<p><code>ARG</code>命令允许定义一个参数，这个参数可以在通过Dockerfile文件构建Docker镜像时，通过命令参数传递给Docker。比如：</p>
+<pre><code class="language-dockerfile">ARG tcpPort
+</code></pre>
+<p>当执行<code>docker build</code>命令执行Dockerfile构建Docker镜像时，可以指定<code>tcpPort</code>参数，比如：</p>
+<pre><code class="language-dockerfile">docker build --build-arg tcpPort=8080 .
+</code></pre>
+<blockquote>
+<p>注意，<code>--build-arg</code>后面的<code>tcpPort=8080</code>，是将<code>tcpPort</code>参数的值设置为8080。</p>
+</blockquote>
+<p>我们可以通过多个<code>ARG</code>命令定义多个参数，举个例子：</p>
+<pre><code class="language-dockerfile">ARG tcpPort
+ARG useTls
+</code></pre>
+<p>当构建Docker镜像时，必须为所有构建参数提供值。【译者注，1.13版本之前，不提供值会直接报错，1.13版本之后，不提供值不会报错，但是会弹出警告】。举个例子：</p>
+<pre><code class="language-dockerfile">docker build --build-arg tcpPort=8080 --build-arg useTls=true .
+</code></pre>
+<p>我们可以为<code>ARG</code>设置默认值，当构建Docker镜像时，如果没有指定参数值，将使用默认值。举个例子：</p>
+<pre><code class="language-dockerfile">ARG tcpPort=8080
+ARG useTls=true
+</code></pre>
+<p>如果<code>tcpPort</code>和<code>useTls</code>在生成Docker镜像时，都没有设置参数，将使用默认值8080和true。</p>
+<p><code>ARG</code>声明的参数通常在Dockerfile的其他地方引用，比如：</p>
+<pre><code class="language-dockerfile">ARG tcpPort=8080
+ARG useTls=true
+
+CMD start-my-server.sh -port ${tcpPort} -tls ${useTls}
+</code></pre>
+<blockquote>
+<p>注意：两个引用<code>${tcpPort}</code>和<code>${useTls}</code>，引用名是<code>tcpPort</code>和<code>useTls</code>这两个<code>ARG</code>声明的参数。</p>
+</blockquote>
+<pre><code class="language-dockerfile">docker build --build-arg tcpPort=8080
+</code></pre>
+<h2 id="workdir">WORKDIR</h2>
+<p><code>WORKDIR</code>命令指明了Docker镜像中的工作目录，工作目录将对<code>WORKDIR</code>指令之后的所有命令生效，举个例子：</p>
+<pre><code class="language-dockerfile">WORKDIR    /java/jdk/bin
+</code></pre>
+<h2 id="expose">EXPOSE</h2>
+<p><code>EXPOSE</code>命令将对外开放Docker容器中的网络端口，比如，如果Docker容器运行一个web服务器，那么，该web服务器可能需要打开端口80，以便客户端链接到它。举个例子：</p>
+<pre><code class="language-dockerfile">EXPOSE   8080
+</code></pre>
+<p>我们还可以指明打开端口的通信协议，比如：UDP和TCP。下面是设置允许通信协议的示例：</p>
+<pre><code class="language-dockerfile">EXPOSE   8080/tcp 9999/udp
+</code></pre>
+<p>如果没有指定协议，将默认认定为TCP协议。</p>
+<h2 id="volume">VOLUME</h2>
+<p><code>VOLUME</code>命令会在Docker镜像中创建一个目录，这个目录可以挂载到Docker主机上。换句话说，可以在Docker镜像中创建目录，比如<code>/data</code>，这个目录可以在稍后挂载到Docker主机的<code>/container-data/container1</code>目录上。挂载成功后，容器会启动。下面是一个使用<code>VOLUME</code>命令在Dockerfile中定义装载目录的示例：</p>
+<pre><code class="language-dockerfile">VOLUME   /data
+</code></pre>
+<h2 id="entrypoint">ENTRYPOINT</h2>
+<p><code>ENTRYPOINT</code>命令为从该Docker镜像启动Docker容器提供入口点，入口点是Docker容器启动时执行的应用程序或命令。这样，<code>ENTRYPOINT</code>和<code>CMD</code>工作方式类似，不同之处在于，使用<code>ENTRYPOINT</code>时，当<code>ENTRYPOINT</code>执行的应用程序完成时，Docker容器将关闭。因此，<code>ENTRYPOINT</code>使Docker镜像本身成为一个可执行命令，可以启动，完成后关闭。以下是<code>ENTRYPOINT</code>示例：</p>
+<pre><code class="language-dockerfile">ENTRYPOINT java -cp /apps/myapp/myapp.jar com.jenkov.myapp.Main
+</code></pre>
+<p>这个示例将在容器启动时执行Java应用程序的主类<code>com.jenkov.myapp.Main</code>，当应用程序关闭时，Docker容器也会关闭。</p>
+<h2 id="healthcheck">HEALTHCHECK</h2>
+<p><code>HEALTHCHECK</code>命令可以定期执行健康检查，以监视Docker容器中运行的应用程序的运行状况。如果命令返回0，Docker将认为应用程序和容器正常，如果命令返回1，Docker会认为应用程序和容器不正常。示例如下：</p>
+<pre><code class="language-dockerfile">HEALTHCHECK java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
+</code></pre>
+<p>这个示例中使用了java应用程序的<code>com.jenkov.myapp.HealthCheck</code>作为健康检查的命令，我们可以使用任何有意义的健康检查命令。</p>
+<h3 id="健康检查间隔时间">健康检查间隔时间</h3>
+<p>默认情况下，Docker每30秒执行一次<code>HEALTHCHECK</code>命令。如果想修改时间间隔，我们可以自定义时间，通过<code>--interval</code>参数，可以指定健康检查的检查间隔时间。下面是一个将<code>HEALTHCHECK</code>间隔设置为60秒的示例：</p>
+<pre><code class="language-dockerfile">HEALTHCHECK --interval=60s java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
+</code></pre>
+<h3 id="健康检查开始时间">健康检查开始时间</h3>
+<p>默认情况下，Docker会立即检查Docker容器的监控状况。但是，有些应用程序可能需要一段时间启动，因此，只有经过某段时间后再进行健康检查才有意义。我们可以使用<code>--start-period</code>参数设置健康检查开始时间。下面是一个将健康检查设置为5分钟的示例，在Docker开始健康检查之前，为容器和应用程序提供300秒（5分钟）的启动时间：</p>
+<pre><code class="language-dockerfile">HEALTHCHECK --start-period=300s java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
+</code></pre>
+<h3 id="健康检查超时时间">健康检查超时时间</h3>
+<p>健康检查很有可能超时，如果<code>HEALTCHECK</code>命令需要超过给定时间限制才完成，Docker将认为健康检查超时。可以使用<code>--timeout</code>参数设置超时时间，如下是设置超时时间为5秒的示例：</p>
+<pre><code class="language-dockerfile">HEALTHCHECK --timeout=5s java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
+</code></pre>
+<blockquote>
+<p>注意，如果健康检查超时，Docker也会认为容器不健康。</p>
+</blockquote>
+<h3 id="健康检查重复次数">健康检查重复次数</h3>
+<p>如果<code>HEALTHCHECK</code>命令执行失败，有可能是结果返回1，或者执行超时，Docker会在认定容器不健康前，重试3次<code>HEALTHCHECK</code>命令，用于检查Docker容器是否返回健康状态。可以通过<code>--retries</code>设置重试次数。下面是将重试次数设置为5的示例：</p>
+<pre><code class="language-dockerfile">HEALTHCHECK --retries=5 java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://local
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Docker 教程（一）：Docker 是什么]]></title>
+        <id>https://kangjn.github.io/post/docker-jiao-cheng-yi-docker-shi-shi-me/</id>
+        <link href="https://kangjn.github.io/post/docker-jiao-cheng-yi-docker-shi-shi-me/">
+        </link>
+        <updated>2021-04-21T03:04:33.000Z</updated>
+        <content type="html"><![CDATA[<p>Docker 是一种将应用程序和服务器配置打包成 Docker  镜像的方法，使用了一种称为 Dockerfile 的简单打包规范。Docker 镜像可以启动多个多个实例，这些运行的实例被称为 Docker  容器。这个系列的内容主要包括讲解什么是 Docker 镜像、什么是容器、什么是 Dockerfile，以及如何创建、运行和发布等。</p>
+<h2 id="docker-的优势">Docker 的优势</h2>
+<p>使用 Dockerfile 打包应用和服务器配置最大的好处是：</p>
+<ul>
+<li>不会忘记服务器是如何配置的，这些配置信息都记录在 Dockerfile 中。</li>
+<li>很容易在一个全新啊的 Docker 主机上运行应用程序，只需要将应用程序的 Docker 镜像部署到这台 Docker 主机上，然后启动它即可。</li>
+<li>可以使用 Kubernetes 和 Swarm 轻松管理集群中的 Docker 容器。</li>
+<li>目前许多云服务器平台可以很轻松的部署 Docker 容器，Docker 已经成为让云更加独立的部署方案。</li>
+<li>Docker 容器可以很简单的实现在客户自己的服务器上按照你的应用程序。</li>
+</ul>
+<h2 id="什么是-docker-容器">什么是 Docker 容器</h2>
+<p>Linux  操作系统有几个特性：运行在操作系统上运行容器化的应用程序，这些容器化的特性，运行将文件系统和网络在各个容器化应用程序之间彼此分离。换句话说，一个容器化应用程序，不能访问另一个容器化应用程序的文件系统或网络，除非增加特殊配置，允许这种操作。Docker 使用 Linux 的容器化特性，并通过一组易于使用的工具公开这些特性。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction1.png" alt="什么是 Docker 容器" loading="lazy"></figure>
+<h2 id="docker-容器-vs-虚拟机">Docker 容器 vs. 虚拟机</h2>
+<p>Docker 容器在本质上类似于虚拟机，两者的不同之处在于，虚拟机在总栈上有一个额外的操作系统。也就是说，虚拟机有完整的操作系统，然后这个虚拟机运行在一个有操作系统的主机上。</p>
+<p>Docker 容器与虚拟机的实现不同，它没有自己单独的操作系统，直接运行在所在主机的操作系统中。所以，Docker 容器足够小，因为它不包含虚拟机操作系统。Docker 容器运行的也很好，因为它不需要虚拟机的虚拟化。</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction2.png" alt="Docker 容器 vs. 虚拟机" loading="lazy"></figure>
+<h2 id="dockerfile">Dockerfile</h2>
+<p>如前所述，我们可以通过一个按规则定义的 Dockerfile 文件，指定要包含在 Docker 容器中的内容。Dockerfile  文件包含了一组有 Docker 命令行工具执行的 Docker 指令，按照 Dockerfile 执行的结果是 Docker 镜像。我们可以从 <a href="http://tutorials.jenkov.com/docker/dockerfile.html">Dockerfile 教程</a> 中得到更详细的解释。【译者注：后续翻译完成后，将替换此处链接。】</p>
+<h2 id="docker-镜像">Docker 镜像</h2>
+<p>Docker 命令行工具按照 Dockerfile 中定义的结构执行指令时，会生产一个可移植、可运行的 Docker 镜像。这个  Docker 镜像中包含了所有 Docker 容器需要的文件和指令，同一个 Docker 镜像可以启动多个 Docker 容器。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction3.png" alt="Docker 镜像" loading="lazy"></figure>
+<h2 id="docker-仓库">Docker 仓库</h2>
+<p>Docker 镜像可以存储在 Docker 仓库中，一个可以将 Docker 镜像上传、下载的存储仓库。Docker  仓库可以是私有的，只能你或者你的组织或者你指定的人管理其中的镜像，也可以是公有的，任何人都可以管理其中的镜像，或者是从中下载 Docker  镜像。</p>
+<p>一个公有的 Docker 仓库，是运行潜在用户下载、安装和运行软件的很好的方式，只需要将应用程序打包为 Docker 镜像，上传到公有的 Docker 仓库中，你的用户就可以访问并使用它。</p>
+<p>Docker 公司已将 Docker 仓库作为一项托管服务，提供了私有和公有两种服务。一些云服务商，比如 AWS、AZure 和  Google，也提供了 Docker 仓库服务器，可以上传自己的 Docker 镜像。很容易的就能在云基础设施上的虚拟机或 Kubernetes 中使用这些镜像。</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction4.png" alt="Docker 仓库" loading="lazy"></figure>
+<h2 id="docker-命令行工具">Docker 命令行工具</h2>
+<p>当在操作系统中安装 Docker 的时候，会同时安装 Docker 命令行工具。Docker 命令行工具可以通过 Dockerfile  构建 Docker 镜像，可以将 Docker 镜像上传到 Docker 仓库中，可以从 Docker 仓库中下载 Docker 镜像，可以操作 Docker 镜像启动或停止 Docker 容器。</p>
+<h2 id="docker-compose">Docker Compose</h2>
+<p>Docker Compose 提供一种功能，可以将多个 Docker  容器链接成一个组合中，这个组合中的所有容器，可以一次性全部部署或停止。比如，一个 Docker 容器中运行应用，一个 Docker  容器中运行数据库，应用依赖于数据库，同时启动或停止，可以实现应用依赖的数据库没有正常运行。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CentOS7安装使用Docker]]></title>
+        <id>https://kangjn.github.io/post/centos7-an-zhuang-shi-yong-docker/</id>
+        <link href="https://kangjn.github.io/post/centos7-an-zhuang-shi-yong-docker/">
+        </link>
+        <updated>2021-04-21T02:52:06.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="安装">安装</h2>
+<p>Docker 官方为了简化安装流程，提供了一套安装脚本，CentOS 系统上可以使用这套脚本安装：</p>
+<pre><code>curl -sSL https://get.docker.com/ | sh
+</code></pre>
+<p>执行这个命令后，脚本就会自动的将一切准备工作做好，并且把 Docker 安装在系统中。</p>
+<p>不过，由于伟大的墙的原因，在国内使用这个脚本可能会出现某些下载出现错误的情况。国内的一些云服务商提供了这个脚本的修改版本，使其使用国内的 Docker 软件源镜像安装，这样就避免了墙的干扰。</p>
+<h3 id="阿里云安装脚本">阿里云安装脚本</h3>
+<pre><code>curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh 
+</code></pre>
+<hr>
+<h2 id="镜像">镜像</h2>
+<h3 id="选择国内镜像">选择国内镜像</h3>
+<ul>
+<li>
+<h4 id="官方中国区加速器">官方中国区加速器</h4>
+</li>
+</ul>
+<pre><code>sudo echo &quot;DOCKER_OPTS=\&quot;--registry-mirror=https://registry.docker-cn.com\&quot;&quot; &gt;&gt; /etc/default/docker
+</code></pre>
+<p>推荐使用官方加速器。</p>
+<ul>
+<li>
+<h4 id="网易163">网易163</h4>
+</li>
+</ul>
+<pre><code>sudo echo &quot;DOCKER_OPTS=\&quot;--registry-mirror=http://hub-mirror.c.163.com\&quot;&quot; &gt;&gt; /etc/default/docker
+</code></pre>
+<p>目前网易镜像已经比较稳定。</p>
+<p>修改完默认镜像仓库后需要重启docker才能生效：</p>
+<pre><code>service docker restart
+</code></pre>
+<h3 id=""></h3>
+<hr>
+<h2 id="使用">使用</h2>
+<h3 id="启动docker">启动Docker</h3>
+<pre><code>service docker start
+</code></pre>
+<h3 id="开机自启动">开机自启动</h3>
+<pre><code>sudo chkconfig docker on
+</code></pre>
+<h3 id="停止docker">停止Docker</h3>
+<pre><code>service docker stop
+</code></pre>
+<h3 id="本地镜像列表">本地镜像列表</h3>
+<pre><code>docker images
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/903154571.png" alt="img" loading="lazy"></figure>
+<p>使用images命令查看发现当前本地没有任何镜像</p>
+<h3 id="搜索">搜索</h3>
+<pre><code>docker search hello
+</code></pre>
+<p>以下结果是我们搜索到的与&quot;hello&quot;相关的所有镜像</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1217719435.png" alt="img" loading="lazy"></figure>
+<h3 id="拉取镜像">拉取镜像</h3>
+<pre><code>docker pull hello-world
+</code></pre>
+<p>我们尝试从仓库中拉取名为“hello-world”的镜像</p>
+<p>拉取成功后使用docker images命令查看，发现该镜像已被拉取到本地。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/234797084.png" alt="img" loading="lazy"></figure>
+<h3 id="运行镜像">运行镜像</h3>
+<pre><code>docker run hello-world
+</code></pre>
+<p>运行后该镜像会输出如下信息：</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/78870000.png" alt="img" loading="lazy"></figure>
+<h3 id="查看运行中的镜像">查看运行中的镜像</h3>
+<pre><code>docker ps
+</code></pre>
+<h3 id="镜像重命名">镜像重命名</h3>
+<pre><code>docker tag hello-world hw
+</code></pre>
+<p>我们将之前下载的“hello_world”镜像重命名为“hw”，使用images命令查看会发现列表中已经多了一个名为“hw”的镜像。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1341420741.png" alt="img" loading="lazy"></figure>
+<h3 id="删除镜像">删除镜像</h3>
+<pre><code>docker rmi hello-world
+</code></pre>
+<p>我们删除了名为“hello_world”的镜像，rmi后面的参数也可以是 <code>镜像短 ID</code>、<code>镜像长 ID</code>、<code>镜像名</code> 或者 <code>镜像摘要。</code></p>
+<hr>
+<h2 id="卸载">卸载</h2>
+<ul>
+<li>
+<h4 id="列出安装包">列出安装包</h4>
+</li>
+</ul>
+<pre><code>yum list installed | grep docker
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/214283262.png" alt="img" loading="lazy"></figure>
+<ul>
+<li>
+<h4 id="删除安装包">删除安装包</h4>
+</li>
+</ul>
+<pre><code>yum -y remove docker-engine.x86_64
+yum -y remove docker-engine-selinux.noarch
+</code></pre>
+<ul>
+<li>
+<h4 id="删除镜像容器等">删除镜像/容器等</h4>
+</li>
+</ul>
+<pre><code>rm -rf /var/lib/docker
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Spring Boot与Docker部署]]></title>
+        <id>https://kangjn.github.io/post/spring-boot-yu-docker-bu-shu/</id>
+        <link href="https://kangjn.github.io/post/spring-boot-yu-docker-bu-shu/">
+        </link>
+        <updated>2021-04-21T02:44:17.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="开启docker远程访问">开启Docker远程访问</h2>
+<p>首先需要开启docker远程访问功能，以便可以进行远程操作。</p>
+<ul>
+<li>
+<h4 id="centos-6">CentOS 6</h4>
+</li>
+</ul>
+<p>修改/etc/default/docker文件，重启后生效（service docker restart）。</p>
+<pre><code>DOCKER_OPTS=&quot;-H=unix:///var/run/docker.sock -H=0.0.0.0:2375&quot;
+</code></pre>
+<ul>
+<li>
+<h4 id="centos-7">CentOS 7</h4>
+</li>
+</ul>
+<p>打开/usr/lib/systemd/system/docker.service文件，修改ExecStart这行。</p>
+<pre><code>ExecStart=/usr/bin/dockerd  -H tcp://0.0.0.0:2375  -H unix:///var/run/docker.sock
+</code></pre>
+<p>重启后生效</p>
+<pre><code>  systemctl daemon-reload    
+  systemctl restart docker.service 
+</code></pre>
+<p>测试是否生效</p>
+<pre><code>curl http://127.0.0.1:2375/info
+</code></pre>
+<hr>
+<h2 id=""></h2>
+<h2 id="新建maven工程">新建Maven工程</h2>
+<p>pom.xml配置如下:</p>
+<pre><code>&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;test.springboot.docker&lt;/groupId&gt;
+    &lt;artifactId&gt;docker-springboot&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3.RELEASE&lt;/version&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;com.spotify&lt;/groupId&gt;
+                &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;0.4.14&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;imageName&gt;${docker.image.prefix}/${project.artifactId}&lt;/imageName&gt;
+                    &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt;
+                    &lt;dockerHost&gt;http://192.168.1.200:2375&lt;/dockerHost&gt;
+                    &lt;resources&gt;
+                        &lt;resource&gt;
+                            &lt;targetPath&gt;/&lt;/targetPath&gt;
+                            &lt;directory&gt;${project.build.directory}&lt;/directory&gt;
+                            &lt;include&gt;${project.build.finalName}.jar&lt;/include&gt;
+                        &lt;/resource&gt;
+                    &lt;/resources&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</code></pre>
+<p><code>imageName：</code>指定了镜像的名字</p>
+<p><code>dockerDirectory：</code>指定Dockerfile的位置</p>
+<p><code>dockerHost：</code>指定Docker远程API地址</p>
+<p><code>resources：</code>指那些需要和Dockerfile放在一起，在构建镜像时使用的文件，一般应用jar包需要纳入</p>
+<h4 id="创建java类">创建Java类</h4>
+<pre><code>package hello;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class Application {
+
+    @RequestMapping(&quot;/&quot;)
+    public String home() {
+        return &quot;Hello Docker World&quot;;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+</code></pre>
+<h4 id="创建dockerfile">创建Dockerfile</h4>
+<p>在src/main/docker目录下创建一个名为Dockerfile的文件，配置如下：</p>
+<pre><code>FROM java
+VOLUME /tmp
+ADD docker-springboot-0.0.1-SNAPSHOT.jar app.jar
+RUN bash -c 'touch /app.jar'
+ENV JAVA_OPTS=&quot;&quot;
+ENTRYPOINT [ &quot;sh&quot;, &quot;-c&quot;, &quot;java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar&quot; ]
+</code></pre>
+<p>**FROM java：**指Docker Hub上官方提供的java镜像，有了这个基础镜像后，Dockerfile可以通过<code>FROM</code>指令直接获取它的状态——也就是在容器中<code>java</code>是已经安装的，接下来通过自定义的命令来运行Spring Boot应用。</p>
+<p>**VOLUME /tmp：**创建/tmp目录并持久化到Docker数据文件夹，因为Spring Boot使用的内嵌Tomcat容器默认使用<code>/tmp</code>作为工作目录。</p>
+<p>**ADD docker-springboot-0.0.1-SNAPSHOT.jar app.jar：**将应用jar包复制到<code>/app.jar</code></p>
+<p>**ENTRYPOINT：**表示容器运行后默认执行的命令</p>
+<p><strong>完整目录结构如下所示：</strong></p>
+<p><strong><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/291529205.png" alt="img" loading="lazy"></strong></p>
+<p>运行以下命令创建Docker镜像：</p>
+<pre><code>package docker:build
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1205907397.png" alt="img" loading="lazy"></figure>
+<hr>
+<h2 id="docker启动镜像">Docker启动镜像</h2>
+<p>查看项目是否上传成功</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1761674239.png" alt="img" loading="lazy"></figure>
+<h4 id="启动镜像">启动镜像</h4>
+<pre><code>docker run -p 8888:8080 springboot/docker-springboot
+</code></pre>
+<p>通过浏览器访问</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/738880254.png" alt="img" loading="lazy"></figure>
+<p></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[MQTT简介]]></title>
         <id>https://kangjn.github.io/post/mqtt-jian-jie/</id>
@@ -2527,860 +3530,6 @@ Vue.config.productionTip = false;</p>
 <p>虽然基于事件编程有这样那样的缺点，但是在当今的高性能高并发服务器上基于事件编程方式依然非常流行，但已经不是纯粹的基于单一线程的事件驱动了，而是 event loop + multi thread + user level thread。</p>
 <h1 id="9-本文小结">9、本文小结</h1>
 <p>高并发技术从最开始的多进程一路演进到当前的事件驱动，计算机技术就像生物一样也在不断演变进化，但不管怎样，了解历史才能更深刻的理解当下。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[理解高性能、高并发(五)：深入操作系统，理解高并发中的协程]]></title>
-        <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-wu-shen-ru-cao-zuo-xi-tong-li-jie-gao-bing-fa-zhong-de-xie-cheng/</id>
-        <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-wu-shen-ru-cao-zuo-xi-tong-li-jie-gao-bing-fa-zhong-de-xie-cheng/">
-        </link>
-        <updated>2021-04-20T03:59:23.000Z</updated>
-        <content type="html"><![CDATA[<p>应该如何彻底理解协程。</p>
-<h1 id="1-普通的函数">1、普通的函数</h1>
-<p><strong>我们先来看一个普通的函数，这个函数非常简单：</strong></p>
-<pre><code class="language-python">def func():
-   print(&quot;a&quot;)
-   print(&quot;b&quot;)
-   print(&quot;c&quot;)
-</code></pre>
-<p><strong>这是一个简单的普通函数，当我们调用这个函数时会发生什么？</strong></p>
-<ul>
-<li>1）调用func；</li>
-<li>2）func开始执行，直到return；</li>
-<li>3）func执行完成，返回函数A。</li>
-</ul>
-<p><strong>是不是很简单，函数func执行直到返回，并打印出：</strong></p>
-<pre><code class="language-python">a
-b
-c
-</code></pre>
-<p>注意这段代码是用python写的，但本篇关于协程的讨论适用于任何一门语言，因为协程并不是某种语言特有的。而我们只不过恰好使用了python来用作示例，因其足够简单。</p>
-<p>那么协程是什么呢？</p>
-<h1 id="2-从普通函数到协程">2、从普通函数到协程</h1>
-<p>接下来，我们就要从普通函数过渡到协程了。和普通函数只有一个返回点不同，协程可以有多个返回点。</p>
-<p><strong>这是什么意思呢？</strong></p>
-<pre><code class="language-python">void func() {
-  print(&quot;a&quot;)
-  暂停并返回
-  print(&quot;b&quot;)
-  暂停并返回
-  print(&quot;c&quot;)
-}
-</code></pre>
-<p>普通函数下，只有当执行完print(&quot;c&quot;)这句话后函数才会返回，但是在协程下当执行完print(&quot;a&quot;)后func就会因“暂停并返回”这段代码返回到调用函数。</p>
-<p>有的可能会一脸懵，这有什么神奇的吗？</p>
-<p><strong>我写一个return也能返回，就像这样：</strong></p>
-<pre><code class="language-python">void func() {
-  print(&quot;a&quot;)
-  return
-  print(&quot;b&quot;)
-  暂停并返回
-  print(&quot;c&quot;)
-}
-</code></pre>
-<p>直接写一个return语句确实也能返回，但这样写的话return后面的代码都不会被执行到了。</p>
-<p>协程之所以神奇就神奇在当我们从协程返回后还能继续调用该协程，并且是从该协程的上一个返回点后继续执行。</p>
-<p><strong>就好比孙悟空说一声“定”，函数就被暂停了：</strong></p>
-<pre><code class="language-python">void func() {
-  print(&quot;a&quot;)
-  定
-  print(&quot;b&quot;)
-  定
-  print(&quot;c&quot;)
-}
-</code></pre>
-<p>这时我们就可以返回到调用函数，当调用函数什么时候想起该协程后可以再次调用该协程，该协程会从上一个返回点继续执行。在编程语言中一般叫做yield（其它语言中可能会有不同的实现，但本质都是一样的）。</p>
-<p>需要注意的是：当普通函数返回后，进程的地址空间中不会再保存该函数运行时的任何信息，而协程返回后，函数的运行时信息是需要保存下来的。</p>
-<p>接下来，我们就用实际的代码看一看协程。</p>
-<h1 id="3-talk-is-cheapshow-me-the-code">3、“Talk is cheap，show me the code”</h1>
-<p>下面我们使用一个真实的例子来讲解，语言采用python.</p>
-<p>在python语言中，这个“定”字同样使用关键词yield。</p>
-<p><strong>这样我们的func函数就变成了：</strong></p>
-<pre><code class="language-python">void func() {
-  print(&quot;a&quot;)
-  yield
-  print(&quot;b&quot;)
-  yield
-  print(&quot;c&quot;)
-}
-</code></pre>
-<p>**注意：**这时我们的func就不再是简简单单的函数了，而是升级成为了协程，那么我们该怎么使用呢？</p>
-<p><strong>很简单：</strong></p>
-<pre><code class="language-python">def A():
-  co =func() # 得到该协程
-  next(co)    # 调用协程
-  print(&quot;in function A&quot;) # do something
-  next(co)    # 再次调用该协程
-</code></pre>
-<p>我们看到虽然func函数没有return语句，也就是说虽然没有返回任何值，但是我们依然可以写co = func()这样的代码，意思是说co就是我们拿到的协程了。</p>
-<p><strong>接下来我们调用该协程，使用next(co)，运行函数A看看执行到第3行的结果是什么：</strong></p>
-<pre><code class="language-apache">a
-</code></pre>
-<p>显然，和我们的预期一样，协程func在print(&quot;a&quot;)后因执行yield而暂停并返回函数A。</p>
-<p><strong>接下来是第4行，这个毫无疑问，A函数在做一些自己的事情，因此会打印：</strong></p>
-<pre><code class="language-apache">a
-in function A
-</code></pre>
-<p>接下来是重点的一行，当执行第5行再次调用协程时该打印什么呢？</p>
-<p>如果func是普通函数，那么会执行func的第一行代码，也就是打印a。</p>
-<p>但func不是普通函数，而是协程，我们之前说过，协程会在上一个返回点继续运行，因此这里应该执行的是func函数第一个yield之后的代码，也就是 <em>print(&quot;b&quot;)</em>。</p>
-<pre><code class="language-apache">a
-in function A
-b
-</code></pre>
-<p>看到了吧，协程是一个很神奇的函数，它会自己记住之前的执行状态，当再次调用时会从上一次的返回点继续执行。</p>
-<h1 id="4-图形化解释">4、图形化解释</h1>
-<p>为了让你更加彻底的理解协程，我们使用图形化的方式再看一遍。</p>
-<p><strong>首先是普通的函数调用：</strong></p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/fff298.png" alt="img" loading="lazy"></figure>
-<p>**在该图中：**方框内表示该函数的指令序列，如果该函数不调用任何其它函数，那么应该从上到下依次执行，但函数中可以调用其它函数，因此其执行并不是简单的从上到下，箭头线表示执行流的方向。</p>
-<p>**从上图中我们可以看到：**我们首先来到funcA函数，执行一段时间后发现调用了另一个函数funcB，这时控制转移到该函数，执行完成后回到main函数的调用点继续执行。这是普通的函数调用。</p>
-<p><strong>接下来是协程：</strong></p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/135931.png" alt="img" loading="lazy"></figure>
-<p>**在这里：**我们依然首先在funcA函数中执行，运行一段时间后调用协程，协程开始执行，直到第一个挂起点，此后就像普通函数一样返回funcA函数，funcA函数执行一些代码后再次调用该协程。</p>
-<p>**注意：**协程这时就和普通函数不一样了，协程并不是从第一条指令开始执行而是从上一次的挂起点开始执行，执行一段时间后遇到第二个挂起点，这时协程再次像普通函数一样返回funcA函数，funcA函数执行一段时间后整个程序结束。</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/2b9ee.png" alt="img" loading="lazy"></figure>
-<h1 id="5-函数只是协程的一种特例">5、函数只是协程的一种特例</h1>
-<p>和普通函数不同的是，协程能知道自己上一次执行到了哪里。</p>
-<p>现在你应该明白了吧，协程会在函数被暂停运行时保存函数的运行状态，并可以从保存的状态中恢复并继续运行。</p>
-<p>很熟悉的味道有没有，这不就是操作系统对线程的调度嘛，线程也可以被暂停，操作系统保存线程运行状态然后去调度其它线程，此后该线程再次被分配CPU时还可以继续运行，就像没有被暂停过一样。</p>
-<p>只不过线程的调度是操作系统实现的，这些对程序员都不可见，而协程是在用户态实现的，对程序员可见。</p>
-<p>这就是为什么有的人说可以把协程理解为用户态线程的原因。</p>
-<p>也就是说现在程序员可以扮演操作系统的角色了，你可以自己控制协程在什么时候运行，什么时候暂停，也就是说协程的调度权在你自己手上。</p>
-<p>在协程这件事儿上，调度你说了算。</p>
-<p>当你在协程中写下 yield 的时候就是想要暂停该协程，当使用 <em>next()</em> 时就是要再次运行该协程。</p>
-<p>现在你应该理解为什么说函数只是协程的一种特例了吧，函数其实只是没有挂起点的协程而已。</p>
-<h1 id="6-协程的历史">6、协程的历史</h1>
-<p>有的可能认为协程是一种比较新的技术，然而其实协程这种概念早在1958年就已经提出来了，要知道这时线程的概念都还没有提出来。</p>
-<p>到了1972年，终于有编程语言实现了这个概念，这两门编程语言就是Simula 67 以及Scheme。</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/0ea45a.png" alt="img" loading="lazy"></figure>
-<p>但协程这个概念始终没有流行起来，甚至在1993年还有人考古一样专门写论文挖出协程这种古老的技术。</p>
-<p>因为这一时期还没有线程，如果你想在操作系统写出并发程序那么你将不得不使用类似协程这样的技术，后来线程开始出现，操作系统终于开始原生支持程序的并发执行，就这样，协程逐渐淡出了程序员的视线。</p>
-<p>直到近些年，随着互联网的发展，尤其是移动互联网时代的到来，服务端对高并发的要求越来越高，协程再一次重回技术主流，各大编程语言都已经支持或计划开始支持协程。</p>
-<p>那么协程到底是如何实现的呢？</p>
-<h1 id="7-协程到底是如何实现的">7、协程到底是如何实现的？</h1>
-<p>**让我们从问题的本质出发来思考这个问题：**协程的本质是什么呢？</p>
-<p>其实就是可以被暂停以及可以被恢复运行的函数。那么可以被暂停以及可以被恢复意味着什么呢？</p>
-<p>看过篮球比赛的同学想必都知道（没看过的也能知道），篮球比赛也是可以被随时暂停的，暂停时大家需要记住球在哪一方，各自的站位是什么，等到比赛继续的时候大家回到各自的位置，裁判哨子一响比赛继续，就像比赛没有被暂停过一样。</p>
-<p>**看到问题的关键了吗：**比赛之所以可以被暂停也可以继续是因为比赛状态被记录下来了（站位、球在哪一方），这里的状态就是计算机科学中常说的上下文（context）。</p>
-<p>回到协程。</p>
-<p>协程之所以可以被暂停也可以继续，那么一定要记录下被暂停时的状态，也就是上下文，当继续运行的时候要恢复其上下文（状态）另外：函数运行时所有的状态信息都位于函数运行时栈中。</p>
-<p>函数运行时栈就是我们需要保存的状态，也就是所谓的上下文。</p>
-<p><strong>如图所示：</strong></p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/16c42a.png" alt="img" loading="lazy"></figure>
-<p>**从上图中我们可以看出：**该进程中只有一个线程，栈区中有四个栈帧，main函数调用A函数，A函数调用B函数，B函数调用C函数，当C函数在运行时整个进程的状态就如图所示。</p>
-<p>**现在：**我们已经知道了函数的运行时状态就保存在栈区的栈帧中，接下来重点来了哦。</p>
-<p>既然函数的运行时状态保存在栈区的栈帧中，那么如果我们想暂停协程的运行就必须保存整个栈帧的数据，那么我们该将整个栈帧中的数据保存在哪里呢？</p>
-<p>**想一想这个问题：**整个进程的内存区中哪一块是专门用来长时间(进程生命周期)存储数据的？</p>
-<p>**很显然：**这就是堆区啊（heap），我们可以将栈帧保存在堆区中，那么我们该怎么在堆区中保存数据呢？希望你还没有晕，在堆区中开辟空间就是我们常用的C语言中的malloc或者C++中的new。</p>
-<p>**我们需要做的就是：**在堆区中申请一段空间，让后把协程的整个栈区保存下，当需要恢复协程的运行时再从堆区中copy出来恢复函数运行时状态。</p>
-<p>再仔细想一想，为什么我们要这么麻烦的来回copy数据呢？</p>
-<p>**实际上：**我们需要做的是直接把协程的运行需要的栈帧空间直接开辟在堆区中，这样都不用来回copy数据了，如下图所示。</p>
-<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1ee4ae.png" alt="img" loading="lazy"></figure>
-<p>**从上图中我们可以看到：**该程序中开启了两个协程，这两个协程的栈区都是在堆上分配的，这样我们就可以随时中断或者恢复协程的执行了。</p>
-<p>有的可能会问，那么进程地址空间最上层的栈区现在的作用是什么呢？</p>
-<p>**答案是：**这一区域依然是用来保存函数栈帧的，只不过这些函数并不是运行在协程而是普通线程中的。</p>
-<p><strong>现在你应该看到了吧，在上图中实际上共有3个执行流：</strong></p>
-<ul>
-<li>1）一个普通线程；</li>
-<li>2）两个协程。</li>
-</ul>
-<p>虽然有3个执行流但我们创建了几个线程呢？</p>
-<p>**答案是：**一个线程。</p>
-<p>**现在你应该明白为什么要使用协程了吧：**使用协程理论上我们可以开启无数并发执行流，只要堆区空间足够，同时还没有创建线程的开销，所有协程的调度、切换都发生在用户态，这就是为什么协程也被称作用户态线程的原因所在。</p>
-<p>因此：即使你创建了N多协程，但在操作系统看来依然只有一个线程，也就是说协程对操作系统来说是不可见的。</p>
-<p>这也许是为什么协程这个概念比线程提出的要早的原因，可能是写普通应用的程序员比写操作系统的程序员最先遇到需要多个并行流的需求，那时可能都还没有操作系统的概念，或者操作系统没有并行这种需求，所以非操作系统程序员只能自己动手实现执行流，也就是协程。</p>
-<h1 id="8-协程技术概念小结">8、协程技术概念小结</h1>
-<p>到底什么是协程呢？</p>
-<h3 id="81-协程是比线程更小的执行单元">8.1 协程是比线程更小的执行单元</h3>
-<p>协程是比线程更小的一种执行单元，你可以认为是轻量级的线程。</p>
-<p>**之所以说轻：**其中一方面的原因是协程所持有的栈比线程要小很多，java当中会为每个线程分配1M左右的栈空间，而协程可能只有几十或者几百K，栈主要用来保存函数参数、局部变量和返回地址等信息。</p>
-<p>**我们知道：**而线程的调度是在操作系统中进行的，而协程调度则是在用户空间进行的，是开发人员通过调用系统底层的执行上下文相关api来完成的。有些语言，比如nodejs、go在语言层面支持了协程，而有些语言，比如C，需要使用第三方库才可以拥有协程的能力（比如微信开源的Libco库就是这样的）。</p>
-<p>由于线程是操作系统的最小执行单元，因此也可以得出，协程是基于线程实现的，协程的创建、切换、销毁都是在某个线程中来进行的。</p>
-<p>使用协程是因为线程的切换成本比较高，而协程在这方面很有优势。</p>
-<h3 id="82-协程的切换到底为什么很廉价">8.2 协程的切换到底为什么很廉价？</h3>
-<p><strong>关于这个问题，我们回顾一下线程切换的过程：</strong></p>
-<ul>
-<li>1）线程在进行切换的时候，需要将CPU中的寄存器的信息存储起来，然后读入另外一个线程的数据，这个会花费一些时间；</li>
-<li>2）CPU的高速缓存中的数据，也可能失效，需要重新加载；</li>
-<li>3）线程的切换会涉及到用户模式到内核模式的切换，据说每次模式切换都需要执行上千条指令，很耗时。</li>
-</ul>
-<p><strong>实际上协程的切换之所以快的原因我认为主要是：</strong></p>
-<ul>
-<li>1）在切换的时候，寄存器需要保存和加载的数据量比较小；</li>
-<li>2）高速缓存可以有效利用；</li>
-<li>3）没有用户模式到内核模式的切换操作；</li>
-<li>4）更有效率的调度，因为协程是非抢占式的，前一个协程执行完毕或者堵塞，才会让出CPU，而线程则一般使用了时间片的算法，会进行很多没有必要的切换（为了尽量让用户感知不到某个线程卡）。</li>
-</ul>
-<h1 id="9-写在最后">9、写在最后</h1>
-<p>写到这里，相信你已经理解协程到底是怎么一回事了，关于协程更系统的知识可以自行查阅相关资料。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[理解高性能、高并发(四)：深入操作系统，理解同步与异步]]></title>
-        <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-si-shen-ru-cao-zuo-xi-tong-li-jie-tong-bu-yu-yi-bu/</id>
-        <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-si-shen-ru-cao-zuo-xi-tong-li-jie-tong-bu-yu-yi-bu/">
-        </link>
-        <updated>2021-04-20T03:44:16.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="1-编程中的同步调用">1、编程中的同步调用</h1>
-<p>我们先说同步调用，这是程序员最熟悉的场景。</p>
-<p><strong>一般的函数调用都是同步的，就像这样：</strong></p>
-<blockquote>
-<p>funcA() {</p>
-<p>// 等待函数funcB执行完成</p>
-<p>funcB();</p>
-<p>// 继续接下来的流程</p>
-<p>}</p>
-</blockquote>
-<p>funcA调用funcB，那么在funcB执行完前，funcA中的后续代码都不会被执行，也就是说funcA必须等待funcB执行完成。</p>
-<p><strong>就像下图这样：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1105631014.png" alt="img" loading="lazy"><br>
-从上图中我们可以看到，在funcB运行期间funcA什么都做不了，这就是典型的同步。</p>
-<p>注意：一般来说，像这种同步调用，funcA和funcB是运行在同一个线程中的，这是最为常见的情况。</p>
-<p>**但值得注意的是：**即使运行在两个不能线程中的函数也可以进行同步调用，像我们进行IO操作时实际上底层是通过系统调用的方式向操作系统发出请求的，比如磁盘文件读取：</p>
-<blockquote>
-<p>read(file, buf);</p>
-</blockquote>
-<p>这就是我们在《深入操作系统，理解I/O与零拷贝技术》中描述的阻塞式I/O，在read函数返回前程序是无法继续向前推进的：</p>
-<blockquote>
-<p>read(file, buf);</p>
-<p>// 程序暂停运行，</p>
-<p>// 等待文件读取完成后继续运行</p>
-</blockquote>
-<p><strong>如下图所示：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1671658766.png" alt="img" loading="lazy"><br>
-只有当read函数返回后程序才可以被继续执行。</p>
-<p>**注意：**和上面的同步调用不同的是，函数和被调函数运行在不同的线程中。</p>
-<p>**因此：**我们可以得出结论，同步调用和函数与被调函数是否运行在同一个线程是没有关系的。</p>
-<p>在这里我们还要再次强调：同步方式下函数和被调函数无法同时进行。</p>
-<p>同步编程对程序员来说是最自然最容易理解的。</p>
-<p>但容易理解的代价就是在一些场景下，同步并不是高效的，原因很简单，因为任务没有办法同时进行。</p>
-<p>接下来我们看异步调用。</p>
-<h1 id="2-编程中的异步调用">2、编程中的异步调用</h1>
-<p>有同步调用就有异步调用。</p>
-<p>如果你真的理解了本节到目前为止的内容的话，那么异步调用对你来说不是问题。</p>
-<p>**一般来说：**异步调用总是和I/O操作等耗时较高的任务如影随形，像磁盘文件读写、网络数据的收发、数据库操作等。</p>
-<p>我们还是以磁盘文件读取为例。</p>
-<p>在read函数的同步调用方式下，文件读取完之前调用方是无法继续向前推进的，但如果read函数可以异步调用情况就不一样了。</p>
-<p>假如read函数可以异步调用的话，即使文件还没有读取完成，read函数也可以立即返回。</p>
-<blockquote>
-<p>read(file, buff);</p>
-<p>// read函数立即返回</p>
-<p>// 不会阻塞当前程序</p>
-</blockquote>
-<p><strong>就像下图这样：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/933885230.png" alt="img" loading="lazy"></p>
-<p>**可以看到：**在异步这种调用方式下，调用方不会被阻塞，函数调用完成后可以立即执行接下来的程序。</p>
-<p>这时异步的重点就在于：调用方接下来的程序执行可以和文件读取同时进行，从上图中我们也能看出这一点，这就是异步的高效之处。</p>
-<p>**但是：**请注意，异步调用对于程序员来说在理解上是一种负担，代码编写上更是一种负担，总的来说，上帝在为你打开一扇门的时候会适当的关上一扇窗户。</p>
-<p>有的可能会问，在同步调用下，调用方不再继续执行而是暂停等待，被调函数执行完后很自然的就是调用方继续执行，那么异步调用下调用方怎知道被调函数是否执行完成呢？</p>
-<p><strong>这就分为了两种情况：</strong></p>
-<ul>
-<li>1）调用方根本就不关心执行结果；</li>
-<li>2）调用方需要知道执行结果。</li>
-</ul>
-<p>第一种情况比较简单，无需讨论。</p>
-<p><strong>第二种情况下就比较有趣了，通常有两种实现方式：</strong></p>
-<ul>
-<li>1）一种是通知机制：当任务执行完成后发送信号来通知调用方任务完成（这里的信号有很多实现方式：Linux中的signal，或使用信号量等机制都可实现）；</li>
-<li>2）一种是回调机制：也就是我们常说的callback（关于回调我们将在下一篇文章中重点讲解，本篇会有简短的讨论）。</li>
-</ul>
-<p>接下来我们用一个具体的例子讲解一下同步调用与异步调用。</p>
-<h1 id="3-具体的编程例子中理解同步和异步">3、具体的编程例子中理解同步和异步</h1>
-<h3 id="31-一个具体的示例">3.1 一个具体的示例</h3>
-<p>我们以常见的Web服务来举例说明这一问题。</p>
-<p>一般来说Web  Server接收到用户请求后会有一些典型的处理逻辑，最常见的就是数据库查询（当然，你也可以把这里的数据库查询换成其它I/O操作，比如磁盘读取、网络通信等），在这里我们假定处理一次用户请求需要经过步骤A、B、C，然后读取数据库，数据库读取完成后需要经过步骤D、E、F。</p>
-<p><strong>就像这样：</strong></p>
-<blockquote>
-<p># 处理一次用户请求需要经过的步骤：</p>
-<p>A;</p>
-<p>B;</p>
-<p>C;</p>
-<p>数据库读取;</p>
-<p>D；</p>
-<p>E；</p>
-<p>F；</p>
-</blockquote>
-<p>**其中：**步骤A、B、C和D、E、F不需要任何I/O，也就是说这六个步骤不需要读取文件、网络通信等，涉及到I/O操作的只有数据库查询这一步。</p>
-<p>**一般来说：**这样的Web Server有两个典型的线程：主线程和数据库处理线程（注意：这讨论的只是典型的场景，具体业务实际上可会有差别，但这并不影响我们用两个线程来说明问题）。</p>
-<p>首先我们来看下最简单的实现方式，也就是同步。</p>
-<p><strong>这种方式最为自然也最为容易理解：</strong></p>
-<blockquote>
-<p>// 主线程</p>
-<p>main_thread() {</p>
-<p>A;</p>
-<p>B;</p>
-<p>C;</p>
-<p>发送数据库查询请求;</p>
-<p>D;</p>
-<p>E;</p>
-<p>F;</p>
-<p>}</p>
-<p>// 数据库线程</p>
-<p>DataBase_thread() {</p>
-<p>while(1) {</p>
-<p>​    处理数据库读取请求;</p>
-<p>​    返回结果;</p>
-<p>}</p>
-<p>}</p>
-</blockquote>
-<p>这就是最为典型的同步方法：主线程在发出数据库查询请求后就会被阻塞而暂停运行，直到数据库查询完毕后面的D、E、F才可以继续运行。</p>
-<p><strong>就像下图这样：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/2106811704.png" alt="img" loading="lazy"></p>
-<p>**从上图中我们可以看到：**主线程中会有“空隙”，这个空隙就是主线程的“休闲时光”，主线程在这段休闲时光中需要等待数据库查询完成才能继续后续处理流程。</p>
-<p>在这里主线程就好比监工的老板，数据库线程就好比苦逼搬砖的程序员，在搬完砖前老板什么都不做只是紧紧的盯着你，等你搬完砖后才去忙其它事情。</p>
-<p>**显然：**高效的程序员是不能容忍主线程偷懒的。</p>
-<p>是时候祭出大杀器了，这就是异步：</p>
-<p>在异步这种实现方案下主线程根本不去等待数据库是否查询完成，而是发送完数据库读写请求后直接处理下一个请求。</p>
-<p>**有的同学可能会有疑问：**一个请求需要经过A、B、C、数据库查询、D、E、F这七个步骤，如果主线程在完成A、B、C、数据库查询后直接进行处理接下来的请求，那么上一个请求中剩下的D、E、F几个步骤怎么办呢？</p>
-<p>如果大家还没有忘记上一小节内容的话应该知道，这有两种情况，我们来分别讨论。</p>
-<h3 id="32-异步情况1主线程不关心数据库操作结果">3.2 异步情况1：主线程不关心数据库操作结果</h3>
-<p>在这种情况下，主线程根本就不关心数据库是否查询完毕，数据库查询完毕后自行处理接下来的D、E、F三个步骤。</p>
-<p><strong>就像下图这样：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/437487319.png" alt="img" loading="lazy"></p>
-<p>我们说过一个请求需要经过七个步骤，其中前三个是在主线程中完成的，后四个是在数据库线程中完成的，那么数据库线程是怎么知道查完数据库后要处理D、E、F这几个步骤呢？</p>
-<p>这时，我们的另一个主角回调函数就开始登场啦。</p>
-<p>没错，回调函数就是用来解决这一问题的。</p>
-<p>我们可以将处理D、E、F这几个步骤封装到一个函数中，假定将该函数命名为handle_DEF_after_DB_query。</p>
-<p><strong>伪码如下：</strong></p>
-<blockquote>
-<p>void handle_DEF_after_DB_query () {</p>
-<p>D;</p>
-<p>E;</p>
-<p>F;</p>
-<p>}</p>
-</blockquote>
-<p><strong>这样主线程在发送数据库查询请求的同时将该函数一并当做参数传递过去：</strong></p>
-<blockquote>
-<p>DB_query(request, handle_DEF_after_DB_query);</p>
-</blockquote>
-<p>数据库线程处理完后直接调用handle_DEF_after_DB_query就可以了，这就是回调函数的作用。</p>
-<p>也有的同学可能会有疑问，为什么这个函数要传递给数据库线程而不是数据库线程自己定义自己调用呢？</p>
-<p>因为从软件组织结构上讲，这不是数据库线程该做的工作。</p>
-<p>数据库线程需要做的仅仅就是查询数据库、然后调用一个处理函数，至于这个处理函数做了些什么数据库线程根本就不关心，也不应该关心。</p>
-<p>**你可以传入各种各样的回调函数：**也就是说数据库系统可以针对回调函数这一抽象的函数变量来编程，从而更好的应对变化，因为回调函数的内容改变不会影响到数据库线程的逻辑，而如果数据库线程自己定义处理函数那么这种设计就没有灵活性可言了。</p>
-<p>**而从软件开发的角度看：**假设数据库线程逻辑封装为了库提供给其它团队，当数据库团队在研发时怎么可能知道数据库查询后该做什么呢？</p>
-<p>显**然：**只有使用方才知道查询完数据库后该做些什么，因此使用方在使用时简单的传入这个回调函数就可以了。</p>
-<p>这样复杂数据库的团队就和使用方团队实现了所谓的解耦。</p>
-<p>现在你应该明白回调函数的作用了吧。</p>
-<p>**另外：**仔细观察上面两张图，你能看出为什么异步比同步高效吗？</p>
-<p>原因很简单，这也是我们在本篇提到过的，异步天然就无需等待，无依赖。</p>
-<p>主线程处理请求和数据库处理查询请求可以同时进行，因此从系统性能上看，这样的设计能更加充分的利用系统资源，更加快速的处理请求；从用户的角度看，系统的响应也会更加迅速。</p>
-<p>这就是异步的高效之处。</p>
-<p>**但我们应该也可以看出：**异步编程并不如同步来的容易理解，系统可维护性上也不如同步模式。</p>
-<p>那么有没有一种方法既能结合同步模式的容易理解又能结合异步模式的高效呢？答案是肯定的。</p>
-<p>接下来我们看第二种情况，那就是主线程需要关心数据库查询结果。</p>
-<h3 id="33-异步情况2主线程关心数据库操作结果">3.3 异步情况2：主线程关心数据库操作结果</h3>
-<p>在这种情况下，数据库线程需要将查询结果利用通知机制发送给主线程，主线程在接收到消息后继续处理上一个请求的后半部分。</p>
-<p><strong>就像下图这样：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1240741043.png" alt="img" loading="lazy"></p>
-<p>**从这里我们可以看到：**ABCDEF几个步骤全部在主线中处理，同时主线程同样也没有了“休闲时光”，只不过在这种情况下数据库线程是比较清闲的，从这里并没有上一种方法高效，但是依然要比同步模式下要高效。</p>
-<p>**最后需要注意的是：**并不是所有的情况下异步都一定比同步高效，还需要结合具体业务以及IO的复杂度具体情况具体分析。</p>
-<h1 id="4-本文小结">4、本文小结</h1>
-<p>在这篇文章中我们从各种场景分析了同步与异步这两个概念，但是不管在什么场景下，同步往往意味着双方要相互等待、相互依赖，而异步意味着双方相互独立、各行其是。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[理解高性能、高并发(三)：深入操作系统，彻底理解I/O多路复用]]></title>
-        <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-san-shen-ru-cao-zuo-xi-tong-che-di-li-jie-io-duo-lu-fu-yong/</id>
-        <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-san-shen-ru-cao-zuo-xi-tong-che-di-li-jie-io-duo-lu-fu-yong/">
-        </link>
-        <updated>2021-04-20T03:35:09.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="1-什么是文件">1、什么是文件？</h1>
-<p>在正式展开本文的内容之前，我们需要先预习一下文件以及文件描述符的概念。</p>
-<p>程序员使用I/O最终都逃不过文件这个概念。</p>
-<p>在Linux世界中文件是一个很简单的概念，作为程序员我们只需要将其理解为一个N byte的序列就可以了：</p>
-<blockquote>
-<p>b1, b2, b3, b4, ....... bN</p>
-</blockquote>
-<p>实际上所有的I/O设备都被抽象为了文件这个概念，一切皆文件（Everything is File），磁盘、网络数据、终端，甚至进程间通信工具管道pipe等都被当做文件对待。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1044806017.png" alt="img" loading="lazy"></p>
-<p>所有的I/O操作也都可以通过文件读写来实现，这一非常优雅的抽象可以让程序员使用一套接口就能对所有外设I/O操作。</p>
-<p><strong>常用的I/O操作接口一般有以下几类：</strong></p>
-<ul>
-<li>1）打开文件，open；</li>
-<li>2）改变读写位置，seek；</li>
-<li>3）文件读写，read、write；</li>
-<li>4）关闭文件，close。</li>
-</ul>
-<p>程序员通过这几个接口几乎可以实现所有I/O操作，这就是文件这个概念的强大之处。</p>
-<h1 id="2-什么是文件描述符">2、什么是文件描述符？</h1>
-<p>在上一篇《<a href="https://www.oschina.net/action/GoToLink?url=http%3A%2F%2Fwww.52im.net%2Fthread-3280-1-1.html">深入操作系统，理解I/O与零拷贝技术</a>》中我们讲到：要想进行I/O读操作，像磁盘数据，我们需要指定一个buff用来装入数据。</p>
-<p><strong>一般都是这样写的：</strong></p>
-<blockquote>
-<p>read(buff);</p>
-</blockquote>
-<p>但是这里我们忽略了一个关键问题：那就是，虽然我们指定了往哪里写数据，但是我们该从哪里读数据呢？</p>
-<p>从上一节中我们知道，通过文件这个概念我们能实现几乎所有I/O操作，因此这里少的一个主角就是文件。</p>
-<p>那么我们一般都怎样使用文件呢？</p>
-<p>**举个例子：**如果周末你去比较火的餐厅吃饭应该会有体会，一般周末人气高的餐厅都会排队，然后服务员会给你一个排队序号，通过这个序号服务员就能找到你，这里的好处就是服务员无需记住你是谁、你的名字是什么、来自哪里、喜好是什么、是不是保护环境爱护小动物等等，这里的关键点就是：服务员对你一无所知，但依然可以通过一个号码就能找到你。</p>
-<p>**同样的：**在Linux世界要想使用文件，我们也需要借助一个号码，根据“<a href="https://www.oschina.net/action/GoToLink?url=http%3A%2F%2Fwww.52im.net%2Fthread-3280-1-1.html">弄不懂原则</a>”，这个号码就被称为了文件描述符（file descriptors），在Linux世界中鼎鼎大名，其道理和上面那个排队号码一样。</p>
-<p>**因此：**文件描述仅仅就是一个数字而已，但是通过这个数字我们可以操作一个打开的文件，这一点要记住。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/201177950.png" alt="img" loading="lazy"></p>
-<p>有了文件描述符，进程可以对文件一无所知，比如文件在磁盘的什么位置、加载到内存中又是怎样管理的等等，这些信息统统交由操作系统打理，进程无需关心，操作系统只需要给进程一个文件描述符就足够了。</p>
-<p><strong>因此我们来完善上述程序：</strong></p>
-<blockquote>
-<p>int fd = open(file_name); // 获取文件描述符</p>
-<p>read(fd, buff);</p>
-</blockquote>
-<p>怎么样，是不是非常简单。</p>
-<h1 id="3-文件描述符太多了怎么办">3、文件描述符太多了怎么办？</h1>
-<p>经过了这么多的铺垫，终于要到高性能、高并发这一主题了。</p>
-<p>从前几节我们知道，所有I/O操作都可以通过文件样的概念来进行，这当然包括网络通信。</p>
-<p>如果你有一个IM服务器，当三次握手建议长连接成功以后，我们会调用accept来获取一个链接，调用该函数我们同样会得到一个文件描述符，通过这个文件描述符就可以处理客户端发送的聊天消息并且把消息转发给接收者。</p>
-<p>也就是说，通过这个描述符我们就可以和客户端进行通信了：</p>
-<blockquote>
-<p>// 通过accept获取客户端的文件描述符</p>
-<p>int conn_fd = accept(...);</p>
-</blockquote>
-<p>Server端的处理逻辑通常是接收客户端消息数据，然后执行转发（给接收者）逻辑：</p>
-<blockquote>
-<p>if(read(conn_fd, msg_buff) &gt; 0) {</p>
-<p>do_transfer(msg_buff);</p>
-<p>}</p>
-</blockquote>
-<p>是不是非常简单，然而世界终归是复杂的，当然也不是这么简单的。</p>
-<p>接下来就是比较复杂的了。</p>
-<p>既然我们的主题是高并发，那么Server端就不可能只和一个客户端通信，而是可能会同时和成千上万个客户端进行通信。这时你需要处理不再是一个描述符这么简单，而是有可能要处理成千上万个描述符。</p>
-<p>为了不让问题一上来就过于复杂，我们先简单化，假设只同时处理两个客户端的请求。</p>
-<p><strong>有的同学可能会说，这还不简单，这样写不就行了：</strong></p>
-<blockquote>
-<p>if(read(socket_fd1, buff) &gt; 0) { // 处理第一个</p>
-<p>do_transfer();</p>
-<p>}</p>
-<p>if(read(socket_fd2, buff) &gt; 0) { // 处理第二个</p>
-<p>do_transfer();</p>
-</blockquote>
-<p>在《[深入操作系统，理解I/O与零拷贝技术]》中我们讨论过，这是非常典型的阻塞式I/O，如果此时没有数据可读那么进程会被阻塞而暂停运行。这时我们就无法处理第二个请求了，即使第二个请求的数据已经就位，这也就意味着处理某一个客户端时由于进程被阻塞导致剩下的所有其它客户端必须等待，在同时处理几万客户端的server上。这显然是不能容忍的。</p>
-<p>聪明的你一定会想到使用多线程：为每个客户端请求开启一个线程，这样一个客户端被阻塞就不会影响到处理其它客户端的线程了。注意：既然是高并发，那么我们要为成千上万个请求开启成千上万个线程吗，大量创建销毁线程会严重影响系统性能。</p>
-<p>那么这个问题该怎么解决呢？</p>
-<p>**这里的关键点在于：**我们事先并不知道一个文件描述对应的I/O设备是否是可读的、是否是可写的，在外设的不可读或不可写的状态下进行I/O只会导致进程阻塞被暂停运行。</p>
-<p>因此要优雅的解决这个问题，就要从其它角度来思考这个问题了。</p>
-<h1 id="4-不要打电话给我有需要我会打给你">4、“不要打电话给我，有需要我会打给你”</h1>
-<p>大家生活中肯定会接到过推销电话，而且不止一个，一天下来接上十个八个推销电话你的身体会被掏空的。</p>
-<p>这个场景的关键点在于：打电话的人并不知道你是不是要买东西，只能来一遍遍问你。因此一种更好的策略是不要让他们打电话给你，记下他们的电话，有需要的话打给他们，这样推销员就不会一遍一遍的来烦你了（虽然现实生活中这并不可能）。</p>
-<p>**在这个例子中：**你，就好比内核，推销者就好比应用程序，电话号码就好比文件描述符，和你用电话沟通就好比I/O。</p>
-<p>现在你应该明白了吧，处理多个文件描述符的更好方法其实就存在于推销电话中。</p>
-<p>因此相比上一节中：我们通过I/O接口主动问内核这些文件描述符对应的外设是不是已经就绪了，一种更好的方法是，我们把这些感兴趣的文件描述符一股脑扔给内核，并霸气的告诉内核：“我这里有1万个文件描述符，你替我监视着它们，有可以读写的文件描述符时你就告诉我，我好处理”。而不是弱弱的问内核：“第一个文件描述可以读写了吗？第二个文件描述符可以读写吗？第三个文件描述符可以读写了吗？。。。”</p>
-<p>**这样：**应用程序就从“繁忙”的主动变为了清闲的被动，反正文件描述可读可写了内核会通知我，能偷懒我才不要那么勤奋。</p>
-<p>这是一种更加高效的I/O处理机制，现在我们可以一次处理多路I/O了，为这种机制起一个名字吧，就叫I/O多路复用吧，这就是 I/O multiplexing。</p>
-<h1 id="5-io多路复用io-multiplexing">5、I/O多路复用（I/O multiplexing）</h1>
-<p>multiplexing一词其实多用于通信领域，为了充分利用通信线路，希望在一个信道中传输多路信号，要想在一个信道中传输多路信号就需要把这多路信号结合为一路，将多路信号组合成一个信号的设备被称为Multiplexer（多路复用器），显然接收方接收到这一路组合后的信号后要恢复原先的多路信号，这个设备被称为Demultiplexer（多路分用器）。</p>
-<p><strong>如下图所示：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/793876181.png" alt="img" loading="lazy"></p>
-<p>回到我们的主题。</p>
-<p><strong>所谓I/O多路复用指的是这样一个过程：</strong></p>
-<ul>
-<li>1）我们拿到了一堆文件描述符（不管是网络相关的、还是磁盘文件相关等等，任何文件描述符都可以）；</li>
-<li>2）通过调用某个函数告诉内核：“这个函数你先不要返回，你替我监视着这些描述符，当这堆文件描述符中有可以进行I/O读写操作的时候你再返回”；</li>
-<li>3）当调用的这个函数返回后我们就能知道哪些文件描述符可以进行I/O操作了。</li>
-</ul>
-<p>也就是说通过I/O多路复用我们可以同时处理多路I/O。那么有哪些函数可以用来进行I/O多路复用呢？</p>
-<p><strong>以Linux为例，有这样三种机制可以用来进行I/O多路复用：</strong></p>
-<ul>
-<li>1）select；</li>
-<li>2）poll；</li>
-<li>3）epoll。</li>
-</ul>
-<p>接下来我们就来介绍一下I/O多路复用三剑客。</p>
-<h1 id="6-io多路复用三剑客">6、I/O多路复用三剑客</h1>
-<p>**本质上：**Linux上的select、poll、epoll都是阻塞式I/O，也就是我们常说的同步I/O。</p>
-<p>原因在于：调用这些I/O多路复用函数时如果任何一个需要监视的文件描述符都不可读或者可写那么进程会被阻塞暂停执行，直到有文件描述符可读或者可写才继续运行。</p>
-<h3 id="61-select初出茅庐">6.1 select：初出茅庐</h3>
-<p>在select这种I/O多路复用机制下，我们需要把想监控的文件描述集合通过函数参数的形式告诉select，然后select会将这些文件描述符集合拷贝到内核中。</p>
-<p>我们知道数据拷贝是有性能损耗的，因此为了减少这种数据拷贝带来的性能损耗，Linux内核对集合的大小做了限制，并规定用户监控的文件描述集合不能超过1024个，同时当select返回后我们仅仅能知道有些文件描述符可以读写了，但是我们不知道是哪一个。因此程序员必须再遍历一边找到具体是哪个文件描述符可以读写了。</p>
-<p><strong>因此，总结下来select有这样几个特点：</strong></p>
-<ul>
-<li>1）我能照看的文件描述符数量有限，不能超过1024个；</li>
-<li>2）用户给我的文件描述符需要拷贝的内核中；</li>
-<li>3）我只能告诉你有文件描述符满足要求了，但是我不知道是哪个，你自己一个一个去找吧（遍历）。</li>
-</ul>
-<p>因此我们可以看到，select机制的这些特性在高并发网络服务器动辄几万几十万并发链接的场景下无疑是低效的。</p>
-<h3 id="62-poll小有所成">6.2 poll：小有所成</h3>
-<p>poll和select是非常相似的。</p>
-<p>poll相对于select的优化仅仅在于解决了文件描述符不能超过1024个的限制，select和poll都会随着监控的文件描述数量增加而性能下降，因此不适合高并发场景。</p>
-<h3 id="63-epoll独步天下">6.3 epoll：独步天下</h3>
-<p>在select面临的三个问题中，文件描述数量限制已经在poll中解决了，剩下的两个问题呢？</p>
-<p>针对拷贝问题：epoll使用的策略是各个击破与共享内存。</p>
-<p>**实际上：**文件描述符集合的变化频率比较低，select和poll频繁的拷贝整个集合，内核都快被烦死了，epoll通过引入epoll_ctl很体贴的做到了只操作那些有变化的文件描述符。同时epoll和内核还成为了好朋友，共享了同一块内存，这块内存中保存的就是那些已经可读或者可写的的文件描述符集合，这样就减少了内核和程序的拷贝开销。</p>
-<p>针对需要遍历文件描述符才能知道哪个可读可写这一问题，epoll使用的策略是“当小弟”。</p>
-<p>在select和poll机制下：进程要亲自下场去各个文件描述符上等待，任何一个文件描述可读或者可写就唤醒进程，但是进程被唤醒后也是一脸懵逼并不知道到底是哪个文件描述符可读或可写，还要再从头到尾检查一遍。</p>
-<p>但epoll就懂事多了，主动找到进程。</p>
-<p>**在这种机制下：**进程不需要亲自下场了，进程只要等待在epoll上，epoll代替进程去各个文件描述符上等待，当哪个文件描述符可读或者可写的时候就告诉epoll，epoll用小本本认真记录下来然后唤醒大哥：“进程大哥，快醒醒，你要处理的文件描述符我都记下来了”，这样进程被唤醒后就无需自己从头到尾检查一遍，因为epoll小弟都已经记下来了。</p>
-<p>因此我们可以看到：在epoll这种机制下，实际上利用的就是“不要打电话给我，有需要我会打给你”这种策略，进程不需要一遍一遍麻烦的问各个文件描述符，而是翻身做主人了——“你们这些文件描述符有哪个可读或者可写了主动报上来”。</p>
-<p>这种机制实际上就是大名鼎鼎的事件驱动——Event-driven，这也是我们下一篇的主题。</p>
-<p>**实际上：**在Linux平台，epoll基本上就是高并发的代名词。</p>
-<h1 id="7-本文小结">7、本文小结</h1>
-<p>基于一切皆文件的设计哲学，I/O也可以通过文件的形式实现，高并发场景下要与多个文件交互，这就离不开高效的I/O多路复用技术。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[理解高性能、高并发(二)：深入操作系统，理解I/O与零拷贝技术]]></title>
-        <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-er-shen-ru-cao-zuo-xi-tong-li-jie-io-yu-ling-kao-bei-ji-zhu/</id>
-        <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-er-shen-ru-cao-zuo-xi-tong-li-jie-io-yu-ling-kao-bei-ji-zhu/">
-        </link>
-        <updated>2021-04-20T03:24:39.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="1-不能执行io的计算机是什么">1、不能执行I/O的计算机是什么？</h2>
-<p><strong>相信对于程序员来说I/O操作是最为熟悉不过的了，比如：</strong></p>
-<ul>
-<li>1）当我们使用C语言中的printf、C++中的&quot;&lt;&lt;&quot;，Python中的print，Java中的System.out.println等时；</li>
-<li>2）当我们使用各种语言读写文件时；</li>
-<li>3）当我们通过TCP/IP进行网络通信时；</li>
-<li>4）当我们使用鼠标龙飞凤舞时；</li>
-<li>5）当我们拿起键盘在评论区指点江山亦或是埋头苦干努力制造bug时；</li>
-<li>6）当我们能看到屏幕上的漂亮的图形界面时等等。</li>
-</ul>
-<p>以上这一切，都是I/O！</p>
-<p>**想一想：**如果没有I/O计算机该是一种多么枯燥的设备，不能看电影、不能玩游戏，也不能上网，这样的计算机最多就是一个大号的计算器。</p>
-<p>既然I/O这么重要，那么到底什么才是I/O呢？</p>
-<h2 id="2-什么是io">2、什么是I/O？</h2>
-<p>I/O就是简单的数据Copy，仅此而已！</p>
-<p>这一点很重要！</p>
-<p>既然是copy数据，那么又是从哪里copy到哪里呢？</p>
-<p>如果数据是从外部设备copy到内存中，这就是Input。</p>
-<p>如果数据是从内存copy到外部设备，这就是Output。</p>
-<p>内存与外部设备之间不嫌麻烦的来回copy数据就是Input and Output，简称I/O（Input/Output），仅此而已。</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/e5hfe9.jpg" alt="" loading="lazy"></figure>
-<h2 id="3-io与cpu">3、I/O与CPU</h2>
-<p>现在我们知道了什么是I/O，接下来就是重点部分了。</p>
-<p>我们知道现在的CPU其主频都是数GHz起步，这是什么意思呢？</p>
-<p>**简单说就是：**CPU执行机器指令的速度是纳秒级别的，而通常的I/O比如磁盘操作，一次磁盘seek大概在毫秒级别，因此如果我们把CPU的速度比作战斗机的话，那么I/O操作的速度就是肯德鸡。</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/jionur.jpg" alt="" loading="lazy"></figure>
-<p>也就是说当我们的程序跑起来时（CPU执行机器指令），其速度是要远远快于I/O速度的。那么接下来的问题就是二者速度相差这么大，那么我们该如何设计、该如何更加合理的高效利用系统资源呢？</p>
-<p>既然有速度差异，而且进程在执行完I/O操作前不能继续向前推进，那么显然只有一个办法，那就是<strong>等待</strong>（wait）。</p>
-<p>同样是等待，有聪明的等待，也有傻傻的等待，简称傻等，那么是选择聪明的等待呢还是选择傻等呢？</p>
-<p>假设你是一个急性子（CPU），需要等待一个重要的文件，不巧的是这个文件只能快递过来（I/O），那么这时你是选择什么事情都不干了，深情的注视着门口就像盼望着你的哈尼一样专心等待这个快递呢？还是暂时先不要管快递了，玩个游戏看个电影刷会儿短视频等快递来了再说呢？</p>
-<p>很显然，更好的方法就是先去干其它事情，快递来了再说。</p>
-<p>**因此：**这里的关键点就是快递没到前手头上的事情可以先暂停，切换到其它任务，等快递过来了再切换回来。</p>
-<p>理解了这一点你就能明白执行I/O操作时底层都发生了什么。</p>
-<p>接下来让我们以读取磁盘文件为例来讲解这一过程。</p>
-<h2 id="4-执行io时底层都发生了什么">4、执行I/O时底层都发生了什么</h2>
-<p>在支持线程的操作系统中，实际上被调度的是线程而不是进程，为了更加清晰的理解I/O过程，我们暂时假设操作系统只有进程这样的概念，先不去考虑线程，这并不会影响我们的讨论。</p>
-<p>现在内存中有两个进程，进程A和进程B，当前进程A正在运行。</p>
-<p><strong>如下图所示：</strong></p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/hmyji1gy.png" alt="" loading="lazy"></figure>
-<p>进程A中有一段读取文件的代码，不管在什么语言中通常我们定义一个用来装数据的buff，然后调用read之类的函数。</p>
-<p><strong>就像这样：</strong></p>
-<pre><code>read(buff);
-</code></pre>
-<p>这就是一种典型的I/O操作，当CPU执行到这段代码的时候会向磁盘发送读取请求。</p>
-<p>**注意：**与CPU执行指令的速度相比，I/O操作操作是非常慢的，因此操作系统是不可能把宝贵的CPU计算资源浪费在无谓的等待上的，这时重点来了，注意接下来是重点哦。</p>
-<p>由于外部设备执行I/O操作是相当慢的，因此在I/O操作完成之前进程是无法继续向前推进的，这就是所谓的阻塞，即通常所说的block。</p>
-<p>操作系统检测到进程向I/O设备发起请求后就暂停进程的运行，怎么暂停运行呢？**很简单：**只需要记录下当前进程的运行状态并把CPU的PC寄存器指向其它进程的指令就可以了。</p>
-<p>进程有暂停就会有继续执行，因此操作系统必须保存被暂停的进程以备后续继续执行，显然我们可以用队列来保存被暂停执行的进程。</p>
-<p>如下图所示，进程A被暂停执行并被放到阻塞队列中（**注意：**不同的操作系统会有不同的实现，可能每个I/O设备都有一个对应的阻塞队列，但这种实现细节上的差异不影响我们的讨论）。</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/xbyo7ew.png" alt="" loading="lazy"></figure>
-<p>这时操作系统已经向磁盘发送了I/O请求，因此磁盘driver开始将磁盘中的数据copy到进程A的buff中。虽然这时进程A已经被暂停执行了，但这并不妨碍磁盘向内存中copy数据。</p>
-<p>**注意：**现代磁盘向内存copy数据时无需借助CPU的帮助，这就是所谓的DMA（Direct Memory Access）。</p>
-<p><strong>这个过程如下图所示：</strong></p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/jrmg7.png" alt="" loading="lazy"></figure>
-<p>让磁盘先copy着数据，我们接着聊。</p>
-<p>**实际上：**操作系统中除了有阻塞队列之外也有就绪队列，所谓就绪队列是指队列里的进程准备就绪可以被CPU执行了。</p>
-<p>你可能会问为什么不直接执行非要有个就绪队列呢？**答案很简单：**那就是僧多粥少，在即使只有1个核的机器上也可以创建出成千上万个进程，CPU不可能同时执行这么多的进程，因此必然存在这样的进程，即使其一切准备就绪也不能被分配到计算资源，这样的进程就被放到了就绪队列。</p>
-<p>现在进程B就位于就绪队列，万事俱备只欠CPU。</p>
-<p><strong>如下图所示：</strong></p>
-<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/474nmc.png" alt="" loading="lazy"></figure>
-<p>当进程A被暂停执行后CPU是不可以闲下来的，因为就绪队列中还有嗷嗷待哺的进程B，这时操作系统开始在就绪队列中找下一个可以执行的进程，也就是这里的进程B。</p>
-<p>此时操作系统将进程B从就绪队列中取出，找出进程B被暂停时执行到的机器指令的位置，然后将CPU的PC寄存器指向该位置，这样进程B就开始运行啦。</p>
-<p><strong>如下图所示：</strong></p>
-<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/vnkc1g.png" alt="" loading="lazy"></figure>
-<p>**注意：**接下来的这段是重点中的重点！</p>
-<p>**注意观察上图：**此时进程B在被CPU执行，磁盘在向进程A的内存空间中copy数据，看出来了吗——大家都在忙，谁都没有闲着，数据copy和指令执行在同时进行，在操作系统的调度下，CPU、磁盘都得到了充分的利用，这就是程序员的智慧所在。</p>
-<p>现在你应该理解为什么操作系统这么重要了吧。</p>
-<p>此后磁盘终于将全部数据都copy到了进程A的内存中，这时磁盘通知操作系统任务完成啦，你可能会问怎么通知呢？这就是<strong>中断</strong>。</p>
-<p>操作系统接收到磁盘中断后发现数据copy完毕，进程A重新获得继续运行的资格，这时操作系统小心翼翼的把进程A从阻塞队列放到了就绪队列当中。</p>
-<p><strong>如下图所示：</strong></p>
-<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/wekgvjh.png" alt="" loading="lazy"></figure>
-<p>**注意：**从前面关于就绪状态的讨论中我们知道，操作系统是不会直接运行进程A的，进程A必须被放到就绪队列中等待，这样对大家都公平。</p>
-<p>此后进程B继续执行，进程A继续等待，进程B执行了一会儿后操作系统认为进程B执行的时间够长了，因此把进程B放到就绪队列，把进程A取出并继续执行。</p>
-<p>**注意：**操作系统把进程B放到的是就绪队列，因此进程B被暂停运行仅仅是因为时间片到了而不是因为发起I/O请求被阻塞。</p>
-<p><strong>如下图所示：</strong></p>
-<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/hjwjazzm.png" alt="" loading="lazy"></figure>
-<p>进程A继续执行，此时buff中已经装满了想要的数据，进程A就这样愉快的运行下去了，就好像从来没有被暂停过一样，进程对于自己被暂停一事一无所知，这就是操作系统的魔法。</p>
-<p>现在你应该明白了I/O是一个怎样的过程了吧。</p>
-<p>这种进程执行I/O操作被阻塞暂停执行的方式被称为阻塞式I/O，blocking I/O，这也是最常见最容易理解的I/O方式，有阻塞式I/O就有非阻塞式I/O，在这里我们暂时先不考虑这种方式。</p>
-<p>在本节开头我们说过暂时只考虑进程而不考虑线程，现在我们放宽这个条件，实际上也非常简单，只需要把前图中调度的进程改为线程就可以了，这里的讨论对于线程一样成立。</p>
-<h2 id="5-零拷贝zero-copy">5、零拷贝（Zero-copy）</h2>
-<p>**最后需要注意的一点就是：**上面的讲解中我们直接把磁盘数据copy到了进程空间中，但实际上一般情况下I/O数据是要首先copy到操作系统内部，然后操作系统再copy到进程空间中。</p>
-<p>因此我们可以看到这里其实还有一层经过操作系统的copy，对于性能要求很高的场景其实也是可以绕过操作系统直接进行数据copy的，这也是本文描述的场景，这种绕过操作系统直接进行数据copy的技术被称为Zero-copy，也就零拷贝，高并发、高性能场景下常用的一种技术，原理上很简单吧。</p>
-<h2 id="6-本文小结">6、本文小结</h2>
-<p>本文讲解的是程序员常用的I/O（包括所谓的网络I/O），一般来说作为程序员我们无需关心，但是理解I/O背后的底层原理对于设计比如IM这种高性能、高并发系统是极为有益的。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[理解高性能、高并发(一)：深入计算机底层，理解线程与线程池]]></title>
-        <id>https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-yi-shen-ru-ji-suan-ji-di-ceng-li-jie-xian-cheng-yu-xian-cheng-chi/</id>
-        <link href="https://kangjn.github.io/post/cong-gen-shang-li-jie-gao-xing-neng-gao-bing-fa-yi-shen-ru-ji-suan-ji-di-ceng-li-jie-xian-cheng-yu-xian-cheng-chi/">
-        </link>
-        <updated>2021-04-20T03:11:15.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="1-一切要从cpu说起">1、一切要从CPU说起</h1>
-<p>你可能会有疑问，讲多线程为什么要从CPU说起呢？原因很简单，在这里没有那些时髦的概念，你可以更加清晰的看清问题的本质。</p>
-<p>实际情况是：CPU并不知道线程、进程之类的概念。</p>
-<p><strong>CPU只知道两件事：</strong></p>
-<ul>
-<li>1）从内存中取出指令；</li>
-<li>2）执行指令，然后回到 1）。</li>
-</ul>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/121426477.png" alt="img" loading="lazy"></figure>
-<p>你看，在这里CPU确实是不知道什么进程、线程之类的概念。</p>
-<p>接下来的问题就是CPU从哪里取出指令呢？答案是来自一个被称为Program Counter（简称PC）的寄存器，也就是我们熟知的程序计数器，在这里大家不要把寄存器想的太神秘，你可以简单的把寄存器理解为内存，只不过存取速度更快而已。</p>
-<p>PC寄存器中存放的是什么呢？这里存放的是指令在内存中的地址，什么指令呢？是CPU将要执行的下一条指令。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1600014873.png" alt="img" loading="lazy"></p>
-<p>那么是谁来设置PC寄存器中的指令地址呢？</p>
-<p>原来PC寄存器中的地址默认是自动加1的，这当然是有道理的，因为大部分情况下CPU都是一条接一条顺序执行，当遇到if、else时，这种顺序执行就被打破了，CPU在执行这类指令时会根据计算结果来动态改变PC寄存器中的值，这样CPU就可以正确的跳转到需要执行的指令了。</p>
-<p>聪明的你一定会问，那么PC中的初始值是怎么被设置的呢？</p>
-<p>在回答这个问题之前我们需要知道CPU执行的指令来自哪里？是来自内存，废话，内存中的指令是从磁盘中保存的可执行程序加载过来的，磁盘中可执行程序是编译器生成的，编译器又是从哪里生成的机器指令呢？答案就是我们定义的函数。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/472137863.png" alt="img" loading="lazy"></p>
-<p>注意是函数，函数被编译后才会形成CPU执行的指令，那么很自然的，我们该如何让CPU执行一个函数呢？显然我们只需要找到函数被编译后形成的第一条指令就可以了，第一条指令就是函数入口。</p>
-<p>现在你应该知道了吧，我们想要CPU执行一个函数，那么只需要把该函数对应的第一条机器指令的地址写入PC寄存器就可以了，这样我们写的函数就开始被CPU执行起来啦。</p>
-<p>你可能会有疑问，这和线程有什么关系呢？</p>
-<h1 id="2-从cpu到操作系统">2、从CPU到操作系统</h1>
-<p>上一小节中我们明白了CPU的工作原理，我们想让CPU执行某个函数，那么只需要把函数对应的第一条机器执行装入PC寄存器就可以了，这样即使没有操作系统我们也可以让CPU执行程序，虽然可行但这是一个非常繁琐的过程。</p>
-<p><strong>我们需要：</strong></p>
-<ul>
-<li>1）在内存中找到一块大小合适的区域装入程序；</li>
-<li>2）找到函数入口，设置好PC寄存器让CPU开始执行程序。</li>
-</ul>
-<p>这两个步骤绝不是那么容易的事情，如果每次在执行程序时程序员自己手动实现上述两个过程会疯掉的，因此聪明的程序员就会想干脆直接写个程序来自动完成上面两个步骤吧。</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1035563985.png" alt="img" loading="lazy"></figure>
-<p>机器指令需要加载到内存中执行，因此需要记录下内存的起始地址和长度；同时要找到函数的入口地址并写到PC寄存器中，想一想这是不是需要一个数据结构来记录下这些信息。</p>
-<p><strong>数据结构大致如下：</strong></p>
-<blockquote>
-<p>struct *** {</p>
-<p>void* start_addr;</p>
-<p>intlen;</p>
-<p>void* start_point;</p>
-<p>...</p>
-<p>};</p>
-</blockquote>
-<p>接下来就是起名字时刻。</p>
-<p>这个数据结构总要有个名字吧，这个结构体用来记录什么信息呢？记录的是程序在被加载到内存中的运行状态，程序从磁盘加载到内存跑起来叫什么好呢？干脆就叫进程（Process）好了，我们的指导原则就是一定要听上去比较神秘，总之大家都不容易弄懂就对了，我将其称为“弄不懂原则”。</p>
-<p>就这样进程诞生了。</p>
-<p>CPU执行的第一个函数也起个名字，第一个要被执行的函数听起来比较重要，干脆就叫main函数吧。</p>
-<p>完成上述两个步骤的程序也要起个名字，根据“弄不懂原则”这个“简单”的程序就叫操作系统（Operating System）好啦。</p>
-<p>就这样操作系统诞生了，程序员要想运行程序再也不用自己手动加载一遍了。</p>
-<p>现在进程和操作系统都有了，一切看上去都很完美。</p>
-<h1 id="3-从单核到多核如何充分利用多核">3、从单核到多核，如何充分利用多核</h1>
-<p>人类的一大特点就是生命不息折腾不止，从单核折腾到了多核。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/386511984.jpg" alt="img" loading="lazy"></p>
-<p>这时，假设我们想写一个程序并且要分利用多核该怎么办呢？</p>
-<p>有的同学可能会说不是有进程吗，多开几个进程不就可以了？</p>
-<p><strong>听上去似乎很有道理，但是主要存在这样几个问题：</strong></p>
-<ul>
-<li>1）进程是需要占用内存空间的(从上一节能看到这一点)，如果多个进程基于同一个可执行程序，那么这些进程其内存区域中的内容几乎完全相同，这显然会造成内存的浪费；</li>
-<li>2）计算机处理的任务可能是比较复杂的，这就涉及到了进程间通信，由于各个进程处于不同的内存地址空间，进程间通信天然需要借助操作系统，这就在增大编程难度的同时也增加了系统开销。</li>
-</ul>
-<p>该怎么办呢？</p>
-<h1 id="4-从进程到线程">4、从进程到线程</h1>
-<p>让我再来仔细的想一想这个问题，所谓进程无非就是内存中的一段区域，这段区域中保存了CPU执行的机器指令以及函数运行时的堆栈信息，要想让进程运行，就把main函数的第一条机器指令地址写入PC寄存器，这样进程就运行起来了。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/175856179.png" alt="img" loading="lazy"></p>
-<p>进程的缺点在于只有一个入口函数，也就是main函数，因此进程中的机器指令只能被一个CPU执行，那么有没有办法让多个CPU来执行同一个进程中的机器指令呢？</p>
-<p>聪明的你应该能想到，既然我们可以把main函数的第一条指令地址写入PC寄存器，那么其它函数和main函数又有什么区别呢？</p>
-<p>答案是没什么区别，main函数的特殊之处无非就在于是CPU执行的第一个函数，除此之外再无特别之处，我们可以把PC寄存器指向main函数，就可以把PC寄存器指向任何一个函数。</p>
-<p>当我们把PC寄存器指向非main函数时，线程就诞生了。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/206310381.png" alt="img" loading="lazy"></p>
-<p>至此我们解放了思想，一个进程内可以有多个入口函数，也就是说属于同一个进程中的机器指令可以被多个CPU同时执行。</p>
-<p>**注意：**这是一个和进程不同的概念，创建进程时我们需要在内存中找到一块合适的区域以装入进程，然后把CPU的PC寄存器指向main函数，也就是说进程中只有一个执行流。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/906340191.png" alt="img" loading="lazy"></p>
-<p>但是现在不一样了，多个CPU可以在同一个屋檐下(进程占用的内存区域)同时执行属于该进程的多个入口函数，也就是说现在一个进程内可以有多个执行流了。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/495009593.png" alt="img" loading="lazy"></p>
-<p>总是叫执行流好像有点太容易理解了，再次祭出”弄不懂原则“，起个不容易懂的名字，就叫线程吧。</p>
-<p>这就是线程的由来。</p>
-<p>操作系统为每个进程维护了一堆信息，用来记录进程所处的内存空间等，这堆信息记为数据集A。</p>
-<p>同样的，操作系统也需要为线程维护一堆信息，用来记录线程的入口函数或者栈信息等，这堆数据记为数据集B。</p>
-<p>显然数据集B要比数据A的量要少，同时不像进程，创建一个线程时无需去内存中找一段内存空间，因为线程是运行在所处进程的地址空间的，这块地址空间在程序启动时已经创建完毕，同时线程是程序在运行期间创建的（进程启动后），因此当线程开始运行的时候这块地址空间就已经存在了，线程可以直接使用。这就是为什么各种教材上提的创建线程要比创建进程快的原因（当然还有其它原因）。</p>
-<p>值得注意的是，有了线程这个概念后，我们只需要进程开启后创建多个线程就可以让所有CPU都忙起来，这就是所谓高性能、高并发的根本所在。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/2073679658.png" alt="img" loading="lazy"></p>
-<p>很简单，只需要创建出数量合适的线程就可以了。</p>
-<p>另外值得注意的一点是：由于各个线程共享进程的内存地址空间，因此线程之间的通信无需借助操作系统，这给程序员带来极大方便的同时也带来了无尽的麻烦，多线程遇到的多数问题都出自于线程间通信简直太方便了以至于非常容易出错。出错的根源在于CPU执行指令时根本没有线程的概念，多线程编程面临的互斥与同步问题需要程序员自己解决，关于互斥与同步问题限于篇幅就不详细展开了，大部分的操作系统资料都有详细讲解。</p>
-<p>最后需要提醒的是：虽然前面关于线程讲解使用的图中用了多个CPU，但不是说一定要有多核才能使用多线程，在单核的情况下一样可以创建出多个线程，原因在于线程是操作系统层面的实现，和有多少个核心是没有关系的，CPU在执行机器指令时也意识不到执行的机器指令属于哪个线程。即使在只有一个CPU的情况下，操作系统也可以通过线程调度让各个线程“同时”向前推进，方法就是将CPU的时间片在各个线程之间来回分配，这样多个线程看起来就是“同时”运行了，但实际上任意时刻还是只有一个线程在运行。</p>
-<h1 id="5-线程与内存">5、线程与内存</h1>
-<p>在前面的讨论中我们知道了线程和CPU的关系，也就是把CPU的PC寄存器指向线程的入口函数，这样线程就可以运行起来了，这就是为什么我们创建线程时必须指定一个入口函数的原因。</p>
-<p><strong>无论使用任何编程语言，创建一个线程大体相同：</strong></p>
-<blockquote>
-<p>// 设置线程入口函数DoSomething</p>
-<p>thread = CreateThread(DoSomething);</p>
-<p>// 让线程运行起来</p>
-<p>thread.Run();</p>
-</blockquote>
-<p>那么线程和内存又有什么关联呢？</p>
-<p>我们知道函数在被执行的时产生的数据包括：函数参数、局部变量、返回地址等信息。这些信息是保存在栈中的，线程这个概念还没有出现时进程中只有一个执行流，因此只有一个栈，这个栈的栈底就是进程的入口函数，也就是main函数。</p>
-<p><strong>假设main函数调用了funA，funcA又调用了funcB，如图所示：</strong></p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/575895556.png" alt="img" loading="lazy"></p>
-<p>那么有了线程以后了呢？</p>
-<p>有了线程以后一个进程中就存在多个执行入口，即同时存在多个执行流，那么只有一个执行流的进程需要一个栈来保存运行时信息，那么很显然有多个执行流时就需要有多个栈来保存各个执行流的信息，也就是说操作系统要为每个线程在进程的地址空间中分配一个栈，即每个线程都有独属于自己的栈，能意识到这一点是极其关键的。</p>
-<p>​    <img src="https://img2020.cnblogs.com/blog/848699/202012/848699-20201223155557045-512078555.png" alt="img" loading="lazy"></p>
-<p>同时我们也可以看到，创建线程是要消耗进程内存空间的，这一点也值得注意。</p>
-<h1 id="6-线程的使用">6、线程的使用</h1>
-<p>现在有了线程的概念，那么接下来作为程序员我们该如何使用线程呢？</p>
-<p>从生命周期的角度讲，线程要处理的任务有两类：长任务和短任务。</p>
-<p>*<strong>1）长任务（long-lived tasks）：*</strong></p>
-<p>顾名思义，就是任务存活的时间很长，比如以我们常用的word为例，我们在word中编辑的文字需要保存在磁盘上，往磁盘上写数据就是一个任务，那么这时一个比较好的方法就是专门创建一个写磁盘的线程，该写线程的生命周期和word进程是一样的，只要打开word就要创建出该写线程，当用户关闭word时该线程才会被销毁，这就是长任务。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1772188508.png" alt="img" loading="lazy"></p>
-<p>这种场景非常适合创建专用的线程来处理某些特定任务，这种情况比较简单。</p>
-<p>有长任务，相应的就有短任务。</p>
-<p>*<strong>2）短任务（short-lived tasks）：*</strong></p>
-<p>这个概念也很简单，那就是任务的处理时间很短，比如一次网络请求、一次数据库查询等，这种任务可以在短时间内快速处理完成。因此短任务多见于各种Server，像web server、database server、file server、mail  server等，这也是互联网行业的同学最常见的场景，这种场景是我们要重点讨论的。</p>
-<p>**这种场景有两个特点：**一个是任务处理所需时间短；另一个是任务数量巨大。</p>
-<p>如果让你来处理这种类型的任务该怎么办呢？</p>
-<p>你可能会想，这很简单啊，当server接收到一个请求后就创建一个线程来处理任务，处理完成后销毁该线程即可，So easy。</p>
-<p>这种方法通常被称为thread-per-request，也就是说来一个请求就创建一个线程：</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1419829538.png" alt="img" loading="lazy"></p>
-<p>如果是长任务，那么这种方法可以工作的很好，但是对于大量的短任务这种方法虽然实现简单但是有缺点。</p>
-<p><strong>具体是以下这样的缺点：</strong></p>
-<ul>
-<li>1）从前几节我们能看到，线程是操作系统中的概念(这里不讨论用户态线程实现、协程之类)，因此创建线程天然需要借助操作系统来完成，操作系统创建和销毁线程是需要消耗时间的；</li>
-<li>2）每个线程需要有自己独立的栈，因此当创建大量线程时会消耗过多的内存等系统资源。</li>
-</ul>
-<p>这就好比你是一个工厂老板（想想都很开心有没有），手里有很多订单，每来一批订单就要招一批工人，生产的产品非常简单，工人们很快就能处理完，处理完这批订单后就把这些千辛万苦招过来的工人辞退掉，当有新的订单时你再千辛万苦的招一遍工人，干活儿5分钟招人10小时，如果你不是励志要让企业倒闭的话大概是不会这么做到的。</p>
-<p>因此一个更好的策略就是招一批人后就地养着，有订单时处理订单，没有订单时大家可以闲呆着。</p>
-<p>这就是线程池的由来。</p>
-<h1 id="7-从多线程到线程池">7、从多线程到线程池</h1>
-<p>线程池的概念是非常简单的，无非就是创建一批线程，之后就不再释放了，有任务就提交给这些线程处理，因此无需频繁的创建、销毁线程，同时由于线程池中的线程个数通常是固定的，也不会消耗过多的内存，因此这里的思想就是复用、可控。</p>
-<h1 id="8-线程池是如何工作的">8、线程池是如何工作的</h1>
-<p>可能有的同学会问，该怎么给线程池提交任务呢？这些任务又是怎么给到线程池中线程呢？</p>
-<p>很显然，数据结构中的队列天然适合这种场景，提交任务的就是生产者，消费任务的线程就是消费者，实际上这就是经典的生产者-消费者问题。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1620124523.png" alt="img" loading="lazy"></p>
-<p>现在你应该知道为什么操作系统课程要讲、面试要问这个问题了吧，因为如果你对生产者-消费者问题不理解的话，本质上你是无法正确的写出线程池的。</p>
-<p>限于篇幅在这里不打算详细的讲解生产者消费者问题，参考操作系统相关资料就能获取答案。这里我打算讲一讲一般提交给线程池的任务是什么样子的。</p>
-<p><strong>一般来说提交给线程池的任务包含两部分：</strong></p>
-<ul>
-<li>
-<ol>
-<li>需要被处理的数据；</li>
-</ol>
-</li>
-<li>
-<ol start="2">
-<li>处理数据的函数。</li>
-</ol>
-</li>
-</ul>
-<p><strong>伪码描述一下：</strong></p>
-<blockquote>
-<p>struct task {</p>
-<p>void* data;   // 任务所携带的数据</p>
-<p>handler handle; // 处理数据的方法</p>
-<p>}</p>
-</blockquote>
-<p>（注意：你也可以把代码中的struct理解成class，也就是对象)</p>
-<p>线程池中的线程会阻塞在队列上，当生产者向队列中写入数据后，线程池中的某个线程会被唤醒，该线程从队列中取出上述结构体(或者对象)，以结构体(或者对象)中的数据为参数并调用处理函数。</p>
-<p><strong>伪码如下：</strong></p>
-<blockquote>
-<p>while(true) {</p>
-<p>struct task = GetFromQueue(); // 从队列中取出数据</p>
-<p>task-&gt;handle(task-&gt;data);   // 处理数据</p>
-<p>}</p>
-</blockquote>
-<p>以上就是线程池最核心的部分。</p>
-<p>理解这些你就能明白线程池是如何工作的了。</p>
-<h1 id="9-线程池中线程的数量">9、线程池中线程的数量</h1>
-<p>现在线程池有了，那么线程池中线程的数量该是多少呢？</p>
-<p>在接着往下看前先自己想一想这个问题。如果你能看到这里说明还没有睡着。</p>
-<p>要知道线程池的线程过少就不能充分利用CPU，线程创建的过多反而会造成系统性能下降，内存占用过多，线程切换造成的消耗等等。因此线程的数量既不能太多也不能太少，那到底该是多少呢？</p>
-<p>回答这个问题，你需要知道线程池处理的任务有哪几类，有的同学可能会说你不是说有两类吗？长任务和短任务，这个是从生命周期的角度来看的，那么从处理任务所需要的资源角度看也有两种类型，这就是没事儿找抽型。。。啊不，是CPU密集型和I/O密集型。</p>
-<p>*<strong>1）CPU密集型：*</strong></p>
-<p>所谓CPU密集型就是说处理任务不需要依赖外部I/O，比如科学计算、矩阵运算等等。在这种情况下只要线程的数量和核数基本相同就可以充分利用CPU资源。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/544473276.png" alt="img" loading="lazy"></p>
-<p>*<strong>2）I/O密集型：*</strong></p>
-<p>这一类任务可能计算部分所占用时间不多，大部分时间都用在了比如磁盘I/O、网络I/O等。</p>
-<p>​    <img src="https://gitee.com/kangjun/MyBlogImage/raw/master/712702173.png" alt="img" loading="lazy"></p>
-<p>这种情况下就稍微复杂一些了，你需要利用性能测试工具评估出用在I/O等待上的时间，这里记为WT(wait time)，以及CPU计算所需要的时间，这里记为CT（computing time），那么对于一个N核的系统，合适的线程数大概是 <em>N * (1 + WT/CT)</em> ，假设I/O等待时间和计算时间相同，那么你大概需要2N个线程才能充分利用CPU资源，注意这只是一个理论值，具体设置多少需要根据真实的业务场景进行测试。</p>
-<p>当然充分利用CPU不是唯一需要考虑的点，随着线程数量的增多，内存占用、系统调度、打开的文件数量、打开的socker数量以及打开的数据库链接等等是都需要考虑的。</p>
-<p>因此这里没有万能公式，要具体情况具体分析。</p>
-<h1 id="10-线程池不是万能的">10、线程池不是万能的</h1>
-<p>线程池仅仅是多线程的一种使用形式，因此多线程面临的问题线程池同样不能避免，像死锁问题、race condition问题等等，关于这一部分同样可以参考操作系统相关资料就能得到答案。</p>
-<h1 id="11-线程池使用的最佳实践">11、线程池使用的最佳实践</h1>
-<p>线程池是程序员手中强大的武器，互联网公司的各个server上几乎都能见到线程池的身影。</p>
-<p><strong>但使用线程池前你需要考虑：</strong></p>
-<ul>
-<li>1）充分理解你的任务，是长任务还是短任务、是CPU密集型还是I/O密集型，如果两种都有，那么一种可能更好的办法是把这两类任务放到不同的线程池中，这样也许可以更好的确定线程数量；</li>
-<li>2）如果线程池中的任务有I/O操作，那么务必对此任务设置超时，否则处理该任务的线程可能会一直阻塞下去；</li>
-<li>3）线程池中的任务最好不要同步等待其它任务的结果。</li>
-</ul>
-<h1 id="12-本文小结">12、本文小结</h1>
-<p>本文我们从CPU开始一路来到常用的线程池，从底层到上层、从硬件到软件。</p>
-<p>注意：这里通篇没有出现任何特定的编程语言，线程不是语言层面的概念（依然不考虑用户态线程），但是当你真正理解了线程后，相信你可以在任何一门语言下用好多线程，你需要理解的是道，此后才是术。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Node–异步I/O解析]]></title>
-        <id>https://kangjn.github.io/post/node-yi-bu-io-jie-xi/</id>
-        <link href="https://kangjn.github.io/post/node-yi-bu-io-jie-xi/">
-        </link>
-        <updated>2021-04-19T02:58:55.000Z</updated>
-        <content type="html"><![CDATA[<p>“异步”这个名词其实在Node之前就已经诞生了。但是在绝大多数高级编程语言中，异步并不多见。在众多高级语言或运行平台中，将异步作为主要编程方式和设计理念的，Node是首个。</p>
-<p>异步I/O、事件驱动和单线程构成了Node的基调，而Nginx与Node的事件驱动、异步I/O设计理念比较相近。Nginx采用纯C编写，性能表现非常优异，具备面向客户端管理连接的强大能力，但是它的背后依然受限于各种同步方式的编程语言。但Node是全方位的，既可以作为服务器端去处理客户端带来的大量并发请求，也能作为客户端向网络中的各个应用进行并发请求。</p>
-<h2 id="为什么要异步io">为什么要异步I/O</h2>
-<p>为什么异步I/O在Node中如此重要，这是因为Node面向网络设计，在跨网络的结构下，并发已经是现代编程中的标准配备了。</p>
-<h3 id="用户体验">用户体验</h3>
-<p>《高性能JavaScript》中提到过，如果脚本的执行时间超过100毫秒，用户就会感到页面卡顿，以为页面停止响应。而在B/S模型中，网络速度的限制给网页的实时体验造成很大的麻烦。</p>
-<p>如果网页临时需要获取一个资源，通过同步的方式获取，那么JavaScript则需要等待资源完全从服务器端获取后才能继续执行，这期间UI停顿，不响应用户的交互行为。这样用户体验将会极差。而采用异步请求，在下载资源期间，JavaScript和UI的执行都不会处于等待状态，可以继续响应用户的交互行为。</p>
-<p>同理，前端通过异步可以消除掉UI阻塞现象，但是前端获取资源的速度也取决于后端的响应速度。假如一个资源来自于两个不同位置的数据的返回，第一个资源消耗M毫秒，第二个资源消耗N毫秒。如果采用同步的方式，获取两个资源消耗的的时间为M+N毫秒。而采用异步的方式，第一个资源的获取并不会阻塞第二个资源的获取，消耗的时间为max(M,N)。</p>
-<p>随着网站或应用不断膨胀，M与N的值会线性增长，那么异步的性能将比同步更加优越。</p>
-<h3 id="资源分配">资源分配</h3>
-<p>假设业务场景中有一组互不相关的任务需要完成，有以下两种主流的方法：</p>
-<ul>
-<li>单线程串行一次执行</li>
-<li>多线程并行完成</li>
-</ul>
-<p>如果创建多线程的开销小于并行执行，那么多线程是首选的，但是多线程在创建线程和执行期线程上下文切换的开销较大，而且多线程编程经常面临锁、状态同步等问题。</p>
-<p>单线程顺序执行任务的缺点在于性能，任意一个略慢的任务都会导致后续执行代码被阻塞。在计算机资源中，通常I/O与CPU计算之间是可以并行执行的，但是同步的编程模型导致I/O的进行会让后续任务等待，造成资源不能被更好的利用。</p>
-<p>Node利用单线程，远离多线程死锁、状态同步等问题；利用异步I/O，让单线程远离阻塞，更好的利用CPU。</p>
-<h2 id="异步io实现">异步I/O实现</h2>
-<p>异步I/O在Node中应用最为广泛，但是它并不是Node的原创。</p>
-<h3 id="异步io与非阻塞io">异步I/O与非阻塞I/O</h3>
-<p>对于计算机内核I/O而言，异步/同步和阻塞/非阻塞是两码事。</p>
-<p>操作系统对于I/O只有两种方式：阻塞和非阻塞。在调用阻塞I/O时，应用程序需要等待I/O完成才返回结果。</p>
-<p>阻塞I/O的一个特点是调用之后一定要等到系统内核层面完成所有操作之后，调用才结束。阻塞I/O造成CPU等待I/O，浪费等待时间，CPU的处理能力不能得到充分利用。</p>
-<p>为了提高性能，内核提供了非阻塞I/O。非阻塞I/O跟阻塞I/O的差别为调用之后会立即返回，非阻塞I/O返回之后，CPU的时间片可以用来处理其他事物，此时提升性能是明显的，但是由于完成的I/O并没有完成，立即返回的并不是业务层期望的数据，而仅仅是当前的调用状态。</p>
-<p>为了获取完整的数据，应用程序需要重复调用I/O操作来确认是否完成。这种重复调用判断操作是否完成的技术叫做<strong>轮询</strong>。</p>
-<p>现存的轮询技术主要有read、select、poll、epoll和kqueue。这里只讲一下epoll的轮询原理。</p>
-<p>epoll是Linux下效率最高的I/O事件通知机制，在进入轮询的时候，如果没有检查到I/O事件，将会进行休眠，直到事件发生将它唤醒。它是真实利用了事件的通知、执行回调的方式，而不是遍历查询，所以不会浪费CPU，执行效率较高。</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/k3u1fbpfcp1.png" alt="image.png" loading="lazy"></figure>
-<p>轮询技术满足了非阻塞I/O确保获取完整数据的需求，但是对于程序而言，它仍然算是一种同步，因为应用程序仍然需要等待I/O完全返回，依旧花费了很多时间等待。等待期间，CPU要么用于遍历文件描述符，要么用于休眠等待时间发生。</p>
-<h3 id="现实的异步io">现实的异步I/O</h3>
-<p>通过让部分线程进行阻塞I/O或者非阻塞I/O加轮询技术来完成数据获取，让一个线程进行计算处理，通过线程之间的通信将I/O得到的数据进行传递，这就轻松实现了异步I/O（虽然这是模拟的）</p>
-<p>但是最初，Node在*nix 平台下采用了libeio配合libev实现I/O部分，实现了异步I/O。在Node v0.9.3中，自行实现了线程池来完成异步I/O。</p>
-<p>而Windows下的IOCP在某种程度上提供了理想的异步I/O：调用异步方法，等待I/O完成之后的通知，执行回调，用户无需考虑轮询。但是它的内部其实依然是线程池原理，不同之处在于这些线程池有系统内核接手管理。</p>
-<p>由于Windows平台和*nix平台的差异，Node提供了libuv作为抽象封装层，使得所有平台兼容性的判断都由这一层来完成，并保证上层的Node与下层的自定义线程池及IOCP之间个字独立。</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/k3u1fbpfcp2.png" alt="image.png" loading="lazy"></figure>
-<p>我们时常提到Node是单线程的，这里的单线程仅仅只是JavaScript执行在单线程中。在Node中，无论是*nix还是Windows平台，内部完成I/O任务的另有线程池。</p>
-<h2 id="node的异步io">Node的异步I/O</h2>
-<p>完成整个异步I/O环节的有事件循环、观察者和请求对象等。</p>
-<h3 id="事件循环">事件循环</h3>
-<p>事件循环是Node自身的执行模型，正式它使得回调函数十分普遍。</p>
-<p>在进程启动时，Node便会创建一个类似于while(true)的循环，每执行一次循环体的过程我们称为Tick。每个Tick的过程就是查看是否有事件待处理，如果有就取出事件及其相关的回调函数。如果存在关联的回调函数，就执行他们。然后进入下个循环，如果不再有事件处理，就退出进程。</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coJll9.png" alt="coJll9.png" loading="lazy"></figure>
-<h3 id="观察者">观察者</h3>
-<p>每个事件循环中有一个或者多个观察者，而判断是否有事件要处理的过程就是向这些观察者询问是否有要处理的事件。</p>
-<p>在Node中，事件主要来源于网络请求、文件I/O等，这些时间对应的观察者有文件I/O观察者、网络I/O观察者等。观察者将事件进行了分类。</p>
-<p>事件循环是一个典型的生产者/消费者模型。异步I/O、网络请求等则是事件的生产者，不断为Node提供不同类型的事件，这些事件被传递到对应的观察者那里，事件循环则从观察者那里取出事件并处理。</p>
-<h3 id="请求对象">请求对象</h3>
-<p>对于Node的异步I/O调用而言，回调函数不由开发者来调用。从JavaScript发起调用到内核执行完I/O操作的过渡过程中，存在一种产物，叫做<strong>请求对象</strong></p>
-<p>下面用fs.open()方法作为一个小小的例子。</p>
-<pre><code class="language-js">fs.open = function(path,flags,mode,callback){
-    //...
-    binding.open(pathModule._makeLong(path),
-                    stringToFlags(flags),
-                    mode,
-                    callback);
-}
- 
-</code></pre>
-<p>fs.open()的作用是根据指定路径和参数去打开一个文件，从而得到一个文件描述符，这是后续所有I/O操作的初试操作。JavaScript层面的代码通过调用C++核心模块进行下层的操作。</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coJ3O1.png" alt="coJ3O1.png" loading="lazy"></figure>
-<p>从事JavaScript调用Node的核心模块，核心模块调用C++模块，内建模块通过libuv进行系统调用，这里是Node里经典的调用方式。这里libuv作为封装层，有两个平台的实现，实质上是调用了uv_fs_open()方法。在uv_fs_open()的调用过程中，将从JavaScript层传入的参数和当前方法都封装在一个请求对象中，回调函数则被设置在这个对象的属性上。对象包装完毕后，将对象推入线程池等待执行。</p>
-<p>至此，JavaScript调用立即返回，由JavaScript层面发起的异步调用的第一阶段就此结束。JavaScript线程可以继续执行当前任务的后续操作。</p>
-<p>请求对象是异步I/O过程中的重要中间产物，所有的状态都保存在这个对象中，包括送入线程池等待执行以及I/O操作完毕后的回调处理。</p>
-<h3 id="执行回调">执行回调</h3>
-<p>组装好请求对象、送入I/O线程池等待执行，只是完成一部I/O的第一部分，回调通知是第二部分。</p>
-<p>线程池中的I/O操作调用完毕之后，会将获取的结果存储在req-&gt;result属性上，然后调用PostQueueCompletionStatus()通知IOCP，告知当前对象操作已经完成。</p>
-<p>至此，整个异步I/O的流程完全结束。</p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/coJYTK.png" alt="coJYTK.png" loading="lazy"></figure>
-<p>事件循环、观察者、请求对象、I/O线程池这四者共同构成了Node异步I/O模型的基本要素。</p>
-<h3 id="小结">小结</h3>
-<p>整理下来，我们可以提取异步I/O的几个关键词：单线程、事件循环、观察者和I/O线程池。单线程和线程池看起来有些悖论的样子。因为JavaScript是单线程的，所以很容易理解为它不能充分利用多核CPU。实际上，在Node中，除了JavaScript是单线程外，Node自身其实是多线程的，只是I/O线程使用的CPU较少。还有就是除了用户代码无法并行执行外，所有的I/O（磁盘I/O和网络I/O等）都是可以并行起来的。</p>
 ]]></content>
     </entry>
 </feed>

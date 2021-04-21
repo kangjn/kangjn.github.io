@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>springboot-2.利用接口返回数据（json） | MyBlog</title>
+<title>Spring Boot与Docker部署 | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="springboot-2.利用接口返回数据（json） | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="Spring Boot与Docker部署 | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="springboot-2.利用接口返回数据（json）" />
-  <meta property="og:url" content="https://kangjn.github.io/post/springboot-2li-yong-jie-kou-fan-hui-shu-ju-json/" />
+  <meta property="og:description" content="Spring Boot与Docker部署" />
+  <meta property="og:url" content="https://kangjn.github.io/post/spring-boot-yu-docker-bu-shu/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -154,10 +154,10 @@
                 <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
                 
               </span>
-              <h1>springboot-2.利用接口返回数据（json）</h1>
+              <h1>Spring Boot与Docker部署</h1>
               <span class="meta">
                 Posted on
-                2021.04.16，4 min read
+                2021.04.21，5 min read
               </span>
             </div>
           
@@ -172,179 +172,170 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h2 id="springboot-2利用接口返回数据json">springboot-2.利用接口返回数据（json）</h2>
-<h2 id="前言">前言</h2>
-<p>项目前后台交互存在两种方式<br>
-一种普通整体页面提交，比如form提交；<br>
-还有一种局部刷新，或者叫做异步刷新，ajax提交；<br>
-@Controller就是整体页面刷新提交的处理注解</p>
-<p>@RestController就是ajax提交，一般返回json格式，相当于我们经常使用的@ResponseBody+@Controller组合</p>
-<h2 id="正文">正文</h2>
-<p>新建文件夹controller<br>
-然后在该文件夹下新建 控制类.java文件<br>
-[![cWWn9x.png]((https://gitee.com/kangjun/MyBlogImage/raw/master/cWWn9x.png)</p>
-<h3 id="1最简单的数据返回">1.最简单的数据返回</h3>
-<pre><code>@RestController
-public class helloController {
-    @RequestMapping(&quot;/&quot;)
-    public String hello()
-    {
-        return &quot;hello&quot;;
-    }
-}
-</code></pre>
-<p>【@RequestMapping作用】<br>
-<strong>处理请求地址的映射<br>
-用于类和方法上，类上的 “请求地址” 是方法上的 “请求地址” 的父地址</strong><br>
-[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWWgCq.png" alt="cWWgCq.png" loading="lazy"></p>
-<h3 id="2返回类对象信息">2.返回类对象信息</h3>
-<p>为了演示，我们新建一个文件夹User，然后在该文件夹下新建一个文件User.java<br>
-[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWWWvT.png" alt="cWWWvT.png" loading="lazy"><br>
-内容如下：</p>
-<pre><code>public class User {
-    private String name;
-    private String sex;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-}
-</code></pre>
-<p><strong>然后在controller文件夹下新建一个userController.java文件</strong><br>
-(记得自行import需要的文件)<br>
-[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWfMin.png" alt="cWfMin.png" loading="lazy"></p>
-<pre><code>@RestController
-public class userController {
-    @RequestMapping(&quot;/getUser&quot;)
-    public User getUser() {
-        User u = new User();
-        u.setName(&quot;x&quot;);
-        u.setSex(&quot;nan&quot;);
-        return u;
-
-    }
-}
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWWgCq.png" alt="cWWgCq.png" loading="lazy"></figure>
-<h3 id="3返回封装的类对象信息">3.返回封装的类对象信息</h3>
-<p>解释一下该处和2处的区别：<br>
-@Description: 自定义响应数据结构这个类是提供给门户，ios，安卓，微信商城用的门户接受此类数据后需要使用本类的方法转换成对于的数据类型格式（类，或者list）其他自行处理</p>
+          <h2 id="开启docker远程访问">开启Docker远程访问</h2>
+<p>首先需要开启docker远程访问功能，以便可以进行远程操作。</p>
 <ul>
 <li>
-<p>200：表示成功</p>
-</li>
-<li>
-<p>500：表示错误，错误信息在msg字段中</p>
-</li>
-<li>
-<p>501：bean验证错误，不管多少个错误都以map形式返回</p>
-</li>
-<li>
-<p>502：拦截器拦截到用户token出错</p>
-</li>
-<li>
-<p>555：异常抛出信息<br>
-简单来说，就是当前台提交用户信息给后台时，后台会返回一个json数据，其中包含状态码（200等），message（“ok”或者“failure”），然后再包含一个用户信息列表。</p>
-<p><strong>首先，在pom文件中添加依赖项</strong></p>
-</li>
-<li>
-<p>jackson-databind</p>
-</li>
-<li>
-<p>jackson-core<br>
-新建一个jsonResult.java文件</p>
+<h4 id="centos-6">CentOS 6</h4>
 </li>
 </ul>
-<pre><code>package cn.ericam.nndemo.Json;
-public class jsonResult {
-    // 响应业务状态
-    private Integer status;
-    // 响应消息
-    private String msg;
-    // 响应中的数据
-    private Object data;
-    public static jsonResult ok(Object data) {
-        return new jsonResult(data);
-    }
-    //类含参初始化1
-    public jsonResult(Integer status, String msg, Object data) {
-        this.status = status;
-        this.msg = msg;
-        this.data = data;
+<p>修改/etc/default/docker文件，重启后生效（service docker restart）。</p>
+<pre><code>DOCKER_OPTS=&quot;-H=unix:///var/run/docker.sock -H=0.0.0.0:2375&quot;
+</code></pre>
+<ul>
+<li>
+<h4 id="centos-7">CentOS 7</h4>
+</li>
+</ul>
+<p>打开/usr/lib/systemd/system/docker.service文件，修改ExecStart这行。</p>
+<pre><code>ExecStart=/usr/bin/dockerd  -H tcp://0.0.0.0:2375  -H unix:///var/run/docker.sock
+</code></pre>
+<p>重启后生效</p>
+<pre><code>  systemctl daemon-reload    
+  systemctl restart docker.service 
+</code></pre>
+<p>测试是否生效</p>
+<pre><code>curl http://127.0.0.1:2375/info
+</code></pre>
+<hr>
+<h2 id=""></h2>
+<h2 id="新建maven工程">新建Maven工程</h2>
+<p>pom.xml配置如下:</p>
+<pre><code>&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;test.springboot.docker&lt;/groupId&gt;
+    &lt;artifactId&gt;docker-springboot&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3.RELEASE&lt;/version&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;com.spotify&lt;/groupId&gt;
+                &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;0.4.14&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;imageName&gt;${docker.image.prefix}/${project.artifactId}&lt;/imageName&gt;
+                    &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt;
+                    &lt;dockerHost&gt;http://192.168.1.200:2375&lt;/dockerHost&gt;
+                    &lt;resources&gt;
+                        &lt;resource&gt;
+                            &lt;targetPath&gt;/&lt;/targetPath&gt;
+                            &lt;directory&gt;${project.build.directory}&lt;/directory&gt;
+                            &lt;include&gt;${project.build.finalName}.jar&lt;/include&gt;
+                        &lt;/resource&gt;
+                    &lt;/resources&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</code></pre>
+<p><code>imageName：</code>指定了镜像的名字</p>
+<p><code>dockerDirectory：</code>指定Dockerfile的位置</p>
+<p><code>dockerHost：</code>指定Docker远程API地址</p>
+<p><code>resources：</code>指那些需要和Dockerfile放在一起，在构建镜像时使用的文件，一般应用jar包需要纳入</p>
+<h4 id="创建java类">创建Java类</h4>
+<pre><code>package hello;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class Application {
+
+    @RequestMapping(&quot;/&quot;)
+    public String home() {
+        return &quot;Hello Docker World&quot;;
     }
 
-    //类含参初始化2
-    public jsonResult(Object data) {
-        this.status = 200;
-        this.msg = &quot;OK&quot;;
-        this.data = data;
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
 
-    //get和set方法
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
 }
 </code></pre>
-<p>然后在userController.java下修改为如下代码：</p>
-<pre><code>@RestController
-public class userController {
-    @RequestMapping(&quot;/getUser&quot;)
-    
-    public jsonResult getUser()
-    {
-        User u = new User();
-        u.setName(&quot;x&quot;);
-        u.setSex(&quot;nan&quot;);
-        return  jsonResult.ok(u);
-    }
-}
+<h4 id="创建dockerfile">创建Dockerfile</h4>
+<p>在src/main/docker目录下创建一个名为Dockerfile的文件，配置如下：</p>
+<pre><code>FROM java
+VOLUME /tmp
+ADD docker-springboot-0.0.1-SNAPSHOT.jar app.jar
+RUN bash -c 'touch /app.jar'
+ENV JAVA_OPTS=&quot;&quot;
+ENTRYPOINT [ &quot;sh&quot;, &quot;-c&quot;, &quot;java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar&quot; ]
 </code></pre>
-<p>[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWfyLD.png" alt="cWfyLD.png" loading="lazy"><br>
-<strong>【ps：IDEA利用ctrl+insert可以快速生成get和set方法】</strong></p>
+<p>**FROM java：**指Docker Hub上官方提供的java镜像，有了这个基础镜像后，Dockerfile可以通过<code>FROM</code>指令直接获取它的状态——也就是在容器中<code>java</code>是已经安装的，接下来通过自定义的命令来运行Spring Boot应用。</p>
+<p>**VOLUME /tmp：**创建/tmp目录并持久化到Docker数据文件夹，因为Spring Boot使用的内嵌Tomcat容器默认使用<code>/tmp</code>作为工作目录。</p>
+<p>**ADD docker-springboot-0.0.1-SNAPSHOT.jar app.jar：**将应用jar包复制到<code>/app.jar</code></p>
+<p>**ENTRYPOINT：**表示容器运行后默认执行的命令</p>
+<p><strong>完整目录结构如下所示：</strong></p>
+<p><strong><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/291529205.png" alt="img" loading="lazy"></strong></p>
+<p>运行以下命令创建Docker镜像：</p>
+<pre><code>package docker:build
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1205907397.png" alt="img" loading="lazy"></figure>
+<hr>
+<h2 id="docker启动镜像">Docker启动镜像</h2>
+<p>查看项目是否上传成功</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1761674239.png" alt="img" loading="lazy"></figure>
+<h4 id="启动镜像">启动镜像</h4>
+<pre><code>docker run -p 8888:8080 springboot/docker-springboot
+</code></pre>
+<p>通过浏览器访问</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/738880254.png" alt="img" loading="lazy"></figure>
+<p></p>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
 <li>
 <ul>
-<li><a href="#springboot-2%E5%88%A9%E7%94%A8%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AEjson">springboot-2.利用接口返回数据（json）</a></li>
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E6%AD%A3%E6%96%87">正文</a>
+<li><a href="#%E5%BC%80%E5%90%AFdocker%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">开启Docker远程访问</a><br>
+*
 <ul>
-<li><a href="#1%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%94%E5%9B%9E">1.最简单的数据返回</a></li>
-<li><a href="#2%E8%BF%94%E5%9B%9E%E7%B1%BB%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AF">2.返回类对象信息</a></li>
-<li><a href="#3%E8%BF%94%E5%9B%9E%E5%B0%81%E8%A3%85%E7%9A%84%E7%B1%BB%E5%AF%B9%E8%B1%A1%E4%BF%A1%E6%81%AF">3.返回封装的类对象信息</a></li>
+<li><a href="#centos-6">CentOS 6</a></li>
+<li><a href="#centos-7">CentOS 7</a></li>
+</ul>
+</li>
+<li></li>
+<li><a href="#%E6%96%B0%E5%BB%BAmaven%E5%B7%A5%E7%A8%8B">新建Maven工程</a><br>
+*
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BAjava%E7%B1%BB">创建Java类</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAdockerfile">创建Dockerfile</a></li>
+</ul>
+</li>
+<li><a href="#docker%E5%90%AF%E5%8A%A8%E9%95%9C%E5%83%8F">Docker启动镜像</a><br>
+*
+<ul>
+<li><a href="#%E5%90%AF%E5%8A%A8%E9%95%9C%E5%83%8F">启动镜像</a></li>
 </ul>
 </li>
 </ul>
@@ -354,9 +345,9 @@ public class userController {
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/springboot-1jian-yue-ban-chuang-jian-di-yi-ge-ying-yong/">
+            <a href="https://kangjn.github.io/post/mqtt-jian-jie/">
               <span class="post-title">
-                springboot-1.简约版创建第一个应用&rarr;
+                MQTT简介&rarr;
               </span>
             </a>
           </p>

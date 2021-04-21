@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>深入理解Java8 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="深入理解Java8 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="深入理解Java8" />
+  <meta property="og:url" content="https://kangjn.github.io/post/shen-ru-li-jie-java8/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618976787924"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1618976787924"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/UVCPskwcm/" class="tag">java</a>
+                
+              </span>
+              <h1>深入理解Java8</h1>
+              <span class="meta">
+                Posted on
+                2021.04.21，12 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <h3 id="lambda的基本语法">Lambda的基本语法</h3>
+<p>(parm1,parm1,parm1) -&gt;{<br>
+};</p>
+<blockquote>
+<p>lambda表达式结构</p>
+</blockquote>
+<ul>
+<li>一个lambda表达式可以有零个或多个参数</li>
+<li>参数的类型既可以明确声明，也可以根据上下文来推断</li>
+<li>所有参数需包含在圆括号内，参数之间用逗号相隔</li>
+<li>空圆括号代表参数集为空</li>
+<li>当只有一个参数，且其类型可推导时，圆括号()可省略</li>
+<li>Lambda表达式的主体可包含零条或多条语句</li>
+<li>如果Lambda表达式的主题只有一条语句，花括号{}可以省略。匿名函数的返回类型与该主体表达式一致</li>
+<li>如果Lambda表达式的主题包含一条以上语句，则表达式必须包含再花括号{}中。匿名函数的返回类型与代码块的返回类型一致，若没有则返回为空</li>
+</ul>
+<blockquote>
+<p>函数式接口</p>
+</blockquote>
+<ul>
+<li>一个接口中只有一个抽象的方法</li>
+<li>声明函数式接口时，在接口上添加<code>@FunctionalInterface</code>注解，这样编译器会按照函数式接口去验证</li>
+<li>一个接口中只有一个抽象方法时，编译器会默认这个接口为函数式接口</li>
+<li>接口中定义的方法为定级父类Object类中的方法时，接口可以拥有两个及以上的方法。因为接口的实现类也会继承Object,所以编译器会认为接口中只有一个方法</li>
+</ul>
+<blockquote>
+<p>注意点</p>
+</blockquote>
+<ul>
+<li>在Python、JavaScript等语言中lambda为函数，在java中lambda为对象</li>
+<li>在java8中，接口中可以有具体方法的实现，必须是<code>default meathod</code></li>
+<li>在java中可以使用静态方法</li>
+</ul>
+<h3 id="函数式接口如何实例">函数式接口如何实例</h3>
+<blockquote>
+<p>函数式方法的声明</p>
+</blockquote>
+<ol>
+<li>采用lambda表达式的方式进行声明一个接口实例<br>
+package funcationdemo;</li>
+</ol>
+<p>import java.util.Arrays;<br>
+import java.util.List;</p>
+<p>/**</p>
+<ul>
+<li>
+<p>描述:</p>
+</li>
+<li>
+<p>lambda表达式练习<br>
+*/<br>
+public class Test01 {<br>
+public static void main(String[] args) {<br>
+List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 7);<br>
+MyInterface myInterface = i -&gt; {<br>
+return i;<br>
+};<br>
+list.forEach(i -&gt; System.out.println(myInterface.printElement(i)));</p>
+<p>}<br>
+}<br>
+@FunctionalInterface<br>
+interface MyInterface{<br>
+Integer printElement(Integer i);<br>
+}</p>
+</li>
+</ul>
+<ol>
+<li>采用方法引用的方式进行声明<br>
+public class Test01 {<br>
+public static void main(String[] args) {<br>
+List<String> list2 = Arrays.asList(&quot;hello&quot;,&quot;world&quot;,&quot;hello world&quot;);<br>
+list2.forEach(String::toUpperCase);<br>
+}<br>
+}</li>
+<li>采用构造方法的方式进行声明<br>
+package funcationdemo;</li>
+</ol>
+<p>/**</p>
+<ul>
+<li>描述:</li>
+<li>lambda表达式练习<br>
+*/<br>
+public class Test01 {<br>
+public static void main(String[] args) {<br>
+MyInterface myInterface = Person::new;<br>
+System.out.println(myInterface.getPerson(&quot;李华&quot;));<br>
+}<br>
+}</li>
+</ul>
+<p>@FunctionalInterface<br>
+interface MyInterface {<br>
+Person getPerson(String name);<br>
+}</p>
+<p>class Person {<br>
+private String name;</p>
+<pre><code>public Person(String name) {
+    this.name = name;
+}
+
+public String getName() {
+    return name;
+}
+
+public void setName(String name) {
+    this.name = name;
+}
+
+@Override
+public String toString() {
+    return &quot;Person{&quot; +
+        &quot;name='&quot; + name + '\'' +
+        '}';
+}
+</code></pre>
+<p>}</p>
+<h3 id="函数式接口四种类型">函数式接口四种类型</h3>
+<p>函数式接口	方法	参数类型	返回类型	作用<br>
+Consumer消费型接口	void accept(T t)	T	void	对T类型的参数进行操作<br>
+Supplier供给型接口	T get()	无	T	操作数据，返回T类型的结果<br>
+Function函数型接口	R apply(T t)	T	R	对T类型参数进行操作，并返回R类型的结果<br>
+Predicate 断定型接口	boolean test(T t)	T	boolean	确定T类型参数是否满足某约束，并返回boolean值</p>
+<h3 id="lambda表达式的作用">Lambda表达式的作用</h3>
+<ul>
+<li>传递行为，而不仅仅是值</li>
+<li>提升抽象层次</li>
+<li>API重用性更好</li>
+<li>更加灵活</li>
+</ul>
+<h3 id="function接口">Function接口</h3>
+<blockquote>
+<p><strong>函数式接口中，可以进行传值，也可以进行行为的传递，可以让方法的使用者传递方法所需要实现的行为，方法本身做更加抽象的逻辑实现</strong><br>
+package funcationdemo;</p>
+</blockquote>
+<p>import java.util.function.Function;</p>
+<p>/**</p>
+<ul>
+<li>
+<p>描述:</p>
+</li>
+<li>
+<p>function 函数实现*<br>
+*/<br>
+public class FunctionTest {<br>
+public static void main(String[] args) {<br>
+FunctionTest functionTest = new FunctionTest();<br>
+System.out.println(functionTest.compute(3, value -&gt; value * value));<br>
+}</p>
+<p>public int compute(int a, Function&lt;Integer, Integer&gt; function) {<br>
+return function.apply(a);<br>
+}<br>
+}</p>
+</li>
+</ul>
+<h4 id="bifunction接口">BiFunction接口</h4>
+<p>package funcationdemo;</p>
+<p>import java.util.function.BiFunction;<br>
+import java.util.function.Function;</p>
+<p>/****************************************</p>
+<ul>
+<li>描述:</li>
+<li>BiFunction函数接口练习</li>
+<li>Interface BiFunction&lt;T,U,R&gt;</li>
+<li>
+<pre><code> T - 函数的第一个参数类型
+</code></pre>
+</li>
+<li>
+<pre><code> U - 函数的第二个参数类型
+</code></pre>
+</li>
+<li>
+<pre><code> R - 函数结果的类型
+</code></pre>
+</li>
+<li></li>
+<li>
+<pre><code> 表示接受两个参数并产生结果的函数。
+</code></pre>
+</li>
+<li>
+<pre><code> 是Function函数有两个参数的展现方式
+</code></pre>
+</li>
+<li></li>
+</ul>
+<p>****************************************/<br>
+public class BiFunctionTest {<br>
+public static void main(String[] args) {<br>
+BiFunctionTest test = new BiFunctionTest();<br>
+//        求两个数之和<br>
+System.out.println(test.compute(3, 4, Integer::sum));</p>
+<p>//        System.out.println(test.compute2(3, 4, Integer::sum, item -&gt; item * item));<br>
+//        等价于<br>
+System.out.println(test.compute2(3, 4, (num1, num2) -&gt; num1 * num2, value -&gt; value * value));</p>
+<pre><code>}
+
+/**
+ * public interface BiFunction&lt;T, U, R&gt; {
+ * &lt;p&gt;
+ * R apply(T t, U u);
+ * &lt;p&gt;
+ * &lt;p&gt;
+ * }
+ */
+public int compute(int num1, int num2, BiFunction&lt;Integer, Integer, Integer&gt; function) {
+    return function.apply(num1, num2);
+}
+
+
+/****
+ *  default &lt;V&gt; BiFunction&lt;T, U, V&gt; andThen(Function&lt;? super R, ? extends V&gt; after) {
+ *         Objects.requireNonNull(after);
+ *         return (T t, U u) -&gt; after.apply(apply(t, u));
+ *     }
+ * @param num1 计算的值
+ * @param num2 计算的值
+ * @param function 需要求和函数参数（函数参数指的是需要函数执行的行为）
+ * @param function2 需要返回函数参数
+ * @return 计算后返回的值
+ */
+public int compute2(int num1, int num2,
+                    BiFunction&lt;Integer, Integer, Integer&gt; function,
+                    Function&lt;Integer, Integer&gt; function2) {
+    return function.andThen(function2).apply(num1, num2);
+}
+</code></pre>
+<p>}</p>
+<h4 id="binaryoperator接口">BinaryOperator接口</h4>
+<p>package funcationdemo;</p>
+<p>import java.util.Comparator;<br>
+import java.util.function.BinaryOperator;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>BinaryOperator</li>
+<li>表示对同一类型的两个操作数的操作，产生与操作数相同的结果。</li>
+<li>对于操作数和结果都是相同类型的情况</li>
+<li>是BiFunction的专业化</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class BinaryOperatorTest {<br>
+public static void main(String[] args) {<br>
+BinaryOperatorTest test = new BinaryOperatorTest();<br>
+System.out.println(test.compute(3, 4, Integer::sum));<br>
+System.out.println(test.minByComparator(5, 6, Comparator.comparingInt(num -&gt; num)));<br>
+}</p>
+<pre><code>/****
+ *
+ * 继承 BiFunction&lt;T,T,T&gt; ,也拥有 apply()方法
+ * 三个参数必须是同类型的
+ *
+ * public interface BinaryOperator&lt;T&gt; extends BiFunction&lt;T,T,T&gt; {
+ *
+ * }
+ *
+ *
+ * @param num1
+ * @param num2
+ * @param function
+ * @return
+ */
+public int compute(int num1, int num2, BinaryOperator&lt;Integer&gt; function) {
+    return function.apply(num1, num2);
+}
+
+/***
+ *
+ *     public static &lt;T&gt; BinaryOperator&lt;T&gt; minBy(Comparator&lt;? super T&gt; comparator) {
+ *         Objects.requireNonNull(comparator);
+ *         return (a, b) -&gt; comparator.compare(a, b) &lt;= 0 ? a : b;
+ *     }
+ *
+ * @param num1 比较参数1
+ * @param num2 比较数字2
+ * @param comparator 比较器
+ * @return 返回比较的结果
+ */
+
+public int minByComparator(int num1, int num2, Comparator&lt;Integer&gt; comparator) {
+    return BinaryOperator.minBy(comparator).apply(num1, num2);
+}
+</code></pre>
+<p>}</p>
+<h3 id="consumer接口">Consumer接口</h3>
+<p>package funcationdemo;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;<br>
+import java.util.Optional;<br>
+import java.util.function.Consumer;</p>
+<p>/*********************************************************</p>
+<ul>
+<li>描述:</li>
+<li>Consumer函数</li>
+<li>表示接受单个输入参数并且不返回结果的操作</li>
+<li></li>
+</ul>
+<p>********************************************************/<br>
+public class ConsumerTest {<br>
+public static void main(String[] args) {<br>
+List<String> list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);<br>
+list.forEach(str-&gt;{<br>
+String strParam = str;<br>
+Optional<String> optional = Optional.ofNullable(strParam);<br>
+String rtn = optional.map(strParam1 -&gt; strParam1.toUpperCase()).orElse(&quot;&quot;);<br>
+System.out.println(rtn);<br>
+});</p>
+<pre><code>}
+</code></pre>
+<p>}</p>
+<h3 id="predicate接口">Predicate接口</h3>
+<h4 id="结合stream流使用">结合Stream流使用</h4>
+<p>package funcationdemo;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;<br>
+import java.util.Optional;<br>
+import java.util.function.Consumer;<br>
+import java.util.function.Function;<br>
+import java.util.function.Predicate;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>Predicate</li>
+<li>
+<pre><code> 表示一个参数的谓词
+</code></pre>
+</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class PredicateTest {<br>
+public static void main(String[] args) {<br>
+PredicateTest test = new PredicateTest();<br>
+System.out.println(test.isTrueOfStr(&quot;hell0&quot;, str -&gt; str.length() &gt; 4));<br>
+List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);<br>
+//      Predicate 接口使用<br>
+Predicate<Integer> predicate = i -&gt; i % 2 == 0;<br>
+//       Optional 使用的函数<br>
+Function&lt;Integer, Integer&gt; function = integer -&gt; {<br>
+Optional<Integer> integerOptional = Optional.of(integer);<br>
+Integer rtn = integerOptional.map(ele -&gt; 2 * ele).get();<br>
+return rtn;<br>
+};<br>
+//      输出参数<br>
+Consumer<Integer> consumer = param -&gt; {<br>
+Optional<Integer> integer = Optional.ofNullable(param);<br>
+Integer rtn = integer.map(function).get();<br>
+System.out.println(rtn);<br>
+};<br>
+test.conditionFilter(list, predicate, consumer);<br>
+}</p>
+<pre><code>public boolean isTrueOfStr(String str, Predicate&lt;String&gt; funciton) {
+    return funciton.test(str);
+}
+
+public void conditionFilter(List&lt;Integer&gt; list, Predicate&lt;Integer&gt; predicate, Consumer&lt;Integer&gt; consumer) {
+    list.stream().filter(predicate).forEach(consumer);
+}
+</code></pre>
+<p>}</p>
+<h3 id="supplier接口">Supplier接口</h3>
+<p>package funcationdemo;</p>
+<p>import java.util.function.Supplier;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>Supplier</li>
+<li>代表结果供应商，没有要求每次调用供应商时都会返回新的或不同的结果</li>
+<li>不接受参数，返回一个结果。泛型就是需要返回结果的类型</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class SupplierTest {<br>
+public static void main(String[] args) {<br>
+Supplier<String> supplier = String::new;<br>
+String str = supplier.get();<br>
+str = &quot;hello world&quot;;<br>
+System.out.println(str);<br>
+}<br>
+}</p>
+<h3 id="methodreference">MethodReference</h3>
+<blockquote>
+<p><strong>方法引用是用来直接访问类或者实例的已经存在的方法或者构造方法。<code>方法引用提供了一种引用而不执行方法的方式</code>，它需要由兼容的函数式接口构成的目标类型上下文。计算时，方法引用会创建函数式接口的一个实例。</strong></p>
+</blockquote>
+<h4 id="引用静态方法containingclassstaticmethodname">引用静态方法：ContainingClass::staticMethodName</h4>
+<p>package methodreference;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>MethodReference</li>
+<li>方法引用</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class MethodReferenceTest {</p>
+<pre><code>static void toUpperCaseByStr(String str) {
+    System.out.println(str.toUpperCase());
+}
+
+public static void main(String[] args) {
+    List&lt;String&gt; list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);
+</code></pre>
+<p>//        ContainingClass::staticMethodName 引用静态方法<br>
+list.forEach(MethodReferenceTest::toUpperCaseByStr);<br>
+}<br>
+}</p>
+<h4 id="引用某个对象的实例方法containingobjectinstancemethodname">引用某个对象的实例方法：containingObject::instanceMethodName</h4>
+<p>package methodreference;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>MethodReference</li>
+<li>方法引用</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class MethodReferenceTest {</p>
+<pre><code>void toUpperCaseByStr(String str) {
+    System.out.println(str.toUpperCase());
+}
+
+public static void main(String[] args) {
+    List&lt;String&gt; list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);
+    //      引用某个对象的实例方法
+    MethodReferenceTest test = new MethodReferenceTest();
+    list.forEach(test::toUpperCaseByStr);
+}
+</code></pre>
+<p>}</p>
+<h4 id="引用某个类型的任意对象的实例方法containingtypemethodname">引用某个类型的任意对象的实例方法：ContainingType::methodName</h4>
+<p>package methodreference;</p>
+<p>import java.util.Arrays;<br>
+import java.util.List;<br>
+import java.util.function.Consumer;</p>
+<p>/**************************************************************</p>
+<ul>
+<li>描述:</li>
+<li>MethodReference</li>
+<li>方法引用</li>
+<li></li>
+</ul>
+<p>**************************************************************/<br>
+public class MethodReferenceTest{</p>
+<pre><code>public static void main(String[] args) {
+    /*引用某个类型的任意对象的实例方法*/
+    List&lt;String&gt; list = Arrays.asList(&quot;hello&quot;, &quot;world&quot;, &quot;hello world&quot;);
+    list.sort(String::compareTo);
+    list.forEach(System.out::println);
+}
+</code></pre>
+<p>}</p>
+<h4 id="引用构造方法classnamenew">引用构造方法：ClassName::new</h4>
+<pre><code>package methodreference;
+
+import java.util.function.Supplier;
+
+/**************************************************************
+ * 描述:
+ *    MethodReference
+ *    方法引用
+ *
+ **************************************************************/
+public class MethodReferenceTest{
+
+    public MethodReferenceTest() {
+    }
+
+    public String getString(Supplier&lt;String&gt; supplier){
+        return supplier.get() +&quot;test&quot;;
+    }
+    public static void main(String[] args) {
+        MethodReferenceTest test = new MethodReferenceTest();
+        System.out.println(test.getString(String::new));
+    }
+}
+</code></pre>
+<h4 id="超类上的实例方法引用">超类上的实例方法引用</h4>
+<p>**组成语法格式：super::methodName</p>
+<p>方法的名称由methodName指定，通过使用<strong>super</strong>，可以引用方法的超类版本。</p>
+<p>还可以捕获this 指针，this :: equals 等价于lambda表达式 x -&gt; this.equals(x);</p>
+<h4 id="数组构造方法引用">数组构造方法引用</h4>
+<p>**组成语法格式：TypeName[]::new</p>
+<p>例子：</p>
+<p>int[]::new 是一个含有一个参数的构造器引用，这个参数就是数组的长度。等价于lambda表达式 x -&gt; new int[x]。</p>
+<p>假想存在一个接收int参数的数组构造方法</p>
+<p>IntFunction arrayMaker =int[]::new;int[] array = arrayMaker.apply(10)// 创建数组 int[10]</p>
+
+          <div class="toc-container"><ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#lambda%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95">Lambda的基本语法</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%A6%82%E4%BD%95%E5%AE%9E%E4%BE%8B">函数式接口如何实例</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%9B%9B%E7%A7%8D%E7%B1%BB%E5%9E%8B">函数式接口四种类型</a></li>
+<li><a href="#lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E4%BD%9C%E7%94%A8">Lambda表达式的作用</a></li>
+<li><a href="#function%E6%8E%A5%E5%8F%A3">Function接口</a>
+<ul>
+<li><a href="#bifunction%E6%8E%A5%E5%8F%A3">BiFunction接口</a></li>
+<li><a href="#binaryoperator%E6%8E%A5%E5%8F%A3">BinaryOperator接口</a></li>
+</ul>
+</li>
+<li><a href="#consumer%E6%8E%A5%E5%8F%A3">Consumer接口</a></li>
+<li><a href="#predicate%E6%8E%A5%E5%8F%A3">Predicate接口</a>
+<ul>
+<li><a href="#%E7%BB%93%E5%90%88stream%E6%B5%81%E4%BD%BF%E7%94%A8">结合Stream流使用</a></li>
+</ul>
+</li>
+<li><a href="#supplier%E6%8E%A5%E5%8F%A3">Supplier接口</a></li>
+<li><a href="#methodreference">MethodReference</a>
+<ul>
+<li><a href="#%E5%BC%95%E7%94%A8%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95containingclassstaticmethodname">引用静态方法：ContainingClass::staticMethodName</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E6%9F%90%E4%B8%AA%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95containingobjectinstancemethodname">引用某个对象的实例方法：containingObject::instanceMethodName</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E6%9F%90%E4%B8%AA%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BB%BB%E6%84%8F%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95containingtypemethodname">引用某个类型的任意对象的实例方法：ContainingType::methodName</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95classnamenew">引用构造方法：ClassName::new</a></li>
+<li><a href="#%E8%B6%85%E7%B1%BB%E4%B8%8A%E7%9A%84%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8">超类上的实例方法引用</a></li>
+<li><a href="#%E6%95%B0%E7%BB%84%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8">数组构造方法引用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/docker-jiao-cheng-san-docker-ming-ling/">
+              <span class="post-title">
+                Docker 教程（三）：Docker 命令&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
