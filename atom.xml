@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-21T07:43:49.732Z</updated>
+    <updated>2021-04-22T08:13:37.672Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,1102 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[微服务介绍]]></title>
+        <id>https://kangjn.github.io/post/wei-fu-wu-jie-shao/</id>
+        <link href="https://kangjn.github.io/post/wei-fu-wu-jie-shao/">
+        </link>
+        <updated>2021-04-22T08:05:18.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>
+<p><strong>微服务是什么</strong></p>
+</li>
+<li>
+<p><strong>为什么要采用微服务</strong></p>
+</li>
+<li>
+<p><strong>微服务架构</strong></p>
+</li>
+<li>
+<p><strong>架构设计模式</strong></p>
+</li>
+<li>
+<p><strong>服务拆分</strong></p>
+</li>
+<li>
+<p><strong>微服务框架</strong></p>
+</li>
+<li>
+<p>架构模式有很多，微服务不是唯一的选择也不是什么银弹。</p>
+</li>
+<li>
+<p>“你必须长的足够高才能使用微服务”。微服务基础设施，尤其是容器技术、自动化部署、自动化测试这些不完备，微服务形同虚设，不会带来什么质的提升。</p>
+</li>
+<li>
+<p>微服务架构的关键不在于具体的实现，而在于如何合理地划分服务边界以及组织架构是否相匹配。不考虑研发团队的规模和组成就盲目上微服务是不良的技术选型。</p>
+</li>
+<li>
+<p>Spring Boot 是 Spring 全家桶的上层封装，并不是什么崭新的技术，也不是什么值得成为自己杀手锏的技术。</p>
+</li>
+<li>
+<p>Spring Cloud 中 Spring Cloud Netflix 的组件是经过生产环境验证的，其他的则建议慎重选择。</p>
+</li>
+</ul>
+<p><strong>微服务是什么</strong></p>
+<p>微服务起源于 2005 年 Peter Rodgers 博士在云端运算博览会提出的微 Web 服务(Micro-Web-Service)，根本思想类似于 Unix 的管道设计理念。</p>
+<p>2014 年，由 Martin Fowler 与 James Lewis 共同提出了微服务的概念，定义了微服务架构风格是一种通过一套小型服务来开发单个应用的方法，每个服务运行在自己的进程中，并通过轻量级的机制进行通讯（HTTP API）。</p>
+<p><strong>关键的三点是：</strong></p>
+<ul>
+<li><strong>small</strong></li>
+<li><strong>automated</strong></li>
+<li><strong>lightweight</strong></li>
+</ul>
+<p>对比 SOA，微服务可以看做是 SOA 的子集，是轻量级的 SOA，粒度更细的服务，独立进程、数据分离，更注重敏捷、持续交付、DevOps 以及去中心化实践。</p>
+<p><strong>其共同的架构原理：</strong></p>
+<ul>
+<li><strong>单一职责</strong></li>
+<li><strong>关注分离：控制与逻辑相分离</strong></li>
+<li><strong>模块化和分而治之</strong></li>
+</ul>
+<p><strong>特点：</strong></p>
+<ul>
+<li><strong>用服务进行组件化</strong></li>
+<li><strong>围绕业务能力进行组织</strong></li>
+<li><strong>是产品而非项目</strong></li>
+<li><strong>端点智能化和哑管道: 控制逻辑都在端点，管道仅仅是传输</strong></li>
+<li><strong>全自动化部署</strong></li>
+<li><strong>语言和数据的去中心化控制</strong></li>
+<li><strong>面向失败设计</strong></li>
+<li><strong>渐进式设计</strong></li>
+</ul>
+<p><strong>综合来看，其优缺点如下：</strong></p>
+<ul>
+<li><strong>优点：</strong> 模块的强边界；独立部署；技术选型的多样性。</li>
+<li><strong>缺点：</strong> 分布式带来编程复杂度，远程调用的消耗；舍弃强一致性，实现最终一致性；操作复杂性要求有一个成熟的运维团队或者运维基础设施。</li>
+</ul>
+<p><strong>为什么要采用微服务</strong></p>
+<p>是否选择微服务取决于你要设计的系统的复杂度。微服务是用来把控复杂系统的，但是随之而来的就是引入了微服务本身的复杂度。</p>
+<p>需要解决包括自动化部署、监控、容错处理、最终一致性等其他分布式系统面临的问题。即使已经有一些普遍使用的解决方案，但是仍然是有不小的成本的。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/bZVnx0" alt="img" loading="lazy"></figure>
+<p>生产力和复杂度的关系如图所示，可见系统越复杂，微服务带来的收益越大。此外，无论是单体应用还是微服务，团队的技能都需要能够把控住。</p>
+<p><strong>马丁·福勒的一个观点是：</strong> 除非管理单体应用的成本已经太复杂了（太大导致很难修改和部署），否则都不要考虑微服务。</p>
+<p>大部分应用都应该选择单体架构，做好单体应用的模块化而不是拆分成服务。</p>
+<p>因此，系统一开始采用单体架构，做好模块化，之后随着系统变得越来越复杂、模块/服务间的边界越来越清晰，再重构为微服务架构是一个合理的架构演化路径。</p>
+<p><strong>四个可以考虑上微服务的情况：</strong></p>
+<ul>
+<li>多人开发一个模块/项目，提交代码频繁出现大量冲突。</li>
+<li>模块间严重耦合，互相依赖，每次变动需要牵扯多个团队，单次上线需求太多，风险大。</li>
+<li>主要业务和次要业务耦合，横向扩展流程复杂。</li>
+<li>熔断降级全靠 if-else。</li>
+</ul>
+<p><strong>微服务的三个阶段：</strong></p>
+<ul>
+<li><strong>微服务 1.0：</strong> 仅使用注册发现，基于 Spring Cloud 或者 Dubbo 进行开发。</li>
+<li><strong>微服务 2.0：</strong> 使用了熔断、限流、降级等服务治理策略，并配备完整服务工具和平台。</li>
+<li><strong>微服务 3.0：</strong> Service Mesh 将服务治理作为通用组件，下沉到平台层实现，应用层仅仅关注业务逻辑，平台层可以根据业务监控自动调度和参数调整，实现 AIOps 和智能调度。</li>
+</ul>
+<p><strong>微服务架构</strong></p>
+<p><strong>先决条件</strong></p>
+<p><strong>微服务的先决条件如下：</strong></p>
+<ul>
+<li><strong>快速的环境提供能力：</strong> 依赖于云计算、容器技术，快速交付环境。</li>
+<li><strong>基本的监控能力：</strong> 包括基础的技术监控和业务监控。</li>
+<li><strong>快速的应用部署能力：</strong> 需要部署管道提供快速的部署能力。</li>
+<li><strong>Devops 文化：</strong> 需要具有良好的持续交付能力，包括全链路追踪、快速环境提供和部署等，还需要快速的反应能力（对问题、故障的快速响应），开发和运维的协同工作。</li>
+</ul>
+<p>此外，根据康威定律和逆康威定律（技术架构倒逼组织架构改进），组织架构也是一个很关键的因素。</p>
+<p><strong>对应于微服务架构，组织架构需要遵循以下原则：</strong></p>
+<ul>
+<li>一个微服务由一个团队维护，团队成员以三人为宜。</li>
+<li>单个团队的任务和发展是独立的，不受其他因素影响。</li>
+<li>团队是功能齐全、全栈、自治的，扁平、自我管理。</li>
+</ul>
+<p><strong>基础设施</strong></p>
+<p>微服务的推行需要依赖于很多底层基础设施，包括提供微服务的编译、集成、打包、部署、配置等工作，采用 PaaS 平台解决微服务从开发到运行的全生命周期管理，同时提供异构环境管理、容器资源隔离与互通、服务伸缩漂移、服务升级与回退、服务熔断与降级、服务注册与发现。</p>
+<p><strong>①最基本的基础设施</strong></p>
+<p><strong>进程间通讯机制：</strong> 微服务是独立进程的，需要确定之间的通讯方式。</p>
+<p><strong>服务发现+服务路由：</strong> 提供服务注册中心，服务提供者和消费者通过服务发现获取服务的信息从而调用服务，实现服务的负载均衡等。</p>
+<p><strong>服务容错：</strong> 微服务架构中，由于服务非常多，往往是一个服务挂了，整个请求链路的服务都受到影响。</p>
+<p>因此需要服务容错，在服务调用失败的时候能够处理错误或者快速失败，包括熔断、Fallback、重试、流控和服务隔离等。</p>
+<p><strong>分布式事务支持：</strong> 随着业务拆分为服务，那么有时候不开避免的就是跨服务的事务，即分布式事务的问题。</p>
+<p>原则是尽量避免分布式事务，如果无法避免那么可以使用消息系统或者 CQRS 和 Event Sourcing 方案来实现最终一致性。</p>
+<p>如果需要强一致性，则有两阶段提交、三阶段提交、TCC 等分布式事务解决方案。</p>
+<p><strong>②提升外部服务对接效率和内部开发效率</strong></p>
+<p><strong>API 网关：</strong> 负责外部系统的访问，跨横切面的公共层面的工作，包括安全、日志、权限控制、传输加密、请求转发、流量控制等。</p>
+<p>典型的网关功能即对外暴露一个域名 xx.com，根据第一级目录做反向路由 xx.com/user，xx.com/trade。</p>
+<p>每一级目录，如 user、trade 对应一个服务的域名。此外，API 网关也可以有服务编排的功能（不推荐）。</p>
+<p><strong>接口框架：</strong> 规范服务之间通讯使用的数据格式、解析包、自解释文档，便于服务使用方快速上手等。</p>
+<p><strong>③提升测试和运维效率</strong></p>
+<p><strong>配置中心:</strong>  运行时配置管理能够解决动态修改配置并批量生效的问题。包括配置版本管理、配置项管理、节点管理、配置同步等。</p>
+<p><strong>持续交付：</strong> 包括持续集成、自动化部署等流程。目的就是小步迭代，快速交付。</p>
+<p><strong>持续集成：</strong> 这一部分并非是微服务特定的，对于之前的单体应用，此部分一般来说也是必要的。</p>
+<p>主要是指通过自动化手段，持续地对代码进程编译构建、自动化测试，以得到快速有效的质量反馈，从而保证代码的顺利交付。</p>
+<p>自动化测试包括代码级别的单元测试、单个系统的集成测试、系统间的接口测试。</p>
+<p><strong>自动化部署：</strong> 微服务架构，节点数动辄上百上千，自动化部署能够提高部署速度和部署频率，从而保证持续交付。</p>
+<p>包括版本管理、资源管理、部署操作、回滚操作等功能。而对于微服务的部署方式，包括蓝绿部署、滚动部署以及金丝雀部署。</p>
+<p><strong>④进一步提升运维效率</strong></p>
+<p><strong>服务监控：</strong> 微服务架构下节点数目众多，需要监控的机器、网络、进程、接口等的数量大大增加，需要一个强大的监控系统，能够提供实时搜集信息进行分析以及实时分析之上的预警。</p>
+<p>包括监控服务的请求次数、响应时间分布、最大/最小响应值、错误码分布等。</p>
+<p><strong>服务跟踪：</strong> 跟踪一个请求的完整路径，包括请求发起时间、响应时间、响应码、请求参数、返回结果等信息，也叫做全链路跟踪。</p>
+<p>通常的服务可以和服务监控做在一起，宏观信息由服务跟踪呈现，微观单个服务/节点的信息由服务监控呈现。服务跟踪目前的实现理论基本都是 Google 的 Dapper 论文。</p>
+<p><strong>服务安全：</strong> 内网之间的微服务调用原则上讲应该是都可以互相访问写，一般并不需要权限控制，但有时候限于业务要求，会对接口、数据等方面有安全控制的要求。</p>
+<p>此部分可以以配置的方式存在于服务注册中心中，和服务绑定，在请求时由做为服务提供者的服务节点进行安全策略控制。配置则可以存储在配置中心以方便动态修改。</p>
+<p>在微服务数量很少的情况下，以上基础设施的优先级自上而下降低。否则，仅仅依赖人工操作，则投入产出比会很低。</p>
+<p>还需要提到的是 Docker 容器技术。虽然这个对于微服务并不是必须的，但是容器技术轻量级、灵活、与应用依存、屏蔽环境差异的特性对于持续交付的实现是至关重要的，即使对于传统的单体应用也能够给其带来交付效率的大幅提升。</p>
+<p><strong>架构设计模式</strong></p>
+<p>在引入微服务之后，传统的单体应用变为了一个一个服务，之前一个应用直接提供接口给客户端访问的架构不再适用。</p>
+<p>微服务架构下，针对不同设备的接口做为 BFF 层（Backend For Frontend），也叫做用户体验适配层，负责聚合、编排微服务的数据转换成前端需要的数据。</p>
+<p>服务之间的调用则在允许的情况下（允许延迟）尽可能使用异步消息传递方式，如此形成面向用户体验的微服务架构设计模式。</p>
+<p><strong>如下图所示：</strong></p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/crkgUc" alt="img" loading="lazy"></figure>
+<p>Client→API Gateway→BFF（Backend For Frontend）→Downstream Microservices：</p>
+<ul>
+<li>后台采用微服务架构，微服务可以采用不同的编程语言和不同的存储机制。</li>
+<li>前台采用 BFF 模式对不同的用户体验（如桌面浏览器，Native App，平板响应式 Web）进行适配。</li>
+<li>BFF、API Orchestration Layer，Edge Service Layer，Device Wrapper Layer 是相同的概念。</li>
+<li>BFF 不能过多，过多会造成代码逻辑重复冗余。</li>
+<li>可以将网关承担的功能，如 Geoip、限流、安全认证等跨横切面功能和 BFF 做在同一层，虽然增加了 BFF 层的复杂性，但能够得到性能优势。</li>
+</ul>
+<p><strong>服务拆分</strong></p>
+<p>微服务架构最核心的环节，主要是对服务的横向拆分。服务拆分就是将一个完整的业务系统解耦为服务，服务需要职责单一，之间没有耦合关系，能够独立开发和维护。</p>
+<p>服务拆分不是一蹴而就的，需要在开发过程中不断地理清边界。在完全理清服务之前，尽量推迟对服务的拆分，尤其是对数据库的拆分。</p>
+<p><strong>拆分方法如下：</strong></p>
+<ul>
+<li><strong>基于业务逻辑拆分</strong></li>
+<li><strong>基于可扩展拆分</strong></li>
+<li><strong>基于可靠性拆分</strong></li>
+<li><strong>基于性能拆分</strong></li>
+</ul>
+<p>其中，对于无法修改的遗留系统，采用绞杀者模式：在遗留系统外面增加新的功能做成微服务方式，而不是直接修改原有系统，逐步的实现对老系统替换。</p>
+<p><strong>拆分过程需要遵守的规范如下：</strong></p>
+<ul>
+<li>先少后多、先粗后细（粒度）</li>
+<li>服务纵向拆分最多三层，两次调用：Controller、组合服务、基础服务</li>
+<li>仅仅单向调用，禁止循环调用</li>
+<li>串行调用改为并行调用或者异步化</li>
+<li>接口应该幂等</li>
+<li>接口数据定义严禁内嵌，透传</li>
+<li>规范化工程名</li>
+<li>先拆分服务，等服务粒度确定后再拆分数据库。</li>
+</ul>
+<p><strong>微服务框架</strong></p>
+<p>上面讲述了微服务架构的众多基础设施，如果每一个基础设施都需要自己开发的话是非常巨大的开发工作。目前市面上已经有不少开源的微服务框架可以选择。</p>
+<p><strong>Spring Boot</strong></p>
+<p>Spring Boot 是用来简化新 Spring 应用的初始搭建以及开发过程的。其虽然不是微服务框架，但其设计的初衷本质就是微应用的底层框架，因此非常适合用于微服务基础设施的开发以及微服务的应用开发。</p>
+<p>尤其对于 Spring 技术栈的团队来说，基于 Spring Boot 开发微服务框架和应用是自然而然的一个选择。关注微信公众号：Java技术栈，在后台回复：boot，可以获取我整理的 N 篇最新 Spring Boot 教程，都是干货。</p>
+<p><strong>Dubbo&amp;Motan</strong></p>
+<p>Dubbo 是阿里开源的服务治理框架。其出现在微服务理念兴起之前，可以看做是 SOA 框架的集大成之作。</p>
+<p><strong>但其仅仅包含了微服务基础设施的部分功能，诸如熔断、服务跟踪、网关等都没有实现：</strong></p>
+<ul>
+<li><strong>服务发现：</strong> 服务发布、订阅、通知。</li>
+<li><strong>高可用策略：</strong> 失败重试（Failover）、快速失败（Failfast）、资源隔离 - 负载均衡 ：最少活跃连接、一致性 Hash、随机请求、轮询等。</li>
+<li><strong>扩展性 ：</strong> 支持 SPI 扩展（service provider interface）。</li>
+<li><strong>其他 ：</strong> 调用统计、访问日志等。</li>
+</ul>
+<p>Motan 则是微博开源的类似 Dubbo 的 RPC 框架，与 Dubbo 相比更轻量级。</p>
+<p><strong>Spring Cloud</strong></p>
+<p>Spring Cloud 是基于 Spring Boot 实现的微服务框架，也可以看做一套微服务实现规范。关注微信公众号：Java技术栈，在后台回复：cloud，可以获取我整理的 N 篇最新 Spring Cloud 教程，都是干货。</p>
+<p>基本涵盖了微服务基础设施的方方面面，包括配置管理、服务发现、断路器、智能路由、微代理、控制总线、全局锁、决策竞选、分布式会话和集群状态管理等。</p>
+<p>其基于 Spring 生态，社区支持非常好。但其很多组件都没有经过生产环境验证，需要慎重选择。</p>
+<p>Spring Cloud Netflix 是 Spring Cloud 的一个子项目，是 Spring 对 Netflix OSS 的集成实现。</p>
+<p><strong>基于 Netflix 的大规模使用，其中的已经被广泛使用的组件包括：</strong></p>
+<ul>
+<li><strong>Eureka：</strong> 服务注册和服务发现</li>
+<li><strong>Ribbon：</strong> 弹性而智能的进程间和服务通讯机制，客户端负载均衡</li>
+<li><strong>Hystrix：</strong> 熔断器，在运行时提供延迟和容错的隔离</li>
+<li><strong>Zuul：</strong> 服务网关</li>
+</ul>
+<p>此外，另一个子项目 Spring Cloud Alibaba 则是 Alibaba 开源的基于 Spring Boot 的微服务框架，主要是对阿里云服务的支持。</p>
+<p><strong>Service Mesh</strong></p>
+<p>上述的微服务框架都是侵入式的，服务化的过程都需要进行代码改造。Service Mesh 则是下一代微服务架构，最明显的特征就是无入侵。采用 Sidecar 模式来解决系统架构微服务化后的服务间通信和治理问题。</p>
+<p><strong>如下图所示：</strong></p>
+<p><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1hjB5S" alt="img" loading="lazy"><br>
+<strong>目前主流的开源实现包括：</strong></p>
+<ul>
+<li>
+<p><strong>Linkerd 和 Envoy：</strong> 以 Sidecar 为核心，关注如何做好 Proxy，并完成一些通用控制平面的功能。缺乏对这些 Sidecar 的管理和控制。</p>
+</li>
+<li>
+<p><strong>Istio 和 Conduit：</strong> 目前最为流行的 Service Mesh 实现方案，集中在更加强大的控制平面(Sidecar 被称为数据平面)功能。</p>
+<p>前者由 Google 和 IBM 合作，并使用了 Envoy 作为 Sidecar 部分的实现；后者则是 Linkerd 作者的作品。</p>
+<p>相比起来，Istio 有巨头背景，功能强大，但可用性和易用性一直不高，Conduit 则相对简单、功能聚焦。</p>
+</li>
+</ul>
+<p>限于 Service Mesh 带来的性能延迟的开销以及 Sidecar 对分布复杂性的增加，其对大规模部署(微服务数目多)、异构复杂(交互协议/开发语言类型多)的微服务架构带来的收益会更大。</p>
+<p><strong>Sofastack</strong></p>
+<p>蚂蚁金服开源的构建金融级分布式架构的一套中间件。包括微服务开发框架、RPC 框架、服务注册中心、全链路追踪、服务监控、Service Mesh 等一整套分布式应用开发工具。</p>
+<p>特别值得一提的是 SOFAMesh。其实对下一代微服务架构 Service Mesh 的大规模落地方案实践，基于 Istio 改进和扩展而来，应该是国内最为成熟的开源 Service Mesh 方案。</p>
+<p>此外，需要提到 Kubernetes（K8s），其本身提供了部分的微服务特性支持（通过域名做服务发现），对代码无侵入。但服务调用、熔断这些都需要自己实现。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/le2NKP" alt="img" loading="lazy"></figure>
+<p>综上，目前公司技术团队技术栈是 Spring，并且已有服务的实现都是基于 Dubbo。</p>
+<p>因此选择 Spring Cloud Netflix 做为基础的微服务框架，对其中不成熟或者缺乏的组件，选择业界更为成熟的组件替代即可：</p>
+<ul>
+<li><strong>API 网关：</strong> Zuul。</li>
+<li><strong>服务注册中心：</strong> Dubbo。</li>
+<li><strong>配置中心：</strong> Disconf。</li>
+<li><strong>服务监控&amp;全链路追踪：</strong> CAT。</li>
+<li><strong>服务开发框架：</strong> Spring Boot。</li>
+<li><strong>日志监控、告警：</strong> ELK+Elasalert。</li>
+<li><strong>流量控制：</strong> Sentinel。</li>
+<li><strong>消息队列：</strong> Kafka。</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[微服务设计 10 大反模式和陷阱]]></title>
+        <id>https://kangjn.github.io/post/wei-fu-wu-she-ji-10-da-fan-mo-shi-he-xian-jing/</id>
+        <link href="https://kangjn.github.io/post/wei-fu-wu-she-ji-10-da-fan-mo-shi-he-xian-jing/">
+        </link>
+        <updated>2021-04-22T07:49:39.000Z</updated>
+        <content type="html"><![CDATA[<p>O’Reilly的电子书《Microservices AntiPatterns and Pitfalls》讲述了在微服务设计实现时十种最常见的反模式和陷阱。本文基于此书，将这十个点列出。</p>
+<p>数据驱动迁移反模式（Data-Driven Migration）</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/678393.png" alt="img" loading="lazy"></figure>
+<p>如上图所示，此种反模式的问题在于微服务的粒度没有最终确定之前就做了数据迁移，如此当不断的调整服务粒度时，那么数据库就免不了频繁迁移，带来极大的成本。更好的方式如下图所示：</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/758392.png" alt="img" loading="lazy"></figure>
+<p>即先分离功能，数据库先保持之前的单体，等到服务粒度最终确定之后，再分离数据库。</p>
+<p>超时反模式（The Timeout）</p>
+<p>微服务架构是由一系列分离的服务组成的，这些服务之间通过一些远程协议进行互相之间的通信。其中牵扯到了服务的可用性和响应性问题。如下图所示：</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/921392.png" alt="img" loading="lazy"></figure>
+<ul>
+<li>可用性：服务消费方能够连接服务方，并可以向其发送请求。</li>
+<li>响应性：服务方能够在消费方期望时间内给予请求响应。</li>
+</ul>
+<p>为了防止服务的不可用和无法响应，通常的做法就是设置一个调用超时。此种做法表面上看是没问题的，但是试想一下如下情景：发起一个购买100个商品的请求，请求成功返回一个确认号。如果当请求超时但是请求在服务端已经成功执行了，此时这个交易实际是完成的，但是消费方没有拿到确认号，如果重试请求，那么服务方需要一个复杂的机制判断这是否一次重复提交。</p>
+<p>一种解决此问题的方案是设置一个较长的超时时间，如一个服务的通常响应耗时需要2s，最大耗时需要5s，那么超时时间可以设置为10s。但这样的问题就是如果服务不可用，所有消费方都得等待10s，这个是非常损耗性能的。</p>
+<p>解决超时反模式的方案就是使用“断路器模式”。就类似于房屋中的电源断路器，当断路器关闭，电流可以通过，当断路器打开，那么电流中断一直到断路器关闭。断路器模式就是说当检测到服务方无法响应时就打开，后续的请求都会被拒绝掉。一旦服务方可响应了，那么断路器关闭，恢复请求。其工作模式如下图所示：</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/020392.png" alt="img" loading="lazy"></figure>
+<p>断路器会持续地监测远程服务，确保其是可响应的。只要服务可响应，那么断路器会一直关闭，允许请求通过。如果服务突然不可响应，那么断路器打开，拒绝后续的请求。而后续如果断路器又检测到服务恢复了，那么断路器会自动关闭，请求也就恢复了。此种方案与超时时间相比，最大的优势就是一旦服务不可响应，那么断路器模式可以让请求立刻返回而不是需要等待一定的时间。</p>
+<p>[Hystrix]的Netflix是此种断路器模式的一种开源实现。此外，Akka中也包含了一个断路器实现：Akka CircuitBreaker类。</p>
+<p>共享反模式（“I Was Taught to Share”）</p>
+<p>微服务被普遍认为是一种不共享任何东西的架构。但实际上只能是尽可能地少共享，毕竟在某些层面代码被多个服务共享也能带来一定好处。</p>
+<p>例如，与单独部署一套安全服务（认证和授权）其他所有服务都通过远程访问此服务相比，把安全相关的功能封装成jar包（security.jar），然后其他服务都集成此jar包，就能够避免每次都要发起对安全服务的访问，从而提高性能和可靠性。但后面的方案带来的问题就是依赖噩梦：每一个服务都依赖多个自定义的jar包。如此不仅打破了服务之间的边界上下文，同时也引入了诸如总体可靠性、变更控制、易测试性、部署等问题。</p>
+<p>在一个使用面向对象编程语言的单体应用中，使用abstract类和接口实现代码复用和共享是一个良好的实践。但当从单体切换到微服务架构时，对于很多自定义的共享类和工具类（日期、字符串、计算）的处理要考虑到微服务间共享的东西越少越有利于保持服务间的边界上下文，从而更利于快速测试和部署。以下是几种推荐的方式，也是解决“共享反模式”的方案：</p>
+<p><strong>共享项目</strong></p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/257392.jpg" alt="257392" loading="lazy"></figure>
+<p>将共享的代码作为一个项目在编译期与各个服务集成。此种方式便于变更和开发软件，但是最大的问题在于很难发觉哪一个共享模块被修改以及修改的原因，也无法确定自己的服务是否需要这些变更。尤其是在服务发布前期发现某一个共享模块发生了变动的话需要再一次的测试才能走后续流程。</p>
+<p><strong>共享库</strong></p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/358392.jpg" alt="358392" loading="lazy"></figure>
+<p>此种方式即将共享的代码作为类库集成到服务中。如此每次共享的库有改动，服务都需要重新打包、测试、重启。但相比起第一种，其有版本标记，能够更好地控制服务的部署和开发，服务开发者可以自己控制何时将共享库的改动集成进来。</p>
+<p>更进一步的，如果采用此种方案，一定要避免把所有共享的代码都打包进一个jar包中如common.jar。否则会很难确定何时要把库的变动集成到服务中。更好的做法是将共享代码分成几个单独上下文的库，如：security.jar、dateutils.jar、persistence.jar等，如此会比较容易的确定何时去集成共享库的变动。</p>
+<p><strong>冗余</strong></p>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/454393.png" alt="img" loading="lazy"></figure>
+<p>此种方案违反DRY原则，在每一服务中都冗余一份共享代码，能够避免依赖共享也能够保持边界上下文。但是一旦共享的代码有变动，那么所有服务都需要改动。因此，此种方案适用于共享模块非常稳定，极小可能变动的情况。</p>
+<p><strong>服务合并</strong></p>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/563392.png" alt="img" loading="lazy"></figure>
+<p>当多个服务共享的代码变动比较频繁时可以采用此种方案合并成一个服务，如此就避免了多了服务频繁的测试和部署，也避免了依赖共享库。</p>
+<p>可达性报告反模式（Reach-in Reporting）</p>
+<p>微服务中各个服务以及其相应的数据都是包含在一个单独的边界上下文中的，也就是说数据是隔离到多个数据库中的。因此，这也会使得收集微服务的各种数据生成报告变得相对困难。一般来说有四种方案解决这个问题。其中，前三种都是从各个微服务中拉取数据，是这里所说的反模式，被称作“Reach-in Reporting”。</p>
+<p><strong>数据库拉取模式</strong></p>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/732392.png" alt="img" loading="lazy"></figure>
+<p>报告服务直接从各个服务的数据库中拉取数据从而生成各种报告。此种方式简单迅速，但是会让报告服务和业务服务相互依赖，是一种数据库共享集成风格（通过共享的数据库将多个应用耦合在一起）。如此一旦数据库有改动，所有相关服务都要改动，也就打破了微服务中极为重要的边界上下文。</p>
+<p><strong>HTTP拉取模式</strong></p>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/820392.png" alt="img" loading="lazy"></figure>
+<p>与数据库拉取模式相比，此种方式不再是直接去访问服务的数据库，而是通过HTTP接口去请求服务的数据。此种方式能够保持服务的边界上下文，但是性能比较慢，而且HTTP请求无法很好的承载大数据。</p>
+<p><strong>批量拉取模式</strong></p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/931392.png" alt="img" loading="lazy"></figure>
+<p>此种方式会有一个单独的报告数据库/数据仓库来存储各个服务的聚合数据。会通过一个批量任务（离线或者基于增量实时）将服务更新的数据导入到报告数据库/数据仓库中。与数据库拉取模式一样，此种方式这也是一种数据库共享集成风格，会打破服务的边界上下文。</p>
+<p><strong>异步事件推送模式</strong></p>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/068392.png" alt="img" loading="lazy"></figure>
+<p>此种方式即解决“Reach-in  Reporting”反模式的方案。每个服务都把自己的发生的事件异步推送到一个数据捕获服务，后续数据捕获服务会将数据解析存储到报告数据库中。此种方式实现起来较复杂，需要在服务和数据捕获服务之间制定一种协议用于异步传输事件数据。但其能够保持服务的边界上下文，同时也能保证数据的时效性。</p>
+<p>沙粒陷阱（Grains of Sand）</p>
+<p>微服务实现中最有挑战的问题在于如何拆分service，如何控制服务的粒度，而正确的服务粒度则决定了微服务是否能够成功实现。服务粒度也能够影响到性能、健壮性、可靠性、易测试性、部署等。</p>
+<p>“沙粒陷阱”即把服务拆分的太细。其中的一个原因就是很多时候开发者会把一个class与一个服务等同。合理的，应该是一个服务组件（Service component）对应一个服务。一个服务组件具有清晰、简洁的角色、职责，具有一组定义好的操作。其一般通过多个模块（Java  Class）实现。如果组件和模块是一对一的关系，那么不仅仅会造成服务粒度过细同时也是一种不好的编程实践：服务的实现都是通过一个Class，那么此Class会非常大并且承担太多的责任，不利于测试和维护。</p>
+<p>更进一步的，服务的粒度并不应该受其中实现类的数目影响：有些服务可能只需要一个类就可以实现，而有些服务会需要多个类来实现。</p>
+<p>为了避免“沙粒陷阱”，可以通过以下三种测试来判断服务粒度是否合理：</p>
+<p><strong>分析服务范围和功能</strong></p>
+<p>要明确服务用来干什么？有哪些操作？一般通过使用文档或者语言来描述服务的范围和功能就能够看出来服务是否做的工作太多。如果在描述中使用了“和”（“and”）或者“此外”（“in addition”）之类的词，很有可能就是此服务职责太多。</p>
+<p>服务的高内聚是一种良好的实践，其明确一个服务提供的操作之间必须要是有关联的。如对于一个顾客服务，有以下操作：</p>
+<ul>
+<li>添加顾客</li>
+<li>更新顾客信息</li>
+<li>获取顾客信息</li>
+<li>通知顾客</li>
+<li>记录顾客评论</li>
+<li>获取顾客评论</li>
+</ul>
+<p>其中的前三个操作都是对顾客的CRUD操作，是相关联的。而后三者则无关。为了实现服务的高内聚，合理的应该是把此服务拆分成三个服务：顾客维护、顾客通知、顾客评论。</p>
+<p>如此，以粗粒度的服务开始，然后逐渐拆分成细粒度的服务有利于对微服务的拆分。</p>
+<p><strong>分析数据库事务</strong></p>
+<p>传统的关系型数据库都提供了ACID事务特性用于把多个更新操作打包成一个整体提交，要么都成功，要么都失败。而在微服务中，由于服务都是一个个分离的应用，很难实现ACID，一般实现BASE事务（basic availability、soft state、eventual  consistence）即可。但是无法避免的，仍然会有一些场景是需要ACID的。因此，当你不断的需要在BASE和ACID事务做判断和取舍的时候，很有可能就是服务粒度过细。</p>
+<p>如果业务场景无法接受最终一致性，那么最好就是将服务粒度粗化一些，把多个更新操作放到一个服务中。</p>
+<p><strong>分析服务编排</strong></p>
+<p>这里主要说的是服务之间的互相通信。由于对服务的调用都是一次远程调用，因此服务编排会非常大的影响微应用总体的性能。此外，它也会影响系统整体的健壮性和可靠性，越多的远程调用，那么越高的几率会有失败或者超时的请求出现。</p>
+<p>如果发现完成一次业务逻辑需要调用太多的远程服务，就说明服务的粒度可能太细了。这时候就需要将服务粗化。而合并细粒度服务还能够提高性能，提升总体的健壮性和可靠性。同时也减少了多个服务间的依赖，更利于测试和部署。</p>
+<p>此外，使用响应式编程技术异步并行调用远程服务也是一种提升性能和可靠性的方案。</p>
+<p>无因的开发者陷阱（Developer Without a Cause）</p>
+<p>此陷阱主要讲的是开发者或者架构师在做设计时很多时候是拍脑袋在做，没有任何合理的原因或者原因是错误的，也不会做取舍。而想要解决此问题，不仅仅是架构师，开发者也需要同时了解技术带来的好处以及缺陷，从中做权衡。</p>
+<p>了解业务驱动是避免此陷阱的关键一步。每一个开发者和架构师都应该清楚的了解下面这些问题的答案：</p>
+<ul>
+<li>为什么要使用微服务？</li>
+<li>最重要的业务驱动是什么？</li>
+<li>架构中的哪一点是最为重要的？</li>
+</ul>
+<p>假如易部署性、性能、健壮性、可扩展性是系统最看重的特性，那么对于不同的业务侧重点，微服务的粒度需求也是不同的。细粒度的服务能够达到更好的易测试性和易部署性，而粗粒度的服务则有更好的性能、健壮性以及可靠性。</p>
+<p>追随流行陷阱（Jump on the Bandwagon）</p>
+<p>微服务是目前非常流行的架构理念，越来越多的公司也都在紧跟这个潮流纷纷转型微服务架构，而不管到底自己是否真的需要。为了避免此陷阱，需要首先了解微服务的优点和缺点。</p>
+<p>优点：</p>
+<ul>
+<li>易部署：容易部署是微服务的一个很大的优点。毕竟相比起一个庞大的单体应用，一个小并且职责单一的微服务的部署非常简单并且带来的风险也会小很多。而持续部署技术则进一步放大了这个优点。</li>
+<li>易测试：职责单一、共享依赖少使得测试一个微服务是很容易的。而基于微服务做回归测试与单体大应用相比也是很容易的。 控制变更：每个服务的范围和边界上下文使得很容易控制服务的功能变动。</li>
+<li>模块化：微服务就是一个高度模块化的架构风格。这种风格也是一种敏捷方式的表达，能够很快的响应变化。一个系统模块化程度越高，就越容易测试、部署和发布变更。一个服务粒度划分合理的微服务系统是所有架构中模块化程度最高的架构形式。</li>
+<li>可扩展性：由于每一个服务都是一个职责单一的细粒度服务，因此此种架构风格是所有架构分隔中可扩展性最高的。其非常容易扩展某一个或者某几个功能从而满足整体系统的需求。而得益于服务的容器化特性以及各种运维监控工具，服务也能够自动化进行启动和关闭。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>组织变动：微服务需要组织在很多层面进行变动。研发团队需要包含UI、后端开发、规则处理、数据库处理建模等多种职位，从而使得一个小的团队能够具有实现微服务的所有技术栈。同时，传统的单体、分层应用架构的软件发布流程也需要更新为自动化、高效的部署流水线。</li>
+<li>性能：由于服务都是隔离的，因此发起对服务的远程调用肯定是会影响性能的。服务编排、运行环境都是影响性能的很大因素。了解远程调用的延迟、需要与多少服务通信都是与性能相关的需要掌握的信息。</li>
+<li>可靠性：和性能一样。服务的远程调用越多，那么失败的几率就越高，总体的可靠性就会越低。</li>
+<li>DevOps：随着微服务架构而来的是成千上百的服务。手动管理这么多的服务是很不现实的。这就对于自动化运维部署、协作提出了很高的挑战。需要依赖非常多的操作工具和实践，是一个非常复杂的工作。目前差不多有12种类型的操作工具（监控工具、服务注册、发现工具、部署工具等）和框架在微服务架构中被使用，其中每一种又包含了很多具体的工具和产品供选择。对于这些工具和框架的选择一般都会需要将近数月的研究、测试、权衡分析才能做出最适合的技术选型。</li>
+</ul>
+<p>了解了微服务的优缺点后，下一步则需要根据实际的业务来分析微服务是不是解决这些问题的最佳方案。可以采取以下问题：</p>
+<ul>
+<li>业务和技术的目标是什么？</li>
+<li>使用微服务是为了完成什么？</li>
+<li>目前和可预知的痛点是什么？</li>
+<li>应用的最关键的技术特性是什么？（性能、易部署性、易测试性、可扩展性）</li>
+</ul>
+<p>回答这些问题再结合微服务的优缺点能够让你明确现在是否是使用微服务的适当时机。</p>
+<p>除了微服务以外，还有其他7种比较普遍使用的架构供选择：</p>
+<ul>
+<li>基于服务的架构（Service-Based）</li>
+<li>面向服务的架构（Service-Oriented）</li>
+<li>分层架构（Layered）</li>
+<li>微内核架构（Microkernel）</li>
+<li>基于空间的架构（Space-Based）</li>
+<li>事件驱动架构（Event-Driven）</li>
+<li>流水线架构（Pipeline）</li>
+</ul>
+<p>静态合约陷阱（The Static Contract）</p>
+<p>微服务的消费方和服务提供方之间会有一个合约/协议用来规定输入输出数据的格式、操作名称等等。一般情况下这个合约是不变的。但是如果没有使用版本号来管理服务接口，那么就会进入“静态合约”陷阱。</p>
+<p>给合约打上版本标记不仅仅能够避免巨大的变动（服务提供方修改合约使得所有消费方也都得修改），还能够提供向后兼容性。这里有两种技术可以实现合约的版本号：</p>
+<p><strong>在头部信息附加版本号</strong></p>
+<figure data-type="image" tabindex="13"><img src="http://img.javastack.cn/1588152255455392.png" alt="img" loading="lazy"></figure>
+<p>此种方式即在远程访问协议的头部添加版本信息。而如果远程协议使用的是REST，那么还可以使用vendor mime type（vnd）来指定合约的版本号。如下：</p>
+<pre><code>POST /trade/buy
+Accept: application/vnd.svc.trade.v2+json
+</code></pre>
+<p>服务接受到请求，能够通过正则等手段简单解析出其中的合约版本号再根据版本号做相应的处理。</p>
+<p>如果使用消息队列，那么可以将版本号放置在属性部分(Property section)。JMS的一个例子如下：</p>
+<pre><code>String msg = createJSON(&quot;acct&quot;,&quot;12345&quot;,&quot;sedol&quot;,&quot;2046251&quot;,&quot;shares&quot;,&quot;1000&quot;);
+jsmContext.createProducer()
+  .setProperty(&quot;version&quot;,2)
+  .send(queue,msg);
+</code></pre>
+<p><strong>在合约本身中附加版本号</strong></p>
+<p>此种方式版本号独立于远程访问协议，与头部信息版本号相比，这也是其最大的优点。但与此同时，其缺点比较多。首先要从请求信息主体中解析版本号，会出现很多解析的问题。其次，合约的模式可能会非常复杂，使得很难做数据转换。最后，服务还要引入对模式的验证逻辑。</p>
+<p>我们到了吗陷阱（Are We There Yet）</p>
+<p>微服务架构中，各个服务都是独立的个体，也就意味着所有客户端或者API层和服务之间的通信都是一次远程调用。如果对这些远程调用的耗时没有什么概念，那么就陷入了“Are We There  Yet”陷阱。合理的做法需要去测试远程访问的平均延迟、长尾延迟（95%、99%、99.%之外的请求延迟）等指标。而很多时候即使有很好的平均延迟，但是较差的长尾延迟会造成非常大的破坏。</p>
+<p>在生产环境或者准生产环境测试有助于去了解应用的真实性能。例如，一个业务请求需要调用四个服务，假设一个服务调用的延迟是100毫秒，那么加上业务请求本身的延迟，完成此次业务请求共需要500毫秒的延迟。这和单单从代码上去看得出的结论是不一样的。</p>
+<p>了解目前所用协议的平均延迟是一方面，另一方面则需要对比其他远程协议的延迟，从而在合适的地方使用合适的协议。如：JMS、AMQP、MSMQ。</p>
+<p>AMQP协议的性能是最好的。那么结合业务场景，就可以选择REST作为客户端与服务间的通信协议，AMQP做为服务之间的通信协议以提高应用的性能。</p>
+<p>当然，性能并非在选择远程协议时唯一考虑的因素。下一节中就会考虑利用消息队列的一些额外功能。</p>
+<p>REST使用陷阱（Give It a Rest）</p>
+<p>REST现在是微服务中用的最多的通信协议。流行的开发框架如DropWizard、Spring  Boot都提供了REST支持。但是如果只选择REST这一种协议，不去考虑其他诸如消息队列的优势，那么就陷入了“REST使用”陷阱。毕竟异步通信、广播、合并请求事务这些需求，REST是很难实现的。</p>
+<p>消息队列标准目前包括平台特定和平台无关两种。前者包括Java平台中的JMS和C#平台的MSMQ，后者则是AMQP。对于平台特定的消息标准JMS，其规范了API，因此切换broker实现（ActiveMQ、HornetQ）时无需修改API，但由于底层通信协议是不同的，集成的客户端或者服务端jar包需要随着修改。</p>
+<p>对于平台无关的消息标准，其规范了协议实现标准，并没有规范API。使得不同平台之间都可以互相通信，而不管实际产品是什么。如一个使用了RabbitMQ的客户端可以很容易地与一个StormMQ通信（假设使用的协议相同）。也就是其独立于平台的特性使得RabbitMQ成为微服务架构中最流行的消息队列。</p>
+<p><strong>异步请求</strong></p>
+<p>异步通信是消息队列适用的场景之一。服务消费者发起请求后无需等待服务方响应能够提高总体的性能，同时调用方无需担心调用超时，也就无需使用断路器，从而提高了系统的可靠性。</p>
+<p><strong>广播</strong></p>
+<p>将消息广播给多个service是消息队列的又一个适用场景。一个消息生产者向多个消息接受者发送消息，无需知道谁在接受消息以及如何处理它。</p>
+<p><strong>事务请求</strong></p>
+<p>消息系统提供了对事务消息的支持：如果多个消息被发送到了在一个交易上下文的多个队列或者主题中时，那么直到消息发送者commit，服务才会真正的接受到相应的所有消息（在commit之前会一直保存在队列中）。</p>
+<p>因此对于服务消费者需要合并多个远程请求到一个事务中的场景可以选择事务消息。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java 多线程]]></title>
+        <id>https://kangjn.github.io/post/java-duo-xian-cheng/</id>
+        <link href="https://kangjn.github.io/post/java-duo-xian-cheng/">
+        </link>
+        <updated>2021-04-22T06:17:23.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>线程</strong></p>
+<p>线程的概念，百度是这样解释的：</p>
+<p>线程（英语：Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p>
+<p>在Unix System V及SunOS中也被称为轻量进程（Lightweight Processes），但轻量进程更多指内核线程（Kernel Thread），而把用户线程（User Thread）称为线程。</p>
+<p><strong>1.1 线程与进程的区别</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/778301.png" alt="" loading="lazy"></figure>
+<p>进程：指在系统中正在运行的一个应用程序；程序一旦运行就是进程；进程——资源分配的最小单位。</p>
+<p>线程：系统分配处理器时间资源的基本单元，或者说进程之内独立执行的一个单元执行流。线程——程序执行的最小单位。</p>
+<p>也就是，进程可以包含多个线程，而线程是程序执行的最小单位。</p>
+<p><strong>1.2 线程的状态</strong></p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/129301.png" alt="" loading="lazy"></figure>
+<ul>
+<li>NEW：线程刚创建</li>
+<li>RUNNABLE: 在JVM中正在运行的线程，其中运行状态可以有运行中RUNNING和READY两种状态，由系统调度进行状态改变。</li>
+<li>BLOCKED：线程处于阻塞状态，等待监视锁，可以重新进行同步代码块中执行</li>
+<li>WAITING : 等待状态</li>
+<li>TIMED_WAITING: 调用sleep() join() wait()方法可能导致线程处于等待状态</li>
+<li>TERMINATED: 线程执行完毕，已经退出</li>
+</ul>
+<p><strong>1.3 Notify和Wait ：</strong></p>
+<p>Notify和Wait 的作用</p>
+<p>首先看源码给出的解释，这里翻译了一下：</p>
+<p>Notify：唤醒一个正在等待这个对象的线程监控。如果有任何线程正在等待这个对象，那么它们中的一个被选择被唤醒。选择是任意的，发生在执行的酌情权。一个线程等待一个对象通过调用一个{@code wait}方法进行监视。</p>
+<p>Notify()需要在同步方法或同步块中调用，即在调用前，线程也必须获得该对象的对象级别锁</p>
+<p>Wait：导致当前线程等待，直到另一个线程调用{@link java.lang.Object#notify()}方法或{@link java.lang.Object#notifyAll()}方法。</p>
+<p>换句话说，这个方法的行为就像它简单一样执行调用{@code wait(0)}。当前线程必须拥有该对象的监视器。</p>
+<p>线程释放此监视器的所有权，并等待另一个线程通知等待该对象的监视器的线程，唤醒通过调用{@code notify}方法或{@code notifyAll}方法。然后线程等待，直到它可以重新取得监视器的所有权，然后继续执行。</p>
+<p>Wait()的作用是使当前执行代码的线程进行等待，它是Object类的方法，该方法用来将当前线程置入预执行队列中，并且在Wait所在的代码行处停止执行，直到接到通知或被中断为止。</p>
+<p>在调用Wait方法之前，线程必须获得该对象的对象级别锁，即只能在同步方法或同步块中调用Wait方法。</p>
+<p>Wait和Sleep的区别：</p>
+<ul>
+<li>它们最大本质的区别是，Sleep()不释放同步锁，Wait()释放同步锁。</li>
+<li>还有用法的上的不同是：Sleep(milliseconds)可以用时间指定来使他自动醒过来，如果时间不到你只能调用Interreput()来强行打断；Wait()可以用Notify()直接唤起。</li>
+<li>这两个方法来自不同的类分别是Thread和Object</li>
+<li>最主要是Sleep方法没有释放锁，而Wait方法释放了锁，使得其他线程可以使用同步控制块或者方法。</li>
+</ul>
+<p><strong>1.4 Thread.sleep() 和Thread.yield()的异同</strong></p>
+<ul>
+<li>相同 ：Sleep()和yield()都会释放CPU。</li>
+<li>不同：Sleep()使当前线程进入停滞状态，所以执行Sleep()的线程在指定的时间内肯定不会执行；yield()只是使当前线程重新回到可执行状态，所以执行yield()的线程有可能在进入到可执行状态后马上又被执行。Sleep()可使优先级低的线程得到执行的机会，当然也可以让同优先级和高优先级的线程有执行的机会；yield()只能使同优先级的线程有执行的机会。</li>
+</ul>
+<p><strong>1.5 补充：死锁的概念</strong></p>
+<p>死锁：指两个或两个以上的进程（或线程）在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。此时称系统处于死锁状态或系统产生了死锁，这些永远在互相等待的进程称为死锁进程。</p>
+<p>死锁产生的四个必要条件（缺一不可）：</p>
+<ul>
+<li>互斥条件：顾名思义，线程对资源的访问是排他性，当该线程释放资源后下一线程才可进行占用。</li>
+<li>请求和保持：简单来说就是自己拿的不放手又等待新的资源到手。线程T1至少已经保持了一个资源R1占用,但又提出对另一个资源R2请求，而此时，资源R2被其他线程T2占用，于是该线程T1也必须等待，但又对自己保持的资源R1不释放。</li>
+<li>不可剥夺：在没有使用完资源时，其他线性不能进行剥夺。</li>
+<li>循环等待：一直等待对方线程释放资源。</li>
+</ul>
+<p>我们可以根据死锁的四个必要条件破坏死锁的形成。</p>
+<p><strong>1.6 补充：并发和并行的区别</strong></p>
+<p>并发：是指在某个时间段内，多任务交替的执行任务。当有多个线程在操作时，把CPU运行时间划分成若干个时间段,再将时间段分配给各个线程执行。在一个时间段的线程代码运行时，其它线程处于挂起状。</p>
+<p>并行：是指同一时刻同时处理多任务的能力。当有多个线程在操作时，CPU同时处理这些线程请求的能力。</p>
+<p>区别就在于CPU是否能同时处理所有任务，并发不能，并行能。</p>
+<p><strong>1.7 补充：线程安全三要素</strong></p>
+<ul>
+<li>原子性：Atomic包、CAS算法、Synchronized、Lock。</li>
+<li>可见性：Synchronized、Volatile（不能保证原子性）。</li>
+<li>有序性：Happens-before规则。</li>
+</ul>
+<p><strong>1.8 补充：如何实现线程安全</strong></p>
+<ul>
+<li>互斥同步：Synchronized、Lock。</li>
+<li>非阻塞同步：CAS。</li>
+<li>无需同步的方案：如果一个方法本来就不涉及共享数据，那它自然就无需任何同步操作去保证正确性。</li>
+</ul>
+<p><strong>1.9 补充：保证线程安全的机制：</strong></p>
+<ul>
+<li>[Synchronized]关键字</li>
+<li>[Lock]</li>
+<li>[CAS]、原子变量</li>
+<li>[ThreadLocal]：简单来说就是让每个线程，对同一个变量，都有自己的独有副本，每个线程实际访问的对象都是自己的，自然也就不存在线程安全问题了。</li>
+<li>[Volatile]</li>
+<li>[CopyOnWrite]写时复制</li>
+</ul>
+<p>随着CPU核心的增多以及互联网迅速发展，单线程的程序处理速度越来越跟不上发展速度和大数据量的增长速度，多线程应运而生，充分利用CPU资源的同时，极大提高了程序处理速度。</p>
+<p><strong>创建线程的方法</strong></p>
+<p>继承Thread类：</p>
+<pre><code>public class ThreadCreateTest {
+    public static void main(String\[\] args) {
+        new MyThread().start();
+    }
+}
+
+class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + &quot;\\t&quot; + Thread.currentThread().getId());
+    }
+}
+</code></pre>
+<p>实现Runable接口：</p>
+<pre><code>public class RunableCreateTest {
+    public static void main(String\[\] args) {
+        MyRunnable runnable = new MyRunnable();
+        new Thread(runnable).start();
+    }
+}
+
+class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + &quot;\\t&quot; + Thread.currentThread().getId());
+    }
+}
+</code></pre>
+<p>通过Callable和Future创建线程：</p>
+<pre><code>public class CallableCreateTest {
+    public static void main(String [] args) throws Exception {
+         // 将Callable包装成FutureTask，FutureTask也是一种Runnable
+        MyCallable callable = new MyCallable();
+        FutureTask futureTask = new FutureTask&lt;&gt;(callable);
+        new Thread(futureTask).start();
+
+        // get方法会阻塞调用的线程
+        Integer sum = futureTask.get();
+        System.out.println(Thread.currentThread().getName() + Thread.currentThread().getId() + &quot;=&quot; + sum);
+    }
+}
+
+class MyCallable implements Callable&lt;Integer&gt; {
+
+    @Override
+    public Integer call() throws Exception {
+        System.out.println(Thread.currentThread().getName() + &quot;\\t&quot; + Thread.currentThread().getId() + &quot;\\t&quot; + new Date() + &quot; \\tstarting...&quot;);
+
+        int sum = 0;
+        for (int i = 0; i &lt;= 100000; i++) {
+            sum += i;
+        }
+        Thread.sleep(5000);
+
+        System.out.println(Thread.currentThread().getName() + &quot;\\t&quot; + Thread.currentThread().getId() + &quot;\\t&quot; + new Date() + &quot; \\tover...&quot;);
+        return sum;
+    }
+}
+</code></pre>
+<p>线程池方式创建：</p>
+<p>实现Runnable接口这种方式更受欢迎，因为这不需要继承Thread类。在应用设计中已经继承了别的对象的情况下，这需要多继承（而Java不支持多继承，但可以多实现啊），只能实现接口。同时，线程池也是非常高效的，很容易实现和使用。</p>
+<p><strong>2.1 线程池创建线程</strong></p>
+<p>线程池，顾名思义，线程存放的地方。和数据库连接池一样，存在的目的就是为了较少系统开销，主要由以下几个特点：</p>
+<p>降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗（主要）。</p>
+<p>提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。</p>
+<p>提高线程的可管理性。线程是稀缺资源，如果无限制地创建，不仅会消耗系统资源，还会降低系统的稳定性。</p>
+<p>Java提供四种线程池创建方式：</p>
+<ul>
+<li>newCachedThreadPool创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。</li>
+<li>newFixedThreadPool创建一个定长线程池，可控制线程最大并发数，超出的线程会在队列中等待。</li>
+<li>newScheduledThreadPool创建一个定长线程池，支持定时及周期性任务执行。</li>
+<li>newSingleThreadExecutor创建一个单线程化的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序（FIFO, LIFO, 优先级）执行。</li>
+</ul>
+<p>通过源码我们得知ThreadPoolExecutor继承自AbstractExecutorService，而AbstractExecutorService实现了ExecutorService。</p>
+<pre><code>public class ThreadPoolExecutor extends AbstractExecutorService
+
+public abstract class AbstractExecutorService implements ExecutorService
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/473301.png" alt="" loading="lazy"></figure>
+<p><strong>2.2 ThreadPoolExecutor介绍</strong></p>
+<p>实际项目中，用的最多的就是ThreadPoolExecutor这个类，而《阿里巴巴Java开发手册》中强制线程池不允许使用Executors去创建，而是通过New ThreadPoolExecutor实例的方式，这样的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/789301.png" alt="img" loading="lazy"></figure>
+<p>我们从ThreadPoolExecutor入手多线程创建方式，先看一下线程池创建的最全参数。</p>
+<pre><code>public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler) {
+    if (corePoolSize &lt; 0 ||
+        maximumPoolSize &lt;= 0 ||
+        maximumPoolSize &lt; corePoolSize ||
+        keepAliveTime &lt; 0)
+        throw new IllegalArgumentException();
+    if (workQueue == null || threadFactory == null || handler == null)
+        throw new NullPointerException();
+    this.corePoolSize = corePoolSize;
+    this.maximumPoolSize = maximumPoolSize;
+    this.workQueue = workQueue;
+    this.keepAliveTime = unit.toNanos(keepAliveTime);
+    this.threadFactory = threadFactory;
+    this.handler = handler;
+}
+</code></pre>
+<p>参数说明如下：</p>
+<ul>
+<li>corePoolSize：线程池的核心线程数，即便线程池里没有任何任务，也会有corePoolSize个线程在候着等任务。</li>
+<li>maximumPoolSize：最大线程数，不管提交多少任务，线程池里最多工作线程数就是maximumPoolSize。</li>
+<li>keepAliveTime：线程的存活时间。当线程池里的线程数大于corePoolSize时，如果等了keepAliveTime时长还没有任务可执行，则线程退出。</li>
+<li>Unit：这个用来指定keepAliveTime的单位，比如秒：TimeUnit.SECONDS。</li>
+<li>BlockingQueue：一个阻塞队列，提交的任务将会被放到这个队列里。</li>
+<li>threadFactory：线程工厂，用来创建线程，主要是为了给线程起名字，默认工厂的线程名字：pool-1-thread-3。</li>
+<li>handler：拒绝策略，当线程池里线程被耗尽，且队列也满了的时候会调用。</li>
+</ul>
+<p><strong>2.2.1BlockingQueue</strong></p>
+<p>对于BlockingQueue个人感觉还需要单独拿出来说一下。</p>
+<p>BlockingQueue：阻塞队列，有先进先出（注重公平性）和先进后出（注重时效性）两种，常见的有两种阻塞队列：ArrayBlockingQueue和LinkedBlockingQueue</p>
+<p>队列的数据结构大致如图：</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/137301.png" alt="img" loading="lazy"></figure>
+<p>队列一端进入，一端输出。而当队列满时，阻塞。BlockingQueue核心方法：1. 放入数据put2. 获取数据take。常见的两种Queue：</p>
+<p><strong>2.2.2 ArrayBlockingQueue</strong></p>
+<p>基于数组实现，在ArrayBlockingQueue内部，维护了一个定长数组，以便缓存队列中的数据对象，这是一个常用的阻塞队列，除了一个定长数组外，ArrayBlockingQueue内部还保存着两个整形变量，分别标识着队列的头部和尾部在数组中的位置。</p>
+<p>一段代码来验证一下：</p>
+<pre><code>package map;
+
+import java.util.concurrent.*;
+
+public class MyTestMap {
+    // 定义阻塞队列大小
+    private static final int maxSize = 5;
+    public static void main(String\[\] args){
+        ArrayBlockingQueue queue = new ArrayBlockingQueue(maxSize);
+        new Thread(new Productor(queue)).start();
+        new Thread(new Customer(queue)).start();
+    }
+}
+
+class Customer implements Runnable {
+    private BlockingQueue queue;
+    Customer(BlockingQueue queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        this.cusume();
+    }
+
+    private void cusume() {
+        while (true) {
+            try {
+                int count = (int) queue.take();
+                System.out.println(&quot;customer正在消费第&quot; + count + &quot;个商品===&quot;);
+                // 只是为了方便观察输出结果
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+class Productor implements Runnable {
+    private BlockingQueue queue;
+    private int count = 1;
+    Productor(BlockingQueue queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        this.product();
+    }
+    private void product() {
+        while (true) {
+            try {
+                queue.put(count);
+                System.out.println(&quot;生产者正在生产第&quot; + count + &quot;个商品&quot;);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<p>输出如下：</p>
+<pre><code>生产者正在生产第1个商品
+生产者正在生产第2个商品
+生产者正在生产第3个商品
+生产者正在生产第4个商品
+生产者正在生产第5个商品
+customer正在消费第1个商品===
+</code></pre>
+<p><strong>2.2.3 LinkedBlockingQueue</strong></p>
+<p>基于链表的阻塞队列，内部也维护了一个数据缓冲队列。需要我们注意的是如果构造一个LinkedBlockingQueue对象，而没有指定其容量大小。</p>
+<p>LinkedBlockingQueue会默认一个类似无限大小的容量（Integer.MAX_VALUE），这样的话，如果生产者的速度一旦大于消费者的速度，也许还没有等到队列满阻塞产生，系统内存就有可能已被消耗殆尽了。</p>
+<p><strong>2.2.4 LinkedBlockingQueue和ArrayBlockingQueue的主要区别</strong></p>
+<ul>
+<li>ArrayBlockingQueue的初始化必须传入队列大小，LinkedBlockingQueue则可以不传入。</li>
+<li>ArrayBlockingQueue用一把锁控制并发，LinkedBlockingQueue俩把锁控制并发，锁的细粒度更细。即前者生产者消费者进出都是一把锁，后者生产者生产进入是一把锁，消费者消费是另一把锁。</li>
+<li>ArrayBlockingQueue采用数组的方式存取，LinkedBlockingQueue用Node链表方式存取。</li>
+</ul>
+<p><strong>2.2.5handler拒绝策略</strong></p>
+<p>Java提供了4种丢弃处理的方法，当然你也可以自己实现，主要是要实现接口：RejectedExecutionHandler中的方法。</p>
+<ul>
+<li>AbortPolicy：不处理，直接抛出异常。</li>
+<li>CallerRunsPolicy：只用调用者所在线程来运行任务，即提交任务的线程。</li>
+<li>DiscardOldestPolicy：LRU策略，丢弃队列里最近最久不使用的一个任务，并执行当前任务。</li>
+<li>DiscardPolicy：不处理，丢弃掉，不抛出异常。</li>
+</ul>
+<p><strong>2.2.6线程池五种状态</strong></p>
+<pre><code>private static final int RUNNING    = -1 &lt;&lt; COUNT_BITS;
+private static final int SHUTDOWN   =  0 &lt;&lt; COUNT_BITS;
+private static final int STOP       =  1 &lt;&lt; COUNT_BITS;
+private static final int TIDYING    =  2 &lt;&lt; COUNT_BITS;
+private static final int TERMINATED =  3 &lt;&lt; COUNT_BITS;
+</code></pre>
+<p>RUNNING：在这个状态的线程池能判断接受新提交的任务，并且也能处理阻塞队列中的任务。</p>
+<p>SHUTDOWN：处于关闭的状态，该线程池不能接受新提交的任务，但是可以处理阻塞队列中已经保存的任务，在线程处于RUNNING状态，调用shutdown()方法能切换为该状态。</p>
+<p>STOP：线程池处于该状态时既不能接受新的任务也不能处理阻塞队列中的任务，并且能中断现在线程中的任务。当线程处于RUNNING和SHUTDOWN状态，调用shutdownNow()方法就可以使线程变为该状态。</p>
+<p>TIDYING：在SHUTDOWN状态下阻塞队列为空，且线程中的工作线程数量为0就会进入该状态，当在STOP状态下时，只要线程中的工作线程数量为0就会进入该状态。</p>
+<p>TERMINATED：在TIDYING状态下调用terminated()方法就会进入该状态。可以认为该状态是最终的终止状态。</p>
+<p>回到线程池创建ThreadPoolExecutor，我们了解了这些参数，再来看看ThreadPoolExecutor的内部工作原理：</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/378301.png" alt="" loading="lazy"></figure>
+<ul>
+<li>判断核心线程是否已满，是进入队列，否：创建线程</li>
+<li>判断等待队列是否已满，是：查看线程池是否已满，否：进入等待队列</li>
+<li>查看线程池是否已满，是：拒绝，否创建线程</li>
+</ul>
+<p><strong>2.3深入理解ThreadPoolExecutor</strong></p>
+<p>进入Execute方法可以看到：</p>
+<pre><code>public void execute(Runnable command) {
+    if (command == null)
+        throw new NullPointerException();
+    int c = ctl.get();
+  //判断当前活跃线程数是否小于corePoolSize,如果小于，则调用addWorker创建线程执行任务
+    if (workerCountOf(c) &lt; corePoolSize) {
+        if (addWorker(command, true))
+            return;
+        c = ctl.get();
+    }
+  //如果不小于corePoolSize，则将任务添加到workQueue队列。
+    if (isRunning(c) &amp;&amp; workQueue.offer(command)) {
+        int recheck = ctl.get();
+        if (! isRunning(recheck) &amp;&amp; remove(command))
+            reject(command);
+        else if (workerCountOf(recheck) == 0)
+            addWorker(null, false);
+    }
+  //如果放入workQueue失败，则创建线程执行任务，如果这时创建线程失败(当前线程数不小于maximumPoolSize时)，就会调用reject(内部调用handler)拒绝接受任务。
+    else if (!addWorker(command, false))
+        reject(command);
+}
+</code></pre>
+<p>AddWorker方法：</p>
+<ul>
+<li>创建Worker对象，同时也会实例化一个Thread对象。在创建Worker时会调用threadFactory来创建一个线程。</li>
+<li>然后启动这个线程。</li>
+</ul>
+<p><strong>2.3.1线程池中CTL属性的作用是什么？</strong></p>
+<p>CTL属性包含两个概念：</p>
+<pre><code>private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+private static int ctlOf(int rs, int wc) { return rs | wc; }
+</code></pre>
+<ul>
+<li>runState：即rs 表明当前线程池的状态，是否处于Running，Shutdown，Stop，Tidying。</li>
+<li>workerCount：即wc表明当前有效的线程数。</li>
+</ul>
+<p>我们点击workerCount即工作状态记录值，以RUNNING为例，RUNNING = -1 &lt;&lt;  COUNT_BITS;，即-1无符号左移COUNT_BITS位，进一步我们得知COUNT_BITS位29，因为Integer位数为31位（2的五次方减一）</p>
+<pre><code>private static final int COUNT_BITS = Integer.SIZE - 3;
+</code></pre>
+<p>既然是29位那么就是Running的值为：</p>
+<pre><code>1110 0000 0000 0000 0000 0000 0000 0000
+|||
+31~29位
+</code></pre>
+<p>那低28位呢，就是记录当前线程的总线数啦：</p>
+<pre><code>// Packing and unpacking ctl
+private static int runStateOf(int c)     { return c &amp; ~CAPACITY; }
+private static int workerCountOf(int c)  { return c &amp; CAPACITY; }
+private static int ctlOf(int rs, int wc) { return rs | wc; }
+</code></pre>
+<p>从上述代码可以看到workerCountOf这个函数传入ctl之后，是通过CTL&amp;CAPACITY操作来获取当前运行线程总数的。</p>
+<p>也就是RunningState|WorkCount&amp;CAPACITY，算出来的就是低28位的值。因为CAPACITY得到的就是高3位（29-31位）位0，低28位（0-28位）都是1，所以得到的就是ctl中低28位的值。</p>
+<p>而runStateOf这个方法的话，算的就是RunningState|WorkCount&amp;CAPACITY，高3位的值，因为CAPACITY是CAPACITY的取反，所以得到的就是高3位（29-31位）为1，低28位（0-28位）为0，所以通过&amp;运算后，所得到的值就是高3为的值。</p>
+<p>简单来说就是ctl中是高3位作为状态值，低28位作为线程总数值来进行存储。</p>
+<p><strong>2.3.2 shutdownNow和shutdown的区别</strong></p>
+<p>看源码发现有两种近乎一样的方法，shutdownNow和shutdown，设计者这么设计自然是有它的道理，那么这两个方法的区别在哪呢？</p>
+<ul>
+<li>shutdown会把线程池的状态改为SHUTDOWN，而shutdownNow把当前线程池状态改为STOP。</li>
+<li>shutdown只会中断所有空闲的线程，而shutdownNow会中断所有的线程。</li>
+<li>shutdown返回方法为空，会将当前任务队列中的所有任务执行完毕；而shutdownNow把任务队列中的所有任务都取出来返回。</li>
+</ul>
+<p><strong>2.3.3 线程复用原理</strong></p>
+<pre><code>final void runWorker(Worker w) {
+    Thread wt = Thread.currentThread();
+    Runnable task = w.firstTask;
+    w.firstTask = null;
+    w.unlock(); // allow interrupts
+    boolean completedAbruptly = true;
+    try {
+        while (task != null || (task = getTask()) != null) {
+            w.lock();
+            // If pool is stopping, ensure thread is interrupted;
+            // if not, ensure thread is not interrupted.  This
+            // requires a recheck in second case to deal with
+            // shutdownNow race while clearing interrupt
+            if ((runStateAtLeast(ctl.get(), STOP) ||
+                 (Thread.interrupted() &amp;&amp;
+                  runStateAtLeast(ctl.get(), STOP))) &amp;&amp;
+                !wt.isInterrupted())
+                wt.interrupt();
+            try {
+                beforeExecute(wt, task);
+                Throwable thrown = null;
+                try {
+                    task.run();
+                } catch (RuntimeException x) {
+                    thrown = x; throw x;
+                } catch (Error x) {
+                    thrown = x; throw x;
+                } catch (Throwable x) {
+                    thrown = x; throw new Error(x);
+                } finally {
+                    afterExecute(task, thrown);
+                }
+            } finally {
+                task = null;
+                w.completedTasks++;
+                w.unlock();
+            }
+        }
+        completedAbruptly = false;
+    } finally {
+        processWorkerExit(w, completedAbruptly);
+    }
+}
+</code></pre>
+<p>就是任务在并不只执行创建时指定的firstTask第一任务，还会从任务队列的中自己主动取任务执行，而且是有或者无时间限定的阻塞等待，以保证线程的存活。</p>
+<p>默认的是不允许。</p>
+<p><strong>2.4 CountDownLatch和CyclicBarrier区别</strong></p>
+<p>countDownLatch是一个计数器，线程完成一个记录一个，计数器递减，只能只用一次。</p>
+<p>CyclicBarrier的计数器更像一个阀门，需要所有线程都到达，然后继续执行，计数器递增，提供Reset功能，可以多次使用。</p>
+<p><strong>3. 多线程间通信的几种方式</strong></p>
+<p>提及多线程又不得不提及多线程通信的机制。首先，要短信线程间通信的模型有两种：共享内存和消息传递，以下方式都是基本这两种模型来实现的。我们来基本一道面试常见的题目来分析：</p>
+<p>题目：有两个线程A、B，A线程向一个集合里面依次添加元素”abc”字符串，一共添加十次，当添加到第五次的时候，希望B线程能够收到A线程的通知，然后B线程执行相关的业务操作。</p>
+<p><strong>3.1使用volatile关键字</strong></p>
+<pre><code>package thread;
+
+/**
+ *
+ * @author hxz
+ * @description 多线程测试类
+ * @version 1.0
+ * @data 2020年2月15日 上午9:10:09
+ */
+public class MyThreadTest {
+
+    public static void main(String\[\] args) throws Exception {
+
+        notifyThreadWithVolatile();
+
+    }
+
+    /**
+     * 定义一个测试
+     */
+    private static volatile boolean flag = false;
+    /**
+     * 计算I++，当I==5时，通知线程B
+     * @throws Exception
+     */
+    private static void notifyThreadWithVolatile() throws Exception {
+        Thread thc = new Thread(&quot;线程A&quot;){
+            @Override
+            public void run() {
+                for (int i = 0; i &lt; 10; i++) {
+                    if (i == 5) {
+                        flag = true;
+                        try {
+                            Thread.sleep(500L);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                    System.out.println(Thread.currentThread().getName() + &quot;====&quot; + i);
+                }
+            }
+        };
+
+        Thread thd = new Thread(&quot;线程B&quot;) {
+            @Override
+            public void run() {
+                while (true) {
+                    // 防止伪唤醒 所以使用了while
+                    while (flag) {
+                        System.out.println(Thread.currentThread().getName() + &quot;收到通知&quot;);
+                        System.out.println(&quot;do something&quot;);
+                        try {
+                            Thread.sleep(500L);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        return ;
+                    }
+
+                }
+            }
+        };
+
+        thd.start();
+        Thread.sleep(1000L);
+        thc.start();
+
+    }
+}
+</code></pre>
+<p>个人认为这是基本上最好的通信方式，因为A发出通知B能够立马接受并Do Something。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[使用Springboot+mockito进行单元测试]]></title>
+        <id>https://kangjn.github.io/post/shi-yong-springbootmockito-jin-xing-dan-yuan-ce-shi/</id>
+        <link href="https://kangjn.github.io/post/shi-yong-springbootmockito-jin-xing-dan-yuan-ce-shi/">
+        </link>
+        <updated>2021-04-21T08:13:18.000Z</updated>
+        <content type="html"><![CDATA[<p>​    <strong>简介：</strong>  ## SpringBoot应用测试 测试Springboot应用需要依赖一个非常重要的注解@SpringBootTest，这个注解会为测试用例构建Spring容器。@SpringBootTest注解修饰的测试用例默认不会启动web容器，如果需要启动web容器需要设置webEnvironment属性： * MOCK(默认)：会启动一个mock的web server，可以配合@AutoConfig</p>
+<h2 id="springboot应用测试">SpringBoot应用测试</h2>
+<p>测试Springboot应用需要依赖一个非常重要的注解@SpringBootTest，这个注解会为测试用例构建Spring容器。@SpringBootTest注解修饰的测试用例默认不会启动web容器，如果需要启动web容器需要设置webEnvironment属性：</p>
+<ul>
+<li>MOCK(默认)：会启动一个mock的web server，可以配合@AutoConfigureMockMvc注解对web应用进行测试(后面会举例)</li>
+<li>RANDOM_PORT：创建ApplicationContext上下文，启动一个真实的Web容器，监听一个随机的端口。</li>
+<li>DEFINED_PORT：创建ApplicationContext上下文，启动一个真实的Web容器，监听SpringBoot配置配置文件中指定的端口，默认是8080端口。</li>
+<li>NONE：只是启动ApplicationContext，不会启动任何(Mock或者非Mock)web容器。</li>
+</ul>
+<p>如果是使用Junit来进行单元测试，再增加一个@RunWith(SpringRunner.class)或者@RunWith(SpringJUnit4ClassRunner.class)注解。</p>
+<h2 id="利用模拟web容器来测试restful接口">利用模拟Web容器来测试Restful接口</h2>
+<p>当测试用例使用@SpringBootTest注解修饰并将webEnvironment属性设置MOCK之后，测试用例在执行的过程中，就会创建一个模拟的web容器。为了让测试用例能够访问这个模拟的web容器，还需要增加@AutoConfigureMockMvc注解，这样就可以把MockMvc对象利用@Autowired注解注入到测试用例的属性中。MockMvc类的作用就是可以访问模拟的Web容器。接下来我们看一下使用MockMvc配合MockMvcRequestBuilders及MockMvcResultMatchers来访问模拟的Web容器进行测试Rest接口的例子：</p>
+<ul>
+<li>GET请求</li>
+</ul>
+<pre><code>    @Test
+    public void testCase() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.get(&quot;/testQueryData.json?id=6&quot;))
+                .andExpect(
+                        MockMvcResultMatchers.status().isOk()).andReturn();
+       Assert.assertNotNull(result.getResponse().getContentAsString());
+    }
+</code></pre>
+<ul>
+<li>POST请求提交表单</li>
+</ul>
+<pre><code>    @Test
+    public void testCase() throws Exception {
+        UrlEncodedFormEntity formData = new UrlEncodedFormEntity(Arrays.asList(
+                new BasicNameValuePair(&quot;param1&quot;, &quot;xxxxxxx&quot;),
+                new BasicNameValuePair(&quot;param2&quot;, &quot;xxxxxxx&quot;)
+        ), &quot;utf-8&quot;);
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.post(&quot;/testPostData.json&quot;)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+          .content(EntityUtils.toString(formData))).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        Assert.assertNotNull(result.getResponse().getContentAsString());
+    }
+</code></pre>
+<ul>
+<li>DELETE请求</li>
+</ul>
+<pre><code>    @Test
+    public void testCase() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.delete(&quot;/testDeleteData.json?id=1&quot;))
+                .andExpect(
+                        MockMvcResultMatchers.status().isOk());
+    }
+</code></pre>
+<ul>
+<li>PUT请求类似POST</li>
+</ul>
+<pre><code>    @Test
+    public void testCase() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.put(&quot;/testPutData&quot;))
+                .andExpect(
+                        MockMvcResultMatchers.status().isOk()).andReturn();
+        Assert.assertNotNull(result.getResponse().getContentAsString());
+    }
+</code></pre>
+<h2 id="利用testresttemplate测试真实的restful接口">利用TestRestTemplate测试真实的Restful接口</h2>
+<p>Springboot提供了专门用来测试Restful接口的工具类TestRestTemplate，这个类对RestTemplate进行了封装，可以让用户很快捷的编写出http客户端测试代码。<br>
+实例如下：</p>
+<ul>
+<li>GET请求</li>
+</ul>
+<pre><code>public void testCase() throws Exception {
+  String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json?id=xxx&quot;;
+  ResponseEntity&lt;RegcoreResp&gt; response = testRestTemplate.getForEntity(restUrl, RegcoreResp.class);    //RegcoreResp是用户自行定义的返回的数据封装Bean，
+  System.out.println(response.getBody());
+}
+</code></pre>
+<ul>
+<li>POST请求并采用表单方式提交数据</li>
+</ul>
+<pre><code>public void testCase() throws Exception {
+String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap&lt;String, String&gt; params = new LinkedMultiValueMap&lt;String, String&gt;();
+        params.add(&quot;name&quot;, &quot;testName&quot;); 
+        HttpEntity&lt;MultiValueMap&lt;String, String&gt;&gt; requestEntity = new HttpEntity&lt;MultiValueMap&lt;String, String&gt;&gt;(params, headers);
+        ResponseEntity&lt;RegcoreResp&gt; response = testRestTemplate.postForEntity(restUrl, requestEntity, RegcoreResp.class);
+}
+</code></pre>
+<ul>
+<li>POST请求并采用request Body方式传输数据</li>
+</ul>
+<pre><code>public void testCase() throws Exception {
+        String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = &quot;{\&quot;id\&quot;:\&quot;xxxxxx\&quot;,\&quot;status\&quot;:\&quot;xxxxx\&quot;}&quot;;
+        HttpEntity&lt;String&gt; requestEntity = new HttpEntity&lt;String&gt;(body, headers);
+        ResponseEntity&lt;BaseFacadeResp&gt; response = testRestTemplate.postForEntity(restUrl, requestEntity, BaseFacadeResp.class);
+}
+</code></pre>
+<ul>
+<li>DELETE</li>
+</ul>
+<pre><code>public void testCase() throws Exception {
+        String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
+        testRestTemplate.delete(restUrl);  //delete方法没有返回值
+}
+</code></pre>
+<ul>
+<li>PUT方式与POST类似</li>
+</ul>
+<pre><code>public void testCase() throws Exception {
+        String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = &quot;{\&quot;id\&quot;:\&quot;xxxxxx\&quot;,\&quot;status\&quot;:\&quot;xxxxx\&quot;}&quot;;
+        HttpEntity&lt;String&gt; requestEntity = new HttpEntity&lt;String&gt;(body, headers);
+        testRestTemplate.put(restUrl, requestEntity);  //put方法没有返回值
+}
+</code></pre>
+<h2 id="mock与spy">Mock与Spy</h2>
+<ul>
+<li>Mock利用动态代理对一个接口或者类的所有方法进行模拟。</li>
+<li>Spy同样利用动态代理，与Mock不同的是Spy针对于一个真实对象进行模拟并可以对被监控对象中某个方法进行打桩(stubed)控制该方法的执行情况，其他没有打桩的方法则按照对象本身的实际逻辑执行。</li>
+</ul>
+<h2 id="springboot对mock-spy的支持">SpringBoot对Mock Spy的支持</h2>
+<p>在测试SpringBoot应用过程中，某些环境依赖问题可能导致无法调用真实Bean逻辑，比如：某些外部依赖的接口没有准备好。这个时候需要使用Mock、Spy来对Bean进行模拟。SpringBoot提供了@MockBean和@SpyBean两个注解来实现Mock与Spy能力。由于底层还是使用Mockito，用法上与Mockito没有区别。<br>
+示例：</p>
+<pre><code>@RunWith(SpringRunner.class) @SpringBootTest
+public class MyTests {
+  @MockBean
+  private RemoteService remoteService; 
+  @Autowired
+  private Reverser reverser;
+  @Test
+  public void exampleTest() {
+    // RemoteService has been injected into the reverser bean 
+    given(this.remoteService.someCall()).willReturn(&quot;mock&quot;); 
+    String reverse = reverser.reverseSomeCall(); 
+    assertThat(reverse).isEqualTo(&quot;kcom&quot;);
+  }
+}
+</code></pre>
+<h2 id="如何mock方法模拟内部逻辑">如何Mock方法模拟内部逻辑?</h2>
+<p>一般来说mock最典型的用法就是对一个方法的返回值(输出)进行模拟。如果想模拟方法内部逻辑，比如方法对入参进行修改或者对入参对象的某个方法进行回调如何利用mock来实现呢？<br>
+下面举一个实际的场景，比如有这样一段被测试代码：</p>
+<pre><code>  testDOMapper.insert(testBeanDO);
+  if(testBeanDO.getId()==null) {
+       throw new RuntimeException();
+  }
+</code></pre>
+<p>插入数据之后数据库中新纪录的id会回填到templateDO.id这个属性，这个特性是mybatis的一种常用的用法。但是如果我们用Mock如果来实现测试代码执行过testDOMapper.insert(templateDO)之后将templateDO.id属性附上值，如何实现呢？这里要用Answer这个接口</p>
+<pre><code>       Mockito.when(testDOMapper.insert(Mockito.any(TestBeanDO.class))).thenAnswer(new 
+          Answer&lt;Integer&gt;() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                TestBeanDO arg = invocation.getArgumentAt(0, TestBeanDO.class);
+                arg.setId(1L);
+                return 1;
+            }
+        });
+</code></pre>
+<p>上面的代码可以看到answer可以模拟调用insert()方法时方法体如何执行。answer的入参InvocationOnMock对象可以获取实际的入参的对象，这样只要在answer方法体里对入参属性进行修改就可以实现我们想要达到的效果了。<br>
+类似的方法还可以使用 ArgumentMatcher 来实现对参数进行捕获修改，这里给出示例就不再具体说明了。</p>
+<pre><code>        Mockito.when(testDOMapper.insert(Mockito.argThat(new ArgumentMatcher&lt;TestBeanDO&gt;() {
+            @Override
+            public boolean matches(Object argument) {
+                ((TestBeanDO) argument).setId(1L);
+                return true;
+            }
+        }))).thenReturn(1);
+</code></pre>
+<h2 id="给spy的对象进行打桩">给Spy的对象进行打桩</h2>
+<p>spy一般对监控一个真实的对象，按照之前mock的常见用法：</p>
+<pre><code>Mockito.when(spyObj.method()).thenReturn(xxxx);  
+</code></pre>
+<p>其实是不会按照thenReturn()指定的结果返回的，这一点要特别的注意，容易采坑。如果想按照用户自己的定义对spy对象进行打桩的正确方式是：</p>
+<pre><code>Mockito.doReturn(xxxx).when(sypObj).method();
+</code></pre>
+<p>提前设置好方法被调用之后的表现doReturn()返回结果还是doThrow()抛出异常，之后再使用when(spyObj)对spy的对象进行包装之后设置调用的方法就可以了。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[了解Java异步编程]]></title>
         <id>https://kangjn.github.io/post/liao-jie-java-yi-bu-bian-cheng/</id>
@@ -1315,2449 +2411,6 @@ CMD start-my-server.sh -port ${tcpPort} -tls ${useTls}
 <p>当在操作系统中安装 Docker 的时候，会同时安装 Docker 命令行工具。Docker 命令行工具可以通过 Dockerfile  构建 Docker 镜像，可以将 Docker 镜像上传到 Docker 仓库中，可以从 Docker 仓库中下载 Docker 镜像，可以操作 Docker 镜像启动或停止 Docker 容器。</p>
 <h2 id="docker-compose">Docker Compose</h2>
 <p>Docker Compose 提供一种功能，可以将多个 Docker  容器链接成一个组合中，这个组合中的所有容器，可以一次性全部部署或停止。比如，一个 Docker 容器中运行应用，一个 Docker  容器中运行数据库，应用依赖于数据库，同时启动或停止，可以实现应用依赖的数据库没有正常运行。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CentOS7安装使用Docker]]></title>
-        <id>https://kangjn.github.io/post/centos7-an-zhuang-shi-yong-docker/</id>
-        <link href="https://kangjn.github.io/post/centos7-an-zhuang-shi-yong-docker/">
-        </link>
-        <updated>2021-04-21T02:52:06.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="安装">安装</h2>
-<p>Docker 官方为了简化安装流程，提供了一套安装脚本，CentOS 系统上可以使用这套脚本安装：</p>
-<pre><code>curl -sSL https://get.docker.com/ | sh
-</code></pre>
-<p>执行这个命令后，脚本就会自动的将一切准备工作做好，并且把 Docker 安装在系统中。</p>
-<p>不过，由于伟大的墙的原因，在国内使用这个脚本可能会出现某些下载出现错误的情况。国内的一些云服务商提供了这个脚本的修改版本，使其使用国内的 Docker 软件源镜像安装，这样就避免了墙的干扰。</p>
-<h3 id="阿里云安装脚本">阿里云安装脚本</h3>
-<pre><code>curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh 
-</code></pre>
-<hr>
-<h2 id="镜像">镜像</h2>
-<h3 id="选择国内镜像">选择国内镜像</h3>
-<ul>
-<li>
-<h4 id="官方中国区加速器">官方中国区加速器</h4>
-</li>
-</ul>
-<pre><code>sudo echo &quot;DOCKER_OPTS=\&quot;--registry-mirror=https://registry.docker-cn.com\&quot;&quot; &gt;&gt; /etc/default/docker
-</code></pre>
-<p>推荐使用官方加速器。</p>
-<ul>
-<li>
-<h4 id="网易163">网易163</h4>
-</li>
-</ul>
-<pre><code>sudo echo &quot;DOCKER_OPTS=\&quot;--registry-mirror=http://hub-mirror.c.163.com\&quot;&quot; &gt;&gt; /etc/default/docker
-</code></pre>
-<p>目前网易镜像已经比较稳定。</p>
-<p>修改完默认镜像仓库后需要重启docker才能生效：</p>
-<pre><code>service docker restart
-</code></pre>
-<h3 id=""></h3>
-<hr>
-<h2 id="使用">使用</h2>
-<h3 id="启动docker">启动Docker</h3>
-<pre><code>service docker start
-</code></pre>
-<h3 id="开机自启动">开机自启动</h3>
-<pre><code>sudo chkconfig docker on
-</code></pre>
-<h3 id="停止docker">停止Docker</h3>
-<pre><code>service docker stop
-</code></pre>
-<h3 id="本地镜像列表">本地镜像列表</h3>
-<pre><code>docker images
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/903154571.png" alt="img" loading="lazy"></figure>
-<p>使用images命令查看发现当前本地没有任何镜像</p>
-<h3 id="搜索">搜索</h3>
-<pre><code>docker search hello
-</code></pre>
-<p>以下结果是我们搜索到的与&quot;hello&quot;相关的所有镜像</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1217719435.png" alt="img" loading="lazy"></figure>
-<h3 id="拉取镜像">拉取镜像</h3>
-<pre><code>docker pull hello-world
-</code></pre>
-<p>我们尝试从仓库中拉取名为“hello-world”的镜像</p>
-<p>拉取成功后使用docker images命令查看，发现该镜像已被拉取到本地。</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/234797084.png" alt="img" loading="lazy"></figure>
-<h3 id="运行镜像">运行镜像</h3>
-<pre><code>docker run hello-world
-</code></pre>
-<p>运行后该镜像会输出如下信息：</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/78870000.png" alt="img" loading="lazy"></figure>
-<h3 id="查看运行中的镜像">查看运行中的镜像</h3>
-<pre><code>docker ps
-</code></pre>
-<h3 id="镜像重命名">镜像重命名</h3>
-<pre><code>docker tag hello-world hw
-</code></pre>
-<p>我们将之前下载的“hello_world”镜像重命名为“hw”，使用images命令查看会发现列表中已经多了一个名为“hw”的镜像。</p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1341420741.png" alt="img" loading="lazy"></figure>
-<h3 id="删除镜像">删除镜像</h3>
-<pre><code>docker rmi hello-world
-</code></pre>
-<p>我们删除了名为“hello_world”的镜像，rmi后面的参数也可以是 <code>镜像短 ID</code>、<code>镜像长 ID</code>、<code>镜像名</code> 或者 <code>镜像摘要。</code></p>
-<hr>
-<h2 id="卸载">卸载</h2>
-<ul>
-<li>
-<h4 id="列出安装包">列出安装包</h4>
-</li>
-</ul>
-<pre><code>yum list installed | grep docker
-</code></pre>
-<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/214283262.png" alt="img" loading="lazy"></figure>
-<ul>
-<li>
-<h4 id="删除安装包">删除安装包</h4>
-</li>
-</ul>
-<pre><code>yum -y remove docker-engine.x86_64
-yum -y remove docker-engine-selinux.noarch
-</code></pre>
-<ul>
-<li>
-<h4 id="删除镜像容器等">删除镜像/容器等</h4>
-</li>
-</ul>
-<pre><code>rm -rf /var/lib/docker
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Spring Boot与Docker部署]]></title>
-        <id>https://kangjn.github.io/post/spring-boot-yu-docker-bu-shu/</id>
-        <link href="https://kangjn.github.io/post/spring-boot-yu-docker-bu-shu/">
-        </link>
-        <updated>2021-04-21T02:44:17.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="开启docker远程访问">开启Docker远程访问</h2>
-<p>首先需要开启docker远程访问功能，以便可以进行远程操作。</p>
-<ul>
-<li>
-<h4 id="centos-6">CentOS 6</h4>
-</li>
-</ul>
-<p>修改/etc/default/docker文件，重启后生效（service docker restart）。</p>
-<pre><code>DOCKER_OPTS=&quot;-H=unix:///var/run/docker.sock -H=0.0.0.0:2375&quot;
-</code></pre>
-<ul>
-<li>
-<h4 id="centos-7">CentOS 7</h4>
-</li>
-</ul>
-<p>打开/usr/lib/systemd/system/docker.service文件，修改ExecStart这行。</p>
-<pre><code>ExecStart=/usr/bin/dockerd  -H tcp://0.0.0.0:2375  -H unix:///var/run/docker.sock
-</code></pre>
-<p>重启后生效</p>
-<pre><code>  systemctl daemon-reload    
-  systemctl restart docker.service 
-</code></pre>
-<p>测试是否生效</p>
-<pre><code>curl http://127.0.0.1:2375/info
-</code></pre>
-<hr>
-<h2 id=""></h2>
-<h2 id="新建maven工程">新建Maven工程</h2>
-<p>pom.xml配置如下:</p>
-<pre><code>&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-    &lt;groupId&gt;test.springboot.docker&lt;/groupId&gt;
-    &lt;artifactId&gt;docker-springboot&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;1.5.3.RELEASE&lt;/version&gt;
-    &lt;/parent&gt;
-
-    &lt;properties&gt;
-        &lt;java.version&gt;1.8&lt;/java.version&gt;
-    &lt;/properties&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-            &lt;scope&gt;test&lt;/scope&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-
-    &lt;build&gt;
-        &lt;plugins&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-            &lt;/plugin&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;com.spotify&lt;/groupId&gt;
-                &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;
-                &lt;version&gt;0.4.14&lt;/version&gt;
-                &lt;configuration&gt;
-                    &lt;imageName&gt;${docker.image.prefix}/${project.artifactId}&lt;/imageName&gt;
-                    &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt;
-                    &lt;dockerHost&gt;http://192.168.1.200:2375&lt;/dockerHost&gt;
-                    &lt;resources&gt;
-                        &lt;resource&gt;
-                            &lt;targetPath&gt;/&lt;/targetPath&gt;
-                            &lt;directory&gt;${project.build.directory}&lt;/directory&gt;
-                            &lt;include&gt;${project.build.finalName}.jar&lt;/include&gt;
-                        &lt;/resource&gt;
-                    &lt;/resources&gt;
-                &lt;/configuration&gt;
-            &lt;/plugin&gt;
-        &lt;/plugins&gt;
-    &lt;/build&gt;
-&lt;/project&gt;
-</code></pre>
-<p><code>imageName：</code>指定了镜像的名字</p>
-<p><code>dockerDirectory：</code>指定Dockerfile的位置</p>
-<p><code>dockerHost：</code>指定Docker远程API地址</p>
-<p><code>resources：</code>指那些需要和Dockerfile放在一起，在构建镜像时使用的文件，一般应用jar包需要纳入</p>
-<h4 id="创建java类">创建Java类</h4>
-<pre><code>package hello;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@SpringBootApplication
-@RestController
-public class Application {
-
-    @RequestMapping(&quot;/&quot;)
-    public String home() {
-        return &quot;Hello Docker World&quot;;
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-}
-</code></pre>
-<h4 id="创建dockerfile">创建Dockerfile</h4>
-<p>在src/main/docker目录下创建一个名为Dockerfile的文件，配置如下：</p>
-<pre><code>FROM java
-VOLUME /tmp
-ADD docker-springboot-0.0.1-SNAPSHOT.jar app.jar
-RUN bash -c 'touch /app.jar'
-ENV JAVA_OPTS=&quot;&quot;
-ENTRYPOINT [ &quot;sh&quot;, &quot;-c&quot;, &quot;java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar&quot; ]
-</code></pre>
-<p>**FROM java：**指Docker Hub上官方提供的java镜像，有了这个基础镜像后，Dockerfile可以通过<code>FROM</code>指令直接获取它的状态——也就是在容器中<code>java</code>是已经安装的，接下来通过自定义的命令来运行Spring Boot应用。</p>
-<p>**VOLUME /tmp：**创建/tmp目录并持久化到Docker数据文件夹，因为Spring Boot使用的内嵌Tomcat容器默认使用<code>/tmp</code>作为工作目录。</p>
-<p>**ADD docker-springboot-0.0.1-SNAPSHOT.jar app.jar：**将应用jar包复制到<code>/app.jar</code></p>
-<p>**ENTRYPOINT：**表示容器运行后默认执行的命令</p>
-<p><strong>完整目录结构如下所示：</strong></p>
-<p><strong><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/291529205.png" alt="img" loading="lazy"></strong></p>
-<p>运行以下命令创建Docker镜像：</p>
-<pre><code>package docker:build
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1205907397.png" alt="img" loading="lazy"></figure>
-<hr>
-<h2 id="docker启动镜像">Docker启动镜像</h2>
-<p>查看项目是否上传成功</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1761674239.png" alt="img" loading="lazy"></figure>
-<h4 id="启动镜像">启动镜像</h4>
-<pre><code>docker run -p 8888:8080 springboot/docker-springboot
-</code></pre>
-<p>通过浏览器访问</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/738880254.png" alt="img" loading="lazy"></figure>
-<p></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[MQTT简介]]></title>
-        <id>https://kangjn.github.io/post/mqtt-jian-jie/</id>
-        <link href="https://kangjn.github.io/post/mqtt-jian-jie/">
-        </link>
-        <updated>2021-04-20T07:59:45.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="1-简述">1 简述</h2>
-<p>MQTT（Message Queuing  Telemetry  Transport，消息队列遥测传输协议），是一种基于发布/订阅（publish/subscribe）模式的&quot;轻量级&quot;通讯协议，该协议构建于TCP/IP协议上，由IBM在1999年发布。MQTT最大优点在于，可以以极少的代码和有限的带宽，为连接远程设备提供实时可靠的消息服务。作为一种低开销、低带宽占用的即时通讯协议，使其在物联网、小型设备、移动应用等方面有较广泛的应用。</p>
-<p>MQTT是一个基于客户端-服务器的消息发布/订阅传输协议。MQTT协议是轻量、简单、开放和易于实现的，这些特点使它适用范围非常广泛。在很多情况下，包括受限的环境中，如：机器与机器（M2M）通信和物联网（IoT）。其在，通过卫星链路通信传感器、偶尔拨号的医疗设备、智能家居、及一些小型化设备中已广泛使用。</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/59a771.JPEG" alt="img" loading="lazy"></figure>
-<h2 id="2-设计规范">2 设计规范</h2>
-<p>由于物联网的环境是非常特别的，所以MQTT遵循以下设计原则：</p>
-<ul>
-<li>精简，不添加可有可无的功能；</li>
-<li>发布/订阅（Pub/Sub）模式，方便消息在传感器之间传递；</li>
-<li>允许用户动态创建主题，零运维成本；</li>
-<li>把传输量降到最低以提高传输效率；</li>
-<li>把低带宽、高延迟、不稳定的网络等因素考虑在内；</li>
-<li>支持连续的会话控制；</li>
-<li>理解客户端计算能力可能很低；</li>
-<li>提供服务质量管理；</li>
-<li>假设数据不可知，不强求传输数据的类型与格式，保持灵活性。</li>
-</ul>
-<h2 id="3-主要特性">3 主要特性</h2>
-<p>MQTT协议工作在低带宽、不可靠的网络的远程传感器和控制设备通讯而设计的协议，它具有以下主要的几项特性：</p>
-<ul>
-<li>使用发布/订阅消息模式，提供一对多的消息发布，解除应用程序耦合。这一点很类似于XMPP，但是MQTT的信息冗余远小于XMPP，因为XMPP使用XML格式文本来传递数据。</li>
-<li>对负载内容屏蔽的消息传输。</li>
-<li>使用TCP/IP提供网络连接。主流的MQTT是基于TCP连接进行数据推送的，但是同样有基于UDP的版本，叫做MQTT-SN。这两种版本由于基于不同的连接方式，优缺点自然也就各有不同了。</li>
-<li>有三种消息发布服务质量QoS (Quality of Service)：
-<ul>
-<li>At Most Once  至多一次，消息发布完全依赖底层TCP/IP网络。会发生消息丢失或重复。这一级别可用于如下情况，环境传感器数据，丢失一次读记录无所谓，因为不久后还会有第二次发送。这一种方式主要普通APP的推送，倘若你的智能设备在消息推送时未联网，推送过去没收到，再次联网也就收不到了。</li>
-<li>At Least Once 至少一次，确保消息到达，但消息重复可能会发生。</li>
-<li>Exactly Once 有且仅有一次，确保消息到达一次。在一些要求比较严格的计费系统中，可以使用此级别。在计费系统中，消息重复或丢失会导致不正确的结果。这种最高质量的消息发布服务还可以用于即时通讯类的APP的推送，确保用户收到且只会收到一次。</li>
-</ul>
-</li>
-<li>小型传输，开销很小（固定长度的头部是2字节），协议交换最小化，以降低网络流量。这就是为什么在介绍里说它非常适合&quot;在物联网领域，传感器与服务器的通信，信息的收集&quot;，要知道嵌入式设备的运算能力和带宽都相对薄弱，使用这种协议来传递消息再适合不过了。</li>
-<li>使用Last Will和Testament特性通知有关各方客户端异常中断的机制。
-<ul>
-<li>Last Will：即遗言机制，用于通知同一主题下的其他设备发送遗言的设备已经断开了连接。</li>
-<li>Testament：遗嘱机制，功能类似于Last Will。</li>
-</ul>
-</li>
-</ul>
-<h2 id="4-mqtt协议原理">4 MQTT协议原理</h2>
-<h3 id="41-mqtt协议实现方式">4.1 MQTT协议实现方式</h3>
-<p>实现MQTT协议需要客户端和服务器端通讯完成，在通讯过程中，MQTT协议中有三种身份：发布者（Publish）、代理（Broker）、订阅者（Subscribe）。其中，消息的发布者和订阅者都是客户端，消息代理是服务器，消息发布者可以同时是订阅者。</p>
-<p>MQTT传输的消息分为：主题（Topic）和负载（Payload）两部分：</p>
-<ul>
-<li>Topic，可以理解为消息的类型，订阅者订阅（Subscribe）后，就会收到该主题的消息内容（Payload）；</li>
-<li>Payload，可以理解为消息的内容，是指订阅者具体要使用的内容。</li>
-</ul>
-<h3 id="42-网络传输与应用消息">4.2 网络传输与应用消息</h3>
-<p>MQTT会构建底层网络传输：它将建立客户端到服务器的连接，提供两者之间的一个有序的、无损的、基于字节流的双向传输。</p>
-<p>当应用数据通过MQTT网络发送时，MQTT会把与之相关的服务质量（QoS）和主题名（Topic）相关连。</p>
-<h3 id="43-mqtt客户端">4.3 MQTT客户端</h3>
-<p>一个使用MQTT协议的应用程序或者设备，它总是建立到服务器的网络连接。客户端可以：</p>
-<ul>
-<li>发布其他客户端可能会订阅的信息；</li>
-<li>订阅其它客户端发布的消息；</li>
-<li>退订或删除应用程序的消息；</li>
-<li>断开与服务器连接。</li>
-</ul>
-<h3 id="44-mqtt服务器">4.4 MQTT服务器</h3>
-<p>MQTT服务器以称为&quot;消息代理&quot;（Broker），可以是一个应用程序或一台设备。它位于消息发布者和订阅者之间，它可以：</p>
-<ul>
-<li>接受来自客户的网络连接；</li>
-<li>接受客户发布的应用信息；</li>
-<li>处理来自客户端的订阅和退订请求；</li>
-<li>向订阅的客户转发应用程序消息。</li>
-</ul>
-<h3 id="45-mqtt协议中的订阅-主题-会话">4.5 MQTT协议中的订阅、主题、会话</h3>
-<h4 id="451-订阅subscription">4.5.1 订阅（Subscription）</h4>
-<p>订阅包含主题筛选器（Topic Filter）和最大服务质量（QoS）。订阅会与一个会话（Session）关联。一个会话可以包含多个订阅。每一个会话中的每个订阅都有一个不同的主题筛选器。</p>
-<h4 id="452-会话session">4.5.2 会话（Session）</h4>
-<p>每个客户端与服务器建立连接后就是一个会话，客户端和服务器之间有状态交互。会话存在于一个网络之间，也可能在客户端和服务器之间跨越多个连续的网络连接。</p>
-<h4 id="453-主题名topic-name">4.5.3 主题名（Topic Name）</h4>
-<p>连接到一个应用程序消息的标签，该标签与服务器的订阅相匹配。服务器会将消息发送给订阅所匹配标签的每个客户端。</p>
-<h4 id="454-主题筛选器topic-filter">4.5.4 主题筛选器（Topic Filter）</h4>
-<p>一个对主题名通配符筛选器，在订阅表达式中使用，表示订阅所匹配到的多个主题。</p>
-<h4 id="455-负载payload">4.5.5 负载（Payload）</h4>
-<p>消息订阅者所具体接收的内容。</p>
-<h3 id="46-mqtt协议中的方法">4.6 MQTT协议中的方法</h3>
-<p>MQTT协议中定义了一些方法（也被称为动作），来于表示对确定资源所进行操作。这个资源可以代表预先存在的数据或动态生成数据，这取决于服务器的实现。通常来说，资源指服务器上的文件或输出。主要方法有：</p>
-<ul>
-<li>Connect：等待与服务器建立连接。</li>
-<li>Disconnect：等待MQTT客户端完成所做的工作，并与服务器断开TCP/IP会话。</li>
-<li>Subscribe：等待完成订阅。</li>
-<li>UnSubscribe：等待服务器取消客户端的一个或多个topics订阅。</li>
-<li>Publish：MQTT客户端发送消息请求，发送完成后返回应用程序线程。</li>
-</ul>
-<h2 id="5-mqtt协议数据包结构">5 MQTT协议数据包结构</h2>
-<p>在MQTT协议中，一个MQTT数据包由：固定头（Fixed header）、可变头（Variable header）、消息体（payload）三部分构成。</p>
-<ul>
-<li>固定头（Fixed header）：存在于所有MQTT数据包中，表示数据包类型及数据包的分组类标识。</li>
-<li>可变头（Variable header）：存在于部分MQTT数据包中，数据包类型决定了可变头是否存在及其具体内容。</li>
-<li>消息体（Payload）：存在于部分MQTT数据包中，表示客户端收到的具体内容。</li>
-</ul>
-<h3 id="51-mqtt固定头">5.1 MQTT固定头</h3>
-<p>固定头存在于所有MQTT数据包中，包含两部分内容：首字节(Byte 1) 和 剩余消息报文长度(1-4字节)</p>
-<ul>
-<li>Byte 1 首字节：
-<ul>
-<li>Bit 7 6 5 4 高四位无符号值，用于表示MQTT消息的报文类型(MQTT Control Packet type)，总共可以表示2^4=16种协议类型。</li>
-<li>Bit 3 2 1 0 低四位无符号值，用作某些报文的特殊标记(Flags specific to each MQTT Control Packet type)。</li>
-</ul>
-</li>
-<li>Byte 2… Remaining Length 剩余消息报文长度</li>
-</ul>
-<h4 id="511-mqtt数据包类型-mqtt-control-packet-type">5.1.1 MQTT数据包类型 MQTT Control Packet type</h4>
-<p>位于 首字节的高四位，即Byte 1中的 bits 7-4，相于一个4位的无符号值。用于确定报文类型。共有2^4=16种，其中0000和1111是保留字段。具体如下：</p>
-<table>
-<thead>
-<tr>
-<th>报文类型</th>
-<th>字段值</th>
-<th>数据方向</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>保留</td>
-<td>0</td>
-<td>禁用</td>
-<td>保留</td>
-</tr>
-<tr>
-<td>CONNECT</td>
-<td>1</td>
-<td>Client -&gt; Server</td>
-<td>客户端连接到服务器</td>
-</tr>
-<tr>
-<td>CONNACK</td>
-<td>2</td>
-<td>Server -&gt; Client</td>
-<td>连接确认</td>
-</tr>
-<tr>
-<td>PUBLISH</td>
-<td>3</td>
-<td>Client &lt;-&gt; Server</td>
-<td>发布消息</td>
-</tr>
-<tr>
-<td>PUBACK</td>
-<td>4</td>
-<td>Client &lt;-&gt; Server</td>
-<td>发布确认</td>
-</tr>
-<tr>
-<td>PUBREC</td>
-<td>5</td>
-<td>Client &lt;-&gt; Server</td>
-<td>消息已接收(QoS2第一阶段)</td>
-</tr>
-<tr>
-<td>PUBREL</td>
-<td>6</td>
-<td>Client &lt;-&gt; Server</td>
-<td>消息释放(QoS2第二阶段)</td>
-</tr>
-<tr>
-<td>PUBCOMP</td>
-<td>7</td>
-<td>Client &lt;-&gt; Server</td>
-<td>发布结束(QoS2第三阶段)</td>
-</tr>
-<tr>
-<td>SUBSCRIBE</td>
-<td>8</td>
-<td>Client -&gt; Server</td>
-<td>客户端订阅请求</td>
-</tr>
-<tr>
-<td>SUBACK</td>
-<td>9</td>
-<td>Server -&gt; Client</td>
-<td>服务端订阅确认</td>
-</tr>
-<tr>
-<td>UNSUBACRIBE</td>
-<td>10</td>
-<td>Client -&gt; Server</td>
-<td>客户端取消订阅</td>
-</tr>
-<tr>
-<td>UNSUBACK</td>
-<td>11</td>
-<td>Server -&gt; Client</td>
-<td>服务端取消订阅确认</td>
-</tr>
-<tr>
-<td>PINGREQ</td>
-<td>12</td>
-<td>Client -&gt; Server</td>
-<td>客户端发送心跳</td>
-</tr>
-<tr>
-<td>PINGRESP</td>
-<td>13</td>
-<td>Server -&gt; Client</td>
-<td>服务端回复心跳</td>
-</tr>
-<tr>
-<td>DISCONNECT</td>
-<td>14</td>
-<td>Client -&gt; Server</td>
-<td>客户端断开连接请求</td>
-</tr>
-<tr>
-<td>保留</td>
-<td>15</td>
-<td>禁用</td>
-<td>保留</td>
-</tr>
-</tbody>
-</table>
-<h4 id="512-标识位-flags-specific-to-each-mqtt-control-packet-type">5.1.2 标识位 Flags specific to each MQTT Control Packet type</h4>
-<p>位于首字节的低四位，即Byte 1中bits 3-0。表示某些报文类型的控制字段，实际上只有少数报文类型有控制位。</p>
-<p>在不使用标识位的消息类型中，标识位被作为保留位。如果收到无效的标志时，接收端必须关闭网络连接：</p>
-<ul>
-<li>DUP：发布消息的副本。用来在保证消息的可靠传输，如果设置为1，则在下面的变长中增加MessageId，并且需要回复确认，以保证消息传输完成，但不能用于检测消息重复发送。</li>
-<li>QoS：发布消息的服务质量，即：保证消息传递的次数。</li>
-</ul>
-<pre><code>Ø00：最多一次，即：&lt;=1
-
-Ø01：至少一次，即：&gt;=1
-
-Ø10：一次，即：=1
-
-Ø11：预留
-</code></pre>
-<ul>
-<li>RETAIN： 发布保留标识，表示服务器要保留这次推送的信息，如果有新的订阅者出现，就把这消息推送给它，如果设有那么推送至当前订阅者后释放。</li>
-</ul>
-<p>5.1.3 剩余长度（Remaining Length）</p>
-<p>用来保存变长头部(Variable  Header)和消息体(Payload)的总大小。从第二字节(Byte  2)开始，最长可达4字节，所以剩余长度范围是Byte[2-5]。那么怎样确定其长度到底是1字节还是4字节呢？它先用从低位Bit 0到Bit  6来存储，当发现不够时，则将 最高位Bit 7(默认都是高字节在前)置为  1，表示长度不足，需要使用下一个字节继续保存，就继续计算字节长度；如果是0，那么就不再计算字节长度。</p>
-<p>消息长度可以简单理解为128进制的数据，4位长度最大可以表示128, 128*,* 128*128Byte=256MB。但是这个长度的计算有些特别，就是低位在前，高位在后(因为正常的表示方法是高位在前，低位在后)，字节最高位Bit7用于标记是否需要继续计算消息长度。以下是消息长度的长度范围：</p>
-<table>
-<thead>
-<tr>
-<th>字节数</th>
-<th>长度最小值</th>
-<th>长度最大值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>0(0x00)</td>
-<td>127(0x7F)</td>
-</tr>
-<tr>
-<td>2</td>
-<td>128 (0x80, 0x01)</td>
-<td>16 383 (0xFF, 0x7F)</td>
-</tr>
-<tr>
-<td>3</td>
-<td>16 384 (0x80, 0x80, 0x01)</td>
-<td>2 097 151 (0xFF, 0xFF, 0x7F)</td>
-</tr>
-<tr>
-<td>4</td>
-<td>2 097 152 (0x80, 0x80, 0x80, 0x01)</td>
-<td>268 435 455 (0xFF, 0xFF, 0xFF, 0x7F)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="52-mqtt可变头">5.2 MQTT可变头</h3>
-<p>MQTT数据包中包含一个可变头，它驻位于固定的头和负载之间。可变头的内容因数据包类型而不同，较常的应用是作为包的标识：</p>
-<p>很多类型数据包中都包括一个2字节的数据包标识字段，这些类型的包有：PUBLISH (QoS &gt; 0)、PUBACK、PUBREC、PUBREL、PUBCOMP、SUBSCRIBE、SUBACK、UNSUBSCRIBE、UNSUBACK。</p>
-<h3 id="53-payload消息体">5.3 Payload消息体</h3>
-<p>Payload消息体位MQTT数据包的第三部分，包含CONNECT、SUBSCRIBE、SUBACK、UNSUBSCRIBE四种类型的消息：</p>
-<ul>
-<li>CONNECT，消息体内容主要是：客户端的ClientID、订阅的Topic、Message以及用户名和密码。</li>
-<li>SUBSCRIBE，消息体内容是一系列的要订阅的主题以及QoS。</li>
-<li>SUBACK，消息体内容是服务器对于SUBSCRIBE所申请的主题及QoS进行确认和回复。</li>
-<li>UNSUBSCRIBE，消息体内容是要订阅的主题。</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Vue2.0 + TypeScript 项目搭建]]></title>
-        <id>https://kangjn.github.io/post/vue20-typescript-xiang-mu-da-jian/</id>
-        <link href="https://kangjn.github.io/post/vue20-typescript-xiang-mu-da-jian/">
-        </link>
-        <updated>2021-04-20T07:06:51.000Z</updated>
-        <content type="html"><![CDATA[<p>安装 cli</p>
-<h1 id="vue-cli-3-可以使用-typescript-生成新工程-创建方式">Vue CLI 3 可以使用 TypeScript 生成新工程。创建方式：</h1>
-<p>npm install --global @vue/cli</p>
-<h1 id="2-创建一个新工程并选择-manually-select-features-手动选择特性-选项">2. 创建一个新工程，并选择 &quot;Manually select features (手动选择特性)&quot; 选项</h1>
-<p>vue create my-project-name</p>
-<p>vue create my-project-name</p>
-<p>Vue CLI v4.5.12<br>
-? Please pick a preset: Manually select features<br>
-? Check the features needed for your project: Choose Vue version, Babel, TS, PWA, Router, Vuex, CSS Pre-processors, Linter, Unit<br>
-? Choose a version of Vue.js that you want to start the project with 2.x<br>
-? Use class-style component syntax? Yes<br>
-? Use Babel alongside TypeScript (required for modern mode, auto-detected polyfills, transpiling JSX)? Yes<br>
-? Use history mode for router? (Requires proper server setup for index fallback in production) Yes<br>
-? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Less<br>
-? Pick a linter / formatter config: Standard<br>
-? Pick additional lint features: Lint on save<br>
-? Pick a unit testing solution: Mocha<br>
-? Where do you prefer placing config for Babel, ESLint, etc.? In dedicated config files<br>
-? Save this as a preset for future projects? No</p>
-<p>配置 vue.config.js</p>
-<p>根目录新建vue.config.js文件<br>
-1、publicPath 项目根路径</p>
-<p>module.exports = {<br>
-publicPath: '/',//根路径 cli3.0以上使用publicPath<br>
-}</p>
-<p>2、assetsDir 静态资源目录(js,css,img,fonts)这些文件都可以写里面</p>
-<p>module.exports = {<br>
-assetsDir: 'static',// 静态资源目录(js,css,img,fonts)这些文件都可以写里面<br>
-}</p>
-<p>3、outputDir 打包输出目录</p>
-<p>module.exports = {<br>
-outputDir: 'dist',//打包的时候生成的一个文件名<br>
-}</p>
-<p>4、lintOnSave 是否开启eslint保存检测 ,它的有效值为 true || false || 'error'</p>
-<p>module.exports = {<br>
-lintOnSave: 'error',//是否开启eslint保存检测 ,它的有效值为 true || false || 'error'<br>
-}</p>
-<p>5、biyi-admin 指定对第三方依赖包进行babel-polyfill处理</p>
-<p>module.exports = {<br>
-transpileDependencies: [<br>
-'biyi-admin', // 指定对第三方依赖包进行babel-polyfill处理<br>
-],<br>
-}</p>
-<p>6、productionSourceMap 生产环境是否生成 sourceMap 文件</p>
-<p>module.exports = {<br>
-productionSourceMap: false, // 生产环境是否生成 sourceMap 文件<br>
-}</p>
-<p>7、别名配置 '@' './src' ; '@a' './src/assets' ; '@c' './src/components' ; '@p' './src/pages'</p>
-<p>const path = require('path');<br>
-module.exports = {<br>
-chainWebpack: config =&gt; {<br>
-// 别名配置<br>
-config.resolve.alias<br>
-.set('@', path.resolve(__dirname, './src'))<br>
-.set('@a', path.resolve(__dirname, './src/assets'))<br>
-.set('@c', path.resolve(__dirname, './src/components'))<br>
-.set('@p', path.resolve(__dirname, './src/pages'))<br>
-},<br>
-}</p>
-<p>8、解决ie11兼容ES6</p>
-<h1 id="安装依赖">安装依赖</h1>
-<p>yarn add babel-polyfill</p>
-<p>module.exports = {<br>
-chainWebpack: config =&gt; {<br>
-// 解决ie11兼容ES6<br>
-config.entry('main').add('babel-polyfill');<br>
-},<br>
-}</p>
-<p>9、symlinks 符号链接的资源将解析到其实际路径，而不是符号链接的位</p>
-<p>module.exports = {<br>
-chainWebpack: config =&gt; {<br>
-// 修复HMR<br>
-config.resolve.symlinks(true);<br>
-},<br>
-}</p>
-<p>10、gzip 压缩</p>
-<p>yarn add terser-webpack-plugin --dev<br>
-yarn add compression-webpack-plugin --dev</p>
-<h1 id="packagejson">package.json</h1>
-<p>{<br>
-&quot;openGzip&quot;: true,<br>
-}</p>
-<p>let {version, openGzip} = require('./package.json');</p>
-<p>module.exports = {<br>
-configureWebpack: config =&gt; {<br>
-if (process.env.NODE_ENV === 'production') {<br>
-// 为生产环境修改配置...<br>
-config.mode = &quot;production&quot;;<br>
-if (openGzip) {<br>
-config.plugins.push(<br>
-new CompressionWebpackPlugin({<br>
-filename: '[path].gz[query]',<br>
-algorithm: 'gzip',<br>
-test: /.js<span class='katex-error' title='ParseError: KaTeX parse error: Can&#039;t use function &#039;\.&#039; in math mode at position 2: |\̲.̲html'>|\.html</span>|.\css/, // 匹配文件名<br>
-threshold: 10240, // 只有大小大于该值的资源会被处理 10240<br>
-minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理<br>
-deleteOriginalAssets: false, // 删除原文件<br>
-})<br>
-)<br>
-}<br>
-} else {<br>
-// 为开发环境修改配置...<br>
-config.mode = &quot;development&quot;;<br>
-}<br>
-},<br>
-}</p>
-<p>11、打包文件大小配置</p>
-<p>module.exports = {<br>
-configureWebpack: config =&gt; {<br>
-if (process.env.NODE_ENV === 'production') {<br>
-// 为生产环境修改配置...<br>
-config.mode = &quot;production&quot;;</p>
-<pre><code>        // 打包文件大小配置
-        config[&quot;performance&quot;] = {
-            hints: &quot;error&quot;,
-            maxEntrypointSize: 400000,
-            maxAssetSize: 30000000
-        };
-    } else {
-        // 为开发环境修改配置...
-        config.mode = &quot;development&quot;;
-    }
-},
-</code></pre>
-<p>}</p>
-<p>12、将每个依赖包打包成单独的js文件</p>
-<p>let {version, openGzip} = require('./package.json');</p>
-<p>module.exports = {<br>
-configureWebpack: config =&gt; {<br>
-if (process.env.NODE_ENV === 'production') {<br>
-// 为生产环境修改配置...<br>
-config.mode = &quot;production&quot;;</p>
-<pre><code>        // 将每个依赖包打包成单独的js文件
-        Object.assign(config, {
-            output: {
-                ...config.output,
-                filename: `static/js/[name].[chunkhash].${version}.js`,
-                chunkFilename: `static/js/[name].[chunkhash].${version}.js`
-            },
-        })
-    } else {
-        // 为开发环境修改配置...
-        config.mode = &quot;development&quot;;
-    }
-},
-</code></pre>
-<p>}</p>
-<p>13、去除线上的 console</p>
-<p>module.exports = {<br>
-configureWebpack: config =&gt; {<br>
-if (process.env.NODE_ENV === 'production') {<br>
-// 为生产环境修改配置...<br>
-config.mode = &quot;production&quot;;</p>
-<pre><code>        Object.assign(config, {
-            optimization: {
-                minimizer: [
-                    new TerserPlugin({
-                        cache: true, // 是否缓存
-                        // paraller: true, // 是否并行打包
-                        sourceMap: true,
-                        terserOptions: {
-                            compress: {
-                                pure_funcs: [&quot;console.log&quot;]
-                            }
-                        }
-                    })
-                ],
-            }
-        })
-    } else {
-        // 为开发环境修改配置...
-        config.mode = &quot;development&quot;;
-    }
-},
-</code></pre>
-<p>}</p>
-<p>14、css相关配置</p>
-<p>根目录创建 postcss.config.js</p>
-<p>module.exports = {<br>
-plugins: [<br>
-// 兼容浏览器，添加前缀<br>
-require('autoprefixer')({<br>
-overrideBrowserslist: [<br>
-&quot;Android 4.1&quot;,<br>
-&quot;iOS 7.1&quot;,<br>
-&quot;Chrome &gt; 31&quot;,<br>
-&quot;ff &gt; 31&quot;,<br>
-&quot;ie &gt;= 8&quot;<br>
-//'last 10 versions', // 所有主流浏览器最近10版本用<br>
-],<br>
-grid: true<br>
-})</p>
-<pre><code>]
-</code></pre>
-<p>}</p>
-<p>module.exports = {<br>
-// css相关配置<br>
-css: {<br>
-extract: false, // 是否使用css分离插件 ExtractTextPlugin<br>
-sourceMap: false, // 开启 CSS source maps?<br>
-loaderOptions: {<br>
-less: {<br>
-javascriptEnabled: true<br>
-},<br>
-css: {}, // 这里的选项会传递给 css-loader<br>
-postcss: {} // 这里的选项会传递给 postcss-loader<br>
-}, // css预设器配置项 详见https://cli.vuejs.org/zh/config/#css-loaderoptions<br>
-requireModuleExtension: true // 启用 CSS requireModuleExtension for all css / pre-processor files.<br>
-},<br>
-}</p>
-<p>15、parallel 是否为 Babel 或 TypeScript 使用 thread-loader。该选项在系统的 CPU 有多于一个内核时自动启用，仅作用于生产构建。</p>
-<p>module.exports = {<br>
-parallel: require('os').cpus().length &gt; 1, // 是否为 Babel 或 TypeScript 使用 thread-loader。该选项在系统的 CPU 有多于一个内核时自动启用，仅作用于生产构建。<br>
-}</p>
-<p>16、webpack-dev-server 相关配置</p>
-<p>module.exports = {<br>
-devServer: {<br>
-open: true,// 打开谷歌<br>
-host: '0.0.0.0', // 允许外部ip访问<br>
-port: 8081, // 端口<br>
-https: false, // 启用https<br>
-overlay: {<br>
-warnings: true,<br>
-errors: true<br>
-}, // 错误、警告在页面弹出<br>
-proxy: {<br>
-'/api': {<br>
-target: <code>${process.env.VUE_APP_BASE_API}/api</code>,<br>
-changeOrigin: true, // 允许websockets跨域<br>
-// ws: true,<br>
-pathRewrite: {<br>
-'^/api': ''<br>
-}<br>
-}<br>
-} // 代理转发配置，用于调试环境<br>
-},<br>
-}</p>
-<p>17、环境变量和模式</p>
-<p>根目录添加 .env 文件 【默认环境变量】</p>
-<p>NODE_ENV = 'production'<br>
-VUE_APP_MOCK = false<br>
-VUE_APP_CDN = ''<br>
-VUE_APP_BASE_API = ''</p>
-<p>根目录添加 .env.development 文件 【开发环境变量】</p>
-<p>NODE_ENV = 'development'<br>
-VUE_APP_MOCK = true</p>
-<p>根目录添加 .env.production 文件 【生产环境变量】</p>
-<p>NODE_ENV = 'production'<br>
-VUE_APP_MOCK = false<br>
-VUE_APP_BASE_API = ''<br>
-VUE_APP_CDN = ''</p>
-<p>最终</p>
-<p>vue.config.js</p>
-<p>/**</p>
-<ul>
-<li>
-<p>@FileName vue.config.js</p>
-</li>
-<li>
-<p>@Author</p>
-</li>
-<li>
-<p>@Version V 0.0.1</p>
-</li>
-<li>
-<p>@Date</p>
-</li>
-<li>
-<p>@Title Vue配置文件</p>
-</li>
-<li>
-<p>@Desc<br>
-**/<br>
-const path = require('path');<br>
-const TerserPlugin = require('terser-webpack-plugin');<br>
-const CompressionWebpackPlugin = require('compression-webpack-plugin');<br>
-const isProduction = process.env.NODE_ENV === 'production';<br>
-const {version, openGzip} = require('./package.json');<br>
-module.exports = {<br>
-devServer: {<br>
-open: false,<br>
-host: '0.0.0.0',<br>
-port: 8082,<br>
-https: false,<br>
-disableHostCheck: true,<br>
-overlay: {<br>
-warnings: true,<br>
-errors: true<br>
-},<br>
-proxy: {<br>
-'/api': {<br>
-target: <code>${process.env.VUE_APP_BASE_API}</code>,<br>
-changeOrigin: true,<br>
-// ws: true,<br>
-pathRewrite: {<br>
-'^/api': ''<br>
-}<br>
-}<br>
-}<br>
-},<br>
-chainWebpack: config =&gt; {<br>
-config.entry('main').add('babel-polyfill');<br>
-config.resolve.symlinks(true);<br>
-config.resolve.alias<br>
-.set('@', path.resolve(__dirname, './src'))<br>
-.set('@a', path.resolve(__dirname, './src/assets'))<br>
-.set('@c', path.resolve(__dirname, './src/components'))<br>
-.set('@p', path.resolve(__dirname, './src/pages'))<br>
-.set('@l', path.resolve(__dirname, './src/layout'));<br>
-},<br>
-publicPath: '/',<br>
-assetsDir: 'static',<br>
-outputDir: 'dist',<br>
-lintOnSave: 'error',<br>
-transpileDependencies: ['biyi-admin'],<br>
-productionSourceMap: false,<br>
-configureWebpack: config =&gt; {<br>
-console.log(isProduction);<br>
-if (isProduction) {<br>
-config.mode = 'production';</p>
-<p>if (openGzip) {<br>
-config.plugins.push(<br>
-new CompressionWebpackPlugin({<br>
-filename: '[path].gz[query]',<br>
-algorithm: 'gzip',<br>
-test: /.js<span class='katex-error' title='ParseError: KaTeX parse error: Can&#039;t use function &#039;\.&#039; in math mode at position 2: |\̲.̲html'>|\.html</span>|.\css/, // 匹配文件名<br>
-threshold: 10240, // 只有大小大于该值的资源会被处理 10240<br>
-minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理<br>
-deleteOriginalAssets: false // 删除原文件<br>
-})<br>
-);</p>
-<pre><code> // 将每个依赖包打包成单独的js文件
- Object.assign(config, {
-   performance: {
-     hints: 'error',
-     maxEntrypointSize: 10000000,
-     maxAssetSize: 30000000
-   },
-   output: {
-     ...config.output,
-     filename: `static/js/[name].[chunkhash].${version}.js`,
-     chunkFilename: `static/js/[name].[chunkhash].${version}.js`
-   },
-   optimization: {
-     minimizer: [
-       new TerserPlugin({
-         cache: true, // 是否缓存
-         // paraller: true, // 是否并行打包
-         sourceMap: true,
-         terserOptions: {
-           compress: {
-             pure_funcs: ['console.log']
-           }
-         }
-       })
-     ]
-   }
- });
-</code></pre>
-<p>}<br>
-} else {<br>
-config.mode = 'development';<br>
-}<br>
-},<br>
-css: {<br>
-extract: false,<br>
-sourceMap: false,<br>
-loaderOptions: {<br>
-less: {<br>
-javascriptEnabled: true<br>
-},<br>
-css: {},<br>
-postcss: {}<br>
-},<br>
-requireModuleExtension: true<br>
-},<br>
-parallel: require('os').cpus().length &gt; 1,<br>
-pwa: {},<br>
-pluginOptions: {}<br>
-};</p>
-</li>
-</ul>
-<p>package.json</p>
-<p>{<br>
-&quot;name&quot;: &quot;big-data-platform&quot;,<br>
-&quot;version&quot;: &quot;0.1.0&quot;,<br>
-&quot;private&quot;: true,<br>
-&quot;openGzip&quot;: true,<br>
-&quot;scripts&quot;: {<br>
-&quot;serve&quot;: &quot;vue-cli-service serve&quot;,<br>
-&quot;build&quot;: &quot;vue-cli-service build&quot;,<br>
-&quot;test:unit&quot;: &quot;vue-cli-service test:unit&quot;,<br>
-&quot;lint&quot;: &quot;vue-cli-service lint&quot;<br>
-},<br>
-&quot;dependencies&quot;: {<br>
-&quot;axios&quot;: &quot;^0.21.1&quot;,<br>
-&quot;babel-polyfill&quot;: &quot;^6.26.0&quot;,<br>
-&quot;core-js&quot;: &quot;^3.6.5&quot;,<br>
-&quot;localforage&quot;: &quot;^1.9.0&quot;,<br>
-&quot;moment&quot;: &quot;^2.29.1&quot;,<br>
-&quot;register-service-worker&quot;: &quot;^1.7.1&quot;,<br>
-&quot;view-design&quot;: &quot;^4.5.0&quot;,<br>
-&quot;vue&quot;: &quot;^2.6.11&quot;,<br>
-&quot;vue-class-component&quot;: &quot;^7.2.3&quot;,<br>
-&quot;vue-property-decorator&quot;: &quot;^9.1.2&quot;,<br>
-&quot;vue-router&quot;: &quot;^3.2.0&quot;,<br>
-&quot;vuex&quot;: &quot;^3.4.0&quot;<br>
-},<br>
-&quot;devDependencies&quot;: {<br>
-&quot;@types/chai&quot;: &quot;^4.2.11&quot;,<br>
-&quot;@types/mocha&quot;: &quot;^5.2.4&quot;,<br>
-&quot;@types/mockjs&quot;: &quot;^1.0.3&quot;,<br>
-&quot;@typescript-eslint/eslint-plugin&quot;: &quot;^4.18.0&quot;,<br>
-&quot;@typescript-eslint/parser&quot;: &quot;^4.18.0&quot;,<br>
-&quot;@vue/cli-plugin-babel&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-plugin-eslint&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-plugin-pwa&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-plugin-router&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-plugin-typescript&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-plugin-unit-mocha&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-plugin-vuex&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/cli-service&quot;: &quot;~4.5.0&quot;,<br>
-&quot;@vue/eslint-config-standard&quot;: &quot;^5.1.2&quot;,<br>
-&quot;@vue/eslint-config-typescript&quot;: &quot;^7.0.0&quot;,<br>
-&quot;@vue/test-utils&quot;: &quot;^1.0.3&quot;,<br>
-&quot;chai&quot;: &quot;^4.1.2&quot;,<br>
-&quot;compression-webpack-plugin&quot;: &quot;^7.1.2&quot;,<br>
-&quot;eslint&quot;: &quot;^6.7.2&quot;,<br>
-&quot;eslint-plugin-import&quot;: &quot;^2.20.2&quot;,<br>
-&quot;eslint-plugin-node&quot;: &quot;^11.1.0&quot;,<br>
-&quot;eslint-plugin-promise&quot;: &quot;^4.2.1&quot;,<br>
-&quot;eslint-plugin-standard&quot;: &quot;^4.0.0&quot;,<br>
-&quot;eslint-plugin-vue&quot;: &quot;^6.2.2&quot;,<br>
-&quot;less&quot;: &quot;^3.0.4&quot;,<br>
-&quot;less-loader&quot;: &quot;^5.0.0&quot;,<br>
-&quot;mockjs&quot;: &quot;^1.1.0&quot;,<br>
-&quot;terser-webpack-plugin&quot;: &quot;^5.1.1&quot;,<br>
-&quot;typescript&quot;: &quot;~4.1.5&quot;,<br>
-&quot;vue-template-compiler&quot;: &quot;^2.6.11&quot;<br>
-}<br>
-}</p>
-<p>配置eslint</p>
-<p>package.json 文件</p>
-<p>{<br>
-&quot;devDependencies&quot;: {<br>
-&quot;@typescript-eslint/eslint-plugin&quot;: &quot;^4.18.0&quot;,<br>
-&quot;@typescript-eslint/parser&quot;: &quot;^4.18.0&quot;,<br>
-&quot;eslint&quot;: &quot;^6.7.2&quot;,<br>
-&quot;eslint-plugin-import&quot;: &quot;^2.20.2&quot;,<br>
-&quot;eslint-plugin-node&quot;: &quot;^11.1.0&quot;,<br>
-&quot;eslint-plugin-promise&quot;: &quot;^4.2.1&quot;,<br>
-&quot;eslint-plugin-standard&quot;: &quot;^4.0.0&quot;,<br>
-&quot;eslint-plugin-vue&quot;: &quot;^6.2.2&quot;,<br>
-},<br>
-}</p>
-<p>根目录添加 .eslintrc.js 配置文件</p>
-<p>module.exports = {<br>
-root: true,<br>
-env: {<br>
-node: true<br>
-},<br>
-extends: [<br>
-'plugin:vue/essential',<br>
-'@vue/standard',<br>
-'@vue/typescript/recommended'<br>
-],<br>
-parserOptions: {<br>
-ecmaVersion: 2020<br>
-},<br>
-rules: {<br>
-'no-console': 'off',<br>
-'indent': ['off', 2],<br>
-'semi': [2, 'always'], // 语句强制分号结尾<br>
-'quotes': [2, 'single'], // js必须使用单引号<br>
-'vue/no-parsing-error': 'off',<br>
-'no-irregular-whitespace': 'off',<br>
-'no-async-promise-executor': 'off',<br>
-'space-before-function-paren': 'off',<br>
-'object-curly-spacing': ['error', 'never'],<br>
-'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',<br>
-'@typescript-eslint/no-this-alias': 'off',<br>
-'@typescript-eslint/ban-ts-ignore': 'off',<br>
-'@typescript-eslint/no-unused-vars': 'off',<br>
-'@typescript-eslint/ban-ts-comment': 'off',<br>
-'@typescript-eslint/no-explicit-any': 'off',<br>
-'@typescript-eslint/no-empty-function': 'off',<br>
-'@typescript-eslint/explicit-module-boundary-types': 'off'<br>
-},<br>
-overrides: [<br>
-{<br>
-files: [<br>
-'<strong>/<strong>tests</strong>/*.{j,t}s?(x)',<br>
-'</strong>/tests/unit/**/*.spec.{j,t}s?(x)'<br>
-],<br>
-env: {<br>
-mocha: true<br>
-}<br>
-}<br>
-]<br>
-}</p>
-<p>工具类封装<br>
-Cookie操作</p>
-<p>/**</p>
-<ul>
-<li>@FileName cookie.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title Cookie操作</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>设置cookie</li>
-<li>@param name</li>
-<li>@param value</li>
-<li>@param hours</li>
-<li>@param path<br>
-*/<br>
-const setCookie = (name: string, value: any, hours: number, path: string) =&gt; {<br>
-const expires = new Date();<br>
-expires.setTime(expires.getTime() + hours * 3600000);<br>
-const expiresTxt = typeof hours === 'string' ? '' : <code>;expires=${expires.toUTCString()}</code>;<br>
-document.cookie = <code>${escape(name)}=${escape(value)}${expiresTxt}${path === '' ? '' :</code>;path=${path}<code>}</code>;<br>
-};</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>获取cookie值</li>
-<li>@param name<br>
-*/<br>
-const getCookieValue = (name: string) =&gt; {<br>
-let nameTxt = escape(name);<br>
-// 读cookie属性，这将返回文档的所有cookie<br>
-const allCookies = document.cookie;<br>
-// 查找名为name的cookie的开始位置<br>
-nameTxt += '=';<br>
-const pos = allCookies.indexOf(nameTxt);<br>
-// 如果找到了具有该名字的cookie，那么提取并使用它的值<br>
-if (pos !== -1) {<br>
-// 如果pos值为-1则说明搜索'version='失败<br>
-const start = pos + nameTxt.length; // cookie值开始的位置<br>
-let end = allCookies.indexOf(';', start); // 从cookie值开始的位置起搜索第一个';'的位置,即cookie值结尾的位置<br>
-if (end === -1) end = allCookies.length; // 如果end值为-1说明cookie列表里只有一个cookie<br>
-// 提取cookie的值<br>
-return allCookies.substring(start, end); // 对它解码<br>
-}</li>
-</ul>
-<p>return '';<br>
-// 搜索失败，返回空字符串<br>
-};</p>
-<p>/**</p>
-<ul>
-<li>删除cookie</li>
-<li>@param name</li>
-<li>@param path<br>
-*/<br>
-const deleteCookie = (name: string, path: string) =&gt; {<br>
-const expires = new Date(0);<br>
-document.cookie = <code>${escape(name)}=;expires=${expires.toUTCString()}${path === '' ? '' :</code>;path=${path}<code>}</code>;<br>
-};<br>
-export default {<br>
-setCookie,<br>
-getCookieValue,<br>
-deleteCookie<br>
-};</li>
-</ul>
-<p>createRoutes</p>
-<p>yarn add view-design</p>
-<p>/**</p>
-<ul>
-<li>@FileName createRoutes.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/<br>
-import Vue from 'vue';<br>
-import VueRouter from 'vue-router';<br>
-import {LoadingBar} from 'view-design';</li>
-</ul>
-<p>Vue.use(VueRouter);<br>
-const VueRouterPush = VueRouter.prototype.push;</p>
-<p>VueRouter.prototype.push = function push(to: any): any {<br>
-const a: any = VueRouterPush.call(this, to);<br>
-a.catch((err: any) =&gt; err);<br>
-return a;<br>
-};</p>
-<p>LoadingBar.config({<br>
-color: '#ff9900',<br>
-failedColor: '#ed4014',<br>
-height: 3,<br>
-duration: 800<br>
-});</p>
-<p>const createRouter = (baseRoutes: any = [], routes: any = [], base = '', homeName = 'home', mode: any = 'history', title = '', turnTo: any = () =&gt; {<br>
-}) =&gt; {<br>
-const router = new VueRouter({<br>
-mode: mode,<br>
-base: base,<br>
-routes: [<br>
-...routes,<br>
-...baseRoutes<br>
-]<br>
-});</p>
-<p>// 全局守卫<br>
-router.beforeEach((to: any, from: any, next: any) =&gt; {<br>
-LoadingBar.start();<br>
-turnTo(to, next, homeName);<br>
-});</p>
-<p>// 全局后置钩子<br>
-router.afterEach((to: any) =&gt; {<br>
-if (to.meta.title) {<br>
-document.title = title ? to.meta.title + '-' + title : to.meta.title;<br>
-}<br>
-LoadingBar.finish();<br>
-window.scrollTo(0, 0);<br>
-});<br>
-return router;<br>
-};</p>
-<p>export default createRouter;</p>
-<p>gbk</p>
-<p>/**</p>
-<ul>
-<li>@FileName gbk.js</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title 序列化 反序列化</li>
-<li>@Desc<br>
-*<em>/<br>
-/</em> eslint-disable */<br>
-const util = function () {<br>
-var data = function (zipData: any) {<br>
-return zipData<br>
-.replace(/#(\d+)$/g, function (a: any, b: any) {<br>
-return Array(+b + 3).join('#');<br>
-})<br>
-.replace(/#/g, '####')<br>
-.replace(/(\w\w)😦[\w#]+)(?:,|<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;}&#039;, got &#039;#&#039; at position 115: …     if (a != &#039;#̲#&#039;) {
-         …'>)/g, function (a: any, hd: any, dt: any) {
-       return dt.replace(/../g, function (a: any) {
-         if (a != &#039;##&#039;) {
-           return hd + a;
-         } else {
-           return a;
-         }
-       });
-     });
- }(&#039;4e:020405060f12171f20212326292e2f313335373c40414244464a5155575a5b6263646567686a6b6c6d6e6f727475767778797a7b7c7d7f808182838485878a#909697999c9d9ea3aaafb0b1b4b6b7b8b9bcbdbec8cccfd0d2dadbdce0e2e6e7e9edeeeff1f4f8f9fafcfe,4f:00020304050607080b0c12131415161c1d212328292c2d2e31333537393b3e3f40414244454748494a4b4c525456616266686a6b6d6e7172757778797a7d8081828586878a8c8e909293959698999a9c9e9fa1a2a4abadb0b1b2b3b4b6b7b8b9babbbcbdbec0c1c2c6c7c8c9cbcccdd2d3d4d5d6d9dbe0e2e4e5e7ebecf0f2f4f5f6f7f9fbfcfdff,50:000102030405060708090a#0b0e1011131516171b1d1e20222324272b2f303132333435363738393b3d3f404142444546494a4b4d5051525354565758595b5d5e5f6061626364666768696a6b6d6e6f70717273747578797a7c7d818283848687898a8b8c8e8f909192939495969798999a9b9c9d9e9fa0a1a2a4a6aaabadaeafb0b1b3b4b5b6b7b8b9bcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdced0d1d2d3d4d5d7d8d9dbdcdddedfe0e1e2e3e4e5e8e9eaebeff0f1f2f4f6f7f8f9fafcfdfeff,51:00010203040508#090a0c0d0e0f1011131415161718191a1b1c1d1e1f2022232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e42474a4c4e4f5052535758595b5d5e5f606163646667696a6f727a7e7f838486878a8b8e8f90919394989a9d9e9fa1a3a6a7a8a9aaadaeb4b8b9babebfc1c2c3c5c8cacdced0d2d3d4d5d6d7d8d9dadcdedfe2e3e5e6e7e8e9eaeceef1f2f4f7fe,52:0405090b0c0f101314151c1e1f2122232526272a2c2f313234353c3e4445464748494b4e4f5253555758#595a5b5d5f6062636466686b6c6d6e7071737475767778797a7b7c7e808384858687898a8b8c8d8e8f91929495969798999a9ca4a5a6a7aeafb0b4b5b6b7b8b9babbbcbdc0c1c2c4c5c6c8cacccdcecfd1d3d4d5d7d9dadbdcdddee0e1e2e3e5e6e7e8e9eaebecedeeeff1f2f3f4f5f6f7f8fbfcfd,53:0102030407090a0b0c0e11121314181b1c1e1f2224252728292b2c2d2f3031323334353637383c3d404244464b4c4d505458595b5d65686a6c6d7276797b7c7d7e80818387888a8e8f#90919293949697999b9c9ea0a1a4a7aaabacadafb0b1b2b3b4b5b7b8b9babcbdbec0c3c4c5c6c7cecfd0d2d3d5dadcdddee1e2e7f4fafeff,54:000205070b1418191a1c2224252a303336373a3d3f4142444547494c4d4e4f515a5d5e5f6061636567696a6b6c6d6e6f7074797a7e7f8183858788898a8d919397989c9e9fa0a1a2a5aeb0b2b5b6b7b9babcbec3c5cacbd6d8dbe0e1e2e3e4ebeceff0f1f4f5f6f7f8f9fbfe,55:0002030405080a0b0c0d0e121315161718191a1c1d1e1f212526#28292b2d3234353638393a3b3d40424547484b4c4d4e4f515253545758595a5b5d5e5f60626368696b6f7071727374797a7d7f85868c8d8e9092939596979a9b9ea0a1a2a3a4a5a6a8a9aaabacadaeafb0b2b4b6b8babcbfc0c1c2c3c6c7c8cacbcecfd0d5d7d8d9dadbdee0e2e7e9edeef0f1f4f6f8f9fafbfcff,56:0203040506070a0b0d1011121314151617191a1c1d202122252628292a2b2e2f30333537383a3c3d3e404142434445464748494a4b4f5051525355565a5b5d5e5f6061#636566676d6e6f70727374757778797a7d7e7f80818283848788898a8b8c8d9091929495969798999a9b9c9d9e9fa0a1a2a4a5a6a7a8a9aaabacadaeb0b1b2b3b4b5b6b8b9babbbdbebfc0c1c2c3c4c5c6c7c8c9cbcccdcecfd0d1d2d3d5d6d8d9dce3e5e6e7e8e9eaeceeeff2f3f6f7f8fbfc,57:00010205070b0c0d0e0f101112131415161718191a1b1d1e202122242526272b313234353637383c3d3f414344454648494b52535455565859626365676c6e707172747578797a7d7e7f80#818788898a8d8e8f90919495969798999a9c9d9e9fa5a8aaacafb0b1b3b5b6b7b9babbbcbdbebfc0c1c4c5c6c7c8c9cacccdd0d1d3d6d7dbdcdee1e2e3e5e6e7e8e9eaebeceef0f1f2f3f5f6f7fbfcfeff,58:0103040508090a0c0e0f101213141617181a1b1c1d1f222325262728292b2c2d2e2f31323334363738393a3b3c3d3e3f4041424345464748494a4b4e4f505253555657595a5b5c5d5f6061626364666768696a6d6e6f707172737475767778797a7b7c7d7f82848687888a8b8c#8d8e8f909194959697989b9c9da0a1a2a3a4a5a6a7aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbdbebfc0c2c3c4c6c7c8c9cacbcccdcecfd0d2d3d4d6d7d8d9dadbdcdddedfe0e1e2e3e5e6e7e8e9eaedeff1f2f4f5f7f8fafbfcfdfeff,59:000103050608090a0b0c0e1011121317181b1d1e2021222326282c30323335363b3d3e3f404345464a4c4d505253595b5c5d5e5f616364666768696a6b6c6d6e6f70717275777a7b7c7e7f8085898b8c8e8f90919495989a9b9c9d9fa0a1a2a6#a7acadb0b1b3b4b5b6b7b8babcbdbfc0c1c2c3c4c5c7c8c9cccdcecfd5d6d9dbdedfe0e1e2e4e6e7e9eaebedeeeff0f1f2f3f4f5f6f7f8fafcfdfe,5a:00020a0b0d0e0f101214151617191a1b1d1e2122242627282a2b2c2d2e2f3033353738393a3b3d3e3f414243444547484b4c4d4e4f5051525354565758595b5c5d5e5f60616364656668696b6c6d6e6f7071727378797b7c7d7e808182838485868788898a8b8c8d8e8f9091939495969798999c9d9e9fa0a1a2a3a4a5a6a7a8a9abac#adaeafb0b1b4b6b7b9babbbcbdbfc0c3c4c5c6c7c8cacbcdcecfd0d1d3d5d7d9dadbdddedfe2e4e5e7e8eaecedeeeff0f2f3f4f5f6f7f8f9fafbfcfdfeff,5b:0001020304050607080a0b0c0d0e0f10111213141518191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303133353638393a3b3c3d3e3f4142434445464748494a4b4c4d4e4f52565e606167686b6d6e6f7274767778797b7c7e7f82868a8d8e90919294969fa7a8a9acadaeafb1b2b7babbbcc0c1c3c8c9cacbcdcecf#d1d4d5d6d7d8d9dadbdce0e2e3e6e7e9eaebecedeff1f2f3f4f5f6f7fdfe,5c:0002030507080b0c0d0e10121317191b1e1f2021232628292a2b2d2e2f303233353637434446474c4d5253545657585a5b5c5d5f62646768696a6b6c6d70727374757677787b7c7d7e808384858687898a8b8e8f9293959d9e9fa0a1a4a5a6a7a8aaaeafb0b2b4b6b9babbbcbec0c2c3c5c6c7c8c9cacccdcecfd0d1d3d4d5d6d7d8dadbdcdddedfe0e2e3e7e9ebeceeeff1f2f3f4f5f6f7f8f9fafcfdfeff,5d:00#01040508090a0b0c0d0f10111213151718191a1c1d1f2021222325282a2b2c2f3031323335363738393a3b3c3f4041424344454648494d4e4f5051525354555657595a5c5e5f6061626364656667686a6d6e7071727375767778797a7b7c7d7e7f8081838485868788898a8b8c8d8e8f9091929394959697989a9b9c9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b8b9babbbcbdbebfc0c1c2c3c4c6c7c8c9cacbcccecfd0d1d2d3d4d5d6d7d8d9dadcdfe0e3e4eaeced#f0f5f6f8f9fafbfcff,5e:000407090a0b0d0e1213171e1f20212223242528292a2b2c2f303233343536393a3e3f404143464748494a4b4d4e4f50515253565758595a5c5d5f60636465666768696a6b6c6d6e6f70717577797e8182838588898c8d8e92989b9da1a2a3a4a8a9aaabacaeafb0b1b2b4babbbcbdbfc0c1c2c3c4c5c6c7c8cbcccdcecfd0d4d5d7d8d9dadcdddedfe0e1e2e3e4e5e6e7e9ebecedeeeff0f1f2f3f5f8f9fbfcfd,5f:050607090c0d0e10121416191a1c1d1e21222324#282b2c2e30323334353637383b3d3e3f4142434445464748494a4b4c4d4e4f5154595a5b5c5e5f60636567686b6e6f72747576787a7d7e7f83868d8e8f919394969a9b9d9e9fa0a2a3a4a5a6a7a9abacafb0b1b2b3b4b6b8b9babbbebfc0c1c2c7c8cacbced3d4d5dadbdcdedfe2e3e5e6e8e9eceff0f2f3f4f6f7f9fafc,60:0708090b0c10111317181a1e1f2223242c2d2e3031323334363738393a3d3e404445464748494a4c4e4f5153545657585b5c5e5f606165666e71727475777e80#8182858687888a8b8e8f909193959798999c9ea1a2a4a5a7a9aaaeb0b3b5b6b7b9babdbebfc0c1c2c3c4c7c8c9cccdcecfd0d2d3d4d6d7d9dbdee1e2e3e4e5eaf1f2f5f7f8fbfcfdfeff,61:02030405070a0b0c1011121314161718191b1c1d1e21222528292a2c2d2e2f303132333435363738393a3b3c3d3e4041424344454647494b4d4f50525354565758595a5b5c5e5f606163646566696a6b6c6d6e6f717273747678797a7b7c7d7e7f808182838485868788898a8c8d8f9091929395#969798999a9b9c9e9fa0a1a2a3a4a5a6aaabadaeafb0b1b2b3b4b5b6b8b9babbbcbdbfc0c1c3c4c5c6c7c9cccdcecfd0d3d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e7e8e9eaebecedeeeff0f1f2f3f4f6f7f8f9fafbfcfdfe,62:00010203040507091314191c1d1e2023262728292b2d2f303132353638393a3b3c424445464a4f50555657595a5c5d5e5f6061626465687172747577787a7b7d818283858687888b8c8d8e8f9094999c9d9ea3a6a7a9aaadaeafb0b2b3b4b6b7b8babec0c1#c3cbcfd1d5dddee0e1e4eaebf0f2f5f8f9fafb,63:00030405060a0b0c0d0f10121314151718191c2627292c2d2e30313334353637383b3c3e3f40414447484a51525354565758595a5b5c5d60646566686a6b6c6f707273747578797c7d7e7f81838485868b8d9193949597999a9b9c9d9e9fa1a4a6abafb1b2b5b6b9bbbdbfc0c1c2c3c5c7c8cacbccd1d3d4d5d7d8d9dadbdcdddfe2e4e5e6e7e8ebeceeeff0f1f3f5f7f9fafbfcfe,64:0304060708090a0d0e111215161718191a1d1f222324#252728292b2e2f3031323335363738393b3c3e404243494b4c4d4e4f505153555657595a5b5c5d5f60616263646566686a6b6c6e6f70717273747576777b7c7d7e7f8081838688898a8b8c8d8e8f90939497989a9b9c9d9fa0a1a2a3a5a6a7a8aaabafb1b2b3b4b6b9bbbdbebfc1c3c4c6c7c8c9cacbcccfd1d3d4d5d6d9dadbdcdddfe0e1e3e5e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,65:01020304050607080a0b0c0d0e0f10111314151617191a1b1c1d1e1f2021#222324262728292a2c2d30313233373a3c3d404142434446474a4b4d4e5052535457585a5c5f606164656768696a6d6e6f7173757678797a7b7c7d7e7f8081828384858688898a8d8e8f92949596989a9d9ea0a2a3a6a8aaacaeb1b2b3b4b5b6b7b8babbbebfc0c2c7c8c9cacdd0d1d3d4d5d8d9dadbdcdddedfe1e3e4eaebf2f3f4f5f8f9fbfcfdfeff,66:0104050708090b0d1011121617181a1b1c1e2122232426292a2b2c2e3032333738393a3b3d3f40424445464748494a4d4e505158#595b5c5d5e6062636567696a6b6c6d7172737578797b7c7d7f808183858688898a8b8d8e8f909293949598999a9b9c9e9fa0a1a2a3a4a5a6a9aaabacadafb0b1b2b3b5b6b7b8babbbcbdbfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8dadedfe0e1e2e3e4e5e7e8eaebecedeeeff1f5f6f8fafbfd,67:010203040506070c0e0f1112131618191a1c1e20212223242527292e303233363738393b3c3e3f414445474a4b4d5254555758595a5b5d62636466676b6c6e717476#78797a7b7d8082838586888a8c8d8e8f9192939496999b9fa0a1a4a6a9acaeb1b2b4b9babbbcbdbebfc0c2c5c6c7c8c9cacbcccdced5d6d7dbdfe1e3e4e6e7e8eaebedeef2f5f6f7f8f9fafbfcfe,68:01020304060d1012141518191a1b1c1e1f20222324252627282b2c2d2e2f30313435363a3b3f474b4d4f52565758595a5b5c5d5e5f6a6c6d6e6f707172737578797a7b7c7d7e7f8082848788898a8b8c8d8e90919294959698999a9b9c9d9e9fa0a1a3a4a5a9aaabacaeb1b2b4b6b7b8#b9babbbcbdbebfc1c3c4c5c6c7c8cacccecfd0d1d3d4d6d7d9dbdcdddedfe1e2e4e5e6e7e8e9eaebecedeff2f3f4f6f7f8fbfdfeff,69:00020304060708090a0c0f11131415161718191a1b1c1d1e21222325262728292a2b2c2e2f313233353637383a3b3c3e4041434445464748494a4b4c4d4e4f50515253555658595b5c5f616264656768696a6c6d6f7072737475767a7b7d7e7f8183858a8b8c8e8f909192939697999a9d9e9fa0a1a2a3a4a5a6a9aaacaeafb0b2b3b5b6b8b9babcbd#bebfc0c2c3c4c5c6c7c8c9cbcdcfd1d2d3d5d6d7d8d9dadcdddee1e2e3e4e5e6e7e8e9eaebeceeeff0f1f3f4f5f6f7f8f9fafbfcfe,6a:000102030405060708090b0c0d0e0f10111213141516191a1b1c1d1e20222324252627292b2c2d2e30323334363738393a3b3c3f40414243454648494a4b4c4d4e4f515253545556575a5c5d5e5f60626364666768696a6b6c6d6e6f70727374757677787a7b7d7e7f81828385868788898a8b8c8d8f929394959698999a9b9c9d9e9fa1a2a3a4a5a6#a7a8aaadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,6b:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f252628292a2b2c2d2e2f303133343536383b3c3d3f4041424445484a4b4d4e4f5051525354555657585a5b5c5d5e5f606168696b6c6d6e6f7071727374757677787a7d7e7f808588#8c8e8f909194959798999c9d9e9fa0a2a3a4a5a6a7a8a9abacadaeafb0b1b2b6b8b9babbbcbdbec0c3c4c6c7c8c9caccced0d1d8dadcdddedfe0e2e3e4e5e6e7e8e9ecedeef0f1f2f4f6f7f8fafbfcfeff,6c:000102030408090a0b0c0e12171c1d1e2023252b2c2d31333637393a3b3c3e3f434445484b4c4d4e4f5152535658595a62636566676b6c6d6e6f71737577787a7b7c7f8084878a8b8d8e9192959697989a9c9d9ea0a2a8acafb0b4b5b6b7bac0c1c2c3c6c7c8cbcdcecfd1d2d8#d9dadcdddfe4e6e7e9ecedf2f4f9ff,6d:000203050608090a0d0f101113141516181c1d1f20212223242628292c2d2f30343637383a3f404244494c50555657585b5d5f6162646567686b6c6d707172737576797a7b7d7e7f8081838486878a8b8d8f9092969798999a9ca2a5acadb0b1b3b4b6b7b9babbbcbdbec1c2c3c8c9cacdcecfd0d2d3d4d5d7dadbdcdfe2e3e5e7e8e9eaedeff0f2f4f5f6f8fafdfeff,6e:0001020304060708090b0f12131518191b1c1e1f222627282a2c2e30313335#3637393b3c3d3e3f40414245464748494a4b4c4f5051525557595a5c5d5e606162636465666768696a6c6d6f707172737475767778797a7b7c7d8081828487888a8b8c8d8e91929394959697999a9b9d9ea0a1a3a4a6a8a9abacadaeb0b3b5b8b9bcbebfc0c3c4c5c6c8c9cacccdced0d2d6d8d9dbdcdde3e7eaebecedeeeff0f1f2f3f5f6f7f8fafbfcfdfeff,6f:000103040507080a0b0c0d0e101112161718191a1b1c1d1e1f212223252627282c2e303234353738393a3b3c3d3f404142#43444548494a4c4e4f5051525354555657595a5b5d5f60616364656768696a6b6c6f707173757677797b7d7e7f808182838586878a8b8f909192939495969798999a9b9d9e9fa0a2a3a4a5a6a8a9aaabacadaeafb0b1b2b4b5b7b8babbbcbdbebfc1c3c4c5c6c7c8cacbcccdcecfd0d3d4d5d6d7d8d9dadbdcdddfe2e3e4e5e6e7e8e9eaebecedf0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,70:000102030405060708090a0b0c0d0e0f1012131415161718191c1d1e1f2021222425262728292a#2b2c2d2e2f30313233343637383a3b3c3d3e3f404142434445464748494a4b4d4e505152535455565758595a5b5c5d5f606162636465666768696a6e7172737477797a7b7d818283848687888b8c8d8f90919397989a9b9e9fa0a1a2a3a4a5a6a7a8a9aab0b2b4b5b6babebfc4c5c6c7c9cbcccdcecfd0d1d2d3d4d5d6d7dadcdddee0e1e2e3e5eaeef0f1f2f3f4f5f6f8fafbfcfeff,71:0001020304050607080b0c0d0e0f111214171b1c1d1e1f2021222324252728292a2b2c2d2e323334#353738393a3b3c3d3e3f4041424344464748494b4d4f505152535455565758595a5b5d5f6061626365696a6b6c6d6f707174757677797b7c7e7f8081828385868788898b8c8d8e909192939596979a9b9c9d9ea1a2a3a4a5a6a7a9aaabadaeafb0b1b2b4b6b7b8babbbcbdbebfc0c1c2c4c5c6c7c8c9cacbcccdcfd0d1d2d3d6d7d8d9dadbdcdddedfe1e2e3e4e6e8e9eaebecedeff0f1f2f3f4f5f6f7f8fafbfcfdfeff,72:0001020304050708090a0b0c0d0e0f101112131415161718191a#1b1c1e1f2021222324252627292b2d2e2f3233343a3c3e40414243444546494a4b4e4f505153545557585a5c5e60636465686a6b6c6d707173747677787b7c7d828385868788898c8e9091939495969798999a9b9c9d9ea0a1a2a3a4a5a6a7a8a9aaabaeb1b2b3b5babbbcbdbebfc0c5c6c7c9cacbcccfd1d3d4d5d6d8dadb#95</span>,30:000102,00b702:c9c7,00a830:0305,2014ff5e20:162618191c1d,30:141508090a0b0c0d0e0f16171011,00:b1d7f7,22:362728110f2a2908371aa52520,231222:992b2e614c483d1d606e6f64651e3534,26:4240,00b020:3233,2103ff0400a4ff:e0e1,203000a7211626:0605,25:cbcfcec7c6a1a0b3b2,203b21:92909193,30:13#95<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 25: …273747576777879#̲4'>,21:70717273747576777879#4</span>,24:88898a8b8c8d8e8f909192939495969798999a9b7475767778797a7b7c7d7e7f808182838485868760616263646566676869##,32:20212223242526272829##,21:606162636465666768696a6b#97<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 193: …758595a5b5c5de3#̲95'>,ff:010203e505060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5de3#95</span>,30:4142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f90919293#106<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 173: …ff0f1f2f3f4f5f6#̲103'>a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6#103</span>,03:9192939495969798999a9b9c9d9e9fa0a1a3a4a5a6a7a8a9#6<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 49: …1c3c4c5c6c7c8c9#̲5'>b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c3c4c5c6c7c8c9#5</span>,fe:3536393a3f403d3e41424344##3b3c373831#3334#104$,04:10111213141501161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f#13<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 67: …8494a4b4c4d4e4f#̲11'>30313233343551363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f#11</span>,02:cacbd9,20:13152535,21:050996979899,22:151f23526667bf,25:505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f7071727381828384858687#88898a8b8c8d8e8f939495bcbde2e3e4e5,2609229530:121d1e#9<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …:4448,e7c802:61#̲2'>,010100e101ce00e0011300e9011b00e8012b00ed01d000ec014d00f301d200f2016b00fa01d400f901:d6d8dadc,00:fcea,0251e7c701:4448,e7c802:61#2</span>,31:05060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20212223242526272829#19<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 65: …2d5,fe30ff:e2e4#̲,212132:31#,20:…'>,30:212223242526272829,32a333:8e8f9c9d9ea1c4ced1d2d5,fe30ff:e2e4#,212132:31#,20:10#1</span>,30:fc9b9cfdfe069d9e,fe:494a4b4c4d4e4f50515254555657595a5b5c5d5e5f6061#626364656668696a6b,e7:e7e8e9eaebecedeeeff0f1f2f3,30:07#11<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 157: …445464748494a4b#̲13'>,25:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b#13</span>,72:dcdddfe2e3e4e5e6e7eaebf5f6f9fdfeff,73:00020405060708090b0c0d0f1011121418191a1f2023242627282d2f30323335363a3b3c3d404142434445464748#494a4b4c4e4f515354555658595a5b5c5d5e5f6162636465666768696a6b6e7071#92<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …ebfc1c3c4c5c6c7#̲cbccced2d3d4d5d…'>72737475767778797a7b7c7d7f808182838586888a8c8d8f90929394959798999a9c9d9ea0a1a3a4a5a6a7a8aaacadb1b4b5b6b8b9bcbdbebfc1c3c4c5c6c7#cbccced2d3d4d5d6d7d8dadbdcdddfe1e2e3e4e6e8eaebeceeeff0f1f3f4f5f6f7#92</span>f8f9fafbfcfdfeff,74:0001020407080b0c0d0e1112131415161718191c1d1e1f2021232427292b2d2f31323738393a3b3d3e3f4042434445464748494a4b4c4d#4e4f505152535456585d606162636465666768696a6b6c6e6f717273747578797a#92<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …0c1c2c3c4c5c6c7#̲c8c9cacbcccdcec…'>7b7c7d7f8284858688898a8c8d8f9192939495969798999a9b9d9fa0a1a2a3a4a5a6aaabacadaeafb0b1b2b3b4b5b6b7b8b9bbbcbdbebfc0c1c2c3c4c5c6c7#c8c9cacbcccdcecfd0d1d3d4d5d6d7d8d9dadbdddfe1e5e7e8e9eaebecedf0f1f2#92</span>f3f5f8f9fafbfcfdfe,75:0001020305060708090a0b0c0e1012141516171b1d1e202122232426272a2e3436393c3d3f414243444647494a4d5051525355565758#5d5e5f60616263646768696b6c6d6e6f7071737576777a7b7c7d7e808182848587#92$88898a8c8d8e909395989b9c9ea2a6a7a8a9aaadb6b7babbbfc0c1c6cbcccecfd0d1d3d7d9dadcdddfe0e1e5e9ecedeeeff2f3f5f6f7f8fafbfdfe,76:02040607#08090b0d0e0f11121314161a1c1d1e212327282c2e2f31323637393a3b3d414244#92<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …092949597989a9b#̲9c9d9e9fa0a1a2a…'>45464748494a4b4e4f50515253555758595a5b5d5f6061626465666768696a6c6d6e7071727374757677797a7c7f80818385898a8c8d8f9092949597989a9b#9c9d9e9fa0a1a2a3a5a6a7a8a9aaabacadafb0b3b5b6b7b8b9babbbcbdbec0c1c3,554a963f57c3632854ce550954c076:914c,853c77ee827e788d72319698978d6c285b894ffa630966975cb880fa684880ae660276ce51f9655671ac7ff1888450b2596561ca6fb382ad634c625253ed54277b06516b75a45df462d48dcb9776628a8019575d97387f627238767d67cf767e64464f708d2562dc7a17659173ed642c6273822c9881677f724862:6ecc,4f3474e3534a529e7eca90a65e2e6886699c81807ed168d278c5868c9551508d8c2482de80de53058912526576:c4c7c9cbccd3d5d9dadcdddee0e1e2e3e4e6e7e8e9eaebecedf0f3f5f6f7fafbfdff,77:00020305060a0c0e0f1011121314151617181b1c1d1e21232425272a2b#2c2e3031323334393b3d3e3f4244454648494a4b4c4d4e4f52535455565758595c,858496f94fdd582199715b9d62:b1a5,66b48c799c8d7206676f789160b253:5117,8f8880cc8d1d94a1500d72c8590760eb711988ab595482ef672c7b285d297ef7752d6cf58e668ff8903c9f3b6bd491197b145f7c78a784d6853d6b:d5d9d6,5e:0187,75f995ed655d5f:0ac5,8f9f58c181c2907f965b97ad8fb97f168d2c62414fbf53:d85e,8f:a8a9ab,904d68075f6a819888689cd6618b522b762a5f6c658c6fd26ee85bbe644851:75b0,67c44e1979c9997c70b377:5d5e5f606467696a6d6e6f7071727374757677787a7b7c818283868788898a8b8f90939495969798999a9b9c9d9ea1a3a4a6a8abadaeafb1b2b4b6b7b8b9ba#bcbec0c1c2c3c4c5c6c7c8c9cacbcccecfd0d1d2d3d4d5d6d8d9dadddedfe0e1e4,75c55e7673bb83e064ad62e894b56ce2535a52c3640f94c27b944f2f5e1b823681:168a,6e246cca9a736355535c54fa886557e04e0d5e036b657c3f90e8601664e6731c88c16750624d8d22776c8e2991c75f6983dc8521991053c286956b8b60:ede8,707f82:cd31,4ed36ca785cf64cd7cd969fd66f9834953957b564fa7518c6d4b5c428e6d63d253c983:2c36,67e578b4643d5bdf5c945dee8be762c667f48c7a640063ba8749998b8c177f2094f24ea7961098a4660c731677:e6e8eaeff0f1f2f4f5f7f9fafbfc,78:0304050607080a0b0e0f101315191b1e20212224282a2b2e2f31323335363d3f414243444648494a4b4d4f51535458595a#5b5c5e5f606162636465666768696f7071727374757678797a7b7d7e7f80818283,573a5c1d5e38957f507f80a05382655e7545553150218d856284949e671d56326f6e5de2543570928f66626f64a463a35f7b6f8890f481e38fb05c1866685ff16c8996488d81886c649179f057ce6a59621054484e587a0b60e96f848bda627f901e9a8b79e4540375f4630153196c608fdf5f1b9a70803b9f7f4f885c3a8d647fc565a570bd51:45b2,866b5d075ba062bd916c75748e0c7a2061017b794ec77ef877854e1181ed521d51fa6a7153a88e87950496cf6ec19664695a78:848586888a8b8f9092949596999d9ea0a2a4a6a8a9aaabacadaeafb5b6b7b8babbbcbdbfc0c2c3c4c6c7c8cccdcecfd1d2d3d6d7d8dadbdcdddedfe0e1e2e3#e4e5e6e7e9eaebedeeeff0f1f3f5f6f8f9fbfcfdfeff,79:00020304060708090a0b0c,784050a877d7641089e6590463e35ddd7a7f693d4f20823955984e3275ae7a975e:628a,95ef521b5439708a6376952457826625693f918755076df37eaf882262337ef075b5832878c196cc8f9e614874f78bcd6b64523a8d506b21806a847156f153064e:ce1b,51d17c97918b7c074fc38e7f7be17a9c64675d1450ac810676017cb96dec7fe067515b:58f8,78cb64:ae13,63:aa2b,9519642d8fbe7b5476296253592754466b7950a362345e266b864ee38d37888b5f85902e79:0d0e0f1011121415161718191a1b1c1d1f2021222325262728292a2b2c2d2e2f3031323335363738393d3f42434445474a4b4c4d4e4f505152545558596163#6466696a6b6c6e70717273747576797b7c7d7e7f8283868788898b8c8d8e909192,6020803d62c54e39535590f863b880c665e66c2e4f4660ee6de18bde5f3986cb5f536321515a83616863520063638e4850125c9b79775bfc52307a3b60bc905376d75f:b797,76848e6c706f767b7b4977aa51f3909358244f4e6ef48fea654c7b1b72c46da47fdf5ae162b55e95573084827b2c5e1d5f1f90127f1498a063826ec7789870b95178975b57ab75354f4375385e9760e659606dc06bbf788953fc96d551cb52016389540a94938c038dcc7239789f87768fed8c0d53e079:939495969798999b9c9d9e9fa0a1a2a3a4a5a6a8a9aaabacadaeafb0b1b2b4b5b6b7b8bcbfc2c4c5c7c8cacccecfd0d3d4d6d7d9dadbdcdddee0e1e2e5e8ea#eceef1f2f3f4f5f6f7f9fafcfeff,7a:0104050708090a0c0f10111213151618191b1c,4e0176ef53ee948998769f0e952d5b9a8ba24e:221c,51ac846361c252a8680b4f97606b51bb6d1e515c6296659796618c46901775d890fd77636bd272:8aec,8bfb583577798d4c675c9540809a5ea66e2159927aef77ed953b6bb565ad7f0e58065151961f5bf958a954288e726566987f56e4949d76fe9041638754c659:1a3a,579b8eb267358dfa8235524160f0581586fe5ce89e454fc4989d8bb95a2560765384627c904f9102997f6069800c513f80335c1499756d314e8c7a:1d1f21222425262728292a2b2c2d2e2f303132343536383a3e4041424344454748494a4b4c4d4e4f50525354555658595a5b5c5d5e5f606162636465666768#696a6b6c6d6e6f717273757b7c7d7e828587898a8b8c8e8f909394999a9b9ea1a2,8d3053d17f5a7b4f4f104e4f96006cd573d085e95e06756a7ffb6a0a77fe94927e4151e170e653cd8fd483038d2972af996d6cdb574a82b365b980aa623f963259a84eff8bbf7eba653e83f2975e556198de80a5532a8bfd542080ba5e9f6cb88d3982ac915a54296c1b52067eb7575f711a6c7e7c89594b4efd5fff61247caa4e305c0167ab87025cf0950b98ce75af70fd902251af7f1d8bbd594951e44f5b5426592b657780a45b7562:76c2,8f905e456c1f7b264f:0fd8,670d7a:a3a4a7a9aaabaeafb0b1b2b4b5b6b7b8b9babbbcbdbec0c1c2c3c4c5c6c7c8c9cacccdcecfd0d1d2d3d4d5d7d8dadbdcdde1e2e4e7e8e9eaebeceef0f1f2f3#f4f5f6f7f8fbfcfe,7b:0001020507090c0d0e1012131617181a1c1d1f21222327292d,6d:6eaa,798f88b15f17752b629a8f854fef91dc65a781:2f51,5e9c81508d74526f89868d4b590d50854ed8961c723681798d1f5bcc8ba3964459877f1a549056:760e,8be565396982949976d66e895e72751867:46d1,7aff809d8d76611f79c665628d635188521a94a27f38809b7eb25c976e2f67607bd9768b9ad8818f7f947cd5641e95507a3f54:4ae5,6b4c640162089e3d80f3759952729769845b683c86e496:0194,94ec4e2a54047ed968398ddf801566f45e9a7fb97b:2f303234353637393b3d3f404142434446484a4d4e535557595c5e5f61636465666768696a6b6c6d6f70737476787a7c7d7f81828384868788898a8b8c8e8f#9192939698999a9b9e9fa0a3a4a5aeafb0b2b3b5b6b7b9babbbcbdbebfc0c2c3c4,57c2803f68975de5653b529f606d9f9a4f9b8eac516c5bab5f135de96c5e62f18d21517194a952fe6c9f82df72d757a267848d2d591f8f9c83c754957b8d4f306cbd5b6459d19f1353e486ca9aa88c3780a16545987e56fa96c7522e74dc52505be1630289024e5662d0602a68fa51735b9851a089c27ba199867f5060ef704c8d2f51495e7f901b747089c4572d78455f529f9f95fa8f689b3c8be17678684267dc8d:ea35,523d8f8a6eda68cd950590ed56fd679c88f98fc754c87b:c5c8c9cacbcdcecfd0d2d4d5d6d7d8dbdcdedfe0e2e3e4e7e8e9ebecedeff0f2f3f4f5f6f8f9fafbfdff,7c:0001020304050608090a0d0e101112131415171819#1a1b1c1d1e20212223242528292b2c2d2e2f3031323334353637393a3b3c3d3e42,9ab85b696d776c264ea55bb39a87916361a890af97e9542b6db55bd251fd558a7f:55f0,64bc634d65f161be608d710a6c:5749,592f676d822a58d5568e8c6a6beb90dd597d801753f76d695475559d83:77cf,683879be548c4f55540876d28c8996026cb36db88d6b89109e648d3a563f9ed175d55f8872e0606854fc4ea86a2a886160528f7054c470d886799e3f6d2a5b8f5f187ea255894faf7334543c539a501954:0e7c,4e4e5ffd745a58f6846b80e1877472d07cca6e567c:434445464748494a4b4c4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f70717275767778797a7e7f8081828384858687#888a8b8c8d8e8f90939496999a9ba0a1a3a6a7a8a9abacadafb0b4b5b6b7b8babb,5f27864e552c62a44e926caa623782b154d7534e733e6ed1753b521253168bdd69d05f8a60006dee574f6b2273af68538fd87f13636260a3552475ea8c6271156da35ba65e7b8352614c9ec478fa87577c27768751f060f6714c66435e4c604d8c0e707063258f895fbd606286d456de6bc160946167534960e066668d3f79fd4f1a70e96c478b:b3f2,7ed88364660f5a5a9b426d:51f7,8c416d3b4f19706b83b7621660d1970d8d27797851fb57:3efa,673a75787a3d79ef7b957c:bfc0c2c3c4c6c9cbcecfd0d1d2d3d4d8dadbdddee1e2e3e4e5e6e7e9eaebecedeef0f1f2f3f4f5f6f7f9fafcfdfeff,7d:000102030405060708090b0c0d0e0f10#1112131415161718191a1b1c1d1e1f212324252628292a2c2d2e30313233343536,808c99658ff96fc08ba59e2159ec7ee97f095409678168d88f917c4d96c653ca602575be6c7253735ac97ea7632451e0810a5df184df628051805b634f0e796d524260b86d4e5b:c4c2,8b:a1b0,65e25fcc964559937e:e7aa,560967b759394f735bb652a0835a988a8d3e753294be50477a3c4ef767b69a7e5ac16b7c76d1575a5c167b3a95f4714e517c80a9827059787f04832768c067ec78:b177,62e363617b804fed526a51cf835069db92748d:f531,89c1952e7bad4ef67d:3738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6f70717273747576#78797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798,506582305251996f6e:1085,6da75efa50f559dc5c066d466c5f7586848b686859568bb253209171964d854969127901712680f64ea490ca6d479a845a0756bc640594f077eb4fa5811a72e189d2997a7f347ede527f655991758f:7f83,53eb7a9663:eda5,768679f888579636622a52ab8282685467706377776b7aed6d017ed389e359d0621285c982a5754c501f4ecb75a58beb5c4a5dfe7b4b65a491d14eca6d25895f7d2795264ec58c288fdb9773664b79818fd170ec6d787d:999a9b9c9d9e9fa0a1a2a3a4a5a7a8a9aaabacadafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9#dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa,5c3d52b283465162830e775b66769cb84eac60ca7c:beb3,7ecf4e958b66666f988897595883656c955c5f8475c997567a:dfde,51c070af7a9863ea7a767ea0739697ed4e4570784e5d915253a965:51e7,81fc8205548e5c31759a97a062d872d975bd5c459a7983ca5c40548077e94e3e6cae805a62d2636e5de851778ddd8e1e952f4ff153e560e770ac526763509e435a1f5026773753777ee26485652b628963985014723589c951b38bc07edd574783cc94a7519b541b5cfb7d:fbfcfdfeff,7e:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313233343536373839#3a3c3d3e3f40424344454648494a4b4c4d4e4f505152535455565758595a5b5c5d,4fca7ae36d5a90e19a8f55805496536154af5f0063e9697751ef6168520a582a52d8574e780d770b5eb761777ce062:5b97,4ea27095800362f770e49760577782db67ef68f578d5989779d158f354b353ef6e34514b523b5ba28bfe80af554357a660735751542d7a7a60505b5463a762a053e362635bc767af54ed7a9f82e691775e9388e4593857ae630e8de880ef57577b774fa95feb5bbd6b3e53217b5072c2684677:ff36,65f751b54e8f76d45cbf7aa58475594e9b4150807e:5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f8081838485868788898a8b8c8d8e8f909192939495969798999a9c9d9e#aeb4bbbcd6e4ecf9,7f:0a101e37393b3c3d3e3f404143464748494a4b4c4d4e4f5253,998861276e8357646606634656f062:ec69,5ed39614578362c955878721814a8fa3556683b167658d5684dd5a6a680f62e67bee961151706f9c8c3063fd89c861d27f0670c26ee57405699472fc5eca90ce67176d6a635e52b3726280014f6c59e5916a70d96d9d52d24e5096f7956d857e78ca7d2f5121579264c2808b7c7b6cea68f1695e51b7539868a872819ece7bf172f879bb6f137406674e91cc9ca4793c83:8954,540f68174e3d538952b1783e5386522950884f:8bd0,7f:56595b5c5d5e6063646566676b6c6d6f7073757677787a7b7c7d7f8082838485868788898b8d8f9091929395969798999b9ca0a2a3a5a6a8a9aaabacadaeb1#b3b4b5b6b7babbbec0c2c3c4c6c7c8c9cbcdcfd0d1d2d3d6d7d9dadbdcdddee2e3,75e27acb7c926ca596b6529b748354e94fe9805483b28fde95705ec9601c6d9f5e18655b813894fe604b70bc7ec37cae51c968817cb1826f4e248f8691cf667e4eae8c0564a9804a50da759771ce5be58fbd6f664e86648295635ed66599521788c270c852a3730e7433679778f797164e3490bb9cde6dcb51db8d41541d62ce73b283f196f69f8494c34f367f9a51cc707596755cad988653e64ee46e9c740969b4786b998f7559521876246d4167f3516d9f99804b54997b3c7abf7f:e4e7e8eaebecedeff2f4f5f6f7f8f9fafdfeff,80:020708090a0e0f11131a1b1d1e1f2123242b2c2d2e2f303234393a3c3e404144454748494e4f505153555657#595b5c5d5e5f6061626364656667686b6c6d6e6f7072737475767778797a7b7c7d,9686578462e29647697c5a0464027bd36f0f964b82a6536298855e90708963b35364864f9c819e93788c97328d:ef42,9e7f6f5e79845f559646622e9a74541594dd4fa365c55c:6561,7f1586516c2f5f8b73876ee47eff5ce6631b5b6a6ee653754e7163a0756562a18f6e4f264ed16ca67eb68bba841d87ba7f57903b95237ba99aa188f8843d6d1b9a867edc59889ebb739b780186829a:6c82,561b541757cb4e709ea653568fc881097792999286ee6ee1851366fc61626f2b80:7e818285888a8d8e8f909192949597999ea3a6a7a8acb0b3b5b6b8b9bbc5c7c8c9cacbcfd0d1d2d3d4d5d8dfe0e2e3e6eef5f7f9fbfeff,81:000103040507080b#0c1517191b1c1d1f202122232425262728292a2b2d2e3033343537393a3b3c3d3f,8c298292832b76f26c135fd983bd732b8305951a6bdb77db94c6536f830251925e3d8c8c8d384e4873ab679a68859176970971646ca177095a9295416bcf7f8e66275bd059b95a9a95:e8f7,4eec84:0c99,6aac76df9530731b68a65b5f772f919a97617cdc8ff78c1c5f257c7379d889c56ccc871c5bc65e4268c977207ef551:954d,52c95a297f05976282d763cf778485d079d26e3a5e9959998511706d6c1162bf76bf654f60af95fd660e879f9e2394ed54:0d7d,8c2c647881:40414243444547494d4e4f525657585b5c5d5e5f6162636466686a6b6c6f727375767778818384858687898b8c8d8e90929394959697999a9e9fa0a1a2a4a5#a7a9abacadaeafb0b1b2b4b5b6b7b8b9bcbdbebfc4c5c7c8c9cbcdcecfd0d1d2d3,647986116a21819c78e864699b5462b9672b83ab58a89ed86cab6f205bde964c8c0b725f67d062c772614ea959c66bcd589366ae5e5552df6155672876ee776672677a4662ff54:ea50,94a090a35a1c7eb36c164e435976801059485357753796be56ca63208111607c95f96dd65462998151855ae980fd59ae9713502a6ce55c3c62df4f60533f817b90066eba852b62c85e7478be64b5637b5ff55a18917f9e1f5c3f634f80425b7d556e95:4a4d,6d8560a867e072de51dd5b8181:d4d5d6d7d8d9dadbdcdddedfe0e1e2e4e5e6e8e9ebeeeff0f1f2f5f6f7f8f9fafdff,82:030708090a0b0e0f111315161718191a1d2024252627292e323a3c3d3f#404142434546484a4c4d4e5051525354555657595b5c5d5e606162636465666769,62e76cde725b626d94ae7ebd81136d53519c5f04597452aa6012597366968650759f632a61e67cef8bfa54e66b279e256bb485d5545550766ca4556a8db4722c5e156015743662cd6392724c5f986e436d3e65006f5876d878d076fc7554522453db4e535e9e65c180:2ad6,629b5486522870ae888d8dd16ce1547880da57f988f48d54966a914d4f696c9b55b776c6783062a870f96f8e5f6d84ec68da787c7bf781a8670b9e4f636778b0576f7812973962:79ab,528874356bd782:6a6b6c6d71757677787b7c808183858687898c90939495969a9b9ea0a2a3a7b2b5b6babbbcbfc0c2c3c5c6c9d0d6d9dadde2e7e8e9eaecedeef0f2f3f5f6f8#fafcfdfeff,83:000a0b0d1012131618191d1e1f20212223242526292a2e3032373b3d,5564813e75b276ae533975de50fb5c418b6c7bc7504f72479a9798d86f0274e27968648777a562fc98918d2b54c180584e52576a82f9840d5e7351ed74f68bc45c4f57616cfc98875a4678349b448feb7c955256625194fa4ec68386846183e984b257d467345703666e6d668c3166dd7011671f6b3a6816621a59bb4e0351c46f0667d26c8f517668cb59476b6775665d0e81109f5065d779:4841,9a918d775c824e5e4f01542f5951780c56686c148fc45f036c:7de3,8bab639083:3e3f41424445484a4b4c4d4e5355565758595d6270717273747576797a7e7f808182838487888a8b8c8d8f909194959697999a9d9fa1a2a3a4a5a6a7acadae#afb5bbbebfc2c3c4c6c8c9cbcdced0d1d2d3d5d7d9dadbdee2e3e4e6e7e8ebeced,60706d3d7275626694:8ec5,53438fc17b7e4edf8c264e7e9ed494:b1b3,524d6f5c90636d458c3458115d4c6b:2049,67aa545b81547f8c589985375f3a62a26a47953965726084686577a74e544fa85de7979864ac7fd85ced4fcf7a8d520783044e14602f7a8394a64fb54eb279e6743452e482b964d279bd5bdd6c8197528f7b6c22503e537f6e0564ce66746c3060c598778bf75e86743c7a7779cb4e1890b174036c4256da914b6cc58d8b533a86c666f28eaf5c489a716e2083:eeeff3f4f5f6f7fafbfcfeff,84:0002050708090a10121314151617191a1b1e1f20212223292a2b2c2d2e2f30323334353637393a3b3e3f404142434445474849#4a4b4c4d4e4f505253545556585d5e5f606264656667686a6e6f70727477797b7c,53d65a369f8b8da353bb570898a76743919b6cc9516875ca62f372ac52:389d,7f3a7094763853749e4a69b7786e96c088d97fa471:36c3,518967d374e458e4651856b78ba9997662707ed560f970ed58ec4e:c1ba,5fcd97e74efb8ba45203598a7eab62544ecd65e5620e833884c98363878d71946eb65bb97ed2519763c967d480898339881551125b7a59828fb14e736c5d516589258f6f962e854a745e95:10f0,6da682e55f3164926d128428816e9cc3585e8d5b4e0953c184:7d7e7f8081838485868a8d8f90919293949596989a9b9d9e9fa0a2a3a4a5a6a7a8a9aaabacadaeb0b1b3b5b6b7bbbcbec0c2c3c5c6c7c8cbcccecfd2d4d5d7#d8d9dadbdcdee1e2e4e7e8e9eaebedeeeff1f2f3f4f5f6f7f8f9fafbfdfe,85:000102,4f1e6563685155d34e2764149a9a626b5ac2745f82726da968ee50e7838e7802674052396c997eb150bb5565715e7b5b665273ca82eb67495c715220717d886b95ea965564c58d6181b355846c5562477f2e58924f2455468d4f664c4e0a5c1a88f368a2634e7a0d70e7828d52fa97f65c1154e890b57ecd59628d4a86c782:0c0d,8d6664445c0461516d89793e8bbe78377533547b4f388eab6df15a207ec5795e6c885ba15a76751a80be614e6e1758f075:1f25,727253477ef385:030405060708090a0b0d0e0f101214151618191b1c1d1e2022232425262728292a2d2e2f303132333435363e3f404142444546474b4c4d4e4f505152535455#57585a5b5c5d5f60616263656667696a6b6c6d6e6f707173757677787c7d7f8081,770176db526980dc57235e08593172ee65bd6e7f8bd75c388671534177f362fe65f64ec098df86805b9e8bc653f277e24f7f5c4e9a7659cb5f0f793a58eb4e1667ff4e8b62ed8a93901d52bf662f55dc566c90024ed54f8d91ca99706c0f5e0260435ba489c68bd56536624b99965b:88ff,6388552e53d77626517d852c67a268b36b8a62928f9353d482126dd1758f4e668d4e5b70719f85af66:91d9,7f7287009ecd9f205c5e672f8ff06811675f620d7ad658855eb665706f3185:82838688898a8b8c8d8e909192939495969798999a9d9e9fa0a1a2a3a5a6a7a9abacadb1b2b3b4b5b6b8babbbcbdbebfc0c2c3c4c5c6c7c8cacbcccdced1d2#d4d6d7d8d9dadbdddedfe0e1e2e3e5e6e7e8eaebecedeeeff0f1f2f3f4f5f6f7f8,60555237800d6454887075295e05681362f4971c53cc723d8c016c3477617a0e542e77ac987a821c8bf47855671470c165af64955636601d79c153f84e1d6b7b80865bfa55e356db4f:3a3c,99725df3677e80386002988290015b8b8b:bcf5,641c825864de55fd82cf91654fd77d20901f7c9f50f358516eaf5bbf8bc980839178849c7b97867d96:8b8f,7ee59ad3788e5c817a57904296a7795f5b59635f7b0b84d168ad55067f2974107d2295016240584c4ed65b835979585485:f9fafcfdfe,86:0001020304060708090a0b0c0d0e0f10121314151718191a1b1c1d1e1f20212223242526282a2b2c2d2e2f3031323334353637393a3b3d3e3f40#4142434445464748494a4b4c525355565758595b5c5d5f6061636465666768696a,736d631e8e:4b0f,80ce82d462ac53f06cf0915e592a60016c70574d644a8d2a762b6ee9575b6a8075f06f6d8c:2d08,57666bef889278b363a253f970ad6c645858642a580268e0819b55107cd650188eba6dcc8d9f70eb638f6d9b6ed47ee68404684390036dd896768ba85957727985e4817e75bc8a8a68af52548e22951163d098988e44557c4f5366ff568f60d56d9552435c4959296dfb586b75:301c,606c82148146631167618fe2773a8d:f334,94c15e165385542c70c386:6d6f7072737475767778838485868788898e8f90919294969798999a9b9e9fa0a1a2a5a6abadaeb2b3b7b8b9bbbcbdbebfc1c2c3c5c8cccdd2d3d5d6d7dadc#dde0e1e2e3e5e6e7e8eaebeceff5f6f7fafbfcfdff,87:010405060b0c0e0f10111416,6c405ef7505c4ead5ead633a8247901a6850916e77b3540c94dc5f647ae5687663457b527edf75db507762955934900f51f879c37a8156fe5f9290146d825c60571f541051546e4d56e263a89893817f8715892a9000541e5c6f81c062:d658,81319e3596409a:6e7c,692d59a562d3553e631654c786d96d3c5a0374e6889c6b6a59168c4c5f2f6e7e73a9987d4e3870f75b8c7897633d665a769660cb5b9b5a494e0781556c6a738b4ea167897f515f8065fa671b5fd859845a0187:191b1d1f20242627282a2b2c2d2f303233353638393a3c3d404142434445464a4b4d4f505152545556585a5b5c5d5e5f6162666768696a6b6c6d6f71727375#7778797a7f8081848687898a8c8e8f90919294959698999a9b9c9d9ea0a1a2a3a4,5dcd5fae537197e68fdd684556f4552f60df4e3a6f4d7ef482c7840e59d44f:1f2a,5c3e7eac672a851a5473754f80c355829b4f4f4d6e2d8c135c096170536b761f6e29868a658795fb7eb9543b7a337d0a95ee55e17fc174ee631d87176da17a9d621165a1536763e16c835deb545c94a84e4c6c618bec5c4b65e0829c68a754:3e34,6b:cb66,4e9463425348821e4f:0dae,575e620a96fe6664726952:ffa1,609f8bef661471996790897f785277fd6670563b54389521727a87:a5a6a7a9aaaeb0b1b2b4b6b7b8b9bbbcbebfc1c2c3c4c5c7c8c9cccdcecfd0d4d5d6d7d8d9dadcdddedfe1e2e3e4e6e7e8e9ebecedeff0f1f2f3f4f5f6f7f8#fafbfcfdff,88:0001020405060708090b0c0d0e0f101112141718191a1c1d1e1f2023,7a00606f5e0c6089819d591560dc718470ef6eaa6c5072806a8488ad5e2d4e605ab3559c94e36d177cfb9699620f7ec6778e867e5323971e8f9666875ce14fa072ed4e0b53a6590f54136380952851484ed99c9c7ea454b88d248854823795f26d8e5f265acc663e966973:b02e,53bf817a99857fa15baa96:7750,7ebf76f853a2957699997bb189446e584e617fd479658be660f354cd4eab98795df76a6150cf54118c618427785d9704524a54ee56a395006d885bb56dc6665388:2425262728292a2b2c2d2e2f30313334353637383a3b3d3e3f414243464748494a4b4e4f505152535556585a5b5c5d5e5f6066676a6d6f717374757678797a#7b7c80838687898a8c8e8f90919394959798999a9b9d9e9fa0a1a3a5a6a7a8a9aa,5c0f5b5d6821809655787b11654869544e9b6b47874e978b534f631f643a90aa659c80c18c10519968b0537887f961c86c:c4fb,8c225c5185aa82af950c6b238f9b65b05f:fbc3,4fe18845661f8165732960fa51745211578b5f6290a2884c91925e78674f602759d351:44f6,80f853086c7996c4718a4f:11ee,7f9e673d55c5950879c088967ee3589f620c9700865a5618987b5f908bb884c4915753d965ed5e8f755c60647d6e5a7f7e:eaed,8f6955a75ba360ac65cb738488:acaeafb0b2b3b4b5b6b8b9babbbdbebfc0c3c4c7c8cacbcccdcfd0d1d3d6d7dadbdcdddee0e1e6e7e9eaebecedeeeff2f5f6f7fafbfdff,89:0001030405060708#090b0c0d0e0f1114151617181c1d1e1f20222324262728292c2d2e2f3132333537,9009766377297eda9774859b5b667a7496ea884052cb718f5faa65ec8be25bfb9a6f5de16b896c5b8b:adaf,900a8fc5538b62bc9e:262d,54404e2b82bd7259869c5d1688596daf96c554d14e9a8bb6710954bd960970df6df976d04e25781487125ca95ef68a00989c960e708e6cbf594463a9773c884d6f148273583071d5538c781a96c155015f6671305bb48c1a9a8c6b83592e9e2f79e76768626c4f6f75a17f8a6d0b96336c274ef075d2517b68376f3e908081705996747689:38393a3b3c3d3e3f40424345464748494a4b4c4d4e4f505152535455565758595a5b5c5d6061626364656768696a6b6c6d6e6f707172737475767778797a7c#7d7e808284858788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1,64475c2790657a918c2359da54ac8200836f898180006930564e8036723791ce51b64e5f987563964e1a53f666f3814b591c6db24e0058f9533b63d694f14f:9d0a,886398905937905779fb4eea80f075916c825b9c59e85f5d69058681501a5df24e5977e34ee5827a6291661390915c794ebf5f7981c69038808475ab4ea688d4610f6bc55fc64e4976ca6ea28b:e3ae,8c0a8bd15f027f:fccc,7ece83:356b,56e06bb797f3963459fb541f94f66deb5bc5996e5c395f15969089:a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c3cdd3d4d5d7d8d9dbdddfe0e1e2e4e7e8e9eaecedeef0f1f2f4f5f6f7f8f9fa#fbfcfdfeff,8a:01020304050608090a0b0c0d0e0f101112131415161718191a1b1c1d,537082f16a315a749e705e947f2883b984:2425,836787478fce8d6276c85f719896786c662054df62e54f6381c375c85eb896cd8e0a86f9548f6cf36d8c6c38607f52c775285e7d4f1860a05fe75c24753190ae94c072b96cb96e389149670953:cbf3,4f5191c98bf153c85e7c8fc26de44e8e76c26986865e611a82064f:59de,903e9c7c61096e:1d14,96854e885a3196e84e0e5c7f79b95b878bed7fbd738957df828b90c15401904755bb5cea5fa161086b3272f180b28a:891e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3f4041424344454647494a4b4c4d4e4f505152535455565758595a5b5c5d5e#5f606162636465666768696a6b6c6d6e6f7071727374757677787a7b7c7d7e7f80,6d745bd388d598848c6b9a6d9e336e0a51:a443,57a38881539f63f48f9556ed54585706733f6e907f188fdc82d1613f6028966266f07ea68d:8ac3,94a55cb37ca4670860a6960580184e9190e75300966851418fd08574915d665597f55b55531d78386742683d54c9707e5bb08f7d518d572854b1651266828d:5e43,810f846c906d7cdf51ff85fb67a365e96fa186a48e81566a90207682707671e58d2362e952196cfd8d3c600e589e618e66fe8d60624e55b36e23672d8f678a:81828384858687888b8c8d8e8f9091929495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2#c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3,94e195f87728680569a8548b4e4d70b88bc86458658b5b857a84503a5be877bb6be18a797c986cbe76cf65a98f975d2d5c5586386808536062187ad96e5b7efd6a1f7ae05f706f335f20638c6da867564e085e108d264ed780c07634969c62db662d627e6cbc8d7571677f695146808753ec906e629854f286f08f998005951785178fd96d5973cd659f771f7504782781fb8d1e94884fa6679575b98bca9707632f9547963584b8632377415f8172f04e896014657462ef6b63653f8a:e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,8b:0001020304050608090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20212223#24252728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445,5e2775c790d18bc1829d679d652f5431871877e580a281026c414e4b7ec7804c76f4690d6b966267503c4f84574063076b628dbe53ea65e87eb85fd763:1ab7,81:f3f4,7f6e5e1c5cd95236667a79e97a1a8d28709975d46ede6cbb7a924e2d76c55fe0949f88777ec879cd80bf91cd4ef24f17821f54685dde6d328bcc7ca58f7480985e1a549276b15b99663c9aa473e0682a86db6731732a8b:f8db,90107af970db716e62c477a956314e3b845767f152a986c08d2e94f87b518b:464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f6061626364656768696a6b6d6e6f707172737475767778797a7b7c7d7e7f80818283848586#8788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9facb1bbc7d0ea,8c:091e,4f4f6ce8795d9a7b6293722a62fd4e1378168f6c64b08d5a7bc668695e8488c55986649e58ee72b6690e95258ffd8d5857607f008c0651c6634962d95353684c74228301914c55447740707c6d4a517954a88d4459ff6ecb6dc45b5c7d2b4ed47c7d6ed35b5081ea6e0d5b579b0368d58e2a5b977efc603b7eb590b98d70594f63cd79df8db3535265cf79568bc5963b7ec494bb7e825634918967007f6a5c0a907566285de64f5067de505a4f5c57505e:a7#3</span>,8c:38393a3b3c3d3e3f4042434445484a4b4d4e4f5051525354565758595b5c5d5e5f60636465666768696c6d6e6f707172747576777b7c7d7e7f808183848687#888b8d8e8f90919293959697999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacad,4e:8d0c,51404e105eff53454e:15981e,9b325b6c56694e2879ba4e3f53154e47592d723b536e6c1056df80e499976bd3777e9f174e:369f,9f104e:5c6993,82885b5b556c560f4ec453:8d9da3a5ae,97658d5d53:1af5262e3e,8d5c53:6663,52:02080e2d333f404c5e615c,84af52:7d82819093,51827f544e:bbc3c9c2e8e1ebde,4f1b4ef34f:2264,4ef54f:2527092b5e67,65384f:5a5d,8c:aeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebec#edeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,8d:000102030405060708090a0b0c0d,4f:5f57323d76749189838f7e7baa7cac94e6e8eac5dae3dcd1dff8,50:294c,4ff350:2c0f2e2d,4ffe50:1c0c25287e4355484e6c7ba5a7a9bad6,510650:edece6ee,51:070b,4edd6c3d4f:5865ce,9fa06c467c74516e5dfd9ec999985181591452f9530d8a07531051eb591951554ea051564eb388:6ea4,4eb5811488d279805b3488037fb851:abb1bdbc,8d:0e0f101112131415161718191a1b1c205152575f6568696a6c6e6f717278797a7b7c7d7e7f808283868788898c8d8e8f90929395969798999a9b9c9d9ea0a1#a2a4a5a6a7a8a9aaabacadaeafb0b2b6b7b9bbbdc0c1c2c5c7c8c9cacdd0d2d3d4,51:c796a2a5,8b:a0a6a7aab4b5b7c2c3cbcfced2d3d4d6d8d9dcdfe0e4e8e9eef0f3f6f9fcff,8c:000204070c0f1112141516191b181d1f202125272a2b2e2f32333536,53:697a,96:1d2221312a3d3c4249545f676c7274888d97b0,90:979b9d99aca1b4b3b6ba,8d:d5d8d9dce0e1e2e5e6e7e9edeef0f1f2f4f6fcfeff,8e:00010203040607080b0d0e1011121315161718191a1b1c202124252627282b2d303233343637383b3c3e#3f4345464c4d4e4f505354555657585a5b5c5d5e5f60616263646567686a6b6e71,90:b8b0cfc5bed0c4c7d3e6e2dcd7dbebeffe,91:04221e23312f394346,520d594252:a2acadbe,54ff52:d0d6f0,53df71ee77cd5ef451:f5fc,9b2f53b65f01755a5def57:4ca9a1,58:7ebcc5d1,57:292c2a33392e2f5c3b4269856b867c7b686d7673ada48cb2cfa7b493a0d5d8dad9d2b8f4eff8e4dd,8e:73757778797a7b7d7e808283848688898a8b8c8d8e91929395969798999a9b9d9fa0a1a2a3a4a5a6a7a8a9aaadaeb0b1b3b4b5b6b7b8b9bbbcbdbebfc0c1c2#c3c4c5c6c7c8c9cacbcccdcfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4,58:0b0d,57:fded,58:001e194420656c81899a80,99a89f1961ff82:797d7f8f8aa8848e919799abb8beb0c8cae398b7aecbccc1a9b4a1aa9fc4cea4e1,830982:f7e4,83:0f07,82:dcf4d2d8,830c82:fbd3,83:111a061415,82:e0d5,83:1c515b5c08923c34319b5e2f4f47435f4017602d3a336665,8e:e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,8f:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20212223#2425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f4041424344,83:681b696c6a6d6eb078b3b4a0aa939c857cb6a97db87b989ea8babcc1,840183:e5d8,580784:180b,83:ddfdd6,84:1c381106,83:d4df,84:0f03,83:f8f9eac5c0,842683:f0e1,84:5c515a597387887a89783c4669768c8e316dc1cdd0e6bdd3cabfbae0a1b9b497e5e3,850c750d853884f085:391f3a,8f:45464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f6061626364656a808c929da0a1a2a4a5a6a7aaacadaeafb2b3b4b5b7b8babbbcbfc0c3c6#c9cacbcccdcfd2d6d7dae0e1e3e7eceff1f2f4f5f6fafbfcfeff,90:07080c0e131518,85:563b,84:fffc,85:594868645e7a,77a285:43727ba4a8878f79ae9c85b9b7b0d3c1dcff,86:270529163c,5efe5f0859:3c41,803759:555a58,530f5c:22252c34,62:4c6a9fbbcadad7ee,632262f663:394b43adf6717a8eb46dac8a69aebcf2f8e0ffc4dece,645263:c6be,64:45410b1b200c26215e846d96,90:191c2324252728292a2b2c303132333437393a3d3f4043454648494a4b4c4e545556595a5c5d5e5f6061646667696a6b6c6f70717273767778797a7b7c7e81#84858687898a8c8d8e8f90929496989a9c9e9fa0a4a5a7a8a9abadb2b7bcbdbfc0,64:7ab7b899bac0d0d7e4e2,65:09252e,5f:0bd2,75195f1153:5ff1fde9e8fb,54:1216064b5253545643215759233282947771649a9b8476669dd0adc2b4d2a7a6d3d472a3d5bbbfccd9dadca9aaa4ddcfde,551b54e7552054fd551454f355:22230f11272a678fb5496d41553f503c,90:c2c3c6c8c9cbcccdd2d4d5d6d8d9dadedfe0e3e4e5e9eaeceef0f1f2f3f5f6f7f9fafbfcff,91:00010305060708090a0b0c0d0e0f1011121314151617181a1b1c#1d1f20212425262728292a2b2c2d2e30323334353637383a3b3c3d3e3f40414244,55:375675767733305c8bd283b1b988819f7ed6917bdfbdbe9499eaf7c9,561f55:d1ebecd4e6ddc4efe5f2f3cccde8f5e4,8f9456:1e080c012423,55fe56:00272d5839572c4d62595c4c548664716b7b7c8593afd4d7dde1f5ebf9ff,57:040a091c,5e:0f191411313b3c,91:454748515354555658595b5c5f606667686b6d737a7b7c808182838486888a8e8f939495969798999c9d9e9fa0a1a4a5a6a7a8a9abacb0b1b2b3b6b7b8b9bb#bcbdbebfc0c1c2c3c4c5c6c8cbd0d2d3d4d5d6d7d8d9dadbdddedfe0e1e2e3e4e5,5e:3744545b5e61,5c:8c7a8d9096889899919a9cb5a2bdacabb1a3c1b7c4d2e4cbe5,5d:020327262e241e061b583e343d6c5b6f5d6b4b4a697482999d,8c735d:b7c5,5f:73778287898c95999ca8adb5bc,88625f6172:adb0b4b7b8c3c1cecdd2e8efe9f2f4f7,730172f3730372fa91:e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,92:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324#25262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445,72fb73:1713210a1e1d152239252c3831504d57606c6f7e,821b592598e759:2402,99:636768696a6b6c74777d8084878a8d9091939495,5e:80918b96a5a0b9b5beb3,8d535e:d2d1dbe8ea,81ba5f:c4c9d6cf,60035fee60045f:e1e4fe,60:0506,5f:eaedf8,60:1935261b0f0d292b0a3f2178797b7a42,92:464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f7071727375767778797a7b7c7d7e7f808182838485#868788898a8b8c8d8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7,60:6a7d969aad9d83928c9becbbb1ddd8c6dab4,61:20261523,60f461:000e2b4a75ac94a7b7d4f5,5fdd96b395:e9ebf1f3f5f6fcfe,96:030406080a0b0c0d0f12151617191a,4e2c723f62156c:35545c4aa38590948c6869747686a9d0d4adf7f8f1d7b2e0d6faebeeb1d3effe,92:a8a9aaabacadafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8#e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,93:00010203040506070809,6d:39270c43480704190e2b4d2e351a4f525433916f9ea05e93945c607c63,6e1a6d:c7c5de,6e0e6d:bfe0,6e116d:e6ddd9,6e166dab6e0c6dae6e:2b6e4e6bb25f865354322544dfb198e0,6f2d6e:e2a5a7bdbbb7d7b4cf8fc29f,6f:6246472415,6ef96f:2f364b742a0929898d8c78727c7ad1,93:0a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3f40414243444546474849#4a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696b,6f:c9a7b9b6c2e1eedee0ef,70:1a231b39354f5e,5b:80849593a5b8,752f9a9e64345b:e4ee,89305bf08e478b078f:b6d3d5e5eee4e9e6f3e8,90:05040b26110d162135362d2f445152506858625b,66b990:747d8288838b,5f:50575658,5c3b54ab5c:5059,5b715c:6366,7fbc5f:2a292d,82745f3c9b3b5c6e59:81838da9aaa3,93:6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaab#acadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cbcccd,59:97caab9ea4d2b2afd7be,5a:0506,59dd5a0859:e3d8f9,5a:0c09323411231340674a553c6275,80ec5a:aa9b777abeebb2d2d4b8e0e3f1d6e6d8dc,5b:091716323740,5c:151c,5b:5a6573515362,9a:7577787a7f7d808185888a90929396989b9c9d9fa0a2a3a5a7,7e:9fa1a3a5a8a9,93:cecfd0d1d2d3d4d5d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,94:000102030405060708090a0b0c0d#0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e,7e:adb0bec0c1c2c9cbccd0d4d7dbe0e1e8ebeeeff1f2,7f0d7e:f6fafbfe,7f:01020307080b0c0f111217191c1b1f212223242526272a2b2c2d2f3031323335,5e7a757f5ddb753e909573:8e91aea29fcfc2d1b7b3c0c9c8e5d9,987c740a73:e9e7debaf2,74:0f2a5b262528302e2c,94:2f303132333435363738393a3b3c3d3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6c6d6e6f#707172737475767778797a7b7c7d7e7f8081828384919698c7cfd3d4dae6fb,95:1c20,74:1b1a415c575559776d7e9c8e8081878b9ea8a990a7d2ba,97:eaebec,67:4c535e4869a5876a7398a775a89ead8b777cf0,680967d8680a67:e9b0,680c67:d9b5dab3dd,680067:c3b8e2,680e67:c1fd,68:323360614e624464831d55664167403e4a4929b58f7477936bc2,696e68fc69:1f20,68f995:27333d43484b555a606e74757778797a7b7c7d7e808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aa#abacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacb,692468f069:0b0157,68e369:10713960425d846b80987834cc8788ce896663799ba7bbabadd4b1c1cadf95e08dff,6a2f69ed6a:171865,69f26a:443ea0505b358e793d28587c9190a997ab,73:3752,6b:8182878492938d9a9ba1aa,8f:6b6d71727375767877797a7c7e818284878b,95:cccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7ecff,96:0713181b1e20232425262728292b2c2d2f303738393a3e41434a4e4f5152535657#58595a5c5d5e606365666b6d6e6f70717378797a7b7c7d7e7f808182838487898a,8f:8d8e8f989a,8ece62:0b171b1f222125242c,81e774:eff4ff,75:0f1113,65:34eeeff0,66:0a19,677266:031500,708566:f71d34313635,800666:5f54414f56615777848ca79dbedbdce6e9,8d:3233363b3d4045464849474d5559,89:c7cacbcccecfd0d1,72:6e9f5d666f7e7f848b8d8f92,63:0832b0,96:8c8e91929395969a9b9d9e9fa0a1a2a3a4a5a6a8a9aaabacadaeafb1b2b4b5b7b8babbbfc2c3c8cacbd0d1d3d4d6d7d8d9dadbdcdddedfe1e2e3e4e5e6e7eb#ecedeef0f1f2f4f5f8fafbfcfdff,97:0203050a0b0c10111214151718191a1b1d1f20,64:3fd8,80046b:eaf3fdf5f9,6c:0507060d1518191a2129242a32,65:35556b,72:4d525630,8662521680:9f9c93bc,670a80:bdb1abadb4b7e7e8e9eadbc2c4d9cdd7,671080:ddebf1f4ed,81:0d0e,80:f2fc,671581128c5a81:361e2c1832484c5374595a7160697c7d6d67,584d5ab581:888291,6ed581:a3aacc,672681:cabb,97:2122232425262728292b2c2e2f3133343536373a3b3c3d3f404142434445464748494a4b4c4d4e4f5051545557585a5c5d5f63646667686a6b6c6d6e6f7071#72757778797a7b7d7e7f8081828384868788898a8c8e8f9093959697999a9b9c9d,81:c1a6,6b:243739434659,98:d1d2d3d5d9da,6bb35f406bc289f365909f5165:93bcc6c4c3ccced2d6,70:809c969dbbc0b7abb1e8ca,71:1013162f31735c6845724a787a98b3b5a8a0e0d4e7f9,72:1d28,706c71:1866b9,62:3e3d434849,79:3b4046495b5c535a6257606f677a858a9aa7b3,5f:d1d0,97:9e9fa1a2a4a5a6a7a8a9aaacaeb0b1b3b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3#e4e5e8eeeff0f1f2f4f7f8f9fafbfcfdfeff,98:000102030405060708090a0b0c0d0e,60:3c5d5a67415963ab,61:060d5da99dcbd1,620680:807f,6c:93f6,6dfc77:f6f8,78:0009171811,65ab78:2d1c1d393a3b1f3c252c23294e6d56572650474c6a9b939a879ca1a3b2b9a5d4d9c9ecf2,790578f479:13241e34,9f9b9e:f9fbfc,76f177:040d,76f977:07081a22192d263538505147435a68,98:0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d#4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e,77:62657f8d7d808c919fa0b0b5bd,75:3a404e4b485b727983,7f:58615f,8a487f:68747179817e,76:cde5,883294:8586878b8a8c8d8f909497959a9b9ca3a4abaaadacafb0b2b4b6b7b8b9babcbdbfc4c8c9cacbcccdced0d1d2d5d6d7d9d8dbdedfe0e2e4e5e7e8ea,98:6f70717273748b8e929599a3a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcfd0d4d6d7dbdcdde0e1e2e3e4#e5e6e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,99:0001020304050607,94:e9ebeeeff3f4f5f7f9fcfdff,95:03020607090a0d0e0f1213141516181b1d1e1f222a2b292c3132343637383c3e3f4235444546494c4e4f525354565758595b5e5f5d61626465666768696a6b6c6f7172733a,77:e7ec,96c979:d5ede3eb,7a065d477a:03021e14,99:08090a0b0c0e0f1112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2f303132333435363738393a3b3c3d3e3f40414243444546474849#4a4b4c4d4e4f50515253565758595a5b5c5d5e5f60616264667378797b7e828389,7a:393751,9ecf99a57a7076:888e9399a4,74:dee0,752c9e:202228292a2b2c3231363837393a3e414244464748494b4c4e5155575a5b5c5e63666768696a6b6c716d73,75:929496a09daca3b3b4b8c4b1b0c3c2d6cde3e8e6e4ebe7,760375:f1fcff,76:1000050c170a25181519,99:8c8e9a9b9c9d9e9fa0a1a2a3a4a6a7a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8#d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9,76:1b3c2220402d303f35433e334d5e545c566b6f,7fca7a:e6787980868895a6a0aca8adb3,88:6469727d7f82a2c6b7bcc9e2cee3e5f1,891a88:fce8fef0,89:2119131b0a342b3641667b,758b80e576:b2b4,77dc80:1214161c20222526272928310b3543464d526971,898398:788083,99:fafbfcfdfeff,9a:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738#393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f50515253545556575859,98:898c8d8f949a9b9e9fa1a2a5a6,86:4d546c6e7f7a7c7ba88d8bac9da7a3aa93a9b6c4b5ceb0bab1afc9cfb4e9f1f2edf3d0,871386:def4dfd8d1,87:0307,86f887:080a0d09233b1e252e1a3e48343129373f82227d7e7b60704c6e8b53637c64596593afa8d2,9a:5a5b5c5d5e5f606162636465666768696a6b7283898d8e949599a6a9aaabacadaeafb2b3b4b5b9bbbdbebfc3c4c6c7c8c9cacdcecfd0d2d4d5d6d7d9dadbdc#dddee0e2e3e4e5e7e8e9eaeceef0f1f2f3f4f5f6f7f8fafcfdfeff,9b:000102040506,87:c68885ad9783abe5acb5b3cbd3bdd1c0cadbeae0ee,88:1613,87fe88:0a1b21393c,7f:36424445,82107a:fafd,7b:080304150a2b0f47382a192e31202524333e1e585a45754c5d606e7b62727190a6a7b8ac9da885aa9ca2abb4d1c1ccdddae5e6ea,7c0c7b:fefc,7c:0f160b,9b:07090a0b0c0d0e1011121415161718191a1b1c1d1e2021222425262728292a2b2c2d2e3031333435363738393a3d3e3f40464a4b4c4e50525355565758595a#5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b,7c:1f2a26384140,81fe82:010204,81ec884482:2122232d2f282b383b33343e44494b4f5a5f68,88:7e8588d8df,895e7f:9d9fa7afb0b2,7c7c65497c:919d9c9ea2b2bcbdc1c7cccdc8c5d7e8,826e66a87f:bfced5e5e1e6e9eef3,7cf87d:77a6ae,7e:479b,9e:b8b4,8d:73849491b1676d,8c:4749,91:4a504e4f64,9b:7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9ba#bbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadb,91:626170696f7d7e7274798c85908d91a2a3aaadaeafb5b4ba,8c559e7e8d:b8eb,8e:055969,8d:b5bfbcbac4d6d7dadececfdbc6ecf7f8e3f9fbe4,8e098dfd8e:141d1f2c2e232f3a4039353d3149414251524a70767c6f74858f94909c9e,8c:78828a859894,659b89:d6dedadc,9b:dcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,9c:000102030405060708090a0b0c0d0e0f101112131415161718191a#1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b,89:e5ebef,8a3e8b26975396:e9f3ef,97:0601080f0e2a2d303e,9f:808385868788898a8c,9efe9f:0b0d,96:b9bcbdced2,77bf96e092:8eaec8,93:3e6aca8f,94:3e6b,9c:7f8285868788,7a239c:8b8e90919294959a9b9e9fa0a1a2a3a5a6a7a8a9abadaeb0b1b2b3b4b5b6b7babbbcbdc4c5c6c7cacb3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a#7b7d7e808384898a8c8f93969798999daaacafb9bebfc0c1c2c8c9d1d2dadbe0e1cccdcecfd0d3d4d5d7d8d9dcdddfe2,97:7c85919294afaba3b2b4,9a:b1b0b7,9e589a:b6babcc1c0c5c2cbccd1,9b:45434749484d51,98e899:0d2e5554,9a:dfe1e6efebfbedf9,9b:080f131f23,9e:bdbe,7e3b9e:8287888b92,93d69e:9d9fdbdcdde0dfe2e9e7e5eaef,9f:222c2f39373d3e44,9c:e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,9d:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021#22232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142#92<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …a7b7c7d7e7f8081#̲828384858687888…'>434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f8081#82838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2#92</span>a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1#e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff,9e:000102#92<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …778797a7b7c7d80#̲8183848586898a8…'>030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e24272e30343b3c404d5052535456595d5f606162656e6f727475767778797a7b7c7d80#8183848586898a8c8d8e8f90919495969798999a9b9c9ea0a1a2a3a4a5a7a8a9aa#92</span>abacadaeafb0b1b2b3b5b6b7b9babcbfc0c1c2c3c5c6c7c8cacbccd0d2d3d5d6d7d9dadee1e3e4e6e8ebecedeef0f1f2f3f4f5f6f7f8fafdff,9f:000102030405#060708090a0c0f1112141516181a1b1c1d1e1f21232425262728292a2b2d2e3031#92<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;#&#039; at position 127: …172737475767778#̲797a7b7c7d7e818…'>3233343536383a3c3f4041424345464748494a4b4c4d4e4f52535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778#797a7b7c7d7e81828d8e8f9091929394959697989c9d9ea1a2a3a4a5,f9:2c7995e7f1#92</span>,fa:0c0d0e0f111314181f20212324272829,e8:15161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f40414243#4445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f6061626364'),<br>
-U2Ghash: any = {},<br>
-G2Uhash: any = {};<br>
-// @ts-ignore<br>
-!function (data: any) {<br>
-let k = 0;<br>
-data = data.match(/..../g);<br>
-for (let i = 0x81; i &lt;= 0xfe; i += 1) {<br>
-for (let j = 0x40; j &lt;= 0xFE; j += 1) {<br>
-U2Ghash[data[k += 1]] = (<code>%${i.toString(16)}%${j.toString(16)}</code>)<br>
-.toUpperCase();<br>
-}<br>
-}<br>
-for (const key in U2Ghash) {<br>
-G2Uhash[U2Ghash[key]] = key;<br>
-}<br>
-}(data);</li>
-</ul>
-<p>function isAscii(unicode: any) {<br>
-return ((unicode === 0x20AC) || (unicode &lt;= 0x007F &amp;&amp; unicode &gt;= 0x0000));<br>
-}</p>
-<p>return {<br>
-encode: function (str: any) {<br>
-return str.replace(/./g, (a: any) =&gt; {<br>
-const code = a.charCodeAt(0);<br>
-if (isAscii(code)) {<br>
-return encodeURIComponent(a);<br>
-}<br>
-const key = code.toString(16);<br>
-// @ts-ignore<br>
-if (key.length !== 4) key = (<code>000${key}</code>).match(/....<span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;}&#039; at position 48: …y] || a;
-      }̲);
-    },
-    d…'>/)[0];
-        return U2Ghash[key] || a;
-      });
-    },
-    decode: function (str: any) {
-      return str.replace(/%[0-9A-F]{2}%[0-9A-F]{2}/g, (a: any) =&gt; {
-        if (a in G2Uhash) {
-          // @ts-ignore
-          return String.fromCharCode(`0x</span>{G2Uhash[a]}`);<br>
-}<br>
-return a;<br>
-}).replace(/%[\w]{2}/g, (a: any) =&gt; decodeURIComponent(a));<br>
-}<br>
-};<br>
-}();</p>
-<p>export default util;</p>
-<p>存储localStorage</p>
-<p>/**</p>
-<ul>
-<li>@FileName lStorage.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title 存储localStorage</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>const isNull = (obj: any) =&gt; typeof obj === 'undefined' || obj === null;<br>
-const trim = (str: any) =&gt; isNull(str) ? '' : (<code>${str}</code>).replace(/<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>+|[\s\uFEFF\xA0]+$/g, '');</p>
-<p>const getAll = () =&gt; {<br>
-const len = localStorage.length; // 获取长度<br>
-// console.log(len); // 输出5<br>
-const arr: Array<any> = []; // 定义数据集<br>
-for (let i = 0; i &lt; len; i += 1) {<br>
-// 获取key 索引从0开始<br>
-const getKey = localStorage.key(i) || '';<br>
-// 获取key对应的值<br>
-const getVal = localStorage.getItem(getKey);<br>
-// 放进数组<br>
-arr[i] = {<br>
-key: getKey,<br>
-val: getVal<br>
-};<br>
-}<br>
-return arr;<br>
-};<br>
-const removeItem = (key: string) =&gt; {<br>
-if (!key &amp;&amp; typeof window === 'undefined') return;<br>
-window.localStorage.removeItem(key);<br>
-};<br>
-const setItem = (key: string, content: any) =&gt; {<br>
-if (!key &amp;&amp; typeof window === 'undefined') return;<br>
-let contentTxt = content;<br>
-if (typeof content !== 'string') {<br>
-contentTxt = JSON.stringify(content);<br>
-}<br>
-window.localStorage.setItem(key, contentTxt);<br>
-};<br>
-const getItem = (key: string) =&gt; {<br>
-if (!key &amp;&amp; typeof window === 'undefined') return '';<br>
-return window.localStorage.getItem(key) || '';<br>
-};<br>
-const removeDataFromKey = (key = '') =&gt; {<br>
-const all: any = getAll();<br>
-for (let i = 0, len = all.length; i &lt; len; i += 1) {<br>
-if (trim(all[i].key).indexOf(key) !== -1) {<br>
-removeItem(all[i].key);<br>
-}<br>
-}<br>
-};</p>
-<p>export default {<br>
-// 存储localStorage<br>
-setItem,<br>
-// 获取localStorage<br>
-getItem,<br>
-// 删除localStorage<br>
-removeItem,<br>
-// 从localStorage删除所有保存的数据<br>
-clear: () =&gt; window.localStorage.clear(),<br>
-// 获取所有的 缓存数据<br>
-getAll,<br>
-// 删除指定 key匹配的数据<br>
-removeDataFromKey<br>
-};</p>
-<p>sessionStorage操作</p>
-<p>/**</p>
-<ul>
-<li>@FileName sStorage.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title sessionStorage操作</li>
-<li>@Desc<br>
-**/<br>
-const setItem = (key: string, content: any) =&gt; {<br>
-if (!key &amp;&amp; typeof window === 'undefined') return;<br>
-sessionStorage.setItem(key, JSON.stringify(content));<br>
-};<br>
-const getItem = (key: string) =&gt; {<br>
-if (!key &amp;&amp; typeof window === 'undefined') return;<br>
-return JSON.parse(sessionStorage.getItem(key) || '');<br>
-};<br>
-const removeItem = (key: string) =&gt; {<br>
-if (!key &amp;&amp; typeof window === 'undefined') return;<br>
-sessionStorage.removeItem(key);<br>
-};<br>
-const clear = () =&gt; {<br>
-sessionStorage.clear();<br>
-};<br>
-export default {<br>
-setItem,<br>
-getItem,<br>
-removeItem,<br>
-clear<br>
-};</li>
-</ul>
-<p>mockjs 动态模拟数据</p>
-<p>yarn add mockjs --dev</p>
-<p>/**</p>
-<ul>
-<li>@FileName mock.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title 动态模拟数据</li>
-<li>@Desc<br>
-**/<br>
-import Mock from 'mockjs';</li>
-</ul>
-<p>class MockJs {<br>
-private baseUrl: string;</p>
-<p>constructor(baseUrl = '') {<br>
-this.baseUrl = baseUrl;<br>
-}</p>
-<p>/**</p>
-<ul>
-<li>基础方法</li>
-<li>@param path 拦截的路径</li>
-<li>@param params 返回的模拟数据</li>
-<li>@param method 拦截的method<br>
-*/<br>
-action(path: string, params: any, method = 'post') {<br>
-Mock.mock(new RegExp(<code>^${this.baseUrl + path}</code>), method, params);<br>
-}</li>
-</ul>
-<p>get(path: string, params: any) {<br>
-return this.action(path, params, 'get');<br>
-}</p>
-<p>post(path: string, params: any) {<br>
-return this.action(path, params, 'post');<br>
-}</p>
-<p>put(path: string, params: any) {<br>
-return this.action(path, params, 'put');<br>
-}</p>
-<p>patch(path: string, params: any) {<br>
-return this.action(path, params, 'patch');<br>
-}</p>
-<p>delete(path: string, params: any) {<br>
-return this.action(path, params, 'delete');<br>
-}</p>
-<p>head(path: string, params: any) {<br>
-return this.action(path, params, 'head');<br>
-}</p>
-<p>options(path: string, params: any) {<br>
-return this.action(path, params, 'options');<br>
-}</p>
-<p>tpl(data: any = '', msg = '成功', status = 200) {<br>
-return {msg, data, status};<br>
-}<br>
-}</p>
-<p>export default MockJs;</p>
-<p>Tools 通用工具类</p>
-<p>/**</p>
-<ul>
-<li>@FileName tools.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title 通用工具类</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>import ViewUI from 'view-design';<br>
-/* eslint-disable <em>/<br>
-const utils = {<br>
-getUUID(len: number, radix: number) {<br>
-const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');<br>
-const uuid = [];<br>
-let i;<br>
-radix = radix || chars.length;<br>
-if (len) {<br>
-for (i = 0; i &lt; len; i += 1) uuid[i] = chars[0 | Math.random() * radix];<br>
-} else {<br>
-let r;<br>
-uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';<br>
-uuid[14] = '4';<br>
-for (i = 0; i &lt; 36; i += 1) {<br>
-if (!uuid[i]) {<br>
-r = 0 | Math.random() * 16;<br>
-uuid[i] = chars[(i === 19) ? (r &amp; 0x3) | 0x8 : r];<br>
-}<br>
-}<br>
-}<br>
-return uuid.join('');<br>
-},<br>
-getResult(arr = [], id = '', find = 'id', result = 'value') {<br>
-let value = '';<br>
-if (id === undefined || id === null || !find || !result) {<br>
-return '';<br>
-}<br>
-arr.map((e) =&gt; {<br>
-if (e[find] === id) {<br>
-value = e[result];<br>
-}<br>
-return e;<br>
-});<br>
-return value;<br>
-},<br>
-object: {<br>
-isObject(obj: any) {<br>
-return typeof obj === 'object';<br>
-},<br>
-isFunction(obj: any) {<br>
-return typeof obj === 'function';<br>
-},<br>
-isArray(obj: any) {<br>
-return this.isNotNull(obj) &amp;&amp; obj.constructor === Array;<br>
-},<br>
-isNull(obj: any) {<br>
-return typeof obj === 'undefined' || obj === null || this.length(obj) === 0;<br>
-},<br>
-isNotNull(obj: any) {<br>
-return !this.isNull(obj);<br>
-},<br>
-length(obj: any) {<br>
-let count = 0;<br>
-for (const i in obj) {<br>
-// 如果包含除它的原型本身之外的属性<br>
-if (Object.prototype.hasOwnProperty.call(obj, i)) {<br>
-count += 1;<br>
-}<br>
-}<br>
-return count;<br>
-},<br>
-getChildrenPath(obj: any, c: any, k: any): any {<br>
-if (this.isNull(obj)) {<br>
-return null;<br>
-}<br>
-if (obj === c) {<br>
-return k;<br>
-}<br>
-if (this.isObject(obj)) {<br>
-let v;<br>
-for (const key in obj) {<br>
-if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;<br>
-v = this.getChildrenPath(obj[key], c, key);<br>
-if (utils.string.isNotBlank(v)) {<br>
-return <code>${utils.string.isNotBlank(k) ?</code><span class='katex-error' title='ParseError: KaTeX parse error: Expected &#039;EOF&#039;, got &#039;}&#039; at position 11: {k}.` : &#039;&#039;}̲'>{k}.` : &#039;&#039;}</span>{v}<code>; } } } return null; }, merge(t: any, s: any, mergeArray = false) { for (const k in s) { if (!Object.prototype.hasOwnProperty.call(s, k) || typeof s[k] === 'undefined' || s[k] === null) continue; const item = s[k]; switch (item.constructor) { case Object: { if (t[k] &amp;&amp; t[k].constructor === Object) { this.merge(t[k], item); } else { t[k] = item; } break; } case Array: { if (item.length &lt; 1) { break; } if (mergeArray &amp;&amp; t[k] &amp;&amp; t[k].constructor === Array) { t[k] = [...t[k], ...item]; } else { t[k] = item; } break; } case String: { if (item.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '').length &gt; 0) { t[k] = item; } break; } default: { t[k] = item; } } } return t; } }, string: { trim(str: any) { return utils.object.isNull(str) ? '' : (</code><span class='katex-error' title='ParseError: KaTeX parse error: Undefined control sequence: \s at position 20: …}`).replace(/^[\̲s̲\uFEFF\xA0]+|[\…'>{str}`).replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+</span>/g, '');<br>
-},<br>
-isBlank(str: any) {<br>
-return utils.object.isNull(str) || this.trim(str).length === 0;<br>
-},<br>
-isNotBlank(str: any) {<br>
-return !this.isBlank(str);<br>
-},<br>
-isEmpty(str: any) {<br>
-return utils.object.isNull(str) || (<code>${str}</code>).length === 0;<br>
-},<br>
-isNotEmpty(str: any) {<br>
-return !this.isEmpty(str);<br>
-},<br>
-equalsIgnoreCase(a: any, b: any) {<br>
-if (utils.object.isNull(a) || utils.object.isNull(b)) {<br>
-return false;<br>
-}<br>
-return (<code>${a}</code>).toLowerCase() === (<code>${b}</code>).toLowerCase();<br>
-}<br>
-},<br>
-list: {<br>
-isEmpty(l: any) {<br>
-return utils.object.isNull(l) || l.length &lt; 1;<br>
-},<br>
-isNotEmpty(l: any) {<br>
-return !utils.list.isEmpty(l);<br>
-},<br>
-stringToList(s: any) {<br>
-const txt = typeof s === 'string' ? s.split(',') : s;<br>
-return s &amp;&amp; s.length &gt; 0 ? txt : [];<br>
-},<br>
-find(l: any, k: any, v: any, j: any) {<br>
-const n = [];<br>
-if (utils.list.isNotEmpty(l)) {<br>
-for (let i = 0, len = l.length, r = l[i]; i &lt; len; i += 1) {<br>
-if (j ? r[k] === v : <code>${r[k]}</code> === <code>${v}</code>) n.push(r);<br>
-}<br>
-}<br>
-return n;<br>
-},<br>
-indexOf(l: any, k: any, v: any, b: any, j: any) {<br>
-let n = -1;<br>
-if (utils.list.isNotEmpty(l)) {<br>
-for (let i = b || 0, len = l.length, r = l[i]; i &lt; len; i += 1) {<br>
-if (j ? r[k] === v : <code>${r[k]}</code> === <code>${v}</code>) {<br>
-n = i;<br>
-break;<br>
-}<br>
-}<br>
-}<br>
-return n;<br>
-}<br>
-},<br>
-map: {<br>
-mapsExtVal(maps: any, key: any) {<br>
-const list = [];<br>
-for (let i = 0, len = maps.length; i &lt; len; i += 1) {<br>
-list.push(maps[i][key]);<br>
-}<br>
-return list;<br>
-},<br>
-listToMap(list: any, key: any) {<br>
-if (utils.object.isNull(list) || utils.string.isEmpty(key)) {<br>
-return null;<br>
-}<br>
-const map: any = {};<br>
-for (let i = 0, len = list.length; i &lt; len; i += 1) {<br>
-const row = list[i];<br>
-map[row[key]] = row;<br>
-}<br>
-return map;<br>
-},<br>
-isEqualForString(a: any, b: any) {<br>
-return utils.map.isEqual(a, b, null, true);<br>
-},<br>
-isEmpty(m: any) {<br>
-return utils.object.isNull(m) || this.keys(m).length &lt; 1;<br>
-},<br>
-isNotEmpty(m: any) {<br>
-return !this.isEmpty(m);<br>
-},<br>
-isEqual(a: any, b: any, isWeak: any, isString: any) {<br>
-if (utils.object.isNull(a) &amp;&amp; utils.object.isNull(b)) {<br>
-return true;<br>
-}<br>
-if (utils.object.isNull(a) || utils.object.isNull(b)) {<br>
-return false;<br>
-}<br>
-const aks: any = this.keys(a);<br>
-const bks: any = this.keys(b);<br>
-const aksl: number = aks.length;<br>
-const bksl: number = bks.length;<br>
-if (aksl !== bksl) {<br>
-return false;<br>
-}<br>
-for (let i = 0; i &lt; aksl; i += 1) {<br>
-if (isWeak || isString ? <code>${a[aks[i]]}</code> !== <code>${b[aks[i]]}</code> : a[aks[i]] !== b[aks[i]]) {<br>
-return false;<br>
-}<br>
-}<br>
-return true;<br>
-},<br>
-keys(m: any): any[] {<br>
-const keys: any[] = [];<br>
-for (const key in m) {<br>
-if (Object.prototype.hasOwnProperty.call(m, key)) {<br>
-keys.push(key);<br>
-}<br>
-}<br>
-return keys;<br>
-},<br>
-vals(m: any) {<br>
-const l = [];<br>
-const keys = utils.map.keys(m);<br>
-for (let i = 0, len = keys.length; i &lt; len; i += 1) {<br>
-l.push(m[keys[i]]);<br>
-}<br>
-return l;<br>
-}<br>
-},<br>
-// 格式化手机号  隐藏中间数据<br>
-formatPhoneNumber(phone: string) {<br>
-if (!phone) return '';<br>
-return <code>${String(phone).slice(0, 3)}****${String(phone).slice(-4)}</code>;<br>
-},<br>
-// 数组转 百分比<br>
-numberToPercentage(percentage: any) {<br>
-if (percentage == null) return '--';<br>
-const num: any = (Math.round(percentage * 10000) / 100).toFixed(2);<br>
-return Number(percentage) === 0 ? '0%' : <code>${Math.abs(num)}%</code>;<br>
-},<br>
-/</em>*</p>
-<ul>
-<li>@param {Array} target 目标数组</li>
-<li>@param {Array} arr 需要查询的数组</li>
-<li>@description 判断要查询的数组是否至少有一个元素包含在目标数组中<br>
-<em>/<br>
-hasOneOf: (targetarr: any, arr: any) =&gt; {<br>
-return targetarr.some((<em>: any) =&gt; arr.indexOf(</em>) &gt; -1);<br>
-},<br>
-onMsg: (callback: any) =&gt; {<br>
-window.onmessage = (res: any) =&gt; {<br>
-callback(res);<br>
-};<br>
-},<br>
-/</em>*</li>
-<li>快捷键注册</li>
-<li>@param kes</li>
-<li>@param fun<br>
-*/<br>
-compositeKey: (kes: string, fun: any) =&gt; {<br>
-const k = kes || '';<br>
-const fn = fun || function () {<br>
-};</li>
-</ul>
-<pre><code>const ks = k.split('+');
-if (ks.length &lt; 2) {
-  console.info('not composite key');
-  return;
-}
-
-document.addEventListener('keydown', function (e) {
-  const ctrl = e.ctrlKey,
-    shift = e.shiftKey,
-    alt = e.altKey;
-  // @ts-ignore
-  let keyIdent = e.keyIdentifier;
-
-  if (ctrl &amp;&amp; (ks.indexOf('ctrl') === -1)) {
-    return;
-  }
-
-  if (shift &amp;&amp; (ks.indexOf('shift') === -1)) {
-    return;
-  }
-
-  if (alt &amp;&amp; (ks.indexOf('alt') === -1)) {
-    return;
-  }
-
-  if (e.keyCode &gt; 47 &amp;&amp; e.keyCode &lt; 91) {
-    keyIdent = String.fromCharCode(e.keyCode);
-  }
-
-  if (keyIdent &amp;&amp; keyIdent.toLowerCase() === ks[ks.length - 1]) {
-    fn(e);
-  }
-});
-</code></pre>
-<p>},<br>
-/**</p>
-<ul>
-<li>消息通用模板</li>
-<li>@param type</li>
-<li>@param content</li>
-<li>@param duration<br>
-<em>/<br>
-message: (type: string, content: string, duration = 6) =&gt; {<br>
-// @ts-ignore<br>
-ViewUI.Message[type]({<br>
-background: true,<br>
-closable: true,<br>
-content,<br>
-duration<br>
-});<br>
-},<br>
-/</em>*</li>
-<li>弹窗通用模板</li>
-<li>@param type</li>
-<li>@param title</li>
-<li>@param content</li>
-<li>@param okCallBack</li>
-<li>@param cancelCallBack<br>
-<em>/<br>
-modal: (type = 'info', title: string, content = '', okCallBack = () =&gt; {<br>
-}, cancelCallBack = () =&gt; {<br>
-}) =&gt; {<br>
-// @ts-ignore<br>
-ViewUI.Modal[type]({<br>
-title: title,<br>
-content: content,<br>
-onOk: () =&gt; {<br>
-okCallBack();<br>
-},<br>
-onCancel: () =&gt; {<br>
-cancelCallBack();<br>
-}<br>
-});<br>
-},<br>
-/</em>*</li>
-<li>通知通用模板</li>
-<li>@param type</li>
-<li>@param title</li>
-<li>@param desc</li>
-<li>@param duration<br>
-<em>/<br>
-notice: (type: string, title: string, desc: string, duration = 6) =&gt; {<br>
-// @ts-ignore<br>
-ViewUI.Notice[type]({<br>
-title,<br>
-desc,<br>
-duration<br>
-});<br>
-},<br>
-/</em>*</li>
-<li>遍历对象 返回 key value</li>
-<li>@param obj</li>
-<li>@param callback<br>
-*/<br>
-forIn: (obj: any, callback: any) =&gt; {<br>
-Object.entries(obj).forEach(entry =&gt; {<br>
-callback(...entry);<br>
-});<br>
-}<br>
-};<br>
-export default utils;</li>
-</ul>
-<p>vueTools</p>
-<p>/**</p>
-<ul>
-<li>@FileName vueTools.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>import createRoutes from './createRoutes';</p>
-<p>/**</p>
-<ul>
-<li>路由权限判断处</li>
-<li>@param to</li>
-<li>@param next</li>
-<li>@param homeName<br>
-<em>/<br>
-const turnTo = (to: any, next: any, homeName = 'home') =&gt; {<br>
-next();<br>
-};<br>
-/</em>*</li>
-<li>创建路由</li>
-<li>@param title 模板通用标题</li>
-<li>@param baseRoutes 基础路由</li>
-<li>@param routes 模板路由</li>
-<li>@param base 路由根地址，线上统一  /</li>
-<li>@param homeName 主界面路由名</li>
-<li>@param mode 路由模式 默认 history<br>
-*/<br>
-const createRoute = (baseRoutes: any = [], routes: any = [], base = '', homeName = 'home', mode: any = 'history') =&gt; {<br>
-if (process.env.NODE_ENV === 'production') base = '';<br>
-const title = '';<br>
-// @ts-ignore<br>
-return createRoutes(baseRoutes, routes, base, homeName, mode, title, turnTo);<br>
-};</li>
-</ul>
-<p>export default {createRoute};</p>
-<p>log</p>
-<p>/**</p>
-<ul>
-<li>@FileName log.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>import moment from './moment';<br>
-import lStorage from './lStorage';<br>
-import fStorage from 'localforage';</p>
-<p>const maxLog = 50;</p>
-<p>const setErrorLog = (key: string, info: any) =&gt; {<br>
-if (typeof window !== 'undefined') {<br>
-lStorage.setItem(key, info);<br>
-} else {<br>
-console.log('[ ERROR ]', info);<br>
-}<br>
-};<br>
-const setApiLog = (key: string, info: any) =&gt; {<br>
-if (typeof window !== 'undefined') {<br>
-// @ts-ignore<br>
-info.time = moment.format();<br>
-const storage = fStorage.createInstance({name: key});</p>
-<pre><code>storage.keys().then((keys: any) =&gt; {
-  if (keys.length &gt; maxLog) {
-    const num = keys.length - maxLog;
-    const newArr = keys.slice(0, num);
-    newArr.forEach((item: any) =&gt; {
-      storage.removeItem(item).then(() =&gt; {
-        // 当值被移除后，此处代码运行
-      }).catch((err: any) =&gt; {
-        console.log(err);
-      });
-    });
-  }
-}).catch((err: any) =&gt; {
-  console.error(err);
-});
-
-// @ts-ignore
-if (info.status !== 200) {
-  setErrorLog('errorMSG', info);
-}
-storage.setItem(moment.format(new Date(), 'x'), JSON.stringify(info));
-</code></pre>
-<p>} else {<br>
-// @ts-ignore<br>
-info.time = moment.format();<br>
-console.log('[ API ]', info);<br>
-}<br>
-};</p>
-<p>const setConsoleLog = (key: string, info: any) =&gt; {<br>
-if (typeof window !== 'undefined') {<br>
-// @ts-ignore<br>
-info.time = moment.format();<br>
-const storage = fStorage.createInstance({name: key});</p>
-<pre><code>storage.keys().then((keys: any) =&gt; {
-  if (keys.length &gt; maxLog) {
-    const num = keys.length - maxLog;
-    const newArr = keys.slice(0, num);
-    newArr.forEach((item: any) =&gt; {
-      storage.removeItem(item).then(() =&gt; {
-        // 当值被移除后，此处代码运行
-      }).catch((err: any) =&gt; {
-        console.log(err);
-      });
-    });
-  }
-}).catch((err: any) =&gt; {
-  console.error(err);
-});
-
-storage.setItem(moment.format(new Date(), 'x'), JSON.stringify(info));
-</code></pre>
-<p>} else {<br>
-// @ts-ignore<br>
-info.time = moment.format();<br>
-console.log('[ API ]', info);<br>
-}<br>
-};</p>
-<p>const consoleMSG = (type: string, title: string, args: any) =&gt; {<br>
-if (type === 'table') {<br>
-// @ts-ignore<br>
-console.log(<code>[ ${type} ] =&gt; ${title}</code>);<br>
-console.table([...args]);<br>
-}<br>
-// @ts-ignore<br>
-console[type](<code>[ ${type} ] =&gt; ${title}</code>, args);<br>
-const consoleInfo = {<br>
-title: title,<br>
-type,<br>
-url: location.pathname + location.search,<br>
-data: args<br>
-};<br>
-setConsoleLog('logStorage', consoleInfo);<br>
-};</p>
-<p>export default {<br>
-setConsoleLog,<br>
-setErrorLog,<br>
-setApiLog,<br>
-info: (title: string, args: any) =&gt; consoleMSG('info', title, args),<br>
-error: (title: string, args: any) =&gt; consoleMSG('error', title, args),<br>
-debug: (title: string, args: any) =&gt; consoleMSG('debug', title, args),<br>
-warn: (title: string, args: any) =&gt; consoleMSG('warn', title, args),<br>
-table: (title: string, args: any) =&gt; consoleMSG('table', title, args)<br>
-};</p>
-<p>Axios</p>
-<p>/**</p>
-<ul>
-<li>@FileName axios.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>import lStorage from './lStorage';<br>
-import ViewUI from 'view-design';<br>
-import tools from './tools';<br>
-import log from './log';<br>
-import axios from 'axios';</p>
-<p>class HttpRequest {<br>
-private baseUrl: string;<br>
-private queue = {};</p>
-<p>constructor(baseUrl = '') {<br>
-this.baseUrl = baseUrl;<br>
-this.queue = {};<br>
-}</p>
-<p>private static apiMsgTemplate(apiInfo: any) {<br>
-return <code>&lt;div style=&quot;font-size: 14px;&quot;&gt;&lt;p style=&quot;color: red;font-size: 14px;&quot;&gt;请截图给管理员，以便快捷修复错误！&lt;/p&gt;&lt;p&gt;错误: ${apiInfo.statusText}&lt;/p&gt;&lt;p&gt;method: ${apiInfo.request.method}&lt;/p&gt;&lt;p style=&quot;margin: 5px 0;&quot;&gt;URL:&lt;br&gt; ${apiInfo.request.url}&lt;/p&gt;&lt;p&gt;参数：&lt;br&gt;${apiInfo.request.data.toString()}&lt;/p&gt;&lt;/div&gt;</code>;<br>
-}</p>
-<p>private getInsideConfig() {<br>
-return {<br>
-baseURL: this.baseUrl,<br>
-timeout: 10000,<br>
-responseType: 'json',<br>
-headers: {<br>
-'If-Modified-Since': 0,<br>
-'Cache-Control': 'no-cache'<br>
-}<br>
-};<br>
-}</p>
-<p>private destroy(url: string) {<br>
-// @ts-ignore<br>
-delete this.queue[url];<br>
-if (!Object.keys(this.queue).length) {<br>
-// @ts-ignore<br>
-ViewUI.LoadingBar.finish();<br>
-}<br>
-}</p>
-<p>private unusualStatus(code: number, apiInfo: any) {<br>
-switch (code) {<br>
-case 0:<br>
-tools.message('info', <code>${apiInfo.statusText}</code>, 10);<br>
-break;<br>
-case 400:<br>
-tools.notice('warning', <code>请求参数错误: ${apiInfo.status}</code>, HttpRequest.apiMsgTemplate(apiInfo), 15);<br>
-break;<br>
-case 401:<br>
-// this.notice('warning', '登录信息', '登录超时或未登录，请重新登录！');<br>
-tools.modal('warning', '登录信息', '登录超时或未登录，请重新登录！', () =&gt; {<br>
-lStorage.setItem('userInfo', '');<br>
-lStorage.setItem('isLogin', false);<br>
-lStorage.setItem('Authorization', '');<br>
-lStorage.setItem('errorMSG', '');<br>
-location.href = '/login?done=' + location.href;<br>
-});<br>
-break;<br>
-case 404:<br>
-tools.notice('info', <code>资源未找到: ${apiInfo.status}</code>, HttpRequest.apiMsgTemplate(apiInfo), 15);<br>
-break;<br>
-case 405:<br>
-tools.notice('warning', <code>请求类型错误: ${apiInfo.status}</code>, HttpRequest.apiMsgTemplate(apiInfo), 15);<br>
-break;<br>
-case 500:<br>
-tools.notice('error', <code>服务器错误: ${apiInfo.status}</code>, HttpRequest.apiMsgTemplate(apiInfo), 15);<br>
-break;<br>
-case 503:<br>
-tools.notice('info', <code>服务器错误: ${apiInfo.status}</code>, '服务器维护中，请稍后再试！', 15);<br>
-break;<br>
-default:<br>
-tools.message('error', <code>${apiInfo.status} : ${apiInfo.statusText}</code>);<br>
-break;<br>
-}<br>
-}</p>
-<p>interceptors(instance: any, url: string) {<br>
-// 请求拦截<br>
-instance.interceptors.request.use(<br>
-(config: any) =&gt; {<br>
-// 添加全局的loading...<br>
-if (!Object.keys(this.queue).length) {<br>
-// @ts-ignore<br>
-ViewUI.LoadingBar.start();<br>
-}<br>
-// @ts-ignore<br>
-this.queue[url] = true;<br>
-return config;<br>
-},<br>
-(error: any) =&gt; Promise.reject(error)<br>
-);</p>
-<pre><code>// axios 响应拦截
-instance.interceptors.response.use(
-  (res: any) =&gt; {
-    this.destroy(url);
-    const {data: {data}, config, request: {responseURL}} = res;
-    const response = res.request;
-
-    const apiInfo = {
-      status: response.status,
-      statusText: (data &amp;&amp; data.msg) || response.statusText,
-      request: {
-        url: responseURL,
-        api: config.baseURL + config.url || '',
-        method: config.method,
-        data: config.data || ''
-      },
-      response: {
-        data: data || ''
-      }
-    };
-
-    log.setApiLog('apiLogStorage', apiInfo);
-    return data || '';
-  },
-  (error: any) =&gt; {
-    this.destroy(url);
-    let apiInfo: any;
-
-    if (error.response) {
-      const {response: {status, statusText, data, config, request: {responseURL}}} = error;
-      apiInfo = {
-        status,
-        statusText: (data &amp;&amp; data.msg) || statusText,
-        request: {
-          url: responseURL,
-          api: config.baseURL + config.url || '',
-          method: config.method,
-          data: config.data || ''
-        },
-        response: {
-          data: data || ''
-        }
-      };
-    } else {
-      const {config, message} = JSON.parse(JSON.stringify(error));
-      const {request} = error;
-      apiInfo = {
-        status: request.status,
-        statusText: message || request.statusText || '',
-        request: {
-          url: '',
-          api: config.baseURL + config.url || '',
-          method: config.method,
-          data: config.data || ''
-        },
-        response: {
-          data: ''
-        }
-      };
-    }
-
-    log.setApiLog('apiLogStorage', apiInfo);
-    this.unusualStatus(apiInfo.status, apiInfo);
-    if (apiInfo.response &amp;&amp; apiInfo.response.data) {
-      return Promise.reject(apiInfo.response.data);
-    }
-    return Promise.reject(error);
-  }
-);
-</code></pre>
-<p>}</p>
-<p>request(options: any) {<br>
-const instance = axios.create();<br>
-options = Object.assign(this.getInsideConfig(), options);<br>
-this.interceptors(instance, options.url);<br>
-return instance(options);<br>
-}<br>
-}</p>
-<p>export default HttpRequest;</p>
-<p>API request</p>
-<p>/**</p>
-<ul>
-<li>@FileName api.request.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/<br>
-import HttpRequest from './axios';<br>
-import lStorage from './lStorage';</li>
-</ul>
-<p>const getTokenToLocalStorage = () =&gt; {<br>
-return lStorage.getItem('Authorization') || '';<br>
-};</p>
-<p>class API {<br>
-private baseUrl: string;<br>
-private axios: any;</p>
-<p>constructor(baseUrl = '') {<br>
-this.baseUrl = baseUrl;<br>
-this.axios = new HttpRequest(baseUrl);<br>
-}</p>
-<p>/**</p>
-<ul>
-<li>post 请求</li>
-<li>@param url 接口url</li>
-<li>@param data 参数</li>
-<li>@param method<br>
-*/<br>
-post(url: string, data: any, method = 'post') {<br>
-return this.axios.request({<br>
-url,<br>
-// data: qs.stringify(data), from 标点传参<br>
-data,<br>
-method,<br>
-headers: {<br>
-Authorization: getTokenToLocalStorage()<br>
-}<br>
-});<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>put 请求</li>
-<li>@param url 接口url</li>
-<li>@param data 参数<br>
-*/<br>
-put(url: string, data: any) {<br>
-return this.post(url, data, 'put');<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>patch 请求</li>
-<li>@param url 接口url</li>
-<li>@param data 参数<br>
-*/<br>
-patch(url: string, data: any) {<br>
-return this.post(url, data, 'patch');<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>get 请求</li>
-<li>@param url 接口url</li>
-<li>@param params 参数</li>
-<li>@param method<br>
-*/<br>
-get(url: string, params: any, method = 'get') {<br>
-return this.axios.request({<br>
-url,<br>
-params,<br>
-method,<br>
-headers: {<br>
-Authorization: getTokenToLocalStorage()<br>
-}<br>
-});<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>delete 请求</li>
-<li>@param url 接口url</li>
-<li>@param params 参数<br>
-*/<br>
-delete(url: string, params: any) {<br>
-return this.get(url, params, 'delete');<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>head 请求</li>
-<li>@param url 接口url</li>
-<li>@param params 参数<br>
-*/<br>
-head(url: string, params: any) {<br>
-return this.get(url, params, 'head');<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>options 请求</li>
-<li>@param url 接口url</li>
-<li>@param params 参数<br>
-*/<br>
-options(url: string, params: any) {<br>
-return this.get(url, params, 'options');<br>
-}</li>
-</ul>
-<p>/**</p>
-<ul>
-<li>axios本版本不支持jsonp 自己拓展一个</li>
-<li>@param url<br>
-*/<br>
-jsonp(url: string) {<br>
-if (!url) {<br>
-console.error('Axios.JSONP 至少需要一个url参数!');<br>
-return;<br>
-}<br>
-return new Promise((resolve: any) =&gt; {<br>
-// @ts-ignore<br>
-window.jsonCallBack = (result: any) =&gt; {<br>
-resolve(result);<br>
-};<br>
-const JSONP = document.createElement('script');<br>
-JSONP.type = 'text/javascript';<br>
-JSONP.src = <code>${url}&amp;callback=jsonCallBack</code>;<br>
-document.getElementsByTagName('head')[0].appendChild(JSONP);<br>
-setTimeout(() =&gt; {<br>
-document.getElementsByTagName('head')[0].removeChild(JSONP);<br>
-}, 500);<br>
-});<br>
-}<br>
-}</li>
-</ul>
-<p>export default API;</p>
-<p>工具类统一导出</p>
-<p>/**</p>
-<ul>
-<li>@FileName index.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/<br>
-import moment from './moment';<br>
-import log from './log';<br>
-import API from './api.request';<br>
-import cookie from './cookie';<br>
-import gbk from './gbk';<br>
-import lStorage from './lStorage';<br>
-import sStorage from './sStorage';<br>
-import tools from './tools';<br>
-import MockJs from './mock';<br>
-import createRoutes from './createRoutes';</li>
-</ul>
-<p>export default {<br>
-...tools,<br>
-moment,<br>
-cookie,<br>
-log,<br>
-API,<br>
-gbk,<br>
-lStorage,<br>
-sStorage,<br>
-MockJs,<br>
-createRoutes<br>
-};</p>
-<p>API &amp; Mock<br>
-相关文件目录</p>
-<p>├─node_modules<br>
-├─public<br>
-│  └─img<br>
-│      └─icons<br>
-├─src<br>
-│  ├─assets<br>
-│  ├─components<br>
-│  │  └─log<br>
-│  ├─data<br>
-│  │  ├─api<br>
-│  │  │  └─test<br>
-│  │  └─mock<br>
-│  │      └─test<br>
-│  ├─layout<br>
-│  ├─libs<br>
-│  ├─router<br>
-│  ├─store<br>
-│  └─views<br>
-└─tests<br>
-└─unit</p>
-<p>api</p>
-<pre><code>1、新建 /src/data/api 目录
-2、新建 /src/data/api/test/index.ts 文件 接口调用配置
-</code></pre>
-<p>/**</p>
-<ul>
-<li>@FileName index.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/<br>
-import tools from '@/libs/index';</li>
-</ul>
-<p>const baseUrl = '/api';<br>
-const api = new tools.API(baseUrl);</p>
-<p>export default {<br>
-// 获取用户信息  http://192.192.192.201:9001/app/mock/1/user/info<br>
-getUserInfoData: () =&gt; api.get('/user/info', {})<br>
-};</p>
-<pre><code>3、新建 /src/data/api/index.ts 文件 导出接口，
-</code></pre>
-<p>/**</p>
-<ul>
-<li>@FileName index.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/<br>
-import test from './test';</li>
-</ul>
-<p>export default {test};</p>
-<pre><code>4、新建 /src/index.ts 文件 所有通用引用配置，方便以后做多入口项目
-</code></pre>
-<p>/**</p>
-<ul>
-<li>@FileName index.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>import Vue from 'vue';<br>
-import ViewUI from 'view-design';<br>
-import tools from '@/libs/index';<br>
-import api from '@/data/api';<br>
-import 'view-design/dist/styles/iview.css';</p>
-<p>Vue.use(ViewUI);</p>
-<p>declare module 'vue/types/vue' {<br>
-interface Vue {<br>
-api: any;<br>
-log: any;<br>
-CDN: any;<br>
-tool: any;<br>
-config: any;<br>
-}<br>
-}<br>
-console.log(process.env);<br>
-Vue.prototype.config = process.env;<br>
-Vue.prototype.log = tools.log;<br>
-Vue.prototype.tool = tools;<br>
-Vue.prototype.api = api;<br>
-Vue.prototype.CDN = (path: string) =&gt; <code>${process.env.VUE_APP_CDN || ''}${path}</code>;<br>
-Vue.config.productionTip = false;</p>
-<pre><code>5、 /src/main.ts 导入/src/index.ts
-</code></pre>
-<p>import Vue from 'vue';<br>
-import App from './App.vue';<br>
-import router from './router';<br>
-import store from './store';</p>
-<p>import '@/index';</p>
-<p>new Vue({<br>
-router,<br>
-store,<br>
-render: h =&gt; h(App)<br>
-}).$mount('#app');</p>
-<pre><code>6、页面调用 api 接口 /src/views/Home.vue
-</code></pre>
-<template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
-</template>
-<script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator';
-  import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
-
-  @Component({
-    components: {
-      HelloWorld
-    }
-  })
-  export default class Home extends Vue {
-    mounted() {
-      this.getUserInfoAction();
-    }
-
-    async getUserInfoAction() {
-      try {
-        const idCard = '33082219510203094X';
-        const data = await this.api.test.getUserInfoData(idCard);
-        this.log.info('接口测试信息 - get', data);
-        return data;
-      } catch (e) {
-        this.log.error('接口测试信息 - get', e);
-      }
-    }
-  }
-</script>
-<p>Mock</p>
-<pre><code>1、新建 /src/data/mock 目录
-2、新建 /src/data/mock/test/index.ts 文件 mock配置，目录结构和api保持一致，方便后期维护
-</code></pre>
-<p>/**</p>
-<ul>
-<li>@FileName index.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/<br>
-import tools from '@/libs/index';</li>
-</ul>
-<p>const baseUrl = '/api';<br>
-const mock = new tools.MockJs(baseUrl);<br>
-mock.get('/user/info', mock.tpl({title: '@title'}));</p>
-<pre><code>3、根目录 .env 文件配置mock开关
-</code></pre>
-<p>NODE_ENV = 'development'<br>
-VUE_APP_MOCK = true</p>
-<pre><code>4、/src/index.ts 导入mock
-</code></pre>
-<p>/**</p>
-<ul>
-<li>@FileName index.ts</li>
-<li>@Author</li>
-<li>@Version V 0.0.1</li>
-<li>@Date</li>
-<li>@Title</li>
-<li>@Desc<br>
-**/</li>
-</ul>
-<p>import Vue from 'vue';<br>
-import ViewUI from 'view-design';<br>
-import tools from '@/libs/index';<br>
-import api from '@/data/api';<br>
-import 'view-design/dist/styles/iview.css';</p>
-<p>/* eslint-disable */<br>
-if (process.env.VUE_APP_MOCK === 'true') require('./data/mock');</p>
-<p>Vue.use(ViewUI);</p>
-<p>declare module 'vue/types/vue' {<br>
-interface Vue {<br>
-api: any;<br>
-log: any;<br>
-CDN: any;<br>
-tool: any;<br>
-config: any;<br>
-}<br>
-}<br>
-console.log(process.env);<br>
-Vue.prototype.config = process.env;<br>
-Vue.prototype.log = tools.log;<br>
-Vue.prototype.tool = tools;<br>
-Vue.prototype.api = api;<br>
-Vue.prototype.CDN = (path: string) =&gt; <code>${process.env.VUE_APP_CDN || ''}${path}</code>;<br>
-Vue.config.productionTip = false;</p>
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>\s\uFEFF\xA0 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
-</li>
-</ol>
-</section>
 ]]></content>
     </entry>
 </feed>
