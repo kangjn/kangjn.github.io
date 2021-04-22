@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-22T08:13:37.672Z</updated>
+    <updated>2021-04-22T09:09:27.818Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,248 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[微服务拆分]]></title>
+        <id>https://kangjn.github.io/post/wei-fu-wu-chai-fen/</id>
+        <link href="https://kangjn.github.io/post/wei-fu-wu-chai-fen/">
+        </link>
+        <updated>2021-04-22T09:04:54.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="一-拆分"><strong>一、拆分</strong></h3>
+<p>**1、新浪微博微服务从纵横两个维度来划分，简单粗暴：</p>
+<p><strong>1.1 纵向拆分</strong></p>
+<p>从业务维度进行拆分。标准是按照业务的关联程度来决定，关联比较密切的业务适合拆分为一个微服务，而功能相对比较独立的业务适合单独拆分为一个微服务。</p>
+<p><strong>1.2 横向拆分</strong></p>
+<p>从公共且独立功能维度拆分。标准是按照是否有公共的被多个其他服务调用，且依赖的资源独立不与其他业务耦合。</p>
+<p>纵向以业务为基准，关系铁的在一起；横向功能独立的在一起。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/115502.png" alt="img" loading="lazy"></figure>
+<p><strong>2.1 服务拆分要迎合业务的需要</strong></p>
+<p>充分考虑业务独立性和专业性，避免以团队来定义服务边界，从而出现“土匪”抢地盘，影响团队信任。</p>
+<p>这个维度和上面的类似，但是强调的是业务和团队成员的各自独立性，对上面是一种很好的补充。</p>
+<p><strong>2.2 拆分后的维护成本要低于拆分前</strong></p>
+<p>这里的维护成本包括：人力、物力、时间。</p>
+<p>这里的成本对大部分中小团队来说都是必须要考虑的重要环节，如果投入和收益不能成正比，或者超出领导的预算或者市场窗口，那么先进的技术就是绊脚石，千万不要迷恋技术，所谓工程师思维千万要不得。</p>
+<p><strong>2.3 拆分不仅仅是架构的调整，组织结构上也要做响应的适应性优化</strong></p>
+<p>确保拆分后的服务由相对独立的团队负责维护。</p>
+<p>这句话怎么理解呢？传统的团队划分是按照产品部、前端、后端横向划分，微服务化以后的团队可能就会是吃一张披萨饼的人数，产品、前端、后端被归类到服务里面，以服务为中心来分配人数。</p>
+<p>把具有不同扩展性要求的服务拆分出来，分别进行部署，降低成本，提高效率。比如全文搜索服务。</p>
+<p>这点和上面的按功能独立性来拆分有点类似，功能独立其实就是面向可扩展性。</p>
+<p><strong>2.5 考虑软件发布频率</strong></p>
+<p>比如把20%经常变动的部分进行抽离，80%不经常变动的单独部署和管理。说白了就是按照8/2原则进行拆分。这个拆分的好处很明显，可以尽可能的减少发布产生的后遗症，比如用户体验、服务相互干扰等。</p>
+<p>但是这里有一个问题，假如20%的服务分属于不同的业务层面，那该怎么办？所以这里的拆分应该有个优先级，在拆分相互冲突的时候应该要优先考虑权重比较高的那个。</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/303502.png" alt="img" loading="lazy"></figure>
+<p>**3、另一种拆分：</p>
+<p><strong>3.1 基于业务逻辑</strong></p>
+<p>将系统中的业务按照职责范围进行识别，职责相同的划分为一个单独的服务。这种业务优先的方式在前面两种姿势当中都出现过，可见是最基本，最重要的划分方式（没有之一）。</p>
+<p><strong>3.2 基于稳定性</strong></p>
+<p>将系统中的业务模块按照稳定性进行排序。稳定的、不经常修改的划分一块；将不稳定的，经常修改的划分为一个独立服务。比如日志服务、监控服务都是相对稳定的服务，可以归到一起。这个很类似上面提到的2/8原则，80%的业务是稳定的。</p>
+<p>至此你会发现服务的拆分真的没有绝对的标准，只有合理才是标准。</p>
+<p><strong>3.3 基于可靠性</strong></p>
+<p>同样，将系统中的业务模块按照可靠性进行排序。对可靠性要求比较高的核心模块归在一起，对可靠性要求不高的非核心模块归在一块。</p>
+<p>这种拆分的高明可以很好的规避因为一颗老鼠屎坏了一锅粥的单体弊端，同时将来要做高可用方案也能很好的节省机器或带宽的成本。</p>
+<p><strong>3.4 基于高性能</strong></p>
+<p>同上，将系统中的业务模块按照对性能的要求进行优先级排序。把对性能要求较高的模块独立成一个服务，对性能要求不高的放在一起。比如全文搜索，商品查询和分类，秒杀就属于高性能的核心模块。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/457502.png" alt="img" loading="lazy"></figure>
+<p><strong>4、盘点</strong></p>
+<p>以上不同拆分各有千秋，异曲同工！</p>
+<ul>
+<li>对业务逻辑均不约而同的放在第一位。</li>
+<li>对业务模块的稳定性和可靠性，对功能的独立性、可扩展性都有相似的看法</li>
+<li>强调拆分应该是多选，而不是单选。具体情况具体分析，可以自由灵活排列组合。</li>
+</ul>
+<h3 id="二-题外话">**二、题外话</h3>
+<p>如果你把上面的划分角度背下来了拿去现场套，可能还会遇到矛盾或争议。</p>
+<p><strong>1、业务矛盾</strong></p>
+<p>假如我们按照业务来划分，根据粒度大小，可能存在以下两种：</p>
+<ul>
+<li>第一种分为商品、交易、用户3个服务；</li>
+<li>第二种分为商品、订单、支付、物流、买家、卖家6个服务。</li>
+</ul>
+<p>3 VS 6，这该怎么办？</p>
+<p>如果你的团队只有9个人，那么分成3个是合理的，如果有18个人，那么6个服务是合理的。这里引入团队成员进行协助拆分。</p>
+<p>可见拆分的姿势不是单选，而是多选的。这个时候必须要考虑团队成员数量。</p>
+<p>在拆分遇到争议的时候，一般情况下我们增加一项拆分条件，虽然不是充要条件，但至少我们的答案会更加接近真理。</p>
+<p>除了业务可能存在争议，其他的划分也会有争议，比如一个独立的服务到底需要多少人员的配置？</p>
+<p><strong>2、三个火枪手(人员配置)</strong></p>
+<p>上面提到的人员数量配置，这里为什么是9和18呢？(这里的团队配置参考李云华前辈提到的三个火枪手的观点)</p>
+<p>换一种问法，为什么说是三个人分配一个服务（当然，成员主要是后端人员）？</p>
+<ul>
+<li>假设是1个人，请个假、生个病都不行。一个人会遇到单点的问题，所以不合理。</li>
+<li>假设是2个人，终于有备份了，但是抽离一个后，剩下1个压力还是很大，不合理。</li>
+<li>假设是3个人，抽离一个还有2个在。而且数字3是个稳定而神奇数字，用得好事半功倍。特别是遇到技术讨论，3个人相对周全，如果是2个可能会各持己见，带有自我的偏见和盲区。</li>
+</ul>
+<p>那么这个3是不是就是稳定的数量呢？</p>
+<p>假设你做的是边开飞机边换引擎的重写工作，那么前期3个人都可能捉襟见肘。但是到了服务后期，你可能1个就够了。</p>
+<p>所以3在我的理解应该是一个基准线，不同的时间段会有上下波动，但是相对稳定。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[一份微服务架构手稿图]]></title>
+        <id>https://kangjn.github.io/post/yi-fen-wei-fu-wu-jia-gou-shou-gao-tu/</id>
+        <link href="https://kangjn.github.io/post/yi-fen-wei-fu-wu-jia-gou-shou-gao-tu/">
+        </link>
+        <updated>2021-04-22T08:26:56.000Z</updated>
+        <content type="html"><![CDATA[<p>什么是微服务？</p>
+<p>微服务 Microservices 之父，马丁.福勒，对微服务大概的概述如下：</p>
+<p>就目前而言，对于微服务业界并没有一个统一的、标准的定义（While there is no precise definition of this architectural style ) 。</p>
+<p>但通常在其而言，微服务架构是一种架构模式或者说是一种架构风格，它提倡将单一应用程序划分成一组小的服务，每个服务运行独立的自己的进程中，服务之间互相协调、互相配合，为用户提供最终价值。</p>
+<p>服务之间采用轻量级的通信机制互相沟通（通常是基于 HTTP 的 RESTful API ) 。每个服务都围绕着具体业务进行构建，并且能够被独立地部署到生产环境、类生产环境等。</p>
+<p>另外，应尽量避免统一的、集中式的服务管理机制，对具体的一个服务而言，应根据业务上下文，选择合适的语言、工具对其进行构建，可以有一个非常轻量级的集中式管理来协调这些服务。可以使用不同的语言来编写服务，也可以使用不同的数据存储。</p>
+<p>根据马丁.福勒的描述，我总结了以下几点：</p>
+<figure data-type="image" tabindex="1"><a href="http://img.javastack.cn/1590629991746502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/746502.png" alt="img" loading="lazy"></a></figure>
+<p><strong>①小服务</strong></p>
+<p>小服务，没有特定的标准或者规范，但他在总体规范上一定是小的。</p>
+<p><strong>②进程独立</strong></p>
+<p>每一组服务都是独立运行的，可能我这个服务运行在 Tomcat 容器，而另一个服务运行在 Jetty 上。可以通过进程方式，不断的横向扩展整个服务。</p>
+<p><strong>③通信</strong></p>
+<p>过去的协议都是很重的，就像 ESB，就像 SOAP，轻通信，这意味着相比过去更智能更轻量的服务相互调用，就所谓 smart endpoints and dumb pipes。</p>
+<p>这些 Endpoint 都是解耦的，完成一个业务通信调用串起这些 Micro Service 就像是 Linux 系统中通过管道串起一系列命令业务。</p>
+<p>过去的业务，我们通常会考虑各种各样的依赖关系，考虑系统耦合带来的问题。微服务，可以让开发者更专注于业务的逻辑开发。</p>
+<p><strong>④部署</strong></p>
+<p>不止业务要独立，部署也要独立。不过这也意味着，传统的开发流程会出现一定程度的改变，开发的适合也要有一定的运维职责。</p>
+<p><strong>⑤管理</strong></p>
+<p>传统的企业级 SOA 服务往往很大，不易于管理，耦合性高，团队开发成本比较大。</p>
+<p>微服务，可以让团队各思其政的选择技术实现，不同的 Service 可以根据各自的需要选择不同的技术栈来实现其业务逻辑。</p>
+<h2 id="微服务的利与弊">微服务的利与弊</h2>
+<p>为什么用微服务呢？因为好玩？不是的。下面是我从网络上找到说的比较全的优点：</p>
+<ul>
+<li>优点是每个服务足够内聚，足够小，代码容易理解这样能聚焦一个指定的业务功能或业务需求。</li>
+<li>开发简单、开发效率提高，一个服务可能就是专一的只干一件事。</li>
+<li>微服务能够被小团队单独开发，这个小团队是 2 到 5 人的开发人员组成。</li>
+<li>微服务是松耦合的，是有功能意义的服务，无论是在开发阶段或部署阶段都是独立的。</li>
+<li>微服务能使用不同的语言开发。</li>
+<li>易于和第三方集成，微服务允许容易且灵活的方式集成自动部署，通过持续集成工具，如 Jenkins，Hudson，bamboo。</li>
+<li>微服务易于被一个开发人员理解，修改和维护，这样小团队能够更关注自己的工作成果。无需通过合作才能体现价值。微服务允许你利用融合最新技术。</li>
+<li>微服务只是业务逻辑的代码，不会和 HTML，CSS 或其他界面组件混合。</li>
+<li>每个微服务都有自己的存储能力，可以有自己的数据库，也可以有统一数据库。</li>
+</ul>
+<p>总的来说，微服务的优势，就是在于，面对大的系统，可以有效的减少复杂程度，使服务架构的逻辑更清晰明了。</p>
+<p>但是这样也会带来很多问题，就譬如分布式环境下的数据一致性，测试的复杂性，运维的复杂性。</p>
+<h2 id="什么组织适合使用微服务">什么组织适合使用微服务？</h2>
+<p>微服务带了种种优点，种种弊端，那么什么组织适合使用微服务？</p>
+<p>①墨菲定律（设计系统）和康威定律（系统划分）<br>
+康威定律，是一个五十多年前就被提出来的微服务概念。在康威的这篇文章中，最有名的一句话就是：</p>
+<blockquote>
+<p>Organizations which design systems are constrained to produce designs which are copies of the communication structures of these  organizations.</p>
+<p>-Melvin Conway(1967)</p>
+</blockquote>
+<p>中文直译大概的意思就是：设计系统的组织，其产生的设计等同于组织之内、组织之间的沟通结构。</p>
+<figure data-type="image" tabindex="2"><a href="http://img.javastack.cn/1590629991985502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/985502.png" alt="img" loading="lazy"></a></figure>
+<p>②架构演化</p>
+<p>架构是不断演化出来的，微服务也是这样，当从各大科技公司，规模大到一定程度，完全需要演化成更进一步管理的技术架构体系。[淘宝千万并发，14 次架构演进]，推荐大家看下。</p>
+<p>[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/233502.png" alt="img" loading="lazy">]</p>
+<p>传统的团队，都是面向过程化的，产品想完了去找策划，策划完了找开发，接着顺着一步一步找。</p>
+<p>我们做技术都是为了产品的，一旦过程出来了什么问题，回溯寻找问题会非常耗时。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/387502.png" alt="img" loading="lazy"></figure>
+<p>使用了微服务架构体系，团队组织方式需要转变成跨职能团队，即每个团队都有产品专家，策划专家，开发专家，运维专家，他们使用 API 方式发布他们的功能，而平台使用他们的功能发布产品。</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/717502.png" alt="img" loading="lazy"></figure>
+<h2 id="微服务技术架构体系">微服务技术架构体系</h2>
+<p>下面我分享一下大部分公司都使用的微服务技术架构体系：</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/956502.png" alt="img" loading="lazy"></figure>
+<h3 id="服务发现">服务发现</h3>
+<p>主流的服务发现，分为三种：</p>
+<p><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/87502.jpg" alt="1590629993087502" loading="lazy">第一种，开发人员开发了程序以后，会找运维配一个域名，服务的话通过 DNS 就能找到我们对应的服务。</p>
+<p>缺点是，由于服务没有负载均衡功能，对负载均衡服务，可能会有相当大的性能问题。</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/191502.jpg" alt="191502" loading="lazy"></figure>
+<p>第二种，是目前普遍的做法。可以参考 Zuul 网关，每一个服务都通过服务端内置的功能注册到注册中心，服务消费者不断轮询注册中心发现对应的服务，使用内置负载均衡调用服务。</p>
+<p>缺点是，对多语言环境不是很好，你需要单独给消费者的客户端开发服务发现和负载均衡功能。当然了，这个方法通常都是用在 Spring Cloud 上的。</p>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/640383.jpg" alt="img" loading="lazy"></figure>
+<p>第三种，是将客户端和负载均衡放在同一个主机，而不是同一个进程内。</p>
+<ul>
+<li>[这种方法相对第一种第二种方法来说，改善了他们的缺点，但是会极大增加运维成本。]</li>
+</ul>
+<h3 id="网关">[网关]</h3>
+<p>微服务的网关是什么？我们可以联系生活实际想一下。每一个大的公司，都会有一偏属于自己的建筑区，而这建筑区内，都有不少的门卫。如果有外来人员进入公司，会先和门卫打好招呼，才能进去。</p>
+<p>将生活实际联系到微服务上，就不难理解网关的意思了：</p>
+<figure data-type="image" tabindex="8"><a href="http://img.javastack.cn/1590629993612502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/640324.jpg" alt="img" loading="lazy"></a></figure>
+<p>网关的作用如下：</p>
+<ul>
+<li>反向路由：很多时候，公司不想让外部人员看到我们公司的内部，就需要网关来进行反向路由。即将外部请求转换成内部具体服务调用。</li>
+<li>安全认证：网络中会有很多恶意访问，譬如爬虫，譬如黑客攻击，网关维护安全功能。</li>
+<li>限流熔断：当请求很多服务不堪重负，会让我们的服务自动关闭，导致不能用服务。限流熔断可以有效的避免这类问题。</li>
+<li>日志监控：所有的外面的请求都会经过网关，这样我们就可以使用网关来记录日志信息。</li>
+<li>灰度发布，蓝绿部署。是指能够平滑过渡的一种发布方式。在其上可以进行 A/B testing。即让一部分用户继续用产品特性 A，一部分用户开始用产品特性 B，如果用户对 B 没有什么反对意见，那么逐步扩大范围，把所有用户都迁移到 B 上面来。</li>
+</ul>
+<p>[开源网关 Zuul 架构：]</p>
+<figure data-type="image" tabindex="9"><a href="http://img.javastack.cn/1590629993902502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/640321.jpg" alt="img" loading="lazy"></a></figure>
+<p>Zuul 网关核心其实是一个 Servlet，所有请求都会经过 Zuul Servlet 传到 ZuulFilter Runner，然后分发到三种过滤器。</p>
+<p>先说说架构图左半部分，分别是使用 Groovy 实现的前置路由过滤器，路由过滤器，后置路由过滤器。</p>
+<p>一般请求都会先经过前置路由过滤器处理，一般的自定义 Java 封装逻辑也会在这里实现。</p>
+<p>路由过滤器，实现的是找到对应的微服务进行调用。调用完了，响应回来，会经过后置路由过滤器，通过后置路由过滤器我们可以封装日志审计的处理。</p>
+<p>可以说 Zuul 网关最大的特色就是它的三层过滤器。是 Zuul 网关设计的自定义过滤器加载机制。</p>
+<p>网关内部会有生产者消费者模型，自动的将过滤器脚本发布到 Zuul 网关读取加载运行。</p>
+<h3 id="配置中心">配置中心</h3>
+<p>以前，开发人员把配置文件放在开发文件里面，这样会有很多隐患。譬如，配置规范不同，无法追溯配置人员。</p>
+<p>一旦需要大规模改动配置，改动时间会很长，无法追溯配置人员，从而影响整个产品，后果是我们承担不起的。</p>
+<p>因此就有配置中心这个喽！现在的开源中心有百度配置中心 Disconf，Spring Cloud Config，Apollo。</p>
+<p>今天重点说说现在应用质量不错的配置中心，携程开源的阿波罗（Apollo）：</p>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/781502.png" alt="img" loading="lazy"></figure>
+<p>Apollo 的配置中心规模比较大，本地应用会有响应的配置中心客户端，可以定时同步配置中心里的配置。如果配置中心怠机，会使用缓存来进行配置。关注微信公众号：Java技术栈，在后台回复：架构，可以获取我整理的 N 篇最新架构干货。</p>
+<h3 id="通讯方式">通讯方式</h3>
+<p>关于通讯方式，一般市面也就是两种远程调用方式，我整理了一个表格：</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/516502.png" alt="img" loading="lazy"></figure>
+<h3 id="监控预警">监控预警</h3>
+<p>监控预警对于微服务很重要，一个可靠的监控预警体系对微服务运行至关重要。</p>
+<p>一般监控分为如下层次：</p>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/744502.png" alt="img" loading="lazy"></figure>
+<p>从基础设施到用户端，层层有监控，全方位，多角度，每一个层面都很重要。</p>
+<p>总体来说，微服务可分为 5 个监控点：</p>
+<ul>
+<li>日志监控</li>
+<li>Metrics 监控</li>
+<li>健康检查</li>
+<li>调用链检查</li>
+<li>告警系统</li>
+</ul>
+<p><strong>①监控架构</strong></p>
+<p>下面的图是大部分公司的一种监控架构图。每一个服务都有一个 Agent，Agent 收集到关键信息，会传到一些 MQ 中，为了解耦。</p>
+<p>同时将日志传入 ELK，将 Metrics 传入 InfluxDB 时间序列库。而像 Nagios，可以定期向 Agent 发起信息检查微服务。关注微信公众号：Java技术栈，在后台回复：架构，可以获取我整理的 N 篇最新架构干货。</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/874502.png" alt="img" loading="lazy"></figure>
+<p><strong>②调用链监控 APM</strong></p>
+<p>很多公司都有调用链监控，就譬如阿里有鹰眼监控，点评的 Cat，大部分调用链监控（没错，我指的 Zipkin）架构是这样的：</p>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/055502.jpg" alt="055502" loading="lazy"></figure>
+<p>当请求进入 Web 容器的时候，会经过创建 Tracer，连接 Spans（模拟潜在的分布式工作的延迟，该模块还包含在系统网络间传递跟踪上下文信息的工具包，如通过 HTTP Headers）。</p>
+<p>Spans 有一个上下文，其中包含 Tracer 标识符，将其放在表示分布式操作的树的正确位置。</p>
+<p>当我们把图中的各种 Span 放到后端的时候，我们的服务调用链会动态的生成调用链。</p>
+<p>下面是一些市场上用的比较多的调用链监控对比：</p>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/193502.jpg" alt="193502" loading="lazy"></figure>
+<h3 id="熔断-隔离-限流-降级">熔断、隔离、限流、降级</h3>
+<p>面对巨大的突发流量下，大型公司一般会采用一系列的熔断（系统自动将服务关闭防止让出现的问题最大化）、隔离（将服务和服务隔离，防止一个服务挂了其他服务不能访问）、限流（单位时间内之允许一定数量用户访问）、降级（当整个微服务架构整体的负载超出了预设的上限阈值或即将到来的流量预计将会超过预设的阈值时，为了保证重要或基本的服务能正常运行，我们可以将一些不重要或不紧急的服务或任务进行服务的延迟使用或暂停使用）措施。</p>
+<p>下面介绍一下 Hystrix 的运行流程：</p>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/492502.png" alt="img" loading="lazy"></figure>
+<p>Hystrix 停止开发，Spring Cloud 何去何从？</p>
+<p>每一个微服务调用时，都会使用 Hystrix 的 Command 方式（上图的左上角那个），然后使用 Command 同步的，或者是响应式的，或者是异步的，判断电路是否熔断（顺着图从左往右看），如果断路则走降级 Fallback。</p>
+<p>如果这个线闭合着，但是线程资源没了，队列满了，则走限流措施（看图的第 5 步）。</p>
+<p>如果走完了，执行成功了，则走 run() 方法，获取 Response，但是这个过程如果出错了，则继续走降级 Fallback。</p>
+<p>同时，看图最上面有一个后缀是 Health 的，这是一个计算整个链路是否健康的组件，每一步操作都被它记录着。</p>
+<h3 id="容器与服务编排引擎">容器与服务编排引擎</h3>
+<p>从物理机到虚拟机，从虚拟机到容器；从物理集群到 OpenStack，OpenStack 到 Kubernetes；科技不断的变化，我们的认知也没刷新。</p>
+<p>我们从容器开始说起，它首先是一个相对独立的运行环境，在这一点有点类似于虚拟机，但是不像虚拟机那样彻底。</p>
+<p>虚拟机会将虚拟硬件、内核（即操作系统）以及用户空间打包在新虚拟机当中，虚拟机能够利用“虚拟机管理程序”运行在物理设备之上。</p>
+<p>虚拟机依赖于 Hypervisor，其通常被安装在“裸金属”系统硬件之上，这导致 Hypervisor 在某些方面被认为是一种操作系统。</p>
+<p>一旦 Hypervisor 安装完成， 就可以从系统可用计算资源当中分配虚拟机实例了，每台虚拟机都能够获得唯一的操作系统和负载（应用程序）。</p>
+<p>简言之，虚拟机先需要虚拟一个物理环境，然后构建一个完整的操作系统，再搭建一层 Runtime，然后供应用程序运行。</p>
+<p>对于容器环境来说，不需要安装主机操作系统，直接将容器层（比如 LXC 或 Libcontainer）安装在主机操作系统（通常是 Linux 变种）之上。</p>
+<p>在安装完容器层之后，就可以从系统可用计算资源当中分配容器实例了，并且企业应用可以被部署在容器当中。</p>
+<p>但是，每个容器化应用都会共享相同的操作系统(单个主机操作系统)。容器可以看成一个装好了一组特定应用的虚拟机，它直接利用了宿主机的内核，抽象层比虚拟机更少，更加轻量化，启动速度极快。</p>
+<p>相比于虚拟机，容器拥有更高的资源使用效率，因为它并不需要为每个应用分配单独的操作系统——实例规模更小、创建和迁移速度也更快。这意味着相比于虚拟机，单个操作系统能够承载更多的容器。</p>
+<p>云提供商十分热衷于容器技术，因为在相同的硬件设备当中，可以部署数量更多的容器实例。</p>
+<p>此外，容器易于迁移，但是只能被迁移到具有兼容操作系统内核的其他服务器当中，这样就会给迁移选择带来限制。</p>
+<p>因为容器不像虚拟机那样同样对内核或者虚拟硬件进行打包，所以每套容器都拥有自己的隔离化用户空间，从而使得多套容器能够运行在同一主机系统之上。</p>
+<p>我们可以看到全部操作系统层级的架构都可实现跨容器共享，惟一需要独立构建的就是二进制文件与库。</p>
+<p>正因为如此，容器才拥有极为出色的轻量化特性。我们最常用的容器是 Docker。</p>
+<p><strong>①容器编排</strong></p>
+<p>过去虚拟机可以通过云平台 OpenStack 管理虚拟化，容器时代如何管理容器呢？这就要看看容器编排引擎了。</p>
+<p>Apache Mesos：Mesos 是基于 Master，Slave 架构，框架决定如何利用资源，Master 负责管理机器，Slave 会定期的将机器情况报告给 Master，Master 再将信息给框架。Master 是高可用的，因为 ZK，也有 Leader 的存在。</p>
+<p>下面是架构图：</p>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/731502.jpg" alt="731502" loading="lazy"></figure>
+<p>Kubernetes：Kubernetes 是最近十分火热的开源容器编排引擎</p>
+<figure data-type="image" tabindex="18"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/981502.jpg" alt="981502" loading="lazy"></figure>
+<p>Kubernetes 设计理念和功能其实就是一个类似 Linux 的分层架构，先说说每一个 Kubernetes 节点内部，kubelet 管理全局全局 pod，而每一个 pod 承载着一个或多个容器，kube-proxy 负责网络代理和负载均衡。</p>
+<p>Kubernetes 节点外部，则是对应的控制管理服务器，负责统一管理各个节点调度分配与运行。</p>
+<p><strong>②服务网格化</strong></p>
+<p>关于服务网络化，后面会更加深入的为大家进行讲解。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[微服务介绍]]></title>
         <id>https://kangjn.github.io/post/wei-fu-wu-jie-shao/</id>
@@ -2204,213 +2446,6 @@ hello-world      latest     fce289e99eb9    9 months ago     1.84kB</p>
 <p>docker ps命令用于显示当前系统中正在运行的 Docker 容器，示例如下：</p>
 <p>docker ps</p>
 <p>注意，一些 Docker 容器会在完成任务后立即关闭，在docker ps的结果列表中，这种 Docker 容器很有可能会很长时间都不可见。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Docker 教程（二）：Dockerfile]]></title>
-        <id>https://kangjn.github.io/post/lesslessdocker-jiao-cheng-greatergreater-er-dockerfile/</id>
-        <link href="https://kangjn.github.io/post/lesslessdocker-jiao-cheng-greatergreater-er-dockerfile/">
-        </link>
-        <updated>2021-04-21T03:07:15.000Z</updated>
-        <content type="html"><![CDATA[<p>Dockerfile包含一组关于如何构建Docker镜像的说明，通过<code>docker build</code>命令执行Dockerfile文件，可以构建一个Docker镜像，本文介绍了如何编写Dockerfile文件以及构建一个Docker镜像。</p>
-<h2 id="dockerfile的好处">Dockerfile的好处</h2>
-<p>Dockerfile文件以书面形式说明了如何构建一个Docker镜像，Docker镜像通常包含如下内容：</p>
-<ul>
-<li>首先需要一个基本的Docker镜像，在这个基础Docker镜像上构建自己的Docker镜像。</li>
-<li>一组需要安装在Docker镜像中的工具和应用。</li>
-<li>一组需要复制到Docker镜像中的文件（比如配置文件）。</li>
-<li>可能需要在防火墙中打开的网络（TPC/UDP）端口或其他。</li>
-<li>等等。。。</li>
-</ul>
-<p>首先，在Dockerfile文件中以书面形式说明这些，就意味着，我们不用特意记住应用程序如何安装，包括操作系统什么要求、需要安装的应用程序、需要赋值的文件、需要打开的网络端口等，这些内容都被记录在Dockerfile中。</p>
-<p>另外，通过Dockerfile文件构建Docker镜像，我们不需要手动执行这些繁琐重复且容易出错的工作。Docker会自动做这些事情，简单、快速、且不容易出错。</p>
-<p>第三，我们很容易和其他人分享Dockerfile文件，并且他们可以自己构建Docker镜像。</p>
-<p>第四，Dockerfile很容易存储在Git这样的版本控制器中，这样就可以跟踪Dockerfile（服务器、应用配置）的变更记录。版本控制器也可以很容易的让人们协同合作，比如在Dockerfile上，以及分享Dockerfile。</p>
-<h2 id="dockerfile的结构">Dockerfile的结构</h2>
-<p>Dockerfile包含一组指令，每个指令有一个命令和参数组成，类似于命令行可执行文件。下面是一个Dockerfile简单示例：</p>
-<pre><code class="language-dockerfile"># 基础镜像
-FROM ubuntu:latest
-
-# 这里可以有更多安装软件和复制文件到镜像中的说明。
-COPY    /myapp/target/myapp.jar    /myapp/myapp.jar
-
-# 在Docker容器中执行的命令。
-CMD echo Starting Docker Container
-</code></pre>
-<h2 id="docker基础镜像">Docker基础镜像</h2>
-<p>Docker镜像是由层组成，每一层都会为最终的Docker镜像添加一些内容。每一个层实际上都是一个单独的Docker镜像，所以说，Docker镜像是由一个或多个层镜像组成，我们可以在其上添加自己的层。</p>
-<p>当通过Dockerfile文件指定自己的Docker镜像时，通常是从一个Docker基础镜像开始。这是另一个Docker镜像，可以在其上构建自己的Docker镜像。这个Docker基础镜像本身可能也包含多个层，并且是基于另一个基础镜像构建的。</p>
-<p>我们可以使用<code>From</code>命令在Dockerfile文件中指定Docker镜像作为基础镜像，如下节所述。</p>
-<h2 id="maintainer">MAINTAINER</h2>
-<p><code>MAINTAINER</code>命令用于说明谁在维护这个Dockerfile文件。比如：</p>
-<pre><code class="language-dockerfile">MAINTAINER   Joe Blocks &lt;joe@blocks.com&gt;
-</code></pre>
-<p><code>MAINTAINER</code>命令并不常用，因为这类信息在Git存储或其他地方有了。</p>
-<h2 id="from">FROM</h2>
-<p><code>FROM</code>命令用于指定Docker基础镜像，如果是从原始Linux镜像开始，可以使用如下命令：</p>
-<pre><code class="language-dockerfile"># 基础镜像
-FROM ubuntu:latest
-</code></pre>
-<h2 id="cmd">CMD</h2>
-<p><code>CMD</code>命令用于指定启动Docker容器是需要执行的命令，该容器是基于此Dockerfile构建的Docker镜像，下面是一些Dockerfile的<code>CMD</code>示例：</p>
-<pre><code class="language-dockerfile">CMD echo Docker container started.
-</code></pre>
-<p>本例是打印“Docker container started”这行文本。</p>
-<p>下一个<code>CMD</code>示例是启动一个java应用：</p>
-<pre><code class="language-dockerfile">CMD java -cp /myapp/myapp.jar com.jenkov.myapp.MainClass arg1 arg2 arg3
-</code></pre>
-<h2 id="copy">COPY</h2>
-<p><code>COPY</code>命令将一个或多个文件从主机（从Dockerfile文件构建Docker镜像的机器）复制到Docker镜像中，可以复制的内容包括文件或目录，下面是一个示例：</p>
-<pre><code class="language-dockerfile">COPY    /myapp/target/myapp.jar    /myapp/myapp.jar
-</code></pre>
-<p>这个例子是把主机的/myapp/target/myapp.jar文件复制到Docker进行中的/myapp/myapp.jar文件。第一个参数是主机路径（从哪里来），第二个参数是Docker镜像的路径（到哪里去）。</p>
-<p>我们还可以复制一个目录到Docker镜像中，比如：</p>
-<pre><code class="language-dockerfile">COPY    /myapp/config/prod    /myapp/config
-</code></pre>
-<p>这个例子是把主机的/myapp/config/prod目录复制到Docker镜像中的/myapp/config目录。</p>
-<p>我们还可以复制多个文件到Docker镜像中的一个目录中，比如：</p>
-<pre><code class="language-dockerfile">COPY    /myapp/config/prod/conf1.cfg   /myapp/config/prod/conf2.cfg   /myapp/config/
-</code></pre>
-<p>这个例子是将主机的/myapp/config/prod/conf1.cfg文件和/myapp/conig/prod/conf2.cfg文件复制到Docker镜像中的/myapp/config/目录中。注意，目标目录必须以/（斜杠）结束才能工作。</p>
-<h2 id="add">ADD</h2>
-<p><code>ADD</code>命令与<code>COPY</code>命令工作方式相同，只有一些细微的差别：</p>
-<ul>
-<li><code>ADD</code>命令可以复制并提取TAR文件到Docker镜像中。</li>
-<li><code>ADD</code>命令可以通过HTTP下载文件，并复制到Docker镜像中。</li>
-</ul>
-<p>下是一些示例：</p>
-<pre><code class="language-dockerfile">ADD    myapp.tar    /myapp/
-</code></pre>
-<p>这个例子是将指定的TAR文件解压缩并提取到Docker镜像的/myapp/目录中。</p>
-<p>下面是另一个例子：</p>
-<pre><code class="language-dockerfile">ADD    http://jenkov.com/myapp.jar    /myapp/
-</code></pre>
-<h2 id="env">ENV</h2>
-<p><code>ENV</code>命令是在Docker镜像中设置环境变量，此环境变量可用于<code>CMD</code>命令在Docker镜像内部启动应用程序。举个例子：</p>
-<pre><code class="language-dockerfile">ENV    MY_VAR   123
-</code></pre>
-<p>本例将环境变量<code>MY_VAR</code>设置为值123。</p>
-<h2 id="run">RUN</h2>
-<p><code>RUN</code>可以在Docker镜像中执行命令行指令，执行时机是Docker镜像构建过程中，所以<code>RUN</code>命令只会执行一次。<code>RUN</code>命令可用于在Docker镜像中安装应用程序、提取文件或其他命令行功能，这些操作只需要执行一次，以供Docker镜像后续使用。</p>
-<pre><code class="language-dockerfile">RUN apt-get install some-needed-app
-</code></pre>
-<h2 id="arg">ARG</h2>
-<p><code>ARG</code>命令允许定义一个参数，这个参数可以在通过Dockerfile文件构建Docker镜像时，通过命令参数传递给Docker。比如：</p>
-<pre><code class="language-dockerfile">ARG tcpPort
-</code></pre>
-<p>当执行<code>docker build</code>命令执行Dockerfile构建Docker镜像时，可以指定<code>tcpPort</code>参数，比如：</p>
-<pre><code class="language-dockerfile">docker build --build-arg tcpPort=8080 .
-</code></pre>
-<blockquote>
-<p>注意，<code>--build-arg</code>后面的<code>tcpPort=8080</code>，是将<code>tcpPort</code>参数的值设置为8080。</p>
-</blockquote>
-<p>我们可以通过多个<code>ARG</code>命令定义多个参数，举个例子：</p>
-<pre><code class="language-dockerfile">ARG tcpPort
-ARG useTls
-</code></pre>
-<p>当构建Docker镜像时，必须为所有构建参数提供值。【译者注，1.13版本之前，不提供值会直接报错，1.13版本之后，不提供值不会报错，但是会弹出警告】。举个例子：</p>
-<pre><code class="language-dockerfile">docker build --build-arg tcpPort=8080 --build-arg useTls=true .
-</code></pre>
-<p>我们可以为<code>ARG</code>设置默认值，当构建Docker镜像时，如果没有指定参数值，将使用默认值。举个例子：</p>
-<pre><code class="language-dockerfile">ARG tcpPort=8080
-ARG useTls=true
-</code></pre>
-<p>如果<code>tcpPort</code>和<code>useTls</code>在生成Docker镜像时，都没有设置参数，将使用默认值8080和true。</p>
-<p><code>ARG</code>声明的参数通常在Dockerfile的其他地方引用，比如：</p>
-<pre><code class="language-dockerfile">ARG tcpPort=8080
-ARG useTls=true
-
-CMD start-my-server.sh -port ${tcpPort} -tls ${useTls}
-</code></pre>
-<blockquote>
-<p>注意：两个引用<code>${tcpPort}</code>和<code>${useTls}</code>，引用名是<code>tcpPort</code>和<code>useTls</code>这两个<code>ARG</code>声明的参数。</p>
-</blockquote>
-<pre><code class="language-dockerfile">docker build --build-arg tcpPort=8080
-</code></pre>
-<h2 id="workdir">WORKDIR</h2>
-<p><code>WORKDIR</code>命令指明了Docker镜像中的工作目录，工作目录将对<code>WORKDIR</code>指令之后的所有命令生效，举个例子：</p>
-<pre><code class="language-dockerfile">WORKDIR    /java/jdk/bin
-</code></pre>
-<h2 id="expose">EXPOSE</h2>
-<p><code>EXPOSE</code>命令将对外开放Docker容器中的网络端口，比如，如果Docker容器运行一个web服务器，那么，该web服务器可能需要打开端口80，以便客户端链接到它。举个例子：</p>
-<pre><code class="language-dockerfile">EXPOSE   8080
-</code></pre>
-<p>我们还可以指明打开端口的通信协议，比如：UDP和TCP。下面是设置允许通信协议的示例：</p>
-<pre><code class="language-dockerfile">EXPOSE   8080/tcp 9999/udp
-</code></pre>
-<p>如果没有指定协议，将默认认定为TCP协议。</p>
-<h2 id="volume">VOLUME</h2>
-<p><code>VOLUME</code>命令会在Docker镜像中创建一个目录，这个目录可以挂载到Docker主机上。换句话说，可以在Docker镜像中创建目录，比如<code>/data</code>，这个目录可以在稍后挂载到Docker主机的<code>/container-data/container1</code>目录上。挂载成功后，容器会启动。下面是一个使用<code>VOLUME</code>命令在Dockerfile中定义装载目录的示例：</p>
-<pre><code class="language-dockerfile">VOLUME   /data
-</code></pre>
-<h2 id="entrypoint">ENTRYPOINT</h2>
-<p><code>ENTRYPOINT</code>命令为从该Docker镜像启动Docker容器提供入口点，入口点是Docker容器启动时执行的应用程序或命令。这样，<code>ENTRYPOINT</code>和<code>CMD</code>工作方式类似，不同之处在于，使用<code>ENTRYPOINT</code>时，当<code>ENTRYPOINT</code>执行的应用程序完成时，Docker容器将关闭。因此，<code>ENTRYPOINT</code>使Docker镜像本身成为一个可执行命令，可以启动，完成后关闭。以下是<code>ENTRYPOINT</code>示例：</p>
-<pre><code class="language-dockerfile">ENTRYPOINT java -cp /apps/myapp/myapp.jar com.jenkov.myapp.Main
-</code></pre>
-<p>这个示例将在容器启动时执行Java应用程序的主类<code>com.jenkov.myapp.Main</code>，当应用程序关闭时，Docker容器也会关闭。</p>
-<h2 id="healthcheck">HEALTHCHECK</h2>
-<p><code>HEALTHCHECK</code>命令可以定期执行健康检查，以监视Docker容器中运行的应用程序的运行状况。如果命令返回0，Docker将认为应用程序和容器正常，如果命令返回1，Docker会认为应用程序和容器不正常。示例如下：</p>
-<pre><code class="language-dockerfile">HEALTHCHECK java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
-</code></pre>
-<p>这个示例中使用了java应用程序的<code>com.jenkov.myapp.HealthCheck</code>作为健康检查的命令，我们可以使用任何有意义的健康检查命令。</p>
-<h3 id="健康检查间隔时间">健康检查间隔时间</h3>
-<p>默认情况下，Docker每30秒执行一次<code>HEALTHCHECK</code>命令。如果想修改时间间隔，我们可以自定义时间，通过<code>--interval</code>参数，可以指定健康检查的检查间隔时间。下面是一个将<code>HEALTHCHECK</code>间隔设置为60秒的示例：</p>
-<pre><code class="language-dockerfile">HEALTHCHECK --interval=60s java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
-</code></pre>
-<h3 id="健康检查开始时间">健康检查开始时间</h3>
-<p>默认情况下，Docker会立即检查Docker容器的监控状况。但是，有些应用程序可能需要一段时间启动，因此，只有经过某段时间后再进行健康检查才有意义。我们可以使用<code>--start-period</code>参数设置健康检查开始时间。下面是一个将健康检查设置为5分钟的示例，在Docker开始健康检查之前，为容器和应用程序提供300秒（5分钟）的启动时间：</p>
-<pre><code class="language-dockerfile">HEALTHCHECK --start-period=300s java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
-</code></pre>
-<h3 id="健康检查超时时间">健康检查超时时间</h3>
-<p>健康检查很有可能超时，如果<code>HEALTCHECK</code>命令需要超过给定时间限制才完成，Docker将认为健康检查超时。可以使用<code>--timeout</code>参数设置超时时间，如下是设置超时时间为5秒的示例：</p>
-<pre><code class="language-dockerfile">HEALTHCHECK --timeout=5s java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://localhost/healthcheck
-</code></pre>
-<blockquote>
-<p>注意，如果健康检查超时，Docker也会认为容器不健康。</p>
-</blockquote>
-<h3 id="健康检查重复次数">健康检查重复次数</h3>
-<p>如果<code>HEALTHCHECK</code>命令执行失败，有可能是结果返回1，或者执行超时，Docker会在认定容器不健康前，重试3次<code>HEALTHCHECK</code>命令，用于检查Docker容器是否返回健康状态。可以通过<code>--retries</code>设置重试次数。下面是将重试次数设置为5的示例：</p>
-<pre><code class="language-dockerfile">HEALTHCHECK --retries=5 java -cp /apps/myapp/healthcheck.jar com.jenkov.myapp.HealthCheck https://local
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Docker 教程（一）：Docker 是什么]]></title>
-        <id>https://kangjn.github.io/post/docker-jiao-cheng-yi-docker-shi-shi-me/</id>
-        <link href="https://kangjn.github.io/post/docker-jiao-cheng-yi-docker-shi-shi-me/">
-        </link>
-        <updated>2021-04-21T03:04:33.000Z</updated>
-        <content type="html"><![CDATA[<p>Docker 是一种将应用程序和服务器配置打包成 Docker  镜像的方法，使用了一种称为 Dockerfile 的简单打包规范。Docker 镜像可以启动多个多个实例，这些运行的实例被称为 Docker  容器。这个系列的内容主要包括讲解什么是 Docker 镜像、什么是容器、什么是 Dockerfile，以及如何创建、运行和发布等。</p>
-<h2 id="docker-的优势">Docker 的优势</h2>
-<p>使用 Dockerfile 打包应用和服务器配置最大的好处是：</p>
-<ul>
-<li>不会忘记服务器是如何配置的，这些配置信息都记录在 Dockerfile 中。</li>
-<li>很容易在一个全新啊的 Docker 主机上运行应用程序，只需要将应用程序的 Docker 镜像部署到这台 Docker 主机上，然后启动它即可。</li>
-<li>可以使用 Kubernetes 和 Swarm 轻松管理集群中的 Docker 容器。</li>
-<li>目前许多云服务器平台可以很轻松的部署 Docker 容器，Docker 已经成为让云更加独立的部署方案。</li>
-<li>Docker 容器可以很简单的实现在客户自己的服务器上按照你的应用程序。</li>
-</ul>
-<h2 id="什么是-docker-容器">什么是 Docker 容器</h2>
-<p>Linux  操作系统有几个特性：运行在操作系统上运行容器化的应用程序，这些容器化的特性，运行将文件系统和网络在各个容器化应用程序之间彼此分离。换句话说，一个容器化应用程序，不能访问另一个容器化应用程序的文件系统或网络，除非增加特殊配置，允许这种操作。Docker 使用 Linux 的容器化特性，并通过一组易于使用的工具公开这些特性。</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction1.png" alt="什么是 Docker 容器" loading="lazy"></figure>
-<h2 id="docker-容器-vs-虚拟机">Docker 容器 vs. 虚拟机</h2>
-<p>Docker 容器在本质上类似于虚拟机，两者的不同之处在于，虚拟机在总栈上有一个额外的操作系统。也就是说，虚拟机有完整的操作系统，然后这个虚拟机运行在一个有操作系统的主机上。</p>
-<p>Docker 容器与虚拟机的实现不同，它没有自己单独的操作系统，直接运行在所在主机的操作系统中。所以，Docker 容器足够小，因为它不包含虚拟机操作系统。Docker 容器运行的也很好，因为它不需要虚拟机的虚拟化。</p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction2.png" alt="Docker 容器 vs. 虚拟机" loading="lazy"></figure>
-<h2 id="dockerfile">Dockerfile</h2>
-<p>如前所述，我们可以通过一个按规则定义的 Dockerfile 文件，指定要包含在 Docker 容器中的内容。Dockerfile  文件包含了一组有 Docker 命令行工具执行的 Docker 指令，按照 Dockerfile 执行的结果是 Docker 镜像。我们可以从 <a href="http://tutorials.jenkov.com/docker/dockerfile.html">Dockerfile 教程</a> 中得到更详细的解释。【译者注：后续翻译完成后，将替换此处链接。】</p>
-<h2 id="docker-镜像">Docker 镜像</h2>
-<p>Docker 命令行工具按照 Dockerfile 中定义的结构执行指令时，会生产一个可移植、可运行的 Docker 镜像。这个  Docker 镜像中包含了所有 Docker 容器需要的文件和指令，同一个 Docker 镜像可以启动多个 Docker 容器。</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction3.png" alt="Docker 镜像" loading="lazy"></figure>
-<h2 id="docker-仓库">Docker 仓库</h2>
-<p>Docker 镜像可以存储在 Docker 仓库中，一个可以将 Docker 镜像上传、下载的存储仓库。Docker  仓库可以是私有的，只能你或者你的组织或者你指定的人管理其中的镜像，也可以是公有的，任何人都可以管理其中的镜像，或者是从中下载 Docker  镜像。</p>
-<p>一个公有的 Docker 仓库，是运行潜在用户下载、安装和运行软件的很好的方式，只需要将应用程序打包为 Docker 镜像，上传到公有的 Docker 仓库中，你的用户就可以访问并使用它。</p>
-<p>Docker 公司已将 Docker 仓库作为一项托管服务，提供了私有和公有两种服务。一些云服务商，比如 AWS、AZure 和  Google，也提供了 Docker 仓库服务器，可以上传自己的 Docker 镜像。很容易的就能在云基础设施上的虚拟机或 Kubernetes 中使用这些镜像。</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/introduction4.png" alt="Docker 仓库" loading="lazy"></figure>
-<h2 id="docker-命令行工具">Docker 命令行工具</h2>
-<p>当在操作系统中安装 Docker 的时候，会同时安装 Docker 命令行工具。Docker 命令行工具可以通过 Dockerfile  构建 Docker 镜像，可以将 Docker 镜像上传到 Docker 仓库中，可以从 Docker 仓库中下载 Docker 镜像，可以操作 Docker 镜像启动或停止 Docker 容器。</p>
-<h2 id="docker-compose">Docker Compose</h2>
-<p>Docker Compose 提供一种功能，可以将多个 Docker  容器链接成一个组合中，这个组合中的所有容器，可以一次性全部部署或停止。比如，一个 Docker 容器中运行应用，一个 Docker  容器中运行数据库，应用依赖于数据库，同时启动或停止，可以实现应用依赖的数据库没有正常运行。</p>
 ]]></content>
     </entry>
 </feed>
