@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>springboot-3.资源文件属性配置 | MyBlog</title>
+<title>在VS code中提交项目到码云 | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="springboot-3.资源文件属性配置 | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="在VS code中提交项目到码云 | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="springboot-3.资源文件属性配置" />
-  <meta property="og:url" content="https://kangjn.github.io/post/springboot-3zi-yuan-wen-jian-shu-xing-pei-zhi/" />
+  <meta property="og:description" content="在VS code中提交项目到码云" />
+  <meta property="og:url" content="https://kangjn.github.io/post/zai-vs-code-zhong-ti-jiao-xiang-mu-dao-ma-yun/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -151,13 +151,13 @@
             <div class="post-heading">
               <span class="tags">
                 
-                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                <a href="https://kangjn.github.io/tag/XXpYsHEH1/" class="tag">git</a>
                 
               </span>
-              <h1>springboot-3.资源文件属性配置</h1>
+              <h1>在VS code中提交项目到码云</h1>
               <span class="meta">
                 Posted on
-                2021.04.16，3 min read
+                2021.04.23，3 min read
               </span>
             </div>
           
@@ -172,92 +172,80 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h2 id="springboot-3资源文件属性配置">springboot-3.资源文件属性配置</h2>
-<h3 id="前言">前言</h3>
-<p>为什么要进行资源文件属性配置呢？可以想象成就是一个设置文件。比如设置好数据库密码.port端口后，在其他地方只需要用名字引用即可。<br>
-举个例子：<br>
-我们设置以下项目的持有者名称为ericam</p>
-<pre><code>demo:
-    name: &quot;ericam&quot;
-</code></pre>
-<p>那么在其他地方只需要引用name名称即可，然后如果整个项目需要多次引用，后期我们只需要在一个配置文件里更改下名称即可，不必多次操作。</p>
-<p>Spring Boot可使用注解的方式将自定义的properties文件映射到实体bean中，比如application.properties文件 或者application.yml</p>
-<h3 id="正文">正文</h3>
-<p>（1）首先，在pom文件中添加依赖项</p>
-<pre><code>&lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;
-</code></pre>
-<p><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1.png" alt="img" loading="lazy"><br>
-（2）修改application.yml文件，添加如下内容</p>
-<pre><code>demo:
-  name: &quot;ericam&quot;
-</code></pre>
-<p>（3）新建一个Resource.java文件<br>
-<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWhDts.png" alt="cWhDts.png" loading="lazy"></p>
-<pre><code>package cn.ericam.nndemo;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-@Configuration  //使用配置注解 ，表示这个类是配置文件
-@ConfigurationProperties(prefix = &quot;demo&quot;) //prefix 指定配置文件里的前缀
-@PropertySource(value = &quot;classpath:application.yml&quot;)
-public class Resource {
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-</code></pre>
-<p>ps：ConfigurationProperties是一个注解，可以标注在一个Class上，这样Spring Boot会从Environment中获取其属性对应的属性值给其进行注入。<br>
-（4）接下来，我们开始引用一波尝试，打开helloController.java文件</p>
-<pre><code>@RestController
-public class helloController {
-    @Autowired
-    private Resource resource;    //构建一个Resource类对象，通过autowired自动赋值
-    @RequestMapping(&quot;/getR&quot;)
-    public jsonResult gr()
-    {
-        Resource b = new Resource();   
-        BeanUtils.copyProperties(resource,b); //将resource的值拷贝复制给b
-        return  jsonResult.ok(b);
-    }
-}
-</code></pre>
-<p>ps:@Autowired 注释可以对类成员变量、方法及构造函数进行标注，完成自动装配。<br>
-通过 @Autowired的使用来消除 set、get方法。</p>
-<p>打开浏览器<br>
-<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWhccV.png" alt="cWhccV.png" loading="lazy"></p>
-<p>application.yml文件中重要属性</p>
-<pre><code>server:
-    port: 8080       #端口
-    servlet:
-        context-path: /demo   #配置路径，此后访问http://localhost:****/demo/****
-</code></pre>
-
-          <div class="toc-container"><ul class="markdownIt-TOC">
-<li>
+          <p>在VS code中提交项目</p>
+<p>首先在VS code中进入到要上传的项目内，比如我的是Angular项目，就是这个样子：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/408314.png" alt="" loading="lazy"></figure>
+<p>然后依次执行如下语句：<br>
+初始化：<br>
+git init<br>
+定向到你的代码仓库：<br>
+git remote add origin https://gitee.com/用户个性地址/HelloGitee.git<br>
+上传并添加评论：<br>
+git add .<br>
+git commit -m &quot;第一次提交&quot;<br>
+git push origin master ——这里注意，如果你项目中有redme文件而且在码云网站上创建仓库时也生成了redme文件话要加上 -f</p>
+<p>将代码放到码云<br>
+到码云里新建一个仓库，完成后码云会有一个命令教程按上面的来就行了<br>
+码云中的使用教程：</p>
+<p>Git 全局设置:<br>
+git config --global user.name &quot;ASxx&quot;<br>
+git config --global user.email &quot;123456789@qq.com&quot;</p>
+<p>创建 git 仓库:</p>
+<p>mkdir wap // 项目在本地的路径<br>
+cd wap<br>
+git init<br>
+touch README.md<br>
+git add README.md<br>
+git commit -m &quot;first commit&quot;<br>
+git remote add origin https://git.oschina.net/name/package.git  // 远程仓库地址<br>
+git push -u origin master</p>
+<p>已有项目：<br>
+cd existing_git_repo<br>
+git remote add origin https://git.oschina.net/name/package.git<br>
+git push -u origin master<br>
+下面说下详细的本地操作步骤：</p>
+<p><strong>1、用vs打开你的项目文件夹</strong></p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/980552.png" alt="" loading="lazy"></figure>
+<p><strong>2、配置git</strong></p>
+<p>打开Git Bash输入以下命令</p>
+<p>如果还没输入全局配置就先把这个全局配置输入上去</p>
+<p>Git 全局设置:</p>
+<p>git config --global user.name &quot;ASxx&quot;<br>
+git config --global user.email &quot;123456789@qq.com&quot;</p>
+<p>然后开始做提交代码到码云的配置<br>
+cd d:/wamp/www/mall360/wap              //首先指定到你的项目目录下<br>
+git init<br>
+touch README.md<br>
+git add README.md<br>
+git commit -m &quot;first commit&quot;<br>
+git remote add origin https://git.oschina.net/name/package.git   //用你仓库的url<br>
+git push -u origin master  //提交到你的仓库<br>
+正常情况下上面的命令执行完成后，本地文件夹会有一个隐藏的.git文件夹，云端你的仓库里应该会有一个README.md文件。</p>
 <ul>
-<li><a href="#springboot-3%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7%E9%85%8D%E7%BD%AE">springboot-3.资源文件属性配置</a>
-<ul>
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E6%AD%A3%E6%96%87">正文</a></li>
+<li><strong>3、在vscode中提交代码到仓库</strong></li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
+<p>回到vs code打开git工作区就会看到所有代码显示在这里</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/939768.png" alt="img" loading="lazy"></figure>
+<p>点击+号，把所有文件提交到暂存区。</p>
+<p>然后打开菜单选择--提交已暂存的</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/104252.png" alt="img" loading="lazy"></figure>
+<p>然后按提示随便在消息框里输入一个消息，再按ctrl+enter提交</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/778020.png" alt="img" loading="lazy"></figure>
+<p>然后把所有暂存的代码push云端，</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/866213.png" alt="img" loading="lazy"></figure>
+<p>点击后，会弹出让你输入账号密码，把你托管平台的账号密码输入上去就行了。。。</p>
+<p>不出问题的话你整个项目就会提交到云端上了。</p>
+<p>在vs中每次更新代码都会要输入账号密码，方便起见，可以配置一下让GIT记住密码账号。</p>
+<pre><code>git config --global credential.helper store   //在Git Bash输入这个命令就可以了
+</code></pre>
+
+          <div class="toc-container"></div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/springboot-2li-yong-jie-kou-fan-hui-shu-ju-json/">
+            <a href="https://kangjn.github.io/post/ke-zai-gu-zi-li-de-jiao-yang/">
               <span class="post-title">
-                springboot-2.利用接口返回数据（json）&rarr;
+                刻在骨子里的“教养”&rarr;
               </span>
             </a>
           </p>
