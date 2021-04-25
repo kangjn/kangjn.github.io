@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-23T08:41:55.566Z</updated>
+    <updated>2021-04-25T06:09:55.134Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,570 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[mysql开发规则]]></title>
+        <id>https://kangjn.github.io/post/mysql-kai-fa-gui-ze/</id>
+        <link href="https://kangjn.github.io/post/mysql-kai-fa-gui-ze/">
+        </link>
+        <updated>2021-04-25T05:47:49.000Z</updated>
+        <content type="html"><![CDATA[<p>(一)核心规则</p>
+<p>(1)不在数据库做运算</p>
+<p>cpu计算务必移至业务层；</p>
+<p>(2)控制单表数据量</p>
+<p>int型不超过1000w，含char则不超过500w；</p>
+<p>合理分表；</p>
+<p>限制单库表数量在300以内；</p>
+<p>(3)控制列数量</p>
+<p>字段少而精，字段数建议在20以内；</p>
+<p>(4)平衡范式与冗余</p>
+<p>效率优先；</p>
+<p>往往牺牲范式；</p>
+<p>(5)拒绝3B</p>
+<p>拒绝大sql语句：big sql</p>
+<p>拒绝大事物：big transaction</p>
+<p>拒绝大批量：big batch</p>
+<p>(二)字段类规则</p>
+<p>(6)用好数值类型</p>
+<p>tinyint(1Byte)</p>
+<p>smallint(2Byte)</p>
+<p>mediumint(3Byte)</p>
+<p>int(4Byte)</p>
+<p>bigint(8Byte)</p>
+<p>bad case：int(1)/int(11)</p>
+<p>(7)字符转化为数字</p>
+<p>用int而不是char(15)存储ip</p>
+<p>(8)优先使用enum或set</p>
+<p>例如：<code>sex</code> enum (‘F’, ‘M’)</p>
+<p>(9)避免使用NULL字段</p>
+<p>NULL字段很难查询优化；</p>
+<p>NULL字段的索引需要额外空间；</p>
+<p>NULL字段的复合索引无效；</p>
+<p>bad case：</p>
+<p><code>name</code> char(32) default null</p>
+<p><code>age</code> int not null</p>
+<p>good case：</p>
+<p><code>age</code> int not null default 0</p>
+<p>(10)少用text/blob</p>
+<p>varchar的性能会比text高很多；</p>
+<p>实在避免不了blob，请拆表；</p>
+<p>(11)不在数据库里存图片</p>
+<p>(三)索引类规则</p>
+<p>(12)谨慎合理使用索引</p>
+<p>改善查询、减慢更新；</p>
+<p>索引一定不是越多越好(能不加就不加，要加的一定得加)；</p>
+<p>覆盖记录条数过多不适合建索引，例如“性别”；</p>
+<p>(13)字符字段必须建前缀索引</p>
+<p>(14)不在索引做列运算</p>
+<p>！！！不只是索引，都不能做列运算吧！！！</p>
+<p>bad case：</p>
+<p>select id where age +1 = 10;</p>
+<p>(15)innodb主键推荐使用自增列；</p>
+<p>主键建立聚簇索引；</p>
+<p>主键不应该被修改；</p>
+<p>字符串不应该做主键；</p>
+<p>如果不指定主键，innodb会使用唯一且非空值索引代替；</p>
+<p>(16)不用外键</p>
+<p>请由程序保证约束；</p>
+<p>(四)sql类规则</p>
+<p>(17)sql语句尽可能简单</p>
+<p>一条sql只能在一个cpu运算；</p>
+<p>大语句拆小语句，减少锁时间；</p>
+<p>一条大sql可以堵死整个库；</p>
+<p>(18)简单的事务</p>
+<p>事务时间尽可能短；</p>
+<p>bad case：</p>
+<p>上传图片事务</p>
+<p>(19)避免使用trig/func</p>
+<p>触发器、函数不用；</p>
+<p>客户端程序取而代之；</p>
+<p>(20)不用select *</p>
+<p>消耗cpu，io，内存，带宽；</p>
+<p>这种程序不具有扩展性；</p>
+<p>(21)OR改写为IN()</p>
+<p>or的效率是n级别；</p>
+<p>in的消息时log(n)级别；</p>
+<p>in的个数建议控制在200以内；</p>
+<p>select id from t where phone=’159′ or phone=’136′;</p>
+<p>=&gt;</p>
+<p>select id from t where phone in (’159′, ’136′);</p>
+<p>(22)OR改写为UNION</p>
+<p>mysql的索引合并很弱智</p>
+<p>select id from t where phone = ’159′ or name = ‘john’;</p>
+<p>=&gt;</p>
+<p>select id from t where phone=’159′</p>
+<p>union</p>
+<p>select id from t where name=’jonh’</p>
+<p>(23)避免负向%</p>
+<p>(24)慎用count(*)</p>
+<p>(25)同上</p>
+<p>(26)limit高效分页</p>
+<p>limit越大，效率越低</p>
+<p>select id from t limit 10000, 10;</p>
+<p>=&gt;</p>
+<p>select id from t where id &gt; 10000 limit 10;</p>
+<p>(27)使用union all替代union</p>
+<p>union有去重开销</p>
+<p>(28)少用连接join</p>
+<p>(29)使用group by</p>
+<p>分组；</p>
+<p>自动排序；</p>
+<p>(30)请使用同类型比较</p>
+<p>(31)使用load data导数据</p>
+<p>load data比insert快约20倍；</p>
+<p>(32)打散批量更新</p>
+<p>(33)新能分析工具</p>
+<p>show profile;</p>
+<p>mysqlsla;</p>
+<p>mysqldumpslow;</p>
+<p>explain;</p>
+<p>show slow log;</p>
+<p>show processlist;</p>
+<p>show query_response_time(percona);</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[国外程序员整理的Java资源大全 ]]></title>
+        <id>https://kangjn.github.io/post/guo-wai-cheng-xu-yuan-zheng-li-de-java-zi-yuan-da-quan/</id>
+        <link href="https://kangjn.github.io/post/guo-wai-cheng-xu-yuan-zheng-li-de-java-zi-yuan-da-quan/">
+        </link>
+        <updated>2021-04-25T05:40:14.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="构建">构建</h2>
+<p>这里搜集了用来构建应用程序的工具。</p>
+<ul>
+<li><a href="http://maven.apache.org/">Apache Maven</a>：Maven使用声明进行构建并进行依赖管理，偏向于使用约定而不是配置进行构建。Maven优于Apache Ant。后者采用了一种过程化的方式进行配置，所以维护起来相当困难。</li>
+<li><a href="http://www.gradle.org/">Gradle</a>：Gradle采用增量构建。Gradle通过Groovy编程而不是传统的XML声明进行配置。Gradle可以很好地配合Maven进行依赖管理，并且把Ant脚本当作头等公民。</li>
+</ul>
+<h2 id="字节码操作">字节码操作</h2>
+<p>编程操作Java字节码的函数库。</p>
+<ul>
+<li><a href="http://asm.ow2.org/">ASM</a>：通用底层字节码操作及分析。</li>
+<li><a href="http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/">Javassist</a>：尝试简化字节码编辑。</li>
+<li><a href="http://bytebuddy.net/">Byte Buddy</a>：使用“流式API”进一步简化字节码生成。</li>
+</ul>
+<h2 id="代码分析">代码分析</h2>
+<p>软件度量和质量评估工具。</p>
+<ul>
+<li><a href="http://checkstyle.sourceforge.net/">Checkstyle</a>：对编程规范和标准进行静态分析。</li>
+<li><a href="http://findbugs.sourceforge.net/">FindBugs</a>：通过字节码静态分析找出潜在Bug。</li>
+<li><a href="http://pmd.sourceforge.net/">PMD</a>：对源代码中不良编程习惯进行分析。</li>
+<li><a href="http://www.sonarqube.org/">SonarQube</a>：通过插件集成其它分析组件，提供评估最终结果报告。</li>
+</ul>
+<h2 id="编译器">编译器</h2>
+<p>创建分析器、解释器和编译器的框架。</p>
+<ul>
+<li><a href="http://www.antlr.org/">ANTLR</a>：功能完备的自顶向下分析复杂框架。</li>
+<li><a href="https://javacc.java.net/">JavaCC</a>：相对ANTLR更具体，上手略为简单。支持语法语法超前预测（syntactic lookahead）。</li>
+</ul>
+<h2 id="持续集成">持续集成</h2>
+<p>支持持续集成、测试和应用发布的工具。</p>
+<ul>
+<li><a href="https://www.atlassian.com/software/bamboo">Bamboo</a>：Atlassian的持续集成（CI）解决方案，包含很多其它产品。</li>
+<li><a href="https://circleci.com/">CircleCI</a>：提供托管服务，可免费试用。</li>
+<li><a href="https://www.codeship.io/features">Codeship</a>：提供托管服务，提供有限免费计划。</li>
+<li><a href="http://www.thoughtworks.com/products/go-continuous-delivery">Go</a>：ThoughtWork开源持续集成解决方案。</li>
+<li><a href="http://jenkins-ci.org/">Jenkins</a>：提供基于服务器的部署服务。</li>
+<li><a href="http://www.jetbrains.com/teamcity/">TeamCity</a>：JetBrain持续集成方案，提供免费版。</li>
+<li><a href="https://travis-ci.org/">Travis</a>：提供托管服务，常用于开源项目。</li>
+</ul>
+<h2 id="数据库">数据库</h2>
+<p>简化数据库交互的工具、库。</p>
+<ul>
+<li><a href="http://flywaydb.org/">Flyway</a>：使用Java API轻松完成数据库迁移。</li>
+<li><a href="http://h2database.com/">H2</a>：小型SQL数据库，以内存操作著称。</li>
+<li><a href="http://jdbi.org/">JDBI</a>：便捷的JDBC抽象。</li>
+<li><a href="http://www.jooq.org/">jOOQ</a>：基于SQL schema生成类型安全代码。</li>
+<li><a href="https://github.com/facebook/presto">Presto</a>：针对大数据的分布式SQL查询引擎。</li>
+<li><a href="http://www.querydsl.com/">Querydsl</a>：针对Java的类型安全统一查询。</li>
+</ul>
+<h2 id="日期和时间">日期和时间</h2>
+<p>处理日期和时间的函数库。</p>
+<ul>
+<li><a href="http://www.joda.org/joda-time/">Joda-Time</a>：Java 8出现之前，它是日期、时间处理的标准函数库。</li>
+<li><a href="https://github.com/MenoData/Time4J">Time4J</a>：Java高级日期、时间函数库。</li>
+</ul>
+<h2 id="依赖注入">依赖注入</h2>
+<p>帮助代码实现<a href="http://en.wikipedia.org/wiki/Inversion_of_control">控制反转</a>模式的函数库。</p>
+<ul>
+<li><a href="http://square.github.io/dagger/">Dagger</a> ：编译期的注入框架，没有使用反射，主要用于Android开发。</li>
+<li><a href="https://github.com/google/guice">Guice</a>：轻量级注入框架，功能强大可与Dagger媲美。</li>
+</ul>
+<h2 id="开发库">开发库</h2>
+<p>从基础层次上改进开发流程。</p>
+<ul>
+<li><a href="https://eclipse.org/aspectj/">AspectJ</a>：面向切面编程扩展，与程序无缝连接。</li>
+<li><a href="https://github.com/google/auto">Auto</a>：源代码生成器集合。</li>
+<li><a href="http://ssw.jku.at/dcevm/">DCEVM</a>：通过修改JVM，在运行时可无限次重定义已加载的类。OpenJDK 7、8已提供支持，详情可查看<a href="http://dcevm.github.io/">这个分支（fork）</a>。</li>
+<li><a href="http://zeroturnaround.com/software/jrebel/">JRebel</a>：商用软件，无需重新部署可即时重新加载代码及配置。</li>
+<li><a href="http://projectlombok.org/">Lombok</a>：代码生成器，旨在减少Java冗余代码。</li>
+<li><a href="https://github.com/Netflix/RxJava">RxJava</a>：使用JVM中可观察序列，创建异步、基于事件应用程序的函数库。</li>
+<li><a href="https://github.com/spring-projects/spring-loaded">Spring Loaded</a>：另一个JVM类重载代理。</li>
+<li><a href="http://vertx.io/">vert.x</a>：JVM多语言事件驱动应用框架。</li>
+</ul>
+<h2 id="分布式应用">分布式应用</h2>
+<p>用来开发分布式、具有容错性应用程序的函数库和框架。</p>
+<ul>
+<li><a href="http://akka.io/">Akka</a>：构建并发、分布式和具有容错功能的事件驱动应用程序所需的工具包和运行时。</li>
+<li><a href="http://storm.incubator.apache.org/">Apache Storm</a>：分布式实时计算系统。</li>
+<li><a href="http://zookeeper.apache.org/">Apache ZooKeeper</a>：为大型分布式系统，使用分布式配置、同步和命名注册提供协调服务。</li>
+<li><a href="http://hazelcast.org/">Hazelcast</a>：分布式、高可扩展性内存网格。</li>
+<li><a href="https://github.com/Netflix/Hystrix">Hystrix</a>：为分布式系统提供延迟和容错处理。</li>
+<li><a href="http://www.jgroups.org/">JGroups</a>：一组提供可靠消息传输的工具包，可用来创建集群。集群中的节点可互相发送消息。</li>
+<li><a href="http://www.paralleluniverse.co/quasar/">Quasar</a>：为JVM提供轻量级线程和Actor。</li>
+</ul>
+<h2 id="发布">发布</h2>
+<p>使用本机格式分发Java应用程序的工具。</p>
+<ul>
+<li><a href="https://bintray.com/">Bintray</a>：对二进制发布进行版本控制，可与Maven或Gradle配合使用。</li>
+<li><a href="http://izpack.org/">IzPack</a>：为跨平台部署建立授权工具。</li>
+<li><a href="http://launch4j.sourceforge.net/">Launch4j</a>：将JAR包装为小巧的Windows可执行文件。</li>
+<li><a href="https://github.com/libgdx/packr#packr">packr</a>：将程序JAR、资源和JVM打包成Windows、Linux和Mac OS X的本机文件。</li>
+</ul>
+<h2 id="文档处理">文档处理</h2>
+<p>用来处理Office格式文档的函数库。</p>
+<ul>
+<li><a href="http://poi.apache.org/">Apache POI</a>：支持OOXML （XLSX、DOCX、PPTX）以及 OLE2 （XLS, DOC or PPT）格式的文档。</li>
+<li><a href="http://www.jopendocument.org/">jOpenDocument</a>：处理OpenDocument格式文档。</li>
+</ul>
+<h2 id="游戏开发">游戏开发</h2>
+<p>游戏开发框架。</p>
+<ul>
+<li><a href="http://jmonkeyengine.org/">jMonkeyEngine</a>：支持现代3D开发的游戏引擎。</li>
+<li><a href="http://libgdx.badlogicgames.com/">libGDX</a>：全面的跨平台高级开发框架。</li>
+<li><a href="http://lwjgl.org/">LWJGL</a>：抽象了OpenGL、CL、AL等函数库的健壮框架。</li>
+</ul>
+<h2 id="gui">GUI</h2>
+<p>用来创建现代图形用户界面的函数库。</p>
+<ul>
+<li><a href="http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html">JavaFX</a>：Swing的继承者。</li>
+<li><a href="http://www.oracle.com/technetwork/java/javase/downloads/javafxscenebuilder-info-2157684.html">Scene Builder</a>：JavaFX虚拟布局工具。</li>
+</ul>
+<h2 id="高性能">高性能</h2>
+<p>与高性能计算有关的资源，包括集合以及很多具体功能的函数库。</p>
+<ul>
+<li><a href="http://lmax-exchange.github.io/disruptor/">Disruptor</a>：线程间消息函数库。</li>
+<li><a href="http://fastutil.di.unimi.it/">fastutil</a>：快速紧凑的Java类型安全集合。</li>
+<li><a href="https://github.com/goldmansachs/gs-collections">GS Collections</a>：受Smalltalk启发的集合框架。</li>
+<li><a href="https://github.com/OpenHFT/hftc">hftc</a>：Hash set和hash map。</li>
+<li><a href="http://labs.carrotsearch.com/hppc.html">HPPC</a>：基本类型集合。</li>
+<li><a href="http://javolution.org/">Javolution</a>：针对实时嵌入式系统的函数库。</li>
+<li><a href="http://trove.starlight-systems.com/">Trove</a>：基本类型集合。</li>
+</ul>
+<h2 id="ide">IDE</h2>
+<p>视图简化开发的集成开发环境。</p>
+<ul>
+<li><a href="http://www.eclipse.org/">Eclipse</a>：后台做了很多工作，以其丰富插件著称。</li>
+<li><a href="http://www.jetbrains.com/idea/">IntelliJ IDEA</a>：支持很多JVM语言，为Android开发提供了很多不错的选项。其商业版本主要面向企业用户。</li>
+<li><a href="https://netbeans.org/">NetBeans</a>：集成了很多Java SE和Java EE特性，包括数据库访问、服务器、HTML5以及AngularJS。</li>
+</ul>
+<h2 id="图像处理">图像处理</h2>
+<p>用来帮助创建、评估或操作图形的函数库。</p>
+<ul>
+<li><a href="http://square.github.io/picasso/">Picasso</a>：Android下载图像和图像缓存函数库。</li>
+<li><a href="https://github.com/zxing/zxing">ZXing</a>：多种格式的一维、二维条形码处理函数库。</li>
+</ul>
+<h2 id="json">JSON</h2>
+<p>简化JSON处理的函数库。</p>
+<ul>
+<li><a href="https://code.google.com/p/google-gson/">Gson</a>：将Java对象序列化为JSON及反向操作。使用时提供了很好的性能。</li>
+<li><a href="http://wiki.fasterxml.com/JacksonHome">Jackson</a>：与GSON类似，但如果需要频繁初始化Jackson库会带来性能问题。</li>
+</ul>
+<h2 id="jvm和jdk">JVM和JDK</h2>
+<p>目前的JVM、JDK实现。</p>
+<ul>
+<li><a href="https://jdk9.java.net/">JDK 9</a>：JDK 9早期访问版本。</li>
+<li><a href="http://openjdk.java.net/">OpenJDK</a>：开源实现。</li>
+</ul>
+<h2 id="日志">日志</h2>
+<p>记录应用程序的日志函数库。</p>
+<ul>
+<li><a href="http://logging.apache.org/log4j/">Apache Log4j 2</a>：对之前版本进行了完全重写。现在的版本具备一个强大的插件和配置架构。</li>
+<li><a href="http://www.elasticsearch.org/overview/kibana/">kibana</a>：对日志进行分析并进行可视化。</li>
+<li><a href="http://logback.qos.ch/">Logback</a>：Log4j原班人马作品。被证明是一个强健的日志函数库，通过Groovy提供了很多有意思的配置选项。</li>
+<li><a href="http://logstash.net/">logstash</a>：日志文件管理工具。</li>
+<li><a href="http://www.slf4j.org/">SLF4J</a>：日志抽象层，需要与某个具体日志框架配合使用。</li>
+</ul>
+<h2 id="机器学习">机器学习</h2>
+<p>提供具体统计算法的工具。其算法可从数据中学习。</p>
+<ul>
+<li><a href="http://hadoop.apache.org/">Apache Hadoop</a>：对商用硬件集群上大规模数据存储和处理的开源软件框架。</li>
+<li><a href="https://mahout.apache.org/">Apache Mahout</a>：专注协同过滤、聚类和分类的可扩展算法。</li>
+<li><a href="http://spark.apache.org/">Apache Spark</a>：开源数据分析集群计算框架。</li>
+<li><a href="http://0xdata.github.io/h2o/">h2o</a>：用作大数据统计的分析引擎。</li>
+<li><a href="http://www.cs.waikato.ac.nz/ml/weka/">Weka</a>：用作数据挖掘的算法集合，包括从预处理到可视化的各个层次。</li>
+</ul>
+<h2 id="消息">消息</h2>
+<p>在客户端之间进行消息传递，确保协议独立性的工具。</p>
+<ul>
+<li><a href="http://activemq.apache.org/">Apache ActiveMQ</a>：实现JMS的开源消息代理（broker），可将同步通讯转为异步通讯。</li>
+<li><a href="http://kafka.apache.org/">Apache Kafka</a>：高吞吐量分布式消息系统。</li>
+<li><a href="http://hornetq.jboss.org/">JBoss HornetQ</a>：清晰、准确、模块化且方便嵌入的消息工具。</li>
+<li><a href="https://github.com/zeromq/jeromq">JeroMQ</a>：ZeroMQ的纯Java实现。</li>
+</ul>
+<h2 id="其它">其它</h2>
+<p>其它资源。</p>
+<ul>
+<li><a href="https://github.com/iluwatar/java-design-patterns">Design Patterns</a>：实现并解释了最常见的<a href="http://www.amazon.cn/gp/product/B001130JN8/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&amp;tag=importnew-23&amp;linkCode=as2&amp;camp=536&amp;creative=3200&amp;creativeASIN=B001130JN8">设计模式</a>。</li>
+<li><a href="https://github.com/google/jimfs">Jimfs</a>：内存文件系统。</li>
+<li><a href="https://code.google.com/p/lanterna/">Lanterna</a>：类似curses的简单console文本GUI函数库。</li>
+<li><a href="http://lightadmin.org/">LightAdmin</a>：可插入式CRUD UI函数库，可用于快速应用开发。</li>
+<li><a href="http://metrics.codahale.com/">Metrics</a>：创建自己的软件度量或者为支持框架添加度量信息，通过JMX或HTTP进行发布或者发送到数据库。</li>
+<li><a href="http://openrefine.org/">OpenRefine</a>：用来处理混乱数据的工具，包括清理、转换、使用Web Service进行扩展并将其关联到数据库。</li>
+<li><a href="http://www.robovm.org/">RoboVM</a>：Java编写原生iOS应用。</li>
+</ul>
+<h2 id="自然语言处理">自然语言处理</h2>
+<p>用来专门处理文本的函数库。</p>
+<ul>
+<li><a href="https://opennlp.apache.org/">Apache OpenNL</a>：处理类似分词等常见任务的工具。</li>
+<li><a href="http://nlp.stanford.edu/software/corenlp.shtml">CoreNLP</a>：斯坦佛的CoreNLP提供了一组基础工具，可以处理类似标签、实体名识别和情感分析这样的任务。</li>
+<li><a href="http://alias-i.com/lingpipe/">LingPipe</a>：一组可以处理各种任务的工具集，支持POS标签、情感分析等。</li>
+<li><a href="http://mallet.cs.umass.edu/">Mallet</a>：统计学自然语言处理、文档分类、聚类、主题建模等。</li>
+</ul>
+<h2 id="网络">网络</h2>
+<p>网络编程函数库。</p>
+<ul>
+<li><a href="http://netty.io/">Netty</a>：构建高性能网络应用程序开发框架。</li>
+<li><a href="http://square.github.io/okhttp/">OkHttp</a> ：一个Android和Java应用的HTTP+SPDY客户端。</li>
+</ul>
+<h2 id="orm">ORM</h2>
+<p>处理对象持久化的API。</p>
+<ul>
+<li><a href="https://www.eclipse.org/eclipselink/">EclipseLink</a>：支持许多持久化标准，JPA、JAXB、JCA和SDO。</li>
+<li><a href="http://hibernate.org/orm/">Hibernate</a>：广泛使用、强健的持久化框架。Hibernate的技术社区非常活跃。</li>
+<li><a href="http://ebean-orm.github.io/">Ebean</a>：支持快速数据访问和编码的ORM框架。</li>
+</ul>
+<h2 id="pdf">PDF</h2>
+<p>用来帮助创建PDF文件的资源。</p>
+<ul>
+<li><a href="http://xmlgraphics.apache.org/fop/">Apache FOP</a>：从XSL-FO创建PDF。</li>
+<li><a href="http://pdfbox.apache.org/">Apache PDFBox</a>：用来创建和操作PDF的工具集。</li>
+<li><a href="http://dynamicreports.org/">DynamicReports</a>：JasperReports的精简版。</li>
+<li><a href="http://itextpdf.com/">iText</a>：一个易于使用的PDF函数库，用来编程创建PDF文件。注意，用于商业用途时需要许可证。</li>
+<li><a href="http://community.jaspersoft.com/project/jasperreports-library">JasperReports</a>：一个复杂的报表引擎。</li>
+</ul>
+<h2 id="rest框架">REST框架</h2>
+<p>用来创建RESTful 服务的框架。</p>
+<ul>
+<li><a href="https://dropwizard.github.io/dropwizard/">Dropwizard</a>：偏向于自己使用的Web框架。用来构建Web应用程序，使用了Jetty、Jackson、Jersey和Metrics。</li>
+<li><a href="https://jersey.java.net/">Jersey</a>：JAX-RS参考实现。</li>
+<li><a href="http://resteasy.jboss.org/">RESTEasy</a>：经过JAX-RS规范完全认证的可移植实现。</li>
+<li><a href="http://square.github.io/retrofit/">Retrofit</a>：一个Java类型安全的REST客户端。</li>
+<li><a href="http://www.sparkjava.com/">Spark</a>：受到Sinatra启发的Java REST框架。</li>
+<li><a href="https://helloreverb.com/developers/swagger">Swagger</a>：Swagger是一个规范且完整的框架，提供描述、生产、消费和可视化RESTful Web Service。</li>
+</ul>
+<h2 id="科学">科学</h2>
+<p>用于科学计算和分析的函数库。</p>
+<ul>
+<li><a href="http://jwork.org/scavis/">SCaVis</a>：用于科学计算、数据分析和数据可视化环境。</li>
+</ul>
+<h2 id="搜索">搜索</h2>
+<p>文档索引引擎，用于搜索和分析。</p>
+<ul>
+<li><a href="http://lucene.apache.org/solr/">Apache Solr</a> ：一个完全的企业搜索引擎。为高吞吐量通信进行了优化。</li>
+<li><a href="http://www.elasticsearch.org/">Elasticsearch</a>：一个分布式、支持多租户（multitenant）全文本搜索引擎。提供了RESTful Web接口和无schema的JSON文档。</li>
+</ul>
+<h2 id="安全">安全</h2>
+<p>用于处理安全、认证、授权或会话管理的函数库。</p>
+<ul>
+<li><a href="http://shiro.apache.org/">Apache Shiro</a>：执行认证、授权、加密和会话管理。</li>
+<li><a href="http://cryptomator.org/">Cryptomator</a>：在云上进行客户端跨平台透明加密。</li>
+<li><a href="http://keycloak.jboss.org/">Keycloak</a>：为浏览器应用和RESTful Web Service集成SSO和IDM。目前还处于beta版本，但是看起来非常有前途。</li>
+<li><a href="http://picketlink.org/">PicketLink</a>：PicketLink是一个针对Java应用进行安全和身份认证管理的大型项目（Umbrella Project）。</li>
+<li><a href="http://projects.spring.io/spring-security/">Spring Security</a>：专注认证、授权和多维度攻击防护框架。</li>
+</ul>
+<h2 id="序列化">序列化</h2>
+<p>用来高效处理序列化的函数库。</p>
+<ul>
+<li><a href="https://github.com/google/flatbuffers">FlatBuffers</a>：序列化函数库，高效利用内存，无需解包和解析即可高效访问序列化数据。</li>
+<li><a href="https://github.com/EsotericSoftware/kryo">Kryo</a>：快速和高效的对象图形序列化框架。</li>
+<li><a href="https://github.com/msgpack/msgpack-java">MessagePack</a>：一种高效的二进制序列化格式。</li>
+</ul>
+<h2 id="服务器">服务器</h2>
+<p>用来部署应用程序的服务器。</p>
+<ul>
+<li><a href="http://tomcat.apache.org/">Apache Tomcat</a>：针对Servlet和JSP的应用服务器，健壮性好且适用性强。</li>
+<li><a href="http://tomee.apache.org/">Apache TomEE</a>：Tomcat加Java EE。</li>
+<li><a href="https://glassfish.java.net/">GlassFish</a>：Java EE开源参考实现，由Oracle资助开发。</li>
+<li><a href="http://www.eclipse.org/jetty/">Jetty</a>：轻量级、小巧的应用服务器，通常会嵌入到项目中。</li>
+<li><a href="http://www.wildfly.org/">WildFly</a>：之前被称作JBoss，由Red Hat开发。支持很多Java EE功能。</li>
+</ul>
+<h2 id="模版引擎">模版引擎</h2>
+<p>对模板中表达式进行替换的工具。</p>
+<ul>
+<li><a href="http://velocity.apache.org/">Apache Velocity</a>：提供HTML页面模板、email模板和通用开源代码生成器模板。</li>
+<li><a href="http://freemarker.org/">FreeMarker</a>：通用模板引擎，不需要任何重量级或自己使用的依赖关系。</li>
+<li><a href="http://jknack.github.io/handlebars.java/">Handlebars.java</a>：使用Java编写的模板引擎，逻辑简单，支持语义扩展（semantic Mustache）。</li>
+<li><a href="https://jsp.java.net/">JavaServer Pages</a>：通用网站模板，支持自定义标签库。</li>
+<li><a href="http://www.thymeleaf.org/">Thymeleaf</a>：旨在替换JSP，支持XML文件。</li>
+</ul>
+<h2 id="测试">测试</h2>
+<p>测试内容从对象到接口，涵盖性能测试和基准测试工具。</p>
+<ul>
+<li><a href="http://jmeter.apache.org/">Apache JMeter</a>：功能性测试和性能评测。</li>
+<li><a href="http://arquillian.org/">Arquillian</a>：集成测试和功能行测试平台，集成Java EE容器。</li>
+<li><a href="http://joel-costigliola.github.io/assertj/">AssertJ</a>：支持流式断言提高测试的可读性。</li>
+<li><a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a>：JVM微基准测试工具。</li>
+<li><a href="http://junit.org/">JUnit</a>：通用测试框架。</li>
+<li><a href="http://code.google.com/p/mockito/">Mockito</a>：在自动化单元测试中创建测试对象，为TDD或BDD提供支持。</li>
+<li><a href="http://docs.seleniumhq.org/">Selenium</a>：为Web应用程序提供可移植软件测试框架。</li>
+<li><a href="http://selenide.org/">Selenide</a>：为Selenium提供精准的周边API，用来编写稳定且可读的UI测试。</li>
+<li><a href="http://testng.org/">TestNG</a> ：测试框架。</li>
+<li><a href="http://visualvm.java.net/">VisualVM</a>：提供可视化方式查看运行中的应用程序信息。</li>
+</ul>
+<h2 id="工具类">工具类</h2>
+<p>通用工具类函数库。</p>
+<ul>
+<li><a href="http://commons.apache.org/">Apache Commons</a>：提供各种用途的函数，比如配置、验证、集合、文件上传或XML处理等。</li>
+<li><a href="http://code.google.com/p/guava-libraries/">Guava</a>：集合、缓存、支持基本类型、并发函数库、通用注解、字符串处理、I/O等。</li>
+<li><a href="http://www.javatuples.org/">javatuples</a>：正如名字表示的那样，提供tuple支持。尽管目前tuple的概念还有留有争议。</li>
+</ul>
+<h2 id="网络爬虫">网络爬虫</h2>
+<p>用于分析网站内容的函数库。</p>
+<ul>
+<li><a href="http://nutch.apache.org/">Apache Nutch</a> ：可用于生产环境的高度可扩展、可伸缩的网络爬虫。</li>
+<li><a href="https://code.google.com/p/crawler4j/">Crawler4j</a>：简单的轻量级爬虫。</li>
+<li><a href="http://jsoup.org/">JSoup</a> ：刮取、解析、操作和清理HTML。</li>
+</ul>
+<h2 id="web框架">Web框架</h2>
+<p>用于处理Web应用程序不同层次间通讯的框架。</p>
+<ul>
+<li><a href="http://tapestry.apache.org/">Apache Tapestry</a>：基于组件的框架，使用Java创建动态、强健的、高度可扩展的Web应用程序。</li>
+<li><a href="http://wicket.apache.org/">Apache Wicket</a>：基于组件的Web应用框架，与Tapestry类似带有状态显示GUI。</li>
+<li><a href="http://www.gwtproject.org/">Google Web Toolkit</a>：一组Web开发工具集，包含在客户端将Java代码转为JavaScript的编译器、XML解析器、RCP API、JUnit集成、国际化支持和GUI控件。</li>
+<li><a href="https://grails.org/">Grails</a>：Groovy框架，旨在提供一个高效开发环境，使用约定而非配置、没有XML并支持混入（mixin）。</li>
+<li><a href="http://www.playframework.com/">Play</a>： 使用约定而非配置，支持代码热加载并在浏览器中显示错误。</li>
+<li><a href="http://primefaces.org/">PrimeFaces</a>：JSF框架，提供免费版和带技术支持的商业版。包含一些前端组件。</li>
+<li><a href="http://projects.spring.io/spring-boot/">Spring Boot</a>：微框架，简化了Spring新程序的开发过程。</li>
+<li><a href="http://projects.spring.io/spring-framework/">Spring</a>：旨在简化Java EE的开发过程，提供依赖注入相关组件并支持面向切面编程。</li>
+<li><a href="https://vaadin.com/">Vaadin</a>：基于GWT构建的事件驱动框架。使用服务端架构，客户端使用Ajax。</li>
+<li><a href="http://www.ninjaframework.org/">Ninja</a>：Java全栈Web开发框架。非常稳固、快速和高效。</li>
+<li><a href="http://www.ratpack.io/">Ratpack</a>：一组Java开发函数库，用于构建快速、高效、可扩展且测试完备的HTTP应用程序。</li>
+</ul>
+<h2 id="资源">资源</h2>
+<h2 id="社区">社区</h2>
+<p>活跃的讨论区。</p>
+<ul>
+<li><a href="http://www.reddit.com/r/java">r/java</a>：Java社区的Subreddit。</li>
+<li><a href="http://stackoverflow.com/questions/tagged/java">stackoverflow</a>：问答平台。</li>
+</ul>
+<h2 id="有影响的书籍">有影响的书籍</h2>
+<p>具有广泛影响且值得阅读的Java经典书籍。</p>
+<ul>
+<li><a href="http://www.amazon.cn/gp/product/0321356683/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&amp;camp=536&amp;creative=3200&amp;creativeASIN=0321356683&amp;linkCode=as2&amp;tag=vastwork-23">Effective Java (2nd Edition)</a></li>
+<li><a href="http://www.amazon.com/Java-Concurrency-Practice-Brian-Goetz/dp/0321349601">Java Concurrency in Practice</a> | <a href="http://www.amazon.cn/gp/product/B0077K9XHW/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&amp;camp=536&amp;creative=3200&amp;creativeASIN=B0077K9XHW&amp;linkCode=as2&amp;tag=vastwork-23">Java并发编程实战</a></li>
+<li><a href="http://www.amazon.cn/gp/product/B0011C3CVA/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&amp;camp=536&amp;creative=3200&amp;creativeASIN=B0011C3CVA&amp;linkCode=as2&amp;tag=vastwork-23">Thinking in Java</a> | <a href="http://www.amazon.cn/gp/product/B0011F7WU4/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&amp;camp=536&amp;creative=3200&amp;creativeASIN=B0011F7WU4&amp;linkCode=as2&amp;tag=vastwork-23">中文版</a></li>
+</ul>
+<h2 id="播客">播客</h2>
+<p>可以一边编程一边听的东西。</p>
+<ul>
+<li><a href="http://www.javaposse.com/">The Java Posse</a></li>
+</ul>
+<h2 id="twitter">Twitter</h2>
+<p>值得关注的帐号。</p>
+<ul>
+<li><a href="https://twitter.com/AdamBien/">Adam Bien</a>：自由职业者、作家、JavaONE明星演讲者、顾问、Java Champion。</li>
+<li><a href="https://twitter.com/agoncal/">Antonio Goncalves</a>：Java Champion、JUG Leader、Devoxx France、Java EE 6/7、JCP、作家。</li>
+<li><a href="https://twitter.com/arungupta/">Arun Gupta</a>：Java Champion、JavaONE明星演讲者、JUG Leader、Devoxx4Kids成员、Red Hatter。</li>
+<li><a href="https://twitter.com/brunoborges">Bruno Borges</a>：Oracle产品经理、Java Jock。</li>
+<li><a href="https://twitter.com/edburns">Ed Burns</a>：Oracle技术团队顾问。</li>
+<li><a href="https://twitter.com/baeldung">Eugen Paraschiv</a>：Spring安全课程作者。</li>
+<li><a href="https://twitter.com/JavaFXpert">James Weaver</a>：Java、JavaFX、IoT开发者、作者和演讲者。</li>
+<li><a href="https://twitter.com/Java_EE/">Java EE</a>：Java EE Twitter官方账号。</li>
+<li><a href="https://twitter.com/Oraclejavamag">Java Magazine</a>：Java杂志官方账号。</li>
+<li><a href="https://twitter.com/javanetbuzz/">Java.net</a>：Java.net官方账号。</li>
+<li><a href="https://twitter.com/java/">Java</a>：Java Twitter官方账号。</li>
+<li><a href="https://twitter.com/javinpaul">Javin Paul</a>：知名Java博客作者。</li>
+<li><a href="https://twitter.com/lukaseder">Lukas Eder</a>：Data Geekery（jOOQ）创始人兼CEO。</li>
+<li><a href="https://twitter.com/mariofusco">Mario Fusco</a>：RedHatter、JUG协调、活跃讲师和作者。</li>
+<li><a href="https://twitter.com/mreinhold">Mark Reinhold</a>：Oracle首席架构师、Java平台开发组。</li>
+<li><a href="https://twitter.com/karianna">Martijn Verburg</a>：London JUG co-leader、演讲者、作家、Java Champion等。</li>
+<li><a href="https://twitter.com/OpenJDK">OpenJDK</a>：OpenJDK官方账号。</li>
+<li><a href="https://twitter.com/reza_rahman">Reza Rahman</a>：Java EE、GlassFish、WebLogic传道者、作家、演讲者、开源黑客。</li>
+<li><a href="https://twitter.com/sjmaple">Simon Maple</a>：Java Champion、virtualJUG创始人、LJC leader、RebelLabs作者。</li>
+<li><a href="https://twitter.com/jodastephen">Stephen Colebourne</a>： Java Champion、演讲者。</li>
+<li><a href="https://twitter.com/kablosna">Tim Boudreau</a>：作家、NetBeans大牛。</li>
+<li><a href="https://twitter.com/trisha_gee">Trisha Gee</a>：Java Champion、演讲者。</li>
+</ul>
+<h2 id="网站">网站</h2>
+<p>值得阅读的网站。</p>
+<ul>
+<li><a href="http://google-styleguide.googlecode.com/svn/trunk/javaguide.html">Google Java Style</a></li>
+<li><a href="http://www.infoq.com/">InfoQ</a></li>
+<li><a href="http://www.javacodegeeks.com/">Java Code Geeks</a></li>
+<li><a href="http://java.net/">Java.net</a></li>
+<li><a href="http://java.dzone.com/">Javalobby</a></li>
+<li><a href="http://www.javaworld.com/">JavaWorld</a></li>
+<li><a href="http://zeroturnaround.com/rebellabs/">RebelLabs</a></li>
+<li><a href="http://www.javaspecialists.eu/archive/archive.jsp">The Java Specialist’ Newsletter</a></li>
+<li><a href="http://www.theserverside.com/">TheServerSide.com</a></li>
+<li><a href="http://www.thoughts-on-java.org/">Thoughts On Java</a></li>
+<li><a href="http://www.importnew.com/">ImportNew</a>（ImportNew 专注 Java 技术）</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[在自己的应用中加入支付功能]]></title>
+        <id>https://kangjn.github.io/post/zai-zi-ji-de-ying-yong-zhong-jia-ru-zhi-fu-gong-neng/</id>
+        <link href="https://kangjn.github.io/post/zai-zi-ji-de-ying-yong-zhong-jia-ru-zhi-fu-gong-neng/">
+        </link>
+        <updated>2021-04-25T05:31:20.000Z</updated>
+        <content type="html"><![CDATA[<p>在自己的应用中如何加入对支付功能的支持。</p>
+<p><strong>1、项目名称：龙果支付系统 roncoo-pay</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/047554.jpg" alt="1561286741806047554" loading="lazy"></figure>
+<p>**项目简介：**龙果支付系统核心目标是汇聚所有主流支付渠道，打造一款轻量、便捷、易用，且集支付、资金对账、资金清结算于一体的支付系统，满足互联网业务系统的收款和业务资金管理需求。</p>
+<p>主要特点：</p>
+<ul>
+<li>具备支付系统通用的支付、对账、清算、资金账户管理、支付订单管理等功能；</li>
+<li>目前已接通“支付宝即时到账”和“微信扫码支付”通道；</li>
+<li>支持直连和间连两种支付模式，任君选择；</li>
+<li>通过支付网关，业务系统可以轻松实现统一支付接入；</li>
+<li>搭配运营后台，支付数据的监控和管理可以兼得；</li>
+<li>配套完善的系统使用文档，可轻松嵌入任何需要支付的场景；</li>
+</ul>
+<p>**项目地址：**https://gitee.com/roncoocom/roncoo-pay</p>
+<p><strong>2、项目名称：聚合支付系统 XxPay</strong></p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/025826.jpg" alt="" loading="lazy"></figure>
+<p>**项目简介：**XxPay 聚合支付使用 Java 开发，包括spring-cloud、dubbo、spring-boot三个架构版本，已接入微信、支付宝等主流支付渠道，可直接用于生产环境。</p>
+<p>目前已经接入支付渠道：微信(公众号支付、扫码支付、APP支付、H5支付)、支付宝(电脑网站支付、手机网站支付、APP支付、当面付)。</p>
+<p>**项目地址：**https://gitee.com/jmdhappy/xxpay-master</p>
+<p><strong>3、项目名称：常用支付接口 IJPay</strong></p>
+<p>**项目简介：**IJPay 封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。不依赖任何第三方 mvc 框架，仅仅作为工具使用简单快速完成支付模块的开发，可轻松嵌入到任何系统里。</p>
+<p><strong>项目地址：https://gitee.com/javen205/IJPay</strong></p>
+<p><strong>4、项目名称：基于 Java 的支付开发工具包</strong></p>
+<p>**项目简介：**优雅的轻量级支付模块，集成微信支付、支付宝、银联、友店、富友、跨境支付等。付与业务完全剥离，简单几行代码即可实现支付，简单快速完成支付模块的开发，可轻松嵌入到任何系统里。</p>
+<p>目前仅是一个开发工具包（即SDK），只提供简单 Web 实现，建议使用 maven 或 gradle 引用本项目即可使用本 SDK 提供的各种支付相关的功能。</p>
+<p>**项目地址：**https://gitee.com/egzosn/pay-java-parent</p>
+<p><strong>5、项目名称：轻量级支付系统 Fastpay</strong></p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/087807.jpg" alt="" loading="lazy"></figure>
+<p>**项目简介：**Fastpay 的目标是打造一款开源的、轻量级的、微服务化的、可共私有云部署的、可定制化的集成聚合支付和资金清结算于一体的统一支付系统，满足互联网企业业务系统的收款和资金处理等需求。</p>
+<ul>
+<li>在支付系统上实施微服务架构，使用最流行的Spring Cloud做服务化。</li>
+<li>设计天生可伸缩的数据存储，直接使用分库分表。</li>
+<li>使用缓存进行加速交易过程，提高用户体验。</li>
+<li>将回调通知、入账等异步化，提高用户响应能力。</li>
+<li>使用分布式定时任务系统将任务调度与交易隔离。</li>
+<li>使用当前最先进的单元化架构实现可水平伸缩。</li>
+</ul>
+<p>**项目地址：**https://gitee.com/robertleepeak/fastpay</p>
+<p><strong>6、项目名称：支付 SDK 扩展包 easyPay</strong></p>
+<p>**项目简介：**本项目根据支付宝、微信最新 API 开发而成，高度抽象的类，免去各种拼 json 与 xml 的痛苦；符合 PSR  标准，你可以各种方便的与你的框架集成；文件结构清晰易理解，可以随心所欲添加本项目中没有的支付网关；方法使用更优雅，不必再去研究那些奇怪的的方法名或者类名是做啥用的。</p>
+<p>**项目地址：**https://gitee.com/yansongda/pay</p>
+<p><strong>7、项目名称：互联网金融支付系统 aaden-pay</strong></p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/024867.jpg" alt="" loading="lazy"></figure>
+<p>**项目简介：**基于互联网金融理财环境下产生的支付系统，特点为：</p>
+<ul>
+<li>同卡进出，用户先实名绑定银行卡，后交易，不支持手机扫码交易。</li>
+<li>提供统一的支付框架，只需少量代码就可快速接入新渠道，提供一个稳定的支付解决方法，节约程序员时间。</li>
+</ul>
+<p>**项目地址：**https://gitee.com/aaden/aaden-pay</p>
+<p><strong>8、项目名称：基于 PHP 的支付 SDK</strong></p>
+<p>**项目简介：**Payment 是一个 PHP 版本的支付聚合第三方 SDK，集成了微信支付、支付宝支付、招商一网通支付。提供统一的调用接口，方便快速接入各种支付、查询、退款、转账能力。</p>
+<p>**项目地址：**https://gitee.com/helei112g/payment</p>
+<p><strong>9、项目名称：基于 .NET Core 的支付 SDK 集</strong></p>
+<p>**项目简介：**本项目是基于 .NET Core / ASP.NET Core 开发的跨平台支付 SDK 集，简化了 API 调用及相关通知的处理流程。</p>
+<p>目前支持：支付宝(Alipay)、微信支付(WeChatPay)、QQ钱包(QPay)、京东支付(JDPay)、连连支付(LianLianPay)、银联支付(UnionPay)。</p>
+<p>**项目地址：**https://gitee.com/Essensoft/Payment</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[在VS code中提交项目到码云]]></title>
         <id>https://kangjn.github.io/post/zai-vs-code-zhong-ti-jiao-xiang-mu-dao-ma-yun/</id>
@@ -1300,752 +1864,6 @@ public class MyThreadTest {
 }
 </code></pre>
 <p>个人认为这是基本上最好的通信方式，因为A发出通知B能够立马接受并Do Something。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[使用Springboot+mockito进行单元测试]]></title>
-        <id>https://kangjn.github.io/post/shi-yong-springbootmockito-jin-xing-dan-yuan-ce-shi/</id>
-        <link href="https://kangjn.github.io/post/shi-yong-springbootmockito-jin-xing-dan-yuan-ce-shi/">
-        </link>
-        <updated>2021-04-21T08:13:18.000Z</updated>
-        <content type="html"><![CDATA[<p>​    <strong>简介：</strong>  ## SpringBoot应用测试 测试Springboot应用需要依赖一个非常重要的注解@SpringBootTest，这个注解会为测试用例构建Spring容器。@SpringBootTest注解修饰的测试用例默认不会启动web容器，如果需要启动web容器需要设置webEnvironment属性： * MOCK(默认)：会启动一个mock的web server，可以配合@AutoConfig</p>
-<h2 id="springboot应用测试">SpringBoot应用测试</h2>
-<p>测试Springboot应用需要依赖一个非常重要的注解@SpringBootTest，这个注解会为测试用例构建Spring容器。@SpringBootTest注解修饰的测试用例默认不会启动web容器，如果需要启动web容器需要设置webEnvironment属性：</p>
-<ul>
-<li>MOCK(默认)：会启动一个mock的web server，可以配合@AutoConfigureMockMvc注解对web应用进行测试(后面会举例)</li>
-<li>RANDOM_PORT：创建ApplicationContext上下文，启动一个真实的Web容器，监听一个随机的端口。</li>
-<li>DEFINED_PORT：创建ApplicationContext上下文，启动一个真实的Web容器，监听SpringBoot配置配置文件中指定的端口，默认是8080端口。</li>
-<li>NONE：只是启动ApplicationContext，不会启动任何(Mock或者非Mock)web容器。</li>
-</ul>
-<p>如果是使用Junit来进行单元测试，再增加一个@RunWith(SpringRunner.class)或者@RunWith(SpringJUnit4ClassRunner.class)注解。</p>
-<h2 id="利用模拟web容器来测试restful接口">利用模拟Web容器来测试Restful接口</h2>
-<p>当测试用例使用@SpringBootTest注解修饰并将webEnvironment属性设置MOCK之后，测试用例在执行的过程中，就会创建一个模拟的web容器。为了让测试用例能够访问这个模拟的web容器，还需要增加@AutoConfigureMockMvc注解，这样就可以把MockMvc对象利用@Autowired注解注入到测试用例的属性中。MockMvc类的作用就是可以访问模拟的Web容器。接下来我们看一下使用MockMvc配合MockMvcRequestBuilders及MockMvcResultMatchers来访问模拟的Web容器进行测试Rest接口的例子：</p>
-<ul>
-<li>GET请求</li>
-</ul>
-<pre><code>    @Test
-    public void testCase() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.get(&quot;/testQueryData.json?id=6&quot;))
-                .andExpect(
-                        MockMvcResultMatchers.status().isOk()).andReturn();
-       Assert.assertNotNull(result.getResponse().getContentAsString());
-    }
-</code></pre>
-<ul>
-<li>POST请求提交表单</li>
-</ul>
-<pre><code>    @Test
-    public void testCase() throws Exception {
-        UrlEncodedFormEntity formData = new UrlEncodedFormEntity(Arrays.asList(
-                new BasicNameValuePair(&quot;param1&quot;, &quot;xxxxxxx&quot;),
-                new BasicNameValuePair(&quot;param2&quot;, &quot;xxxxxxx&quot;)
-        ), &quot;utf-8&quot;);
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.post(&quot;/testPostData.json&quot;)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-          .content(EntityUtils.toString(formData))).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        Assert.assertNotNull(result.getResponse().getContentAsString());
-    }
-</code></pre>
-<ul>
-<li>DELETE请求</li>
-</ul>
-<pre><code>    @Test
-    public void testCase() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.delete(&quot;/testDeleteData.json?id=1&quot;))
-                .andExpect(
-                        MockMvcResultMatchers.status().isOk());
-    }
-</code></pre>
-<ul>
-<li>PUT请求类似POST</li>
-</ul>
-<pre><code>    @Test
-    public void testCase() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.put(&quot;/testPutData&quot;))
-                .andExpect(
-                        MockMvcResultMatchers.status().isOk()).andReturn();
-        Assert.assertNotNull(result.getResponse().getContentAsString());
-    }
-</code></pre>
-<h2 id="利用testresttemplate测试真实的restful接口">利用TestRestTemplate测试真实的Restful接口</h2>
-<p>Springboot提供了专门用来测试Restful接口的工具类TestRestTemplate，这个类对RestTemplate进行了封装，可以让用户很快捷的编写出http客户端测试代码。<br>
-实例如下：</p>
-<ul>
-<li>GET请求</li>
-</ul>
-<pre><code>public void testCase() throws Exception {
-  String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json?id=xxx&quot;;
-  ResponseEntity&lt;RegcoreResp&gt; response = testRestTemplate.getForEntity(restUrl, RegcoreResp.class);    //RegcoreResp是用户自行定义的返回的数据封装Bean，
-  System.out.println(response.getBody());
-}
-</code></pre>
-<ul>
-<li>POST请求并采用表单方式提交数据</li>
-</ul>
-<pre><code>public void testCase() throws Exception {
-String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap&lt;String, String&gt; params = new LinkedMultiValueMap&lt;String, String&gt;();
-        params.add(&quot;name&quot;, &quot;testName&quot;); 
-        HttpEntity&lt;MultiValueMap&lt;String, String&gt;&gt; requestEntity = new HttpEntity&lt;MultiValueMap&lt;String, String&gt;&gt;(params, headers);
-        ResponseEntity&lt;RegcoreResp&gt; response = testRestTemplate.postForEntity(restUrl, requestEntity, RegcoreResp.class);
-}
-</code></pre>
-<ul>
-<li>POST请求并采用request Body方式传输数据</li>
-</ul>
-<pre><code>public void testCase() throws Exception {
-        String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String body = &quot;{\&quot;id\&quot;:\&quot;xxxxxx\&quot;,\&quot;status\&quot;:\&quot;xxxxx\&quot;}&quot;;
-        HttpEntity&lt;String&gt; requestEntity = new HttpEntity&lt;String&gt;(body, headers);
-        ResponseEntity&lt;BaseFacadeResp&gt; response = testRestTemplate.postForEntity(restUrl, requestEntity, BaseFacadeResp.class);
-}
-</code></pre>
-<ul>
-<li>DELETE</li>
-</ul>
-<pre><code>public void testCase() throws Exception {
-        String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
-        testRestTemplate.delete(restUrl);  //delete方法没有返回值
-}
-</code></pre>
-<ul>
-<li>PUT方式与POST类似</li>
-</ul>
-<pre><code>public void testCase() throws Exception {
-        String restUrl = &quot;http://localhost:8080/xxxxx/xxxxx.json&quot;;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String body = &quot;{\&quot;id\&quot;:\&quot;xxxxxx\&quot;,\&quot;status\&quot;:\&quot;xxxxx\&quot;}&quot;;
-        HttpEntity&lt;String&gt; requestEntity = new HttpEntity&lt;String&gt;(body, headers);
-        testRestTemplate.put(restUrl, requestEntity);  //put方法没有返回值
-}
-</code></pre>
-<h2 id="mock与spy">Mock与Spy</h2>
-<ul>
-<li>Mock利用动态代理对一个接口或者类的所有方法进行模拟。</li>
-<li>Spy同样利用动态代理，与Mock不同的是Spy针对于一个真实对象进行模拟并可以对被监控对象中某个方法进行打桩(stubed)控制该方法的执行情况，其他没有打桩的方法则按照对象本身的实际逻辑执行。</li>
-</ul>
-<h2 id="springboot对mock-spy的支持">SpringBoot对Mock Spy的支持</h2>
-<p>在测试SpringBoot应用过程中，某些环境依赖问题可能导致无法调用真实Bean逻辑，比如：某些外部依赖的接口没有准备好。这个时候需要使用Mock、Spy来对Bean进行模拟。SpringBoot提供了@MockBean和@SpyBean两个注解来实现Mock与Spy能力。由于底层还是使用Mockito，用法上与Mockito没有区别。<br>
-示例：</p>
-<pre><code>@RunWith(SpringRunner.class) @SpringBootTest
-public class MyTests {
-  @MockBean
-  private RemoteService remoteService; 
-  @Autowired
-  private Reverser reverser;
-  @Test
-  public void exampleTest() {
-    // RemoteService has been injected into the reverser bean 
-    given(this.remoteService.someCall()).willReturn(&quot;mock&quot;); 
-    String reverse = reverser.reverseSomeCall(); 
-    assertThat(reverse).isEqualTo(&quot;kcom&quot;);
-  }
-}
-</code></pre>
-<h2 id="如何mock方法模拟内部逻辑">如何Mock方法模拟内部逻辑?</h2>
-<p>一般来说mock最典型的用法就是对一个方法的返回值(输出)进行模拟。如果想模拟方法内部逻辑，比如方法对入参进行修改或者对入参对象的某个方法进行回调如何利用mock来实现呢？<br>
-下面举一个实际的场景，比如有这样一段被测试代码：</p>
-<pre><code>  testDOMapper.insert(testBeanDO);
-  if(testBeanDO.getId()==null) {
-       throw new RuntimeException();
-  }
-</code></pre>
-<p>插入数据之后数据库中新纪录的id会回填到templateDO.id这个属性，这个特性是mybatis的一种常用的用法。但是如果我们用Mock如果来实现测试代码执行过testDOMapper.insert(templateDO)之后将templateDO.id属性附上值，如何实现呢？这里要用Answer这个接口</p>
-<pre><code>       Mockito.when(testDOMapper.insert(Mockito.any(TestBeanDO.class))).thenAnswer(new 
-          Answer&lt;Integer&gt;() {
-            @Override
-            public Integer answer(InvocationOnMock invocation) throws Throwable {
-                TestBeanDO arg = invocation.getArgumentAt(0, TestBeanDO.class);
-                arg.setId(1L);
-                return 1;
-            }
-        });
-</code></pre>
-<p>上面的代码可以看到answer可以模拟调用insert()方法时方法体如何执行。answer的入参InvocationOnMock对象可以获取实际的入参的对象，这样只要在answer方法体里对入参属性进行修改就可以实现我们想要达到的效果了。<br>
-类似的方法还可以使用 ArgumentMatcher 来实现对参数进行捕获修改，这里给出示例就不再具体说明了。</p>
-<pre><code>        Mockito.when(testDOMapper.insert(Mockito.argThat(new ArgumentMatcher&lt;TestBeanDO&gt;() {
-            @Override
-            public boolean matches(Object argument) {
-                ((TestBeanDO) argument).setId(1L);
-                return true;
-            }
-        }))).thenReturn(1);
-</code></pre>
-<h2 id="给spy的对象进行打桩">给Spy的对象进行打桩</h2>
-<p>spy一般对监控一个真实的对象，按照之前mock的常见用法：</p>
-<pre><code>Mockito.when(spyObj.method()).thenReturn(xxxx);  
-</code></pre>
-<p>其实是不会按照thenReturn()指定的结果返回的，这一点要特别的注意，容易采坑。如果想按照用户自己的定义对spy对象进行打桩的正确方式是：</p>
-<pre><code>Mockito.doReturn(xxxx).when(sypObj).method();
-</code></pre>
-<p>提前设置好方法被调用之后的表现doReturn()返回结果还是doThrow()抛出异常，之后再使用when(spyObj)对spy的对象进行包装之后设置调用的方法就可以了。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[了解Java异步编程]]></title>
-        <id>https://kangjn.github.io/post/liao-jie-java-yi-bu-bian-cheng/</id>
-        <link href="https://kangjn.github.io/post/liao-jie-java-yi-bu-bian-cheng/">
-        </link>
-        <updated>2021-04-21T07:14:33.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="了解java异步编程">了解Java异步编程</h3>
-<p>随着<code>RxJava</code>、<code>Reactor</code>等异步框架的流行，异步编程受到了越来越多的关注，尤其是在IO密集型的业务场景中，相比传统的同步开发模式，异步编程的优势越来越明显。</p>
-<p>那到底什么是异步编程？异步化真正的好处又是什么？如何选择适合自己团队的异步技术？在实施异步框架落地的过程中有哪些需要注意的地方？</p>
-<ol>
-<li>使用RxJava异步改造后的效果</li>
-<li>什么是异步编程？异步实现原理</li>
-<li>异步技术选型参考</li>
-<li>异步化真正的好处是什么？</li>
-<li>异步化落地的难点及解决方案</li>
-<li>扩展:异步其他解决方案-协程</li>
-</ol>
-<h2 id="使用rxjava异步改造后的效果">使用RxJava异步改造后的效果</h2>
-<p>下图是我们后端java项目使用RxJava改造成异步前后的RT(响应时长)效果对比：</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/164025.png" alt="img" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/164040.png" alt="img" loading="lazy"></figure>
-<p>统计数据基于App端的gateway，以75线为准，还有80、85、90、99线，从图中可以看出改成异步后接口整体的平均响应时长降低了**40%**左右。</p>
-<p>(响应时间是以发送请求到收到后端接口响应数据的时长，上图改造的这个后端java接口内部流程比较复杂，因为公司都是微服务架构，该接口内部又调用了6个其他服务的接口，最后把这些接口的数据汇总在一起返回给前端)</p>
-<p>这张图是同步接口和改造成异步接口前后的CPU负载情况对比</p>
-<p>改造前cpu load : 35.46</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/165003.png" alt="img" loading="lazy"></figure>
-<p>改造后cpu load : 14.25</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/165002.png" alt="img" loading="lazy"></figure>
-<p>改成异步后CPU的负载情况也有明显下降，但CPU使用率并无影响(一般情况下异步化后cpu的利用率会有所提高，但要看具体的业务场景)</p>
-<p>CPU LoadAverage是指：一段时间内处于可运行状态和不可中断状态的进程平均数量。(可运行分为正在运行进程和正在等待CPU的进程；<strong>不可中断则是它正在做某些工作不能被中断比如等待磁盘IO、网络IO等</strong>)</p>
-<p>而我们的服务业务场景大部分都是IO密集型业务，功能实现很多需要依赖底层接口，会进行频繁的IO操作。</p>
-<p>下图是2019年在全球架构师峰会上<strong>阿里</strong>分享的异步化改造后的RT和QPS效果：</p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/170052.png" alt="img" loading="lazy"></figure>
-<h2 id="什么是异步编程">什么是异步编程？</h2>
-<h3 id="响应式编程-nio">响应式编程 + NIO</h3>
-<h3 id="1-异步和同步的区别">1. 异步和同步的区别：</h3>
-<p>我们先从<strong>I/O</strong>的角度看下同步模式下接口A调用接口B的交互流程:</p>
-<p>下图是传统的同步模式下io线程的交互流程，可以看出io是阻塞的，即bio的运行模式</p>
-<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/171309.png" alt="img" loading="lazy"></figure>
-<p>接口A发起调用接口B后，这段时间什么事情也不能做，主线程阻塞一直等到接口B数据返回，然后才能进行其他操作，可想而知如果接口A调用的接口不止B的话(A-&gt;B-&gt;C-&gt;D-&gt;E。。。)，那么等待的时间也是递增的，而且<strong>这期间CPU也要一直占用着</strong>，白白浪费资源，也就是上图看到的 cpu load 高的原因。</p>
-<p>而且还有一个隐患就是如果调用的其他服务中的接口比如C超时，或接口C挂掉了，那么对调用方服务A来说，剩余的接口比如D、E都会无限等待下去。。。</p>
-<p>其实大部分情况下我们收到数据后内部的处理逻辑耗时都很短，这个可以通过埋点执行时间统计，<strong>大部分时间都浪费在了IO等待上</strong>。</p>
-<p>下面这个视频演示了同步模式下我们线上环境真实的接口调用情况，即接口调用的线程执行和变化情况，(使用的工具是JDK自带的jvisual来监控线程变化情况)</p>
-<p>这里先交代下大致背景：服务端api接口A内部一共调用了6个其他服务的接口，大致交互是这样的：</p>
-<p>A接口（B -&gt; C -&gt; D -&gt; E -&gt; F -&gt; G）返回聚合数据</p>
-<p>背景：使用Jemter测试工具压测100个线程并发请求接口，以观察线程的运行情况（可以全屏观看）：</p>
-<p><code>http-nio-8080-exec*</code>开头的是tomcat线程池中的线程，即前端请求我们后端接口时要通过tomcat服务器接收和转发的线程，因为我们后端api接口内部又调用了其他服务的6个接口（B、C、D、E、F、G），同步模式下需要等待上一个接口返回数据才能继续调用下一个接口，所以可以从视频中看出，大部分的http线程耗时都在8秒以上(绿色线条代表线程是”运行中”状态，8秒包括等待接口返回的时间和我们内部逻辑处理的总时间，因为是本地环境测试，受机器和网络影响较大)</p>
-<p>然后我们再看下异步模式的交互流程，即nio方式：</p>
-<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/182257.png" alt="img" loading="lazy"></figure>
-<p>大致流程就是接口A发起调用接口B的请求后就立即返回，而不用阻塞等待接口B响应，这样的好处是<code>http-nio-8080-exec*</code>线程可以<strong>马上得到复用，接着处理下一个前端请求的任务</strong>，如果接口B处理完返回数据后，会有一个回调线程池处理真正的响应，即这种模式下我们的业务流程是<strong>http线程只处理请求，回调线程处理接口响应</strong>。</p>
-<p>nio模式下虽然<code>http-nio-8080-exec*</code>线程和回调线程<code>AsfThread-executor-*</code>的运行时间都很短，但是从http线程开始到asf回调处理完返回给前端结果的时间和bio即同步模式下的时间差异不大（在相同的逻辑流程下），并不是nio模式下服务响应的整体时间就会缩短，而是<strong>会提升****CPU的利用率</strong>，因为CPU不再会阻塞等待（不可中断状态减少），这样<strong>CPU就能有更多的资源来处理其他的请求任务</strong>，相同单位时间内能处理更多的任务，所以nio模式带来的好处是：</p>
-<ul>
-<li><strong>提升QPS（用更少的线程资源实现更高的并发能力）</strong></li>
-<li><strong>降低CPU负荷,提高利用率</strong></li>
-</ul>
-<h3 id="2-nio原理">2. Nio原理</h3>
-<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/161708.png" alt="img" loading="lazy"></figure>
-<p>结合上面的接口交互图可知，接口B通过网络返回数据给调用方(接口A)这一过程，对应底层实现就是网卡接收到返回数据后，通过自身的DMA（直接内存访问）将数据拷贝到内核缓冲区，这一步不需要CPU参与操作，也就是把原先CPU等待的事情交给了底层网卡去处理，这样<strong>CPU就可以专注于我们的应用程序即接口内部的逻辑运算</strong>。</p>
-<h3 id="3-nio-in-java">3. Nio In Java</h3>
-<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/212141.png" alt="img" loading="lazy"></figure>
-<p>nio在java里的实现主要是上图中的几个核心组件：<code>channel</code>、<code>buffer</code>、<code>selector</code>，这些组件组合起来即实现了上面所讲的<strong>多路复用机制</strong>，如下图所示：</p>
-<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/212733.png" alt="img" loading="lazy"></figure>
-<h2 id="响应式编程">响应式编程</h2>
-<h3 id="1-什么是响应式编程它和传统的编程方式有什么区别">1. 什么是响应式编程？它和传统的编程方式有什么区别？</h3>
-<p>响应式可以简单的理解为收到某个事件或通知后采取的一系列动作，如上文中所说的响应操作系统的网络数据通知，然后以<strong>回调的方式</strong>处理数据。</p>
-<p>传统的命令式编程主要由：顺序、分支、循环 等控制流来完成不同的行为</p>
-<p>响应式编程的特点是：</p>
-<ul>
-<li><strong>以逻辑为中心转换为以数据为中心</strong></li>
-<li><strong>从命令式到声明式的转换</strong></li>
-</ul>
-<h3 id="2-javautilconcurrentfuture">2. Java.Util.Concurrent.Future</h3>
-<p>在Java使用nio后无法立即拿到真实的数据，而且先得到一个”<code>future</code>“，可以理解为邮戳或快递单，为了获悉真正的数据我们需要不停的通过快递单号查询快递进度，所以 <strong>J.U.C 中的 Future 是Java对异步编程的第一个解决方案</strong>，通常和线程池结合使用，伪代码形式如下：</p>
-<pre><code>ExecutorService executor = Executors.newCachedThreadPool(); // 线程池
-Future&lt;String&gt; future = executor.submit(() -&gt;{
-    Thread.sleep(200); // 模拟接口调用，耗时200ms
-    return &quot;hello world&quot;;
-});
-// 在输出下面异步结果时主线程可以不阻塞的做其他事情
-// TODO 其他业务逻辑
-
-System.out.println(&quot;异步结果:&quot;+future.get()); //主线程获取异步结果
-</code></pre>
-<p><code>Future</code>的缺点很明显：</p>
-<ul>
-<li>无法方便得知任务何时完成</li>
-<li>无法方便获得任务结果</li>
-<li>在主线程获得任务结果会导致主线程阻塞</li>
-</ul>
-<h3 id="3-listenablefuture">3. ListenableFuture</h3>
-<p>Google并发包下的<code>listenableFuture</code>对Java原生的future做了扩展，顾名思义就是使用监听器模式实现的<strong>回调机制</strong>，所以叫可监听的future。</p>
-<pre><code>Futures.addCallback(listenableFuture, new FutureCallback&lt;String&gt;() {
-    @Override
-    public void onSuccess(String result) {
-        System.out.println(&quot;异步结果:&quot; + result);
-    }
-
-    @Override
-    public void onFailure(Throwable t) {
-        t.printStackTrace();
-    }
-}, executor);
-</code></pre>
-<p>回调机制的最大问题是：<strong>Callback Hell（回调地狱）</strong></p>
-<ul>
-<li>代码的字面形式和其所表达的业务含义不匹配</li>
-<li>业务的先后关系在代码层面变成了包含和被包含的关系</li>
-<li>大量使用 Callback 机制，使应该是先后的业务逻辑在代码形式上表现为层层嵌套,这会导致代码难以理解和维护。</li>
-</ul>
-<p>那么如何解决 Callback Hell 问题呢？</p>
-<p><strong>响应式编程</strong></p>
-<p>其实主要是以下两种解决方式：</p>
-<ul>
-<li>事件驱动机制</li>
-<li>链式调用(Lambda)</li>
-</ul>
-<h3 id="4-completablefuture">4. CompletableFuture</h3>
-<p>Java8里的<code>CompletableFuture</code>和Java9的<code>Flow Api</code>勉强算是上面问题的解决方案：</p>
-<pre><code>CompletableFuture&lt;String&gt; f1 = CompletableFuture.supplyAsync(() -&gt;
-    &quot;hello&quot;
-);
-// f2依赖f1的结果做转换
-CompletableFuture&lt;String&gt; f2 = f1.thenApplyAsync(t -&gt;
-    t + &quot; world&quot;
-);
-System.out.println(&quot;异步结果:&quot; + f2.get());
-</code></pre>
-<p>但<code>CompletableFuture</code>处理简单的任务可以使用，但并不是一个完整的反应式编程解决方案，在服务调用复杂的情况下，存在服务编排、上下文传递、柔性限流(背压)方面的不足</p>
-<p>如果使用<code>CompletableFuture</code>面对这些问题可能需要自己额外造一些轮子，Java9的<code>Flow</code>虽然是基于 <strong>Reactive Streams</strong> 规范实现的，但没有RxJava、Project Reactor这些异步框架丰富和强大和完整的解决方案。</p>
-<p>当然如果接口逻辑比较简单，完全可以使用<code>listenableFuture</code>或<code>CompletableFuture</code></p>
-<h3 id="5-reactive-streams">5. Reactive Streams</h3>
-<p>在网飞推出RxJava1.0并在Android端普及流行开后，响应式编程的规范也呼之欲出：</p>
-<p>包括后来的RxJava2.0、Project Reactor都是基于Reactive Streams规范实现的。</p>
-<p>关于他们和<code>listenableFuture</code>、 <code>CompletableFuture</code>的区别通过下面的例子大家应该就会清楚。</p>
-<p>比如下面的基于回调的代码示例：获取用户的5个收藏列表功能</p>
-<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/225236.png" alt="img" loading="lazy"></figure>
-<p>图中标注序号的步骤对应如下：</p>
-<ol>
-<li>根据uid调用用户收藏列表接口<code>userService.getFavorites</code></li>
-<li>成功的回调逻辑</li>
-<li>如果用户收藏列表为空</li>
-<li>调用推荐服务<code>suggestionService.getSuggestions</code></li>
-<li>推荐服务成功后的回调逻辑</li>
-<li>取前5条推荐并展示(<code>Java8 Stream api</code>)</li>
-<li>推荐服务失败的回调,展示错误信息</li>
-<li>如果用户收藏列表有数据返回</li>
-<li>取前5条循环调用详情接口<code>favoriteService.getDetails</code> 成功回调则展示详情,失败回调则展示错误信息</li>
-</ol>
-<p>可以看出主要逻辑都是在回调函数（<code>onSuccess()</code>、<code>onError()</code>）中处理的，在可读性和后期维护成本上比较大。</p>
-<p>基于Reactive Streams规范实现的响应式编程解决方案如下：</p>
-<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/225814.png" alt="img" loading="lazy"></figure>
-<ol>
-<li>调用用户收藏列表接口</li>
-<li>压平数据流调用详情接口</li>
-<li>如果收藏列表为空调用推荐接口</li>
-<li>取前5条</li>
-<li>切换成异步线程处理上述声明接口返回结果)</li>
-<li>成功则展示正常数据,错误展示错误信息</li>
-</ol>
-<p>可以看出因为这些异步框架提供了丰富的api，所以我们可以把主要精力<strong>放在数据的流转上，而不是原来的逻辑控制上。这也是异步编程带来的思想上的转变。</strong></p>
-<p>下图是RxJava的<code>operator api</code>：</p>
-<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/230605.png" alt="img" loading="lazy"></figure>
-<p>（如果这些操作符满足不了你的需求，你也可以自定义操作符）</p>
-<p>所以说<strong>异步最吸引人的地方在于资源的充分利用，不把资源浪费在等待的时间上(nio)，代价是增加了程序的复杂度，而Reactive Program封装了这些复杂性，使其变得简单。</strong></p>
-<p>所以我们无论使用哪种异步框架，尽量使用框架提供的api，而不是像上图那种基于回调业务的代码，把业务逻辑都写在onSuccess、onError等回调方法里，这样无法发挥异步框架的真正作用：</p>
-<blockquote>
-<p>Codes Like Sync，Works Like Async</p>
-</blockquote>
-<p>即以<strong>同步的方式编码，达到异步的效果与性能,兼顾可维护性与可伸缩性</strong>。</p>
-<h2 id="异步框架技术选型">异步框架技术选型</h2>
-<figure data-type="image" tabindex="14"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/231752.png" alt="img" loading="lazy"></figure>
-<p>如果是我个人更愿意选择Project Reactor作为首选异步框架，，还有一点是因为Netflix推出的开源产品渐渐都不维护了，而且Project Reactor提供了<code>reactor-adapter</code>组件，可以方便的和RxJava的api转换。</p>
-<p>其实还有<strong>Vert.x</strong>也算异步框架 (底层使用netty实现nio, 最新版已支持reactive stream规范)</p>
-<h2 id="异步化真正的好处">异步化真正的好处</h2>
-<h3 id="scalability">Scalability</h3>
-<p>伸缩性主要体现在以下两个方面：</p>
-<ul>
-<li><strong>elastic 弹性</strong></li>
-<li><strong>resilient 容错性</strong></li>
-</ul>
-<p>（异步化在平时<strong>不会明显降低 RT、提高 QPS</strong>，文章开头的数据也是在大促这种流量高峰下的体现出的异步效果）</p>
-<p>从架构和应用等更高纬度看待异步带来的好处则会提升系统的两大能力：<strong>弹性</strong> 和 <strong>容错性</strong></p>
-<p>前者反映了系统应对压力的表现，后者反映了系统应对故障的表现</p>
-<h4 id="1-容错性">1. 容错性</h4>
-<p>像RxJava，Reactor这些异步框架处理回调数据时一般会切换线程上下文，其实就是使用不同的线程池来隔离不同的数据流处理逻辑，下图说明了这一特性的好处：</p>
-<figure data-type="image" tabindex="15"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/225922.png" alt="img" loading="lazy"></figure>
-<p>即利用异步框架支持线程池切换的特性实现<strong>服务/接口隔离</strong>，进而提高系统的<strong>高可用</strong>。</p>
-<h4 id="2-弹性">2. 弹性</h4>
-<figure data-type="image" tabindex="16"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/134231.png" alt="img" loading="lazy"></figure>
-<p>back-pressure是一种重要的反馈机制，相比于传统的熔断限流等方式，是一种更加<strong>柔性的自适应限流</strong>。使得系统得以优雅地响应负载，而不是在负载下崩溃。</p>
-<h2 id="异步化落地的难点及解决方案">异步化落地的难点及解决方案</h2>
-<p>还是先看下淘宝总结的异步改造中难点问题：</p>
-<figure data-type="image" tabindex="17"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/130202.png" alt="img" loading="lazy"></figure>
-<p>中间件全异步牵涉到到公司中台化战略或框架部门的支持，包括公司内部常用的中间件比如MQ、redis、dal等。</p>
-<p>这里主要说下上下文传递和阻塞检测的问题：</p>
-<h3 id="1-上下文传递">1. 上下文传递</h3>
-<p>改造成异步服务后，不能再使用<code>ThreadLocal</code>传递上下文context，因为异步框架比如RxJava一般在收到通知后会先调用<code>observeOn()</code>方法切换成另外一个线程处理回调，比如我们在请求接口时在<code>ThreadLocal</code>的context里设置了一个值，在回调线程里从context里取不到这个值的，因为此时已经不是同一个<code>ThreadLocal</code>了，所以需要我们手动在切换上下文的时候传递context从一个线程到另一个线程环境，伪代码如下：</p>
-<pre><code>Context context = ThreadLocalUtils.get(); // 获取当前线程的上下文
-single.observeOn(scheduler).doOnEvent((data, error) -&gt; ThreadLocalUtils.set(context)); // 切换线程后在doOnEvent里重新给新的线程赋值context
-</code></pre>
-<p>在<code>observeOn()</code>方法切换成另外一个线程后调用<code>doOnEvent</code>方法将原来的context赋给新的线程<code>ThreadLocal</code></p>
-<p><strong>注意</strong>：这里的代码只是提供一种解决思路，实际在使用前和使用后还要考虑清空<code>ThreadLocal</code>，因为线程有可能会回收到线程池下次复用，而不是立即清理，<strong>这样就会污染上下文环境</strong>。</p>
-<p>可以将传递上下文的方法封装成公共方法，不需要每次都手动切换。</p>
-<h3 id="2-阻塞检测">2. 阻塞检测</h3>
-<p>阻塞检测主要是要能及时发现我们某个异步任务长时间阻塞的发生，比如异步线程执行时间过长进而影响整个接口的响应，原来同步场景下我们的日志都是串行记录到ES或Cat上的，现在改成异步后，每次处理接口数据的逻辑可能在不同的线程中完成，这样记录的日志就需要我们主动去合并（依据具体的业务场景而定），如果日志无法关联起来，对我们排查问题会增加很多难度。所幸的是随着异步的流行，现在很多日志和监控系统都已支持异步了。</p>
-<p>Project Reactor 自己也有阻塞检测功能</p>
-<h3 id="3-其他问题">3. 其他问题</h3>
-<p>除了上面提到的两个问题外，还有一些比如RxJava2.0之后不支持返回null，如果我们原来的代码或编程习惯所致返回结果有null的情况，可以考虑使用java8的<code>Optional.ofNullable()</code>包装一下，然后返回的RxJava类型是这样的：<code>Single&lt;Optional&gt;</code>，其他异步框架如果有类似的问题同理。</p>
-<h2 id="异步其他解决方案纤程协程">异步其他解决方案：纤程/协程</h2>
-<ul>
-<li>Quasar</li>
-<li>Kilim</li>
-<li>Kotlin</li>
-<li>Open JDK Loom</li>
-<li>AJDK wisp2</li>
-</ul>
-<p>协程并不是什么新技术，它在很多语言中都有实现，比如 <code>Python</code>、<code>Lua</code>、<code>Go</code> 都支持协程。</p>
-<p>协程与线程不同之处在于，<strong>线程由内核调度，而协程的调度是进程自身完成的</strong>。这样就可以不受操作系统对线程数量的限制，一个线程内部可以创建成千上万个协程。因为上文讲到的异步技术都是基于线程的操作和封装，Java中的线程概念对应的就是操作系统的线程。</p>
-<h3 id="1-quasar-kilim">1. Quasar、Kilim</h3>
-<p>开源的Java轻量级线程（协程）框架，通过利用<code>Java instrument</code>技术对字节码进行修改，使方法挂起前后可以保存和恢复JVM栈帧，方法内部已执行到的字节码位置也通过增加状态机的方式记录，在下次恢复执行可直接跳转至最新位置。</p>
-<h3 id="2-kotlin">2. Kotlin</h3>
-<p>Kotlin Coroutine 协程库，因为 Kotlin 的运行依赖于 JVM，不能对 JVM  进行修改，因此Kotlin不能在底层支持协程。同时Kotlin 是一门编程语言，需要在语言层面支持协程，所以Kotlin  对协程支持最核心的部分是在编译器中完成，这一点其实和Quasar、Kilim实现原理类似，都是在<strong>编译期通过修改字节码</strong>的方式实现协程</p>
-<h3 id="3-project-loom">3. Project Loom</h3>
-<p>Project Loom 发起的原因是因为长期以来Java 的线程是与操作系统的线程一一对应的，这限制了 Java 平台并发能力提升，Project Loom 是<strong>从 JVM 层面对多线程技术进行彻底的改变</strong>。</p>
-<p>OpenJDK 在2018年创建了 Loom 项目，目标是在JVM上实现轻量级的线程，并解除JVM线程与内核线程的映射。其实 Loom  项目的核心开发人员正是从Quasar项目过来的，目的也很明确，就是要将这项技术集成到底层JVM里，所以Quasar项目目前已经不维护了。。。</p>
-<h3 id="4-ajdk-wisp2">4. AJDK Wisp2</h3>
-<p>Alibaba Dragonwell 是阿里巴巴的 Open JDK 发行版，提供长期支持。dragonwell8已开源协程功能（之前的版本是不支持的），开启jvm命令：<code>-XX:+UseWisp2</code> 即支持协程。</p>
-<h2 id="总结">总结</h2>
-<ul>
-<li>Future 在异步方面支持有限</li>
-<li>Callback 在编排能力方面有 Callback Hell 的短板</li>
-<li>Project Loom 最新支持的Open JDK版本是16，目前还在测试中</li>
-<li>AJDK wisp2 需要换掉整个JVM，需要考虑改动成本和收益比</li>
-</ul>
-<p>所以目前实现异步化比较成熟的方案是 <strong>Reactive Streams</strong></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[解析springcloud分布式微服务的实现]]></title>
-        <id>https://kangjn.github.io/post/jie-xi-springcloud-fen-bu-shi-wei-fu-wu-de-shi-xian/</id>
-        <link href="https://kangjn.github.io/post/jie-xi-springcloud-fen-bu-shi-wei-fu-wu-de-shi-xian/">
-        </link>
-        <updated>2021-04-21T05:59:47.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="分布式系统">分布式系统</h2>
-<p>微服务就是原来臃肿的项目拆分为多个模块互不关联。如：按照子服务拆分、数据库、接口，依次往下就更加细粒度，当然运维也就越来越难受了。</p>
-<p>分布式则是偏向与机器将诺大的系统划分为多个模块部署在不同服务器上。</p>
-<p>微服务和分布式就是作用的“目标不一样”。</p>
-<h2 id="微服务与cloud">微服务与Cloud</h2>
-<p>微服务是一种概念，spring-cloud是微服务的实现。</p>
-<p>微服务也不一定必须使用cloud来实现，只是微服务中有许多问题，如：负载均衡、服务注册与发现、路由等等。</p>
-<p>而cloud则是将这些处理问题的技术整合了。</p>
-<h2 id="spring-cloud-组件">Spring-Cloud 组件</h2>
-<p><strong>Eureka</strong></p>
-<p>Eureka是Netifix的子模块之一，Eureka有2个组件，一个EurekaServer 实现中间层服务器的负载均衡和故障转移，一个EurekaClient它使得与server交互变得简单。</p>
-<p>Spring-Cloud封装了Netifix公司开发的Eureka模块来实现服务注册和发现。</p>
-<p>通过Eureka的客户端 Eureka Server维持心跳连接，维护可以更方便监控各个微服务的运行。</p>
-<p><strong>角色关系图</strong></p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/720w.jpeg" alt="img" loading="lazy"></figure>
-<p><strong>Eureka使用</strong></p>
-<p>客户端</p>
-<pre><code>&lt;dependency&gt;
-&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-&lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
-&lt;/dependency&gt;
-server:
-port: 4001
-eureka:
-client:
-serviceUrl:
-defaultZone: http://localhost:3000/eureka/ #eureka服务端提供的注册地址 参考服务端配置的这个路径
-instance:
-instance-id: admin-1 #此实例注册到eureka服务端的唯一的实例ID
-prefer-ip-address: true #是否显示IP地址
-leaseRenewalIntervalInSeconds: 10 #eureka客户需要多长时间发送心跳给eureka服务器，表明它仍然活着,默认为30 秒 (与下面配置的单位都是秒)
-leaseExpirationDurationInSeconds: 30 #Eureka服务器在接收到实例的最后一次发出的心跳后，需要等待多久才可以将此实例删除，默认为90秒
-
-spring:
-application:
-name: server-admin #此实例注册到eureka服务端的name
-</code></pre>
-<p>服务端</p>
-<pre><code>&lt;dependency&gt;
-&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-&lt;artifactId&gt;spring-cloud-starter-
-netflix-eureka-server&lt;/artifactId&gt;
-&lt;/dependency&gt;
-yml文件声明 
-server:
-port: 3000
-eureka:
-server:
-enable-self-preservation: false #关闭自我保护机制
-eviction-interval-timer-in-ms: 4000 #设置清理间隔
-（单位：毫秒 默认是60*1000）
-instance:
-hostname: localhost 
-client:
-registerWithEureka: false #不把自己作为一个客户端注册到自己身上
-fetchRegistry: false #不需要从服务端获取注册信息
-（因为在这里自己就是服务端，而且已经禁用自己注册了）
-serviceUrl:
-defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
-在SpringBoot 启动项目中加入注解:@EnableEurekaServer 
-就可以启动项目了，访问对应地址就可以看到界面。
-</code></pre>
-<p><strong>Eureka 集群</strong></p>
-<p>服务启动后Eureka Server会向其他服务server 同步，当消费者要调用服务提供者，则向服务注册中心获取服务提供者的地址，然后将提供者的地址缓存到本地，下次调用时候直接从本地缓存中获取</p>
-<p>yml 服务端</p>
-<pre><code>server:
-port: 3000
-eureka:
-server:
-enable-self-preservation: false #关闭自我保护机制
-eviction-interval-timer-in-ms: 4000 #设置清理间隔
-（单位：毫秒 默认是60*1000）
-instance:
-hostname: eureka3000.com 
-client:
-registerWithEureka: false #不把自己作为一个客户端
-注册到自己身上
-fetchRegistry: false #不需要从服务端获取注册信息
-（因为在这里自己就是服务端，而且已经禁用自己注册了）
-serviceUrl:
-defaultZone: http://eureka3001.com:3001/eureka,
-http://eureka3002.com:3002/eureka
-(这里不注册自己，注册到其他服务上面以为会同步。)
-</code></pre>
-<p><strong>yml 客户端</strong></p>
-<pre><code>server:
-port: 4001
-eureka:
-client:
-serviceUrl:
-defaultZone:http://localhost:3000/eureka/,http://
-eureka3001.com:3001/eureka,http://eureka3002.com:3 002
-/eureka #eureka服务端提供的注册地址 参考服务端配置的这个路径
-instance:
-instance-id: admin-1 #此实例注册到eureka服务端的唯一的实例ID
-prefer-ip-address: true #是否显示IP地址
-leaseRenewalIntervalInSeconds: 10 #eureka客户需要多长时间发
-送心跳给eureka服务器，表明它仍然活着,默认为30 秒 (与下面配置的单位都是秒)
-leaseExpirationDurationInSeconds: 30 #Eureka服务器在
-接收到实例的最后一次发出的心跳后，需要等待多久才可以将此实例删除，默认为90秒
-
-spring:
-application:
-name: server-admin #此实例注册到eureka服务端的name
-</code></pre>
-<p><strong>CAP定理</strong></p>
-<pre><code>C：Consistency 一致性
-A：Availability 可用性
-P：Partition tolerance 分区容错性
-这三个指标不能同时达到
-</code></pre>
-<p><strong>Partition tolerance</strong></p>
-<p>分区容错性，大多数分布式系统都部署在多个子网络。每一个网络是一个区。区间的通信是可能失败的如一个在本地，一个在外地，他们之间是无法通信的。分布式系统在设计的时候必须要考虑这种情况。</p>
-<p><strong>Consistency</strong></p>
-<p>一致性，写操作后的读取，必须返回该值。如：服务器A1和服务器A2，现在发起操作将A1中V0改为V1，用户去读取的时候读到服务器A1得到V1，如果读到A2服务器但是服务器</p>
-<p>还是V0，读到的数据就不对，这就不满足一致性。</p>
-<p>所以让A2返回的数据也对，的让A1给A2发送一条消息，把A2的V0变为V1，这时候不管从哪里读取都是修改后的数据。</p>
-<p><strong>Availability</strong></p>
-<p>可用性就是用户只要给出请求就必须回应，不管是本地服务器还是外地服务器只要接收到就必须做出回应，不管数据是否是最新必须做出回应，负责就不是可用性。</p>
-<p><strong>C与A矛盾</strong></p>
-<p>一致性和可用性不能同时成立，存在分区容错性，通信可能失败。</p>
-<p>如果保证一致性，A1在写操作时，A2的读写只能被锁定，只有等数据同步了才能读写，在锁定期间是不能读写的就不符合可用性。</p>
-<p>如果保持可用性，那么A2就不会被锁定，所以一致性就不能成立。</p>
-<p>综上 无法做到一致性和可用性，所以系统在设计的时候就只能选其一。</p>
-<p><strong>Eureka与Zookeeper</strong></p>
-<p>Zookeeper遵循的是CP原则保持了一致性，所以在master节点因为网络故障与剩余“跟随者”接点失去联系时会重新选举“领导者”，选取“领导者”大概会持续30-120s的时间，且选举的时候整个zookeeper是不可用的。导致在选举的时候注册服务瘫痪。</p>
-<p>Eureka在设计的时候遵循AP可用性。Eureka各个接点是公平的，没有主从之分，down掉几个几点也没问题，其他接点依然可以支持注册，只要有一台Eureka在，注册就可以用，只不过查询到的数据可能不是最新的。Eureka有自我保护机制，如果15分钟之内超过85%接点都没有正常心跳，那么Eureka认为客户端与注册中心出现故障，此时情况可能是</p>
-<p>Eureka不在从注册列表移除因为长时间没有瘦到心跳而过期的服务。</p>
-<p>Eureka仍然能够接收注册和查询，但不会同步到其他接点。</p>
-<p>当网络稳定后，当前的 实例注册信息会更新到其他接点。</p>
-<p><strong>Ｒibbon</strong></p>
-<p>rebbon主要提供客户端的负载均衡，提供了一套完善的客户端的配置。Rebbin会自动帮助你基于某种规则（如：简单的轮询，随机链接等）。</p>
-<p>服务端的负载均衡是一个url通过一个代理服务器，然后通过代理服务器（策略：轮询，随机 ，权重等等），反向代理到你的服务器。</p>
-<p>客户端负载均衡是通过一个请求在客户端已经声明了要调用那个服务，然后通过具体算法来完成负载均衡。</p>
-<p><strong>Ｒibbon使用</strong></p>
-<p>引入依赖，Eureka以及把Ribbon集成在里面。</p>
-<p>使用Ribbon只有在RestTemplate上面加入@LoadBalanced注解。</p>
-<p><strong>Feign负载均衡</strong></p>
-<p>feign是一个声明式的webService客户端，使用feign会让编写webService更简单，就是定义一个接口加上注解。</p>
-<p>feign是为了编写java http客户端更加简单，在Ribbon+RestTemplate此基础上进一步封装，简化了使用Spring Cloud Ribbon时，自动封装服务调用客户端的开发量。</p>
-<p><strong>Feign使用</strong></p>
-<pre><code>引入依赖
-&lt;dependency&gt;
-&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-&lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
-&lt;/dependency&gt;
-在启动类上加@EnableFeignClients
-然后在接口上加@FeignClient(&quot;SERVER-POWER&quot;)注解其中参数就是服务的名字。
-</code></pre>
-<p><strong>Feign集成Ribbon</strong></p>
-<p>利用Ribbon维护服务列表信息，融合了Ribbon的负载均衡配置，与Ribbon不同的是Feign只需要定义服务绑定接口以声明的方式，实现简答的服务调用。</p>
-<h2 id="hystrix断路器">hystrix断路器</h2>
-<p>是一种用于处理分布式系统延迟和容错的开源库。在分布式系统中许多依赖不可避免的会调用失败，比如超时、异常等，断路器保证出错不会导致整体服务失败，避免级联故障。</p>
-<p>断路器其实就是一种开关设置，类似保险丝，像调用方返回一个符合预期的、可处理的备选响应，而不是长时间等待或者抛出无法处理的异常，保证服务调用方线程不会被长时间 不必要占用，从而避免了在分布式系统中蔓延，乃至雪崩。</p>
-<p>微服务中 client-&gt;微服务A-&gt;微服务B-&gt;微服务C-&gt;微服务D,其中微服务B异常了，所有请求微服务A的请求都会卡在B这里，就会导致线程一直累积在这里，那么其他微服务就没有可用线程，导致整个服务器雪崩。</p>
-<p>针对这方案有 服务限流、超时监控、服务熔断、服务降级</p>
-<p><strong>降级 超时</strong></p>
-<p>降级就是服务响应过长 ，或者不可用了，就是服务调用不了了，我们不能把错误信息返回出来，或者长时间卡在哪里，所以要准备一个策略当发生这种问题我们直接调用这个方法快速返回这个请求，不让他一直卡在那。</p>
-<p>要在调用方做降级（要不然那个微服务都down掉了在做降级就没有意义）。</p>
-<p>引入hystrix依赖</p>
-<pre><code>&lt;dependency&gt; 
-&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-&lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt; 
-&lt;/dependency&gt;
-在启动类上加入@EnableHystrix 或者@EnableCircuitBreaker。
-@RequestMapping(&quot;/feignPower.do&quot;) 
-@HystrixCommand(fallbackMethod = &quot;fallbackMethod&quot;) 
-public Object feignPower(String name){ 
-return powerServiceClient.power(); 
-} 
-fallbackMethod：
-public Object fallbackMethod(String name){ 
-System.out.println(name); 
-return R.error(&quot;降级信息&quot;); 
-}
-这里的降级信息具体内容根据业务需求来，比如返回一个默认的查询信息等等。
-hystrix有超时监听，当你请求超过1秒 就会超时，这个是可以配置的
-</code></pre>
-<p>这里的降级信息具体内容根据业务需求来，比如返回一个默认的查询信息等等。</p>
-<p>hystrix有超时监听，当你请求超过1秒 就会超时，这个是可以配置的</p>
-<p><strong>降级什么用</strong></p>
-<p>第一他可以监听服务有没有超时。第二报错了他这里直接截断了没有让请求一直卡在这个。</p>
-<p>其实降级，当你系统迎来高并发的时候，这时候发现系统马上承载不了这个大的并发 ，可以先关闭一些不重要 的微服务（就是在降级方法返回一个比较友好的信息）把资源让出来给主服务，其实就是整体资源不够用了，忍痛关闭某些服务，待过渡后再打开。</p>
-<p><strong>熔断限流</strong></p>
-<p>熔断就像生活中的跳闸，比如电路故障了，为了防止事故扩大，这里切断你的电源以免意外发生。当一个微服务调用多次，hystrix就会采取熔断  机制，不在继续调用你的方法，会默认短路，5秒后试探性的先关闭熔断机制，如果在这时候失败一次会直接调用降级方法，一定程度避免雪崩，</p>
-<p>限流，限制某个微服务使用量，如果线程占用超过了，超过的就会直接降级该次调用。</p>
-<p><strong>Feign整合hystrix</strong></p>
-<pre><code>feign默认支持hystrix，需要在yml配置中打开。
-feign: 
-hystrix: 
-enabled: true
-
-降级方法
-@FeignClient(value = &quot;SERVER-POWER&quot;, fallback = PowerServiceFallBack.class)
-public interface PowerServiceClient {
-
-@RequestMapping(&quot;/power.do&quot;)
-public Object power(@RequestParam(&quot;name&quot;) String name);
-}
-
-在feign客户端的注解上 有个属性叫fallback 然后指向一个类 PowerServiceClient 
-@Component
-public class PowerServiceFallBack implements PowerServiceClient {
-@Override
-public Object power(String name) {
-return R.error(&quot;测试降级&quot;);
-}
-}
-</code></pre>
-<h2 id="zuul-网关">Zuul 网关</h2>
-<p>zuul包含了对请求的路由和过滤两个主要功能</p>
-<p>路由是将外部请求转发到具体的微服务实例上。是实现统一入口基础而过滤器功能负责对请求的处理过程干预，是实现请求校验等功能。</p>
-<p>Zuul与Eureka进行整合，将zuul注册在Eureka服务治理下，同时从Eureka获取其他服务信息。（zuul分服务最终还是注册在Eureka上）</p>
-<p><strong>路由</strong></p>
-<pre><code>&lt;dependency&gt;
-&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-&lt;artifactId&gt;spring-cloud-starter-netflix-zuul&lt;/artifactId&gt;
-&lt;/dependency&gt;
-dependency&gt;
-&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-&lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
-&lt;/dependency&gt;
-最后要注册在Eureka上所以需要引入eureka依赖
-YML
-server:
-port: 9000
-eureka:
-client:
-serviceUrl:
-defaultZone: http://localhost:3000/eureka/ #eureka服务端提供的注册地址 参考服务端配置的这个路径
-instance:
-instance-id: zuul-0 #此实例注册到eureka服务端的唯一的实例ID
-prefer-ip-address: true #是否显示IP地址
-leaseRenewalIntervalInSeconds: 10 #eureka客户需要多长时间发送心跳给eureka服务器，表明它仍然活着,默认为30 秒 (与下面配置的单位都是秒)
-leaseExpirationDurationInSeconds: 30 #Eureka服务器在接收到实例的最后一次发出的心跳后，需要等待多久才可以将此实例删除，默认为90秒
-
-spring:
-application:
-name: zuul #此实例注册到eureka服务端的name 
-启动类 @EnableZuulProxy
-
-在实际开发当中我们肯定不会/server-power这样通过微服务调用，
-可能只要一个/power就好了 
-zuul: 
-routes:
-mypower: 
-serviceId: server-power 
-path: /power/** 
-myorder: 
-serviceId: server-order 
-path: /order/**
-注意/**代表是所有层级 /* 是代表一层。
-一般我们会禁用服务名调用
-ignored-services：server-order 这样就不能通过此服务名调用，
-不过这个配置如果一个一个通微服务名字设置太复杂
-一般禁用服务名 ignored-services：“*”
-有时候要考虑到接口调用需要一定的规范，比如调用微服务URL需要前缀/api，可以加上一个prefix
-prefix：/api 在加上strip-prefix: false /api前缀是不会出现在路由中
-zuul:
-prefix: /api
-ignored-services: &quot;*&quot;
-stripPrefix: false
-routes:
-product:
-serviceId: server-product
-path: /product/**
-order:
-serviceId: server-order
-path: /order/**
-</code></pre>
-<p><strong>过滤器</strong></p>
-<p>过滤器(filter)是zuul的核心组件，zuul大部分功能是通过过滤器实现的，zuul中定义了4种标准过滤器类型，这些过滤器类型对应与请求的生命周期，</p>
-<p>PRE：这种过滤器在请求路由前被调用，可利用过滤器进行身份验证，记录请求微服务的调试信息等。</p>
-<p>ROUTING：这种过滤器将请求路由到微服务，这种过滤器用于构建发送给微服务请求，并使用 Apache HttpClient或Netfix Ribbon请求微服务。</p>
-<p>POST：这种过滤器在路由微服务后执行，可用来相应添加标准的HTTP Header、收集统计信息和指标、将响应从微服务发送给客户端。</p>
-<p>ERROR：在其他阶段发送错误时执行过滤器</p>
-<p><strong>继承ZuulFilter</strong></p>
-<pre><code>@Component
-public class LogFilter extends ZuulFilter { 
-@Override
-public String filterType() {
-return FilterConstants.PRE_TYPE;
-}
-
-@Override
-public int filterOrder() {
-return FilterConstants.PRE_DECORATION_FILTER_ORDER+1;
-}
-
-@Override
-public boolean shouldFilter() {
-return true;
-}
-
-@Override
-public Object run() throws ZuulException {
-RequestContext ctx = RequestContext.getCurrentContext();
-//被代理到的微服务
-String proxy = (String)ctx.get(&quot;proxy&quot;);
-//请求的地址
-String requestURI = (String)ctx.get(&quot;requestURI&quot;);
-//zuul路由后的url
-System.out.println(proxy+&quot;/&quot;+requestURI);
-HttpServletRequest request = ctx.getRequest();
-String loginCookie = CookieUtil.getLoginCookie(request);
-ctx.addZuulRequestHeader(&quot;login_key&quot;,loginCookie);
-return null;
-}
-}
-</code></pre>
-<p>由此可知道自定义zuul Filter要实现以下几个方法。</p>
-<p>filterType：返回过滤器类型，有pre、route、post、erro等几种取值</p>
-<p>filterOrder：返回一个int值指定过滤器的顺序，不同过滤器允许返回相同数字。</p>
-<p>shouldFilter：返回一个boolean判断过滤器是否执行，true执行，false不执行。</p>
-<p>run：过滤器的具体实现。</p>
-<p>Spting-Cloud默认为zuul编写并开启一些过滤器。如果要禁用部分过滤器，只需在application.yml里设置zuul…disable=true，例如zuul.LogFilter.pre.disable=true</p>
-<p>zuul也整合了了hystrix和ribbon的， 提供降级回退，继承FallbackProvider 类 然后重写里面的方法。</p>
 ]]></content>
     </entry>
 </feed>
