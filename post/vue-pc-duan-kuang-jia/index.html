@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="欢迎访问[MyBlog]的个人博客">
 <meta name="author" content="kveln">
-<title>springboot-3.资源文件属性配置 | MyBlog</title>
+<title>Vue PC端框架  | MyBlog</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link
   href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
   rel='stylesheet' type='text/css'>
-<link rel="alternate" type="application/rss+xml" title="springboot-3.资源文件属性配置 | MyBlog » Feed"
+<link rel="alternate" type="application/rss+xml" title="Vue PC端框架  | MyBlog » Feed"
   href="https://kangjn.github.io//atom.xml">
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
@@ -30,8 +30,8 @@
 
 <script>hljs.initHighlightingOnLoad();</script>
 
-  <meta property="og:description" content="springboot-3.资源文件属性配置" />
-  <meta property="og:url" content="https://kangjn.github.io/post/springboot-3zi-yuan-wen-jian-shu-xing-pei-zhi/" />
+  <meta property="og:description" content="Vue PC端框架 " />
+  <meta property="og:url" content="https://kangjn.github.io/post/vue-pc-duan-kuang-jia/" />
   <meta property="og:locale" content="zh-CN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyBlog" />
@@ -151,13 +151,13 @@
             <div class="post-heading">
               <span class="tags">
                 
-                <a href="https://kangjn.github.io/tag/ZhEyBon8d/" class="tag">spring boot</a>
+                <a href="https://kangjn.github.io/tag/zRQVoA7Uz/" class="tag">vue</a>
                 
               </span>
-              <h1>springboot-3.资源文件属性配置</h1>
+              <h1>Vue PC端框架 </h1>
               <span class="meta">
                 Posted on
-                2021.04.16，3 min read
+                2021.04.25，3 min read
               </span>
             </div>
           
@@ -172,92 +172,72 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto post-content-container">
           
-          <h2 id="springboot-3资源文件属性配置">springboot-3.资源文件属性配置</h2>
-<h3 id="前言">前言</h3>
-<p>为什么要进行资源文件属性配置呢？可以想象成就是一个设置文件。比如设置好数据库密码.port端口后，在其他地方只需要用名字引用即可。<br>
-举个例子：<br>
-我们设置以下项目的持有者名称为ericam</p>
-<pre><code>demo:
-    name: &quot;ericam&quot;
-</code></pre>
-<p>那么在其他地方只需要引用name名称即可，然后如果整个项目需要多次引用，后期我们只需要在一个配置文件里更改下名称即可，不必多次操作。</p>
-<p>Spring Boot可使用注解的方式将自定义的properties文件映射到实体bean中，比如application.properties文件 或者application.yml</p>
-<h3 id="正文">正文</h3>
-<p>（1）首先，在pom文件中添加依赖项</p>
-<pre><code>&lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;
-</code></pre>
-<p><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/1.png" alt="img" loading="lazy"><br>
-（2）修改application.yml文件，添加如下内容</p>
-<pre><code>demo:
-  name: &quot;ericam&quot;
-</code></pre>
-<p>（3）新建一个Resource.java文件<br>
-<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWhDts.png" alt="cWhDts.png" loading="lazy"></p>
-<pre><code>package cn.ericam.nndemo;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-@Configuration  //使用配置注解 ，表示这个类是配置文件
-@ConfigurationProperties(prefix = &quot;demo&quot;) //prefix 指定配置文件里的前缀
-@PropertySource(value = &quot;classpath:application.yml&quot;)
-public class Resource {
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-</code></pre>
-<p>ps：ConfigurationProperties是一个注解，可以标注在一个Class上，这样Spring Boot会从Environment中获取其属性对应的属性值给其进行注入。<br>
-（4）接下来，我们开始引用一波尝试，打开helloController.java文件</p>
-<pre><code>@RestController
-public class helloController {
-    @Autowired
-    private Resource resource;    //构建一个Resource类对象，通过autowired自动赋值
-    @RequestMapping(&quot;/getR&quot;)
-    public jsonResult gr()
-    {
-        Resource b = new Resource();   
-        BeanUtils.copyProperties(resource,b); //将resource的值拷贝复制给b
-        return  jsonResult.ok(b);
-    }
-}
-</code></pre>
-<p>ps:@Autowired 注释可以对类成员变量、方法及构造函数进行标注，完成自动装配。<br>
-通过 @Autowired的使用来消除 set、get方法。</p>
-<p>打开浏览器<br>
-<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cWhccV.png" alt="cWhccV.png" loading="lazy"></p>
-<p>application.yml文件中重要属性</p>
-<pre><code>server:
-    port: 8080       #端口
-    servlet:
-        context-path: /demo   #配置路径，此后访问http://localhost:****/demo/****
-</code></pre>
+          <h1 id="1-element">1. Element</h1>
+<p>Element，一套为开发者、设计师和产品经理准备的基于 Vue 2.0 的桌面端组件库</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/060592.jpg" alt="" loading="lazy"></figure>
+<h1 id="2-iview">2. iView</h1>
+<p>一套基于 Vue.js 的高质量UI 组件库</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/054762.jpg" alt="" loading="lazy"></figure>
+<h1 id="3-vue-element-admin">3. vue-element-admin</h1>
+<p>vue-element-admin是基于 Vue2.0，配合使用 Element UI 组件库的一个前端管理后台集成解决方案。它使用了最新的前端技术栈，提炼了典型的业务模型，提供了丰富的功能组件，它可以帮助你快速搭建企业级中后台产品原型。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/048700.jpg" alt="" loading="lazy"></figure>
+<h1 id="4-vue-material">4. Vue Material</h1>
+<p>通过Vue Material和Vue 2.0建立精美的app应用</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/015083.jpg" alt="" loading="lazy"></figure>
+<h1 id="5-vuestrap">5. VueStrap</h1>
+<p>基于 Vue.js 构建的 Bootstrap 组件。该仓库包含一系列基于 Bootstrap 标记和 CSS 的本地 Vue.js 组件。所以不需要 jQuery 和 Bootstrap 的 JavaScript 文件，唯一需要依赖的是:</p>
+<ul>
+<li>Vue.js (要求版本为 ^0.12，基于 0.12.10 版本做的测试)</li>
+<li>Bootstrap CSS (需要版本为 3.x.x， 基于 3.3.5 版本做的测试)。 VueStrap 不依赖某个非常精确的 Bootstrap 版本。</li>
+</ul>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/072878.jpg" alt="" loading="lazy"></figure>
+<h1 id="6-keen-ui">6. Keen UI</h1>
+<p>由Vue编写的基本UI组件的轻量级集合，并受Material Design的启发。</p>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/073456.jpg" alt="" loading="lazy"></figure>
+<h1 id="7-radon-ui">7. Radon UI</h1>
+<p>一个帮助你快速开发产品的Vue组件库，简洁好用，效率高，让你摆脱各种定制化的烦恼。</p>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/001887.jpg" alt="" loading="lazy"></figure>
+<h1 id="8-n3-components">8. N3-components</h1>
+<p>N3组件库是基于Vue.js构建的，让前端工程师和全栈工程师能快速构建页面和应用。致力于构建良好的Vue开发者生态圈，提供良好的开发体验。</p>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/073671.jpg" alt="" loading="lazy"></figure>
+<h1 id="9-muse-ui">9. Muse-UI</h1>
+<p>基于 Vue 2.0 优雅的 Material Design UI 组件库</p>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/036630.jpg" alt="" loading="lazy"></figure>
+<h1 id="10-vue-antd">10. Vue Antd</h1>
+<p>这里是 Ant Design 的 Vue 实现，开发和服务于企业级后台产品。</p>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/011431.jpg" alt="" loading="lazy"></figure>
+<h1 id="11-vuetify">11. Vuetify</h1>
+<p>Vuetify是一个渐进式的框架，试图推动前端开发发展到一个新的水平。Vuetify 支持SSR（服务端渲染），SPA（单页应用程序），PWA（渐进式Web应用程序）和标准HTML页面。</p>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/030282.jpg" alt="" loading="lazy"></figure>
+<h1 id="12-buefy">12. Buefy</h1>
+<p>Buefy 基于 Bulma 和 Vue.js 的轻量级UI组件，它提供了即装即用的轻量级组件。</p>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/071050.jpg" alt="" loading="lazy"></figure>
+<h1 id="13-vue-beauty">13. Vue Beauty</h1>
+<p>基于 ant design 的漂亮的 vue 组件库；vue-beauty 是一套基于 vue.js 和 ant-design样式 的PC端 UI 组件库，旨在帮助开发者提升产品体验和开发效率、降低维护成本。</p>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/014140.png" alt="" loading="lazy"></figure>
 
           <div class="toc-container"><ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#springboot-3%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7%E9%85%8D%E7%BD%AE">springboot-3.资源文件属性配置</a>
-<ul>
-<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
-<li><a href="#%E6%AD%A3%E6%96%87">正文</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a href="#1-element">1. Element</a></li>
+<li><a href="#2-iview">2. iView</a></li>
+<li><a href="#3-vue-element-admin">3. vue-element-admin</a></li>
+<li><a href="#4-vue-material">4. Vue Material</a></li>
+<li><a href="#5-vuestrap">5. VueStrap</a></li>
+<li><a href="#6-keen-ui">6. Keen UI</a></li>
+<li><a href="#7-radon-ui">7. Radon UI</a></li>
+<li><a href="#8-n3-components">8. N3-components</a></li>
+<li><a href="#9-muse-ui">9. Muse-UI</a></li>
+<li><a href="#10-vue-antd">10. Vue Antd</a></li>
+<li><a href="#11-vuetify">11. Vuetify</a></li>
+<li><a href="#12-buefy">12. Buefy</a></li>
+<li><a href="#13-vue-beauty">13. Vue Beauty</a></li>
 </ul>
 </div>
           
           <hr />
           <p class="next-post">下一篇：
-            <a href="https://kangjn.github.io/post/springboot-2li-yong-jie-kou-fan-hui-shu-ju-json/">
+            <a href="https://kangjn.github.io/post/mysql-kai-fa-gui-ze/">
               <span class="post-title">
-                springboot-2.利用接口返回数据（json）&rarr;
+                mysql开发规则&rarr;
               </span>
             </a>
           </p>
