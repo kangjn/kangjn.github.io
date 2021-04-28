@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-04-26T00:28:38.557Z</updated>
+    <updated>2021-04-28T09:29:24.706Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,362 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[Java后端学习路线]]></title>
+        <id>https://kangjn.github.io/post/java-hou-duan-xue-xi-lu-xian/</id>
+        <link href="https://kangjn.github.io/post/java-hou-duan-xue-xi-lu-xian/">
+        </link>
+        <updated>2021-04-27T05:57:47.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>后端技术学习路线</strong>思维导图框架：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/6961bc.png" alt="图片" loading="lazy"></figure>
+<p>图中的每一个节点都可以点开，我都做了细分，在后面章节逐个展开介绍。</p>
+<h2 id="计算机基础">计算机基础</h2>
+<p>不管是后端开发还是前端开发，说到底我们所有的软件开发都是在计算上编写程序，虽然对于大部分人来说，真正开始写代码的时候很少会让你去解决计算机底层的问题，不接触不代表不重要，计算机基础是最重要的。</p>
+<p>后端开发工作中经常用到 Java、C++、Python、Golang 这些语言称为高级编程语言，称为高级是它们接近我们日常交流的自然语言，离计算机底层远，<strong>但所有的高级语言最终都会转化成汇编-&gt;计算机指令-&gt;控制流操控计算机硬件</strong>，所以学习计算机构成和工作原理、操作系统这些基础知识，能够加深我们队高级语言的理解。</p>
+<p><strong>中科大的计算机技术本科主要课程结构安排</strong>。</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/cc33dd.png" alt="图片" loading="lazy"></figure>
+<p>一流大学的计算机专业要学什么可以对照着看下，从学科数学理论基础、计算机体系结构、软件工程方法等等维度展开。</p>
+<p>那如果你不是计算机相关专业的想转行，也不要被吓到了，毕竟这是人家四年时间的学习内容，本科的培养目标不仅仅是培养出一个软件工程师，本科学习还是面向硕士博士的基础培养，注意是计算机科学专业，名字里有个词叫「科学」，我这篇文章要说的 BAT 公司后台软件开发，可以认为是「工学」方向，更多的是服务于工程开发。</p>
+<p>如果只是面向后台开发和工作面试，或者你是非计算机专业想转行，社畜没有太多时间去学习大学那些理论课程，那帮我把计算机基础的范围缩小到下面这 4 门专业课：<strong>计算机组成原理、计算机网路、操作系统、数据结构</strong>。</p>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/b91980.png" alt="图片" loading="lazy"></figure>
+<h3 id="计算机组成原理">计算机组成原理</h3>
+<p>这门课程让你了解计算机的组成和工作原理，要学习的内容包括：</p>
+<ul>
+<li>数据在计算机中的表示和运算（柠檬说：计算机不识数，只认得高低电平，所以数据在计算机内部都用二进制的0和1表示）</li>
+<li>存储系统（柠檬说：数据和程序指令都要存储下来，学习计算机的存储层次，内存、外存、高速缓存、虚拟存储技术）</li>
+<li>指令系统（柠檬说：写的代码最终都要被翻译成计算机指令，指令格式和寻址方式有多种，控制器来控制指令执行）</li>
+<li>中央处理器（也就是 CPU 计算机的大脑，主要构成是运算器和控制器）</li>
+<li>总线（柠檬说：计算机的血管动脉，连接计算机各功能组件，用来传输数据、地址信号、控制信号）</li>
+<li>输入输出系统（柠檬说：Input/Output 也叫 IO 系统，连接和管理各种外部设备比如键盘、显示器等等）</li>
+</ul>
+<h3 id="计算机网络">计算机网络</h3>
+<p>世界上第一台通用计算机「ENIAC」于 1946  被发明出来，如其名字一样仅仅是用于计算，在后来计算机越来越多，如果没有网络每台计算机都将成为一个孤岛，也不会有现在互联网的繁荣，「计算机网络」这门课程的学习路线非常清晰，就是围绕着如何让地理位置上不同的计算机连接起来，并高效可靠的交换数据信息，实现人在家中做，天下事尽知。</p>
+<p>计算机网络有分层次，根据各层属性和特点，分为：</p>
+<ul>
+<li>物理层</li>
+<li>数据链路层</li>
+<li>网络层</li>
+<li>传输层</li>
+<li>应用层</li>
+</ul>
+<p>这个层次划分从上到下就是一个网络数据包的接收路径，反之就是发送路径。既然要交换信息肯定得商量一套通用的协议，就像我们和老外交流，要么他们学中文要么我们学英文，反正得统一出一个标准语言出来，这在计算机网络中称之为「通信协议」。如上述的网络分层，每层都有各自适配的协议，所以计算机网络的学习基本就是围绕着分层协议的学习。</p>
+<h3 id="操作系统">操作系统</h3>
+<p>操作系统也是一种软件。你熟悉的微软Windos操作系统，后台开发熟悉的各种发行版的 Linux 系统，都是通过软件的形式安装在计算机上。</p>
+<p>只不过这个软件和我们平常接触的应用程序软件不同，它比较特殊，因为它向下和计算机硬件（就是我们在计算机组成原理中学习的那些硬件）打交道，向上给其他应用程序和用户提供通用的交互的接口，说白了操作系统就是个中介和管家的角色。它帮我们做了下面这些事情：</p>
+<ul>
+<li>进程管理（柠檬说：你写的程序运行起来才能干活，运行起来的程序称为进程，进程是资源的最小单位）</li>
+<li>内存管理（柠檬说：计算机内存又贵又少，动不动又要来个高并发，内存管理大有学问）</li>
+<li>文件管理（柠檬说：计算机中的资料和信息需要通过文件系统来保存、管理）</li>
+<li>输入输出管理（柠檬说：各种外部设备如何接入计算机和接入之后又如何管理）</li>
+</ul>
+<h3 id="数据结构">数据结构</h3>
+<p>数据结构大家最熟悉，即使毫无计算机基础或是想转行计算机，第一个遇到的就是数据结构，因为面试刷的算法题本质上就是对各种数据结构的运用。所以单纯对面试功利的角度来说，数据结构也是必须要掌握的计算机基础，数据结构要学到：</p>
+<ul>
+<li>线性表（链表、数组、循环链表）</li>
+<li>栈和队列</li>
+<li>树和各种二叉树（二叉排序树、平衡二叉树、哈夫曼树、B树、B+树、Trie树）</li>
+<li>图（图的存储结构、BFS、DFS、最短路径、最小生成树、拓扑排序、关键路径）</li>
+<li>查找算法（二分查找、B树查找、HASH表、KMP字符串模式匹配）</li>
+<li>排序算法（插入排序、冒泡排序、归并排序、基数排序、堆排序）</li>
+<li>贪心算法</li>
+<li>位运算</li>
+<li>分治算法</li>
+<li>动态规划</li>
+</ul>
+<p>好了，计算机基础四大专业课已经大概过了一遍，当然这是我给没有计算机基础同学的实用主义建议，等你学完这四门课程也只能够说入门计算机了，不过这已经比很多人厉害了。如果想真正的了解计算机这门学科，可以等学完了这 4 门基础课程之后，再花写时间挑一些上面培养方案中的课程去学习，做一个知识体系完备的计算机软件后端开发工程师。</p>
+<h2 id="linux">Linux</h2>
+<p>在后台开发领域，你所能接触到的后端服务不敢说 100%，至少也有 90% 以上是运行在 Linux 系统之上，因为它开源、便利、功能强大，需要学习以下技术点：</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/411ebf.png" alt="图片" loading="lazy"></figure>
+<h3 id="linux系统使用">Linux系统使用</h3>
+<p>所以如果你想走后端开发这条路线，我建议你趁早使用 Linux ，越早越好。可以是在个人 PC 上装 Linux  虚拟机，或者装个双系统贵。</p>
+<h3 id="linux-高级编程">Linux 高级编程</h3>
+<p>Linux「高级编程」的意思是比上面的 Linux 基础操作更深入一个层次。</p>
+<p>学会了 Linux 的使用还不算是一个真正的开发人员，使用系统是成为开发者最基本要求，会操作Linux 就像使用 Windows 系统一样，只不过是学习成本的问题，如果这个世界没有 Window 系统，你女朋友花点时间也能掌握 Linux 系统基本操作。</p>
+<p>要想进阶成为后端开发人员，就要懂得如何使用 Linux 系统提供的各种系统API（系统调用接口）进行编程开发，程序员用你写的代码来控制系统，普通用户只会用鼠标操纵。这个阶段需要学习：</p>
+<ul>
+<li>Unix 系统实现 Linux、基本系统数据类型</li>
+<li>文件操作函数: <code>open</code> 、<code>read</code> <code>close</code> <code>write</code> <code>dup</code> <code>fcntl</code> <code>ioctl</code> <code>stat</code> <code>chmod``access</code> <code>chdir</code> ...</li>
+<li>系统编程接口的基本特性和高级特性</li>
+<li>Linux进程环境、如何创建进程、线程，程序的存储空间分配、环境变量</li>
+<li>进程组、会话以及任务控制、进程优先级和调度</li>
+<li>动态库和静态库</li>
+<li>进程间通信：管道和FIFO、消息队列、信号量、共享内存、内存映射</li>
+<li>套接字和网络编程</li>
+</ul>
+<p>总之，这一阶段需要学习的是在 Linux 环境下的高级编程技巧，通过对这些内容的学习也能让你更深入的理解 Linux 系统是如何工作和运行的，并且真正的踏入 Linux 系统编程大门。</p>
+<h3 id="网络编程">网络编程</h3>
+<p>网络编程是通过网络套接字 socket 方式实现的通信，所以也属于进程间通信 IPC（Inter-Process Communication）。</p>
+<p>由于现在的后台服务基于服务端/客户端模型，两者之间基于网络通信，你在家用手机点个外卖的服务请求，也是通过网络通信发给某团的后台服务器，所以后台服务开发，说到底还是网络编程，以及建立在网络编程数据之上的应用层开发。</p>
+<p>网络编程学什么：</p>
+<ul>
+<li>什么是socket套接字</li>
+<li>套接字选项</li>
+<li>TCP/UDP 套接字编程</li>
+<li>Unix domain 协议和编程</li>
+<li>原始套接字编程</li>
+<li>IO多路复用：select 、poll、epoll、kqueue</li>
+<li>序列化技术</li>
+<li>零拷贝技术</li>
+<li>开源网络库：muduo、libevent</li>
+</ul>
+<p>学完以上内容你大概可以写一个类似QQ一样的网络聊天小工具。</p>
+<p>不在在工作中，都有成熟的网络框架或网络通信库，大公司比如鹅厂大部分是自研网络通信框架，小公司用开源项目，这让很多后台开发人员不必关心底层的网络通信细节，除了部分基础架构的开发同学，大部分后台开发同学工作都是在做业务系统的开发。</p>
+<p>但了解底层网络编程原理，是后台开发人员的核心能力，这点对于 C/C++ 后台开发程序员尤为重要。它能拔高你看问题的高度，不了解底层原理，就像是在黑盒编程一样，出了问题无从下手排查。</p>
+<p><strong>学完了以上内容，基本是具备了从事后台开发的基础能力，也能开发出一个简单的后台服务器了。</strong></p>
+<h2 id="数据库">数据库</h2>
+<p>除非是单纯的转发路由类后台服务，一般来说后台开发的web服务器后台程序，后台服务程序说白了就是个死循环：</p>
+<blockquote>
+<p>接收客户端数据包 -&gt; 处理数据包 -&gt; 业务逻辑处理 -&gt; 保存必要的数据 -&gt; 回复响应数据给客户端</p>
+</blockquote>
+<p>这其中会伴随对各种数据的处理，比如电商系统会处理订单数据、用户数据，游戏后台会处理角色数据和装备数据等等，有数据就会涉及到存储系统，数据一般都存储到数据库。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/751d77.png" alt="图片" loading="lazy"></figure>
+<p>主要学习 2 大类数据库：</p>
+<p><strong>关系型数据库</strong>是指采用了关系模型来组织数据的数据库，简单理解就是二维表格模型。</p>
+<p><strong>非关系型数据库</strong>一般指的是 <code>key-value</code> 形式存储数据的 NoSQL 数据库，数据和键值是简单的映射关系。</p>
+<h3 id="关系型数据库">关系型数据库</h3>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzkwOTE2OTY1Nw==&amp;mid=2247486864&amp;idx=1&amp;sn=d509ef3c3d06e9f1149fa136a44d777f&amp;chksm=c13f8b06f6480210fcbd2142e63ec1e8d15984f24a54b504f9c701a3c31bfc3be43fc86ae4ce&amp;token=2073211753&amp;lang=zh_CN&amp;scene=21#wechat_redirect">MySQL 数据库架构</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzkwOTE2OTY1Nw==&amp;mid=2247487268&amp;idx=1&amp;sn=6c97cbcd5ad12695ed2ffd64a16fb6fd&amp;chksm=c13f89b2f64800a48e7bbc39ee7f450a01ece6fc3d4aeaa27fad6ed8ce6a54381f44d1b83a77&amp;token=2073211753&amp;lang=zh_CN&amp;scene=21#wechat_redirect">MySQL索引使用和优化</a></li>
+<li>innoDB存储引擎</li>
+<li>查询性能优化</li>
+<li>聚集索引、非聚集索引</li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzkwOTE2OTY1Nw==&amp;mid=2247486900&amp;idx=1&amp;sn=ef7c98dc6c5ff787387410e0fc0eb3c4&amp;chksm=c13f8b22f6480234c1593c3d256758ab275c1864fc4c1c22fbe9970fb60814f41bf8046c016b&amp;token=2073211753&amp;lang=zh_CN&amp;scene=21#wechat_redirect">事务隔离，ACID，MVCC</a></li>
+<li>锁机制，乐观锁、悲观锁、读锁、写锁、意向锁</li>
+<li>日志</li>
+<li>数据备份与恢复</li>
+</ul>
+<h3 id="非关系型数据库">非关系型数据库</h3>
+<ul>
+<li>redis 基本操作和使用</li>
+<li>redis 设计与实现原理</li>
+<li>MongoDB</li>
+<li>levelDB</li>
+<li>memcache</li>
+<li>HBase</li>
+<li>CKV+ 腾讯自研</li>
+</ul>
+<p>后台开发服务还需要学会解决<strong>三高问题</strong>：高并发、高可用、高性能。</p>
+<h2 id="高并发">高并发</h2>
+<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/105ea6.png" alt="图片" loading="lazy"></figure>
+<p>利用到目前为止学习的内容，我们的开发的后台服务器应付一些小并发场景绰绰有余，但是随着互联网应用业务量的上涨，对后台服务端的请求数剧增，高并发需求随之而来，高并发指的就是高 TPS 和高 QPS</p>
+<ul>
+<li>TPS (Transactions Per Second)每秒事务数</li>
+<li>QPS（Query Per Second）每秒查询数等。</li>
+</ul>
+<p>对于高并发服务必须改变传统的单进程模型，才能处理的过来如此海量的请求。</p>
+<h3 id="多进程">多进程</h3>
+<p>对于高并发的服务请求，由于后台服务一般都是 IO 密集型应用，IO 密集型应用就是大部分 CPU 时间用在网络 IO 上，相对的是 CPU 密集型应用大部分时间花在数据计算上。</p>
+<p>大多数的后台服务程序都是 IO 密集型的应用，网络 IO 的时候 CPU 等待白白浪费时间， 这就告诉我们 CPU 的潜力还没有完全发挥，所以当一个进程的处理能力达到上限，我们可以多创建几个进程，这就是多进程模型。</p>
+<h3 id="多线程">多线程</h3>
+<p>多线程与多进程类似，实际在Linux系统中线程是由轻量级的进程 LWP（Light-weight process）实现，多线程方式实现的后台服务相对于多进程更加轻量，因为多线程是在同一个进程内部实现。</p>
+<p>不过多线程也会带来新的问题，比如全局数据竞争和同步问题，引入线程锁还要防止死锁的发生。</p>
+<h3 id="协程">协程</h3>
+<p>那什么是协程呢？协程 <code>Coroutines</code> 是一种比线程更加轻量级的微线程。类比一个进程可以拥有多个线程，一个线程也可以拥有多个协程，因此协程又称微线程和纤程。可以粗略的把协程理解成子程序调用，每个子程序都可以在一个单独的协程内执行。</p>
+<h3 id="异步回调">异步回调</h3>
+<p>所谓异步回调就是，服务端发起 IO 请求的线程不等网络 IO  线程操作完成，就继续执行随后的代码，一般请求线程需要先注册一个回调函数，当IO 完成之后网络IO线程通过调用之前注册的回调函数来通知发起 IO  请求的线程，这样发起请求的线程就不会阻塞住等待结果，提高了服务处理性能。</p>
+<h2 id="高性能">高性能</h2>
+<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/4f1667.png" alt="图片" loading="lazy"></figure>
+<p>按以上服务模型可以提高服务本身处理能力，高性能后台服务往往还会利用多种技术、从多个维度优化提高性能。比如采用CDN（Content  Delivery  Network）内容分发网络，存储和分发使用户就近获取内容，缩短响应时间；采用池化技术，避免频繁的资源分配与回收；采用服务集群，横向扩展服务能力；采用缓存技术，热点数据加入缓存，减少数据库访问。</p>
+<ul>
+<li>CND 内容分发技术</li>
+<li>池化技术：数据库连接池，线程池</li>
+<li>集群化</li>
+<li>缓存技术</li>
+</ul>
+<h2 id="高可用">高可用</h2>
+<figure data-type="image" tabindex="8"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/781be6.png" alt="图片" loading="lazy"></figure>
+<p>高可用即保证服务的稳定性，不出现重大问题或宕机，常见的解决高可用思路是冗余和负载均衡。冗余的意思就是多部署几台服务器，当其中一台挂掉另外一台能顶上。通过负载均衡技术实现对流量的动态调配，不至于出现大量流量冲击某台机器出现请求不均匀，软件负载均衡技术可以通过DNS、Nginx、LVS等技术实现。这里主要学习的技术有：</p>
+<ul>
+<li>负载均衡技术，软硬件负载均衡</li>
+<li>限流隔离降级技术</li>
+<li>应用层容灾，资源隔离熔断</li>
+<li>异地多活</li>
+</ul>
+<h2 id="设计模式">设计模式</h2>
+<figure data-type="image" tabindex="9"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/2c32c5.png" alt="图片" loading="lazy"></figure>
+<p>设计模式代表着软件开发的一种最佳实践。已经经历了很长一段时间的发展，它们提供了软件开发过程中面临的一般问题的最佳解决方案。学习这些模式有助于经验不足的开发人员通过一种简单快捷的方式来学习软件设计，<strong>当设计大规模软件时遵循必要的设计模式能让写出的代码更加健壮和可扩展</strong>。</p>
+<p>设计模式 6 大原则：</p>
+<ul>
+<li>开闭原则：对扩展开放，对修改关闭，多使用抽象类和接口。</li>
+<li>里氏替换原则：基类可以被子类替换，使用抽象类继承,不使用具体类继承。</li>
+<li>依赖倒转原则：要依赖于抽象，不要依赖于具体，针对接口编程,不针对实现编程。</li>
+<li>接口隔离原则：使用多个隔离的接口，比使用单个接口好，建立最小的接口。</li>
+<li>迪米特法则：一个软件实体应当尽可能少地与其他实体发生相互作用，通过中间类建立联系。</li>
+<li>合成复用原则：尽量使用合成/聚合，而不是使用继承。</li>
+</ul>
+<p>常见设计模式分类</p>
+<ul>
+<li>工厂模式</li>
+<li>单例模式</li>
+<li>建造者模式</li>
+<li>适配器模式</li>
+<li>桥接模式</li>
+<li>过滤器模式</li>
+<li>装饰器模式</li>
+<li>外观模式</li>
+<li>享元模式</li>
+<li>代理模式</li>
+<li>责任链模式</li>
+<li>解释器模式</li>
+<li>迭代器模式</li>
+<li>观察者模式</li>
+<li>...</li>
+</ul>
+<h2 id="分布式">分布式</h2>
+<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/a34448.png" alt="图片" loading="lazy"></figure>
+<p>为什么会出现分布式？随着业务的体量不断增长，单个节点的处理能力无法满足日益增长的计算、存储任务的时候，且硬件的提升（加内存、加磁盘、使用更好的CPU）高昂到得不偿失的时候，应用程序也不能进一步优化的时候，我们才需要考虑分布式系统。</p>
+<blockquote>
+<p>分布式系统是由一组通过网络进行通信、为了完成共同的任务而协调工作的计算机节点组成的系统。分布式系统的出现是为了用廉价的、普通的机器完成单个计算机无法完成的计算、存储任务。其目的是利用更多的机器，处理更多的数据。</p>
+</blockquote>
+<p>分布式系统要解决的问题本身就是和单机系统一样的，而由于分布式系统多节点、通过网络通信的拓扑结构，会引入很多单机系统没有的问题，为了解决这些问题又会引入更多的机制、协议。这里需要学习的内容包括：</p>
+<ul>
+<li>分布式一致性算法：PAXOS、Raft、Zab</li>
+<li>分布式事务：2PC、3PC、TCC</li>
+<li>分布式唯一 ID 生成：雪花算法、UUID、淘宝 TDDL SEQUENCE方案、美团 Leaf</li>
+<li>一致性HASH算法</li>
+<li>扩展性设计，设计可扩展的软件架构</li>
+<li>分布式文件系统：HDFS、FastDFS</li>
+<li>微服务架构设计，服务注册、服务发现、服务路由</li>
+</ul>
+<h2 id="安全">安全</h2>
+<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/ca3e59.png" alt="图片" loading="lazy"></figure>
+<p>本质上后台服务在网络上运行，需要和各种网络环境交互，在正常情况下能够工作，但互联网中有很多针对后台服务的恶意攻击，因此网络安全也是后台开发工程师需要学习的内容。这里主要包括：</p>
+<ul>
+<li>web安全：CSRF、SQL注入、XSS</li>
+<li>DDos防范</li>
+<li>加解密算法：对称加密、哈希算法、非对称加密</li>
+<li>网络隔离：内外网分离、跳板机</li>
+<li>授权认证算法：OAuth2.0、OIDC、2FA、单点登录SSO</li>
+</ul>
+<h2 id="监控与统计">监控与统计</h2>
+<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/618f3d.png" alt="图片" loading="lazy"></figure>
+<p>后台服务运行我们如何了解其运行状态和健康度？如果只是开发小玩具监控和统计大可不必，只需记录本地日志即可，对于成熟的大型后台服务系统，监控、统计、追踪必不可少，<strong>无监控，不运营</strong>。</p>
+<p>开源的监控软件有：Prometheus、Zabbix、Open-Falcon。</p>
+<p>追踪系统也非常重要，特别是目前微服务化，一次服务请求需要经历多个不同的微服务处理，给分布式追踪带来新的挑战，主要包含以下三个方面：</p>
+<ul>
+<li>通过收集日志（Logging），记录程序的调试信息或错误信息，对系统和各个服务的运行状态进行监控</li>
+<li>通过收集量度（Metrics），比如累加量，对系统和各个服务的性能进行监控</li>
+<li>通过分布式追踪（Tracing ），追踪服务请求是如何在各个分布的组件中进行处理的细节</li>
+</ul>
+<p>业界也有一些成熟的开源软件用于监控与追踪：<strong>SkyWalking、Pinpoint、Zipkin、CAT大众点评开源</strong>。不过大公司一般都有自研的一套监控与追踪系统，比如腾讯内部就有多套自研监控与调用链追踪系统。</p>
+<h2 id="搜索引擎">搜索引擎</h2>
+<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/a7057f.png" alt="图片" loading="lazy"></figure>
+<p>我们讨论的是全文搜索引擎，什么是全文搜索引擎？</p>
+<blockquote>
+<p>全文搜索引擎是目前广泛应用的主流搜索引擎。它的工作原理是计算机索引程序通过扫描文章中的每一个词，对每一个词建立一个索引，指明该词在文章中出现的次数和位置，当用户查询时，检索程序就根据事先建立的索引进行查找，并将查找的结果反馈给用户的检索方式。这个过程类似于通过字典中的检索字表查字的过程。</p>
+</blockquote>
+<p><strong>数据分为结构化数据与非结构化数据</strong></p>
+<p>像数据库表这种的数据是结构化数据；而对于像HTML、XML、文档这样不定长度且无固定格式的数据我们称之为非结构化数据。非结构化数据也称为全文数据，对非结构化数据的搜索可以用全文检索的方式，</p>
+<p>目前两大主流的全文搜索引擎「Solr」和「Elasticsearch」都是基于 Lucene 建立。搜索引擎需要学习的内容：</p>
+<ul>
+<li>搜索引擎原理，搜索引擎利用<strong>倒排索引</strong>技术来实现对全文数据的高效检索。</li>
+<li>Lucene，Apache Lucene 是一个开源的全文搜索引擎工具包。</li>
+<li>Elasticsearch 原理与使用</li>
+<li>Solr 原理与使用</li>
+</ul>
+<h2 id="大数据">大数据</h2>
+<figure data-type="image" tabindex="14"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/8ace66.png" alt="图片" loading="lazy"></figure>
+<p>大数据，又称为巨量资料，指的是在传统数据处理应用软件不足以处理的大或复杂的数据集的术语。随着后台服务用户数增加和数据的积累，产生海量有待挖掘价值的数据，分析利用这些数据可以反馈线上决策，优化运营策略，产生数据价值。</p>
+<p>海量数据也可以定义为来自各种来源的大量非结构化或结构化数据。</p>
+<p>在软件开发领域的大数据概念自 20 世纪 90 年代的数据仓库开始，对于大数据的处理也导致各种海量数据的统计和处理技术发展。</p>
+<p>主要包含以下的技术点需要学习：数据存储、离线分析、流式计算。</p>
+<ul>
+<li>大数据存储：Hadoop 框架，HDFS、HBase、YARN 架构、Apache Kudu</li>
+<li>离线分析：Hive、MapReduce、Spark</li>
+<li>流式计算：Flink、Storm、Kafka Stream、Spark Streaming</li>
+</ul>
+<h2 id="虚拟化">虚拟化</h2>
+<figure data-type="image" tabindex="15"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/41eedb.png" alt="图片" loading="lazy"></figure>
+<p>虚拟化，是指通过虚拟化技术将一台计算机虚拟为多台逻辑计算机。</p>
+<h3 id="虚拟化的好处">虚拟化的好处</h3>
+<ul>
+<li>灵活性：在同一硬件上同时运行多个操作系统</li>
+<li>敏捷性：移动操作系统的方式与将文件或图片从一台物理服务器移动到另一台物理服务器的方式相同。</li>
+<li>容错：当物理服务器出现故障时，管理软件会自动将实例迁移到可用服务器，甚至无感知物理硬件故障。</li>
+<li>降低成本：您不再需要过多的物理服务器，操作和维护所需的费用也随之减少。</li>
+</ul>
+<p>常见的虚拟化技术：KVM、Xen、OpenVZ、Docker</p>
+<p>虽然对于大多数后台服务程序来说， 很多服务都是部署在 Docker 容器里，但 Docker 共用了底层系统的  kernel，所有容器共用一部分的运行库，因此隔离性相比 KVM 之类的虚拟化技术差一点，KVM 与 Docker  有各自的使用场景，未来很长一段时间是共存状态。</p>
+<p>OpenStack 管理 VM（Virtual Machine）虚拟机的工具；Kubernetes 简称 K8s ，是管理 container 容器的工具。</p>
+<h2 id="中间件">中间件</h2>
+<figure data-type="image" tabindex="16"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/a87304.png" alt="图片" loading="lazy"></figure>
+<p>在后端开发中你可能经常听说到「中间件」这个词，那什么是中间件？看下Wiki上的定义：</p>
+<blockquote>
+<p>中间件技术创建在对应用软件部分常用功能的抽象上，<strong>将常用且重要的过程调用、分布式组件、消息队列、事务、安全、链接器、商业流程、网络并发、HTTP 服务器、Web Service</strong> 等功能集于一身或者分别在不同品牌的不同产品中分别完成。</p>
+<p>中国科学院软件所研究员仲萃豪把中间件定义为「平台＋通信」。这个定义限定了只有用于分布式系统中的此类软件才能被称为中间件，同时此定义也把中间件与实际应用的应用软件区分开来。</p>
+</blockquote>
+<p>大白话来说，<strong>中间件就是把分布式系统中一些通用功能的抽象出来提供服务的一类软件统称</strong>。它屏蔽掉了底层操作系统的复杂性，向上提供一个统一的开发环境，降低了软件系统开发的复杂度，由于中间件是介于操作系统和应用软件之间，为应用软件提供服务功能的软件，<strong>由于介于两种软件之间，所以称为中间件</strong>。</p>
+<p>常见的的开源中间件有下面几种，组合起来就能搭建一个完整的分布式后台服务系统：</p>
+<ul>
+<li>web server 中间件，Nginx、OpenResty、Tomcat...</li>
+<li>缓存中间件，服务端缓存包括 Redis、Memcached...</li>
+<li>消息队列中间件，Kafka、RabbitMQ、ActiveMQ...</li>
+<li>RPC框架，Tars、Dubbo、gRPC、Thrift</li>
+<li>数据库中间件，Sharding jdbc</li>
+<li>日志系统中间件，ELK B指的是一套解决方案，是 Elasticsearch、Logstash 、 Kibana、Beats  是这 4 种软件产品的首字母缩写。</li>
+<li>配置中心中间件，Apollo、zookeeper统一配置管理</li>
+<li>API网关，开源项目有 Tyk、kong、zuul、orange...</li>
+</ul>
+<h2 id="版本控制">版本控制</h2>
+<figure data-type="image" tabindex="17"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/01b213.png" alt="图片" loading="lazy"></figure>
+<p>大型软件项目的代码量巨大，如何有效组织和管理源码和版本，于是产生了版本控制系统。版本控制系统就是我们常说的SVN 或 Git，用来追踪、维护源码、文件以及配置文件等等的改动，并且提供控制这些改动控制权的程序。</p>
+<p>常见的版本控制系统分为两大类：集中式版本控制和分布式版本控制。作为后端开发工程师，版本控制系统的使用也是必须掌握的基础技能，<strong>不过这些系统一般都是边使用边熟悉，刚开始熟悉一些常用操作就好</strong>。</p>
+<ul>
+<li>常见的有集中式版本控制系统，代表是SVN；</li>
+<li>分布式版本控制系统，代表是Git</li>
+</ul>
+<h2 id="工具">工具</h2>
+<figure data-type="image" tabindex="18"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/104429.png" alt="图片" loading="lazy"></figure>
+<p>一些和后端开发或者说软件开发相关的工具推荐，主要是编辑器和 IDE。</p>
+<h3 id="编辑器">编辑器</h3>
+<p>在 Linux 下开发肯定离不开 Vim 或者 Emacs，这两个都是常用的编辑器，已经形成了两大爱好者阵营。特别是 Vim  编辑器，学习成本有点高，配合上各种插件和配置，有些 Vim 爱好者已经把它当成 IDE 来用了，一旦掌握可以大幅提升工作效率，值得你去学习。</p>
+<p>当然除了 Vim 如果是文字编辑工作，比如写 README 文档或者写技术博客，那么强烈推荐学习下 Markdown  语法，这是一种种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档，注重内容本身不用过多的调整排版。Markdown 编辑器推荐  Typora 、有道云笔记 Markdown 编辑器、VSCode Markdown插件。</p>
+<h3 id="ide">IDE</h3>
+<p>编辑器作为小工程还可以胜任，不过后端开发工作中，一般都是大型的软件工程项目，所以不大可能用编辑器来管理，这时候就需要学习使用专业的集成开发工具。</p>
+<p>集成开发环境（IDE，Integrated Development Environment ）是用于提供程序开发环境的应用程序，一般包括代码编辑器、编译器、调试器和图形用户界面等工具。</p>
+<p>磨刀不误砍柴工，挑一把趁手的兵器再去编程世界遨游。各语言 IDE 五花八门，推荐 JetBrains 系列和 VS Code  ，JetBrains 产品包括各语言开发的一系列的 IDE，特别是Java 的Intellij IDEA 口碑非常不错，部分对应的产品系列如下。</p>
+<ul>
+<li>CLion - 跨平台的C/C++ IDE 开发工具，支持C++11 、C++14、libc++以及Boost。</li>
+<li>GoLand - Go语言的集成开发环境。</li>
+<li>IntelliJ IDEA - 2001年发布。一套智能的 Java 集成开发环境，特别专注与强调程序师的开发撰写效率提升。</li>
+<li>PhpStorm - PHP IDE开发工具。</li>
+<li>PyCharm - 一款结合了Django框架的Python IDE开发工具。</li>
+<li>AppCode - Swift 和 Objective-C IDE开发工具。</li>
+</ul>
+<p>Visual Studio Code（简称VS Code）是一个由微软开发，同时支持Windows 、  Linux和macOS等操作系统的免费代码编辑器，它支持测试，并内置了Git 版本控制功能，同时也具有开发环境功能，例如代码补全（类似于  IntelliSense）、代码片段和代码重构等。该编辑器支持用户个性化配置，例如改变主题颜色、键盘快捷方式等各种属性和参数，同时还在编辑器中内置了扩展程序管理的功能。</p>
+<p>在2019年的 Stack Overflow 组织的开发者调研中，VS Code被认为是最受开发者欢迎的开发环境。</p>
+<h2 id="测试">测试</h2>
+<figure data-type="image" tabindex="19"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/a101f4.png" alt="图片" loading="lazy"></figure>
+<p>软件工程师不仅要写代码，还要做测试，软件测试和软件开发是相伴相生，测试能让保证我们写出代码更加健壮和可维护。</p>
+<p><strong>TDD是测试驱动开发</strong>（Test-Driven Development）的英文简称，是敏捷开发中的一项核心实践和技术，也是一种设计方法论。TDD的原理是在开发功能代码之前，先编写单元测试用例代码，根据测试代码确定需要编写什么产品代码。需要掌握和了解以下测试技术和方法。</p>
+<ul>
+<li>单元测试</li>
+<li>压力测试</li>
+<li>全链路测试</li>
+<li>A/B 测试，灰度发布，蓝绿部署</li>
+</ul>
+<h2 id="学习顺序">学习顺序</h2>
+<p>总结下，后端技术学习的内容还是很多的，不可能一蹴而就。</p>
+<p><strong>把以上技术路线学习优先级做个排序，你照着学就行</strong>，<strong>排序规则</strong>：</p>
+<blockquote>
+<p>星级越高，排名越靠前，重要程度越高，优先安排时间学习。</p>
+</blockquote>
+<p>计算机基础  5星</p>
+<p>Linux  5 星</p>
+<p>数据库 5 星</p>
+<p>设计模式 5 星</p>
+<p>工具 5 星</p>
+<p>中间件 4 星</p>
+<p>分布式 4 星</p>
+<p>高并发、高可用、高性能  4 星</p>
+<p>搜索引擎 4 星</p>
+<p>测试 3 星</p>
+<p>监控与统计 3 星</p>
+<p>虚拟化 3 星</p>
+<p>安全 3 星</p>
+<p>大数据 3 星</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Java 技术书籍大全]]></title>
         <id>https://kangjn.github.io/post/java-ji-zhu-shu-ji-da-quan/</id>
@@ -5105,174 +5461,6 @@ git push -u origin master  //提交到你的仓库<br>
 <p>那么这个3是不是就是稳定的数量呢？</p>
 <p>假设你做的是边开飞机边换引擎的重写工作，那么前期3个人都可能捉襟见肘。但是到了服务后期，你可能1个就够了。</p>
 <p>所以3在我的理解应该是一个基准线，不同的时间段会有上下波动，但是相对稳定。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[一份微服务架构手稿图]]></title>
-        <id>https://kangjn.github.io/post/yi-fen-wei-fu-wu-jia-gou-shou-gao-tu/</id>
-        <link href="https://kangjn.github.io/post/yi-fen-wei-fu-wu-jia-gou-shou-gao-tu/">
-        </link>
-        <updated>2021-04-22T08:26:56.000Z</updated>
-        <content type="html"><![CDATA[<p>什么是微服务？</p>
-<p>微服务 Microservices 之父，马丁.福勒，对微服务大概的概述如下：</p>
-<p>就目前而言，对于微服务业界并没有一个统一的、标准的定义（While there is no precise definition of this architectural style ) 。</p>
-<p>但通常在其而言，微服务架构是一种架构模式或者说是一种架构风格，它提倡将单一应用程序划分成一组小的服务，每个服务运行独立的自己的进程中，服务之间互相协调、互相配合，为用户提供最终价值。</p>
-<p>服务之间采用轻量级的通信机制互相沟通（通常是基于 HTTP 的 RESTful API ) 。每个服务都围绕着具体业务进行构建，并且能够被独立地部署到生产环境、类生产环境等。</p>
-<p>另外，应尽量避免统一的、集中式的服务管理机制，对具体的一个服务而言，应根据业务上下文，选择合适的语言、工具对其进行构建，可以有一个非常轻量级的集中式管理来协调这些服务。可以使用不同的语言来编写服务，也可以使用不同的数据存储。</p>
-<p>根据马丁.福勒的描述，我总结了以下几点：</p>
-<figure data-type="image" tabindex="1"><a href="http://img.javastack.cn/1590629991746502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/746502.png" alt="img" loading="lazy"></a></figure>
-<p><strong>①小服务</strong></p>
-<p>小服务，没有特定的标准或者规范，但他在总体规范上一定是小的。</p>
-<p><strong>②进程独立</strong></p>
-<p>每一组服务都是独立运行的，可能我这个服务运行在 Tomcat 容器，而另一个服务运行在 Jetty 上。可以通过进程方式，不断的横向扩展整个服务。</p>
-<p><strong>③通信</strong></p>
-<p>过去的协议都是很重的，就像 ESB，就像 SOAP，轻通信，这意味着相比过去更智能更轻量的服务相互调用，就所谓 smart endpoints and dumb pipes。</p>
-<p>这些 Endpoint 都是解耦的，完成一个业务通信调用串起这些 Micro Service 就像是 Linux 系统中通过管道串起一系列命令业务。</p>
-<p>过去的业务，我们通常会考虑各种各样的依赖关系，考虑系统耦合带来的问题。微服务，可以让开发者更专注于业务的逻辑开发。</p>
-<p><strong>④部署</strong></p>
-<p>不止业务要独立，部署也要独立。不过这也意味着，传统的开发流程会出现一定程度的改变，开发的适合也要有一定的运维职责。</p>
-<p><strong>⑤管理</strong></p>
-<p>传统的企业级 SOA 服务往往很大，不易于管理，耦合性高，团队开发成本比较大。</p>
-<p>微服务，可以让团队各思其政的选择技术实现，不同的 Service 可以根据各自的需要选择不同的技术栈来实现其业务逻辑。</p>
-<h2 id="微服务的利与弊">微服务的利与弊</h2>
-<p>为什么用微服务呢？因为好玩？不是的。下面是我从网络上找到说的比较全的优点：</p>
-<ul>
-<li>优点是每个服务足够内聚，足够小，代码容易理解这样能聚焦一个指定的业务功能或业务需求。</li>
-<li>开发简单、开发效率提高，一个服务可能就是专一的只干一件事。</li>
-<li>微服务能够被小团队单独开发，这个小团队是 2 到 5 人的开发人员组成。</li>
-<li>微服务是松耦合的，是有功能意义的服务，无论是在开发阶段或部署阶段都是独立的。</li>
-<li>微服务能使用不同的语言开发。</li>
-<li>易于和第三方集成，微服务允许容易且灵活的方式集成自动部署，通过持续集成工具，如 Jenkins，Hudson，bamboo。</li>
-<li>微服务易于被一个开发人员理解，修改和维护，这样小团队能够更关注自己的工作成果。无需通过合作才能体现价值。微服务允许你利用融合最新技术。</li>
-<li>微服务只是业务逻辑的代码，不会和 HTML，CSS 或其他界面组件混合。</li>
-<li>每个微服务都有自己的存储能力，可以有自己的数据库，也可以有统一数据库。</li>
-</ul>
-<p>总的来说，微服务的优势，就是在于，面对大的系统，可以有效的减少复杂程度，使服务架构的逻辑更清晰明了。</p>
-<p>但是这样也会带来很多问题，就譬如分布式环境下的数据一致性，测试的复杂性，运维的复杂性。</p>
-<h2 id="什么组织适合使用微服务">什么组织适合使用微服务？</h2>
-<p>微服务带了种种优点，种种弊端，那么什么组织适合使用微服务？</p>
-<p>①墨菲定律（设计系统）和康威定律（系统划分）<br>
-康威定律，是一个五十多年前就被提出来的微服务概念。在康威的这篇文章中，最有名的一句话就是：</p>
-<blockquote>
-<p>Organizations which design systems are constrained to produce designs which are copies of the communication structures of these  organizations.</p>
-<p>-Melvin Conway(1967)</p>
-</blockquote>
-<p>中文直译大概的意思就是：设计系统的组织，其产生的设计等同于组织之内、组织之间的沟通结构。</p>
-<figure data-type="image" tabindex="2"><a href="http://img.javastack.cn/1590629991985502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/985502.png" alt="img" loading="lazy"></a></figure>
-<p>②架构演化</p>
-<p>架构是不断演化出来的，微服务也是这样，当从各大科技公司，规模大到一定程度，完全需要演化成更进一步管理的技术架构体系。[淘宝千万并发，14 次架构演进]，推荐大家看下。</p>
-<p>[<img src="https://gitee.com/kangjun/MyBlogImage/raw/master/233502.png" alt="img" loading="lazy">]</p>
-<p>传统的团队，都是面向过程化的，产品想完了去找策划，策划完了找开发，接着顺着一步一步找。</p>
-<p>我们做技术都是为了产品的，一旦过程出来了什么问题，回溯寻找问题会非常耗时。</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/387502.png" alt="img" loading="lazy"></figure>
-<p>使用了微服务架构体系，团队组织方式需要转变成跨职能团队，即每个团队都有产品专家，策划专家，开发专家，运维专家，他们使用 API 方式发布他们的功能，而平台使用他们的功能发布产品。</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/717502.png" alt="img" loading="lazy"></figure>
-<h2 id="微服务技术架构体系">微服务技术架构体系</h2>
-<p>下面我分享一下大部分公司都使用的微服务技术架构体系：</p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/956502.png" alt="img" loading="lazy"></figure>
-<h3 id="服务发现">服务发现</h3>
-<p>主流的服务发现，分为三种：</p>
-<p><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/87502.jpg" alt="1590629993087502" loading="lazy">第一种，开发人员开发了程序以后，会找运维配一个域名，服务的话通过 DNS 就能找到我们对应的服务。</p>
-<p>缺点是，由于服务没有负载均衡功能，对负载均衡服务，可能会有相当大的性能问题。</p>
-<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/191502.jpg" alt="191502" loading="lazy"></figure>
-<p>第二种，是目前普遍的做法。可以参考 Zuul 网关，每一个服务都通过服务端内置的功能注册到注册中心，服务消费者不断轮询注册中心发现对应的服务，使用内置负载均衡调用服务。</p>
-<p>缺点是，对多语言环境不是很好，你需要单独给消费者的客户端开发服务发现和负载均衡功能。当然了，这个方法通常都是用在 Spring Cloud 上的。</p>
-<figure data-type="image" tabindex="7"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/640383.jpg" alt="img" loading="lazy"></figure>
-<p>第三种，是将客户端和负载均衡放在同一个主机，而不是同一个进程内。</p>
-<ul>
-<li>[这种方法相对第一种第二种方法来说，改善了他们的缺点，但是会极大增加运维成本。]</li>
-</ul>
-<h3 id="网关">[网关]</h3>
-<p>微服务的网关是什么？我们可以联系生活实际想一下。每一个大的公司，都会有一偏属于自己的建筑区，而这建筑区内，都有不少的门卫。如果有外来人员进入公司，会先和门卫打好招呼，才能进去。</p>
-<p>将生活实际联系到微服务上，就不难理解网关的意思了：</p>
-<figure data-type="image" tabindex="8"><a href="http://img.javastack.cn/1590629993612502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/640324.jpg" alt="img" loading="lazy"></a></figure>
-<p>网关的作用如下：</p>
-<ul>
-<li>反向路由：很多时候，公司不想让外部人员看到我们公司的内部，就需要网关来进行反向路由。即将外部请求转换成内部具体服务调用。</li>
-<li>安全认证：网络中会有很多恶意访问，譬如爬虫，譬如黑客攻击，网关维护安全功能。</li>
-<li>限流熔断：当请求很多服务不堪重负，会让我们的服务自动关闭，导致不能用服务。限流熔断可以有效的避免这类问题。</li>
-<li>日志监控：所有的外面的请求都会经过网关，这样我们就可以使用网关来记录日志信息。</li>
-<li>灰度发布，蓝绿部署。是指能够平滑过渡的一种发布方式。在其上可以进行 A/B testing。即让一部分用户继续用产品特性 A，一部分用户开始用产品特性 B，如果用户对 B 没有什么反对意见，那么逐步扩大范围，把所有用户都迁移到 B 上面来。</li>
-</ul>
-<p>[开源网关 Zuul 架构：]</p>
-<figure data-type="image" tabindex="9"><a href="http://img.javastack.cn/1590629993902502.png"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/640321.jpg" alt="img" loading="lazy"></a></figure>
-<p>Zuul 网关核心其实是一个 Servlet，所有请求都会经过 Zuul Servlet 传到 ZuulFilter Runner，然后分发到三种过滤器。</p>
-<p>先说说架构图左半部分，分别是使用 Groovy 实现的前置路由过滤器，路由过滤器，后置路由过滤器。</p>
-<p>一般请求都会先经过前置路由过滤器处理，一般的自定义 Java 封装逻辑也会在这里实现。</p>
-<p>路由过滤器，实现的是找到对应的微服务进行调用。调用完了，响应回来，会经过后置路由过滤器，通过后置路由过滤器我们可以封装日志审计的处理。</p>
-<p>可以说 Zuul 网关最大的特色就是它的三层过滤器。是 Zuul 网关设计的自定义过滤器加载机制。</p>
-<p>网关内部会有生产者消费者模型，自动的将过滤器脚本发布到 Zuul 网关读取加载运行。</p>
-<h3 id="配置中心">配置中心</h3>
-<p>以前，开发人员把配置文件放在开发文件里面，这样会有很多隐患。譬如，配置规范不同，无法追溯配置人员。</p>
-<p>一旦需要大规模改动配置，改动时间会很长，无法追溯配置人员，从而影响整个产品，后果是我们承担不起的。</p>
-<p>因此就有配置中心这个喽！现在的开源中心有百度配置中心 Disconf，Spring Cloud Config，Apollo。</p>
-<p>今天重点说说现在应用质量不错的配置中心，携程开源的阿波罗（Apollo）：</p>
-<figure data-type="image" tabindex="10"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/781502.png" alt="img" loading="lazy"></figure>
-<p>Apollo 的配置中心规模比较大，本地应用会有响应的配置中心客户端，可以定时同步配置中心里的配置。如果配置中心怠机，会使用缓存来进行配置。关注微信公众号：Java技术栈，在后台回复：架构，可以获取我整理的 N 篇最新架构干货。</p>
-<h3 id="通讯方式">通讯方式</h3>
-<p>关于通讯方式，一般市面也就是两种远程调用方式，我整理了一个表格：</p>
-<figure data-type="image" tabindex="11"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/516502.png" alt="img" loading="lazy"></figure>
-<h3 id="监控预警">监控预警</h3>
-<p>监控预警对于微服务很重要，一个可靠的监控预警体系对微服务运行至关重要。</p>
-<p>一般监控分为如下层次：</p>
-<figure data-type="image" tabindex="12"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/744502.png" alt="img" loading="lazy"></figure>
-<p>从基础设施到用户端，层层有监控，全方位，多角度，每一个层面都很重要。</p>
-<p>总体来说，微服务可分为 5 个监控点：</p>
-<ul>
-<li>日志监控</li>
-<li>Metrics 监控</li>
-<li>健康检查</li>
-<li>调用链检查</li>
-<li>告警系统</li>
-</ul>
-<p><strong>①监控架构</strong></p>
-<p>下面的图是大部分公司的一种监控架构图。每一个服务都有一个 Agent，Agent 收集到关键信息，会传到一些 MQ 中，为了解耦。</p>
-<p>同时将日志传入 ELK，将 Metrics 传入 InfluxDB 时间序列库。而像 Nagios，可以定期向 Agent 发起信息检查微服务。关注微信公众号：Java技术栈，在后台回复：架构，可以获取我整理的 N 篇最新架构干货。</p>
-<figure data-type="image" tabindex="13"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/874502.png" alt="img" loading="lazy"></figure>
-<p><strong>②调用链监控 APM</strong></p>
-<p>很多公司都有调用链监控，就譬如阿里有鹰眼监控，点评的 Cat，大部分调用链监控（没错，我指的 Zipkin）架构是这样的：</p>
-<figure data-type="image" tabindex="14"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/055502.jpg" alt="055502" loading="lazy"></figure>
-<p>当请求进入 Web 容器的时候，会经过创建 Tracer，连接 Spans（模拟潜在的分布式工作的延迟，该模块还包含在系统网络间传递跟踪上下文信息的工具包，如通过 HTTP Headers）。</p>
-<p>Spans 有一个上下文，其中包含 Tracer 标识符，将其放在表示分布式操作的树的正确位置。</p>
-<p>当我们把图中的各种 Span 放到后端的时候，我们的服务调用链会动态的生成调用链。</p>
-<p>下面是一些市场上用的比较多的调用链监控对比：</p>
-<figure data-type="image" tabindex="15"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/193502.jpg" alt="193502" loading="lazy"></figure>
-<h3 id="熔断-隔离-限流-降级">熔断、隔离、限流、降级</h3>
-<p>面对巨大的突发流量下，大型公司一般会采用一系列的熔断（系统自动将服务关闭防止让出现的问题最大化）、隔离（将服务和服务隔离，防止一个服务挂了其他服务不能访问）、限流（单位时间内之允许一定数量用户访问）、降级（当整个微服务架构整体的负载超出了预设的上限阈值或即将到来的流量预计将会超过预设的阈值时，为了保证重要或基本的服务能正常运行，我们可以将一些不重要或不紧急的服务或任务进行服务的延迟使用或暂停使用）措施。</p>
-<p>下面介绍一下 Hystrix 的运行流程：</p>
-<figure data-type="image" tabindex="16"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/492502.png" alt="img" loading="lazy"></figure>
-<p>Hystrix 停止开发，Spring Cloud 何去何从？</p>
-<p>每一个微服务调用时，都会使用 Hystrix 的 Command 方式（上图的左上角那个），然后使用 Command 同步的，或者是响应式的，或者是异步的，判断电路是否熔断（顺着图从左往右看），如果断路则走降级 Fallback。</p>
-<p>如果这个线闭合着，但是线程资源没了，队列满了，则走限流措施（看图的第 5 步）。</p>
-<p>如果走完了，执行成功了，则走 run() 方法，获取 Response，但是这个过程如果出错了，则继续走降级 Fallback。</p>
-<p>同时，看图最上面有一个后缀是 Health 的，这是一个计算整个链路是否健康的组件，每一步操作都被它记录着。</p>
-<h3 id="容器与服务编排引擎">容器与服务编排引擎</h3>
-<p>从物理机到虚拟机，从虚拟机到容器；从物理集群到 OpenStack，OpenStack 到 Kubernetes；科技不断的变化，我们的认知也没刷新。</p>
-<p>我们从容器开始说起，它首先是一个相对独立的运行环境，在这一点有点类似于虚拟机，但是不像虚拟机那样彻底。</p>
-<p>虚拟机会将虚拟硬件、内核（即操作系统）以及用户空间打包在新虚拟机当中，虚拟机能够利用“虚拟机管理程序”运行在物理设备之上。</p>
-<p>虚拟机依赖于 Hypervisor，其通常被安装在“裸金属”系统硬件之上，这导致 Hypervisor 在某些方面被认为是一种操作系统。</p>
-<p>一旦 Hypervisor 安装完成， 就可以从系统可用计算资源当中分配虚拟机实例了，每台虚拟机都能够获得唯一的操作系统和负载（应用程序）。</p>
-<p>简言之，虚拟机先需要虚拟一个物理环境，然后构建一个完整的操作系统，再搭建一层 Runtime，然后供应用程序运行。</p>
-<p>对于容器环境来说，不需要安装主机操作系统，直接将容器层（比如 LXC 或 Libcontainer）安装在主机操作系统（通常是 Linux 变种）之上。</p>
-<p>在安装完容器层之后，就可以从系统可用计算资源当中分配容器实例了，并且企业应用可以被部署在容器当中。</p>
-<p>但是，每个容器化应用都会共享相同的操作系统(单个主机操作系统)。容器可以看成一个装好了一组特定应用的虚拟机，它直接利用了宿主机的内核，抽象层比虚拟机更少，更加轻量化，启动速度极快。</p>
-<p>相比于虚拟机，容器拥有更高的资源使用效率，因为它并不需要为每个应用分配单独的操作系统——实例规模更小、创建和迁移速度也更快。这意味着相比于虚拟机，单个操作系统能够承载更多的容器。</p>
-<p>云提供商十分热衷于容器技术，因为在相同的硬件设备当中，可以部署数量更多的容器实例。</p>
-<p>此外，容器易于迁移，但是只能被迁移到具有兼容操作系统内核的其他服务器当中，这样就会给迁移选择带来限制。</p>
-<p>因为容器不像虚拟机那样同样对内核或者虚拟硬件进行打包，所以每套容器都拥有自己的隔离化用户空间，从而使得多套容器能够运行在同一主机系统之上。</p>
-<p>我们可以看到全部操作系统层级的架构都可实现跨容器共享，惟一需要独立构建的就是二进制文件与库。</p>
-<p>正因为如此，容器才拥有极为出色的轻量化特性。我们最常用的容器是 Docker。</p>
-<p><strong>①容器编排</strong></p>
-<p>过去虚拟机可以通过云平台 OpenStack 管理虚拟化，容器时代如何管理容器呢？这就要看看容器编排引擎了。</p>
-<p>Apache Mesos：Mesos 是基于 Master，Slave 架构，框架决定如何利用资源，Master 负责管理机器，Slave 会定期的将机器情况报告给 Master，Master 再将信息给框架。Master 是高可用的，因为 ZK，也有 Leader 的存在。</p>
-<p>下面是架构图：</p>
-<figure data-type="image" tabindex="17"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/731502.jpg" alt="731502" loading="lazy"></figure>
-<p>Kubernetes：Kubernetes 是最近十分火热的开源容器编排引擎</p>
-<figure data-type="image" tabindex="18"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/981502.jpg" alt="981502" loading="lazy"></figure>
-<p>Kubernetes 设计理念和功能其实就是一个类似 Linux 的分层架构，先说说每一个 Kubernetes 节点内部，kubelet 管理全局全局 pod，而每一个 pod 承载着一个或多个容器，kube-proxy 负责网络代理和负载均衡。</p>
-<p>Kubernetes 节点外部，则是对应的控制管理服务器，负责统一管理各个节点调度分配与运行。</p>
-<p><strong>②服务网格化</strong></p>
-<p>关于服务网络化，后面会更加深入的为大家进行讲解。</p>
 ]]></content>
     </entry>
 </feed>
