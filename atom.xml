@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-05-06T06:18:50.709Z</updated>
+    <updated>2021-05-26T01:55:32.162Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,651 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[分布式锁 三种实现方式]]></title>
+        <id>https://kangjn.github.io/post/fen-bu-shi-suo-san-chong-shi-xian-fang-shi/</id>
+        <link href="https://kangjn.github.io/post/fen-bu-shi-suo-san-chong-shi-xian-fang-shi/">
+        </link>
+        <updated>2021-05-26T01:51:39.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>一、为什么要使用分布式锁</strong></p>
+<p>我们在开发应用的时候，如果需要对某一个共享变量进行多线程同步访问的时候，可以使用我们学到的Java多线程的18般武艺进行处理，并且可以完美的运行，毫无Bug！</p>
+<p>注意这是单机应用，也就是所有的请求都会分配到当前服务器的JVM内部，然后映射为操作系统的线程进行处理！而这个共享变量只是在这个JVM内部的一块内存空间！</p>
+<p>后来业务发展，需要做集群，一个应用需要部署到几台机器上然后做[负载均衡]，大致如下图：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/b2ngry.png" alt="" loading="lazy"></figure>
+<p>上图可以看到，变量A存在JVM1、JVM2、JVM3三个JVM内存中（这个变量A主要体现是在一个类中的一个成员变量，是一个有状态的对象，例如：UserController控制器中的一个整形类型的成员变量)，如果不加任何控制的话，变量A同时都会在JVM分配一块内存，三个请求发过来同时对这个变量操作，显然结果是不对的！即使不是同时发过来，三个请求分别操作三个不同JVM内存区域的数据，变量A之间不存在共享，也不具有可见性，处理的结果也是不对的！</p>
+<p>如果我们业务中确实存在这个场景的话，我们就需要一种方法解决这个问题！</p>
+<p>为了保证一个方法或属性在高并发情况下的同一时间只能被同一个线程执行，在传统单体应用单机部署的情况下，可以使用Java并发处理相关的API(如ReentrantLock或Synchronized)进行互斥控制。在单机环境中，Java中提供了很多并发处理相关的API。但是，随着业务发展的需要，原单体单机部署的系统被演化成分布式集群系统后，由于分布式系统多线程、多进程并且分布在不同机器上，这将使原单机部署情况下的并发控制锁策略失效，单纯的Java API并不能提供分布式锁的能力。为了解决这个问题就需要一种跨JVM的互斥机制来控制共享资源的访问，这就是分布式锁要解决的问题！</p>
+<h3 id="二-分布式锁应该具备哪些条件"><strong>二、分布式锁应该具备哪些条件</strong></h3>
+<p>在分析分布式锁的三种实现方式之前，先了解一下分布式锁应该具备哪些条件：</p>
+<ol>
+<li>在分布式系统环境下，一个方法在同一时间只能被一个机器的一个线程执行；</li>
+<li>高可用的获取锁与释放锁；</li>
+<li>高性能的获取锁与释放锁；</li>
+<li>具备可重入特性；</li>
+<li>具备锁失效机制，防止死锁；</li>
+<li>具备非阻塞锁特性，即没有获取到锁将直接返回获取锁失败。</li>
+</ol>
+<h3 id="三-分布式锁的三种实现方式"><strong>三、分布式锁的三种实现方式</strong></h3>
+<p>目前几乎很多大型网站及应用都是分布式部署的，分布式场景中的数据一致性问题一直是一个比较重要的话题。分布式的CAP理论告诉我们“任何一个分布式系统都无法同时满足一致性（Consistency）、可用性（Availability）和分区容错性（Partition tolerance），最多只能同时满足两项。”所以，很多系统在设计之初就要对这三者做出取舍。在互联网领域的绝大多数的场景中，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可。</p>
+<p>在很多场景中，我们为了保证数据的最终一致性，需要很多的技术方案来支持，比如分布式事务、分布式锁等。有的时候，我们需要保证一个方法在同一时间内只能被同一个线程执行。</p>
+<ul>
+<li>基于缓存（Redis等）实现分布式锁；</li>
+<li>基于数据库实现分布式锁；</li>
+<li>基于Zookeeper实现分布式锁；</li>
+</ul>
+<h4 id="基于-redis-的分布式锁"><strong>基于 Redis 的分布式锁</strong></h4>
+<h5 id="利用-setnx-和-setex"><strong>利用 SETNX 和 SETEX</strong></h5>
+<p>基本命令主要有：</p>
+<ul>
+<li>SETNX(SET If Not Exists)：当且仅当 Key 不存在时，则可以设置，否则不做任何动作。</li>
+<li>SETEX：可以设置超时时间</li>
+</ul>
+<p>其原理为：通过 SETNX 设置 Key-Value 来获得锁，随即进入死循环，每次循环判断，如果存在 Key 则继续循环，如果不存在 Key，则跳出循环，当前任务执行完成后，删除 Key 以释放锁。</p>
+<p>这种方式可能会导致死锁，为了避免这种情况，需要设置超时时间。</p>
+<p>下面，请看具体的实现步骤。</p>
+<p>1.创建一个 Maven 工程并在 pom.xml 加入以下依赖：</p>
+<pre><code class="language-javascript">&lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;2.0.2.RELEASE&lt;/version&gt;
+        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 开启web--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- redis--&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<p>2.创建启动类 Application.java：</p>
+<pre><code class="language-javascript">@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class,args);
+    }
+
+}
+</code></pre>
+<p>3.添加配置文件 application.yml：</p>
+<pre><code class="language-javascript">server:
+  port: 8080
+spring:
+  redis:
+    host: localhost
+    port: 6379
+</code></pre>
+<p>4.创建全局锁类 Lock.java：</p>
+<pre><code class="language-javascript">/**
+ * 全局锁，包括锁的名称
+ */
+public class Lock {
+    private String name;
+    private String value;
+
+    public Lock(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+}
+</code></pre>
+<p>5.创建分布式锁类 DistributedLockHandler.java：</p>
+<pre><code class="language-javascript">@Component
+public class DistributedLockHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(DistributedLockHandler.class);
+    private final static long LOCK_EXPIRE = 30 * 1000L;//单个业务持有锁的时间30s，防止死锁
+    private final static long LOCK_TRY_INTERVAL = 30L;//默认30ms尝试一次
+    private final static long LOCK_TRY_TIMEOUT = 20 * 1000L;//默认尝试20s
+
+    @Autowired
+    private StringRedisTemplate template;
+
+    /**
+     * 尝试获取全局锁
+     *
+     * @param lock 锁的名称
+     * @return true 获取成功，false获取失败
+     */
+    public boolean tryLock(Lock lock) {
+        return getLock(lock, LOCK_TRY_TIMEOUT, LOCK_TRY_INTERVAL, LOCK_EXPIRE);
+    }
+
+    /**
+     * 尝试获取全局锁
+     *
+     * @param lock    锁的名称
+     * @param timeout 获取超时时间 单位ms
+     * @return true 获取成功，false获取失败
+     */
+    public boolean tryLock(Lock lock, long timeout) {
+        return getLock(lock, timeout, LOCK_TRY_INTERVAL, LOCK_EXPIRE);
+    }
+
+    /**
+     * 尝试获取全局锁
+     *
+     * @param lock        锁的名称
+     * @param timeout     获取锁的超时时间
+     * @param tryInterval 多少毫秒尝试获取一次
+     * @return true 获取成功，false获取失败
+     */
+    public boolean tryLock(Lock lock, long timeout, long tryInterval) {
+        return getLock(lock, timeout, tryInterval, LOCK_EXPIRE);
+    }
+
+    /**
+     * 尝试获取全局锁
+     *
+     * @param lock           锁的名称
+     * @param timeout        获取锁的超时时间
+     * @param tryInterval    多少毫秒尝试获取一次
+     * @param lockExpireTime 锁的过期
+     * @return true 获取成功，false获取失败
+     */
+    public boolean tryLock(Lock lock, long timeout, long tryInterval, long lockExpireTime) {
+        return getLock(lock, timeout, tryInterval, lockExpireTime);
+    }
+
+
+    /**
+     * 操作redis获取全局锁
+     *
+     * @param lock           锁的名称
+     * @param timeout        获取的超时时间
+     * @param tryInterval    多少ms尝试一次
+     * @param lockExpireTime 获取成功后锁的过期时间
+     * @return true 获取成功，false获取失败
+     */
+    public boolean getLock(Lock lock, long timeout, long tryInterval, long lockExpireTime) {
+        try {
+            if (StringUtils.isEmpty(lock.getName()) || StringUtils.isEmpty(lock.getValue())) {
+                return false;
+            }
+            long startTime = System.currentTimeMillis();
+            do{
+                if (!template.hasKey(lock.getName())) {
+                    ValueOperations&lt;String, String&gt; ops = template.opsForValue();
+                    ops.set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
+                    return true;
+                } else {//存在锁
+                    logger.debug(&quot;lock is exist!！！&quot;);
+                }
+                if (System.currentTimeMillis() - startTime &gt; timeout) {//尝试超过了设定值之后直接跳出循环
+                    return false;
+                }
+                Thread.sleep(tryInterval);
+            }
+            while (template.hasKey(lock.getName())) ;
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * 释放锁
+     */
+    public void releaseLock(Lock lock) {
+        if (!StringUtils.isEmpty(lock.getName())) {
+            template.delete(lock.getName());
+        }
+    }
+
+}
+</code></pre>
+<p>6.最后创建 HelloController 来测试分布式锁。</p>
+<pre><code class="language-javascript">@RestController
+public class HelloController {
+
+    @Autowired
+    private DistributedLockHandler distributedLockHandler;
+
+    @RequestMapping(&quot;index&quot;)
+    public String index(){
+        Lock lock=new Lock(&quot;lynn&quot;,&quot;min&quot;);
+        if(distributedLockHandler.tryLock(lock)){
+            try {
+                //为了演示锁的效果，这里睡眠5000毫秒
+                System.out.println(&quot;执行方法&quot;);
+                Thread.sleep(5000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            distributedLockHandler.releaseLock(lock);
+        }
+        return &quot;hello world!&quot;;
+    }
+}
+</code></pre>
+<p>7.测试。</p>
+<p>启动 Application.java，连续访问两次浏览器：http://localhost:8080/index，控制台可以发现先打印了一次“执行方法”，说明后面一个线程被锁住了，5秒后又再次打印了“执行方法”，说明锁被成功释放。</p>
+<blockquote>
+<p>通过这种方式创建的分布式锁存在以下问题：</p>
+</blockquote>
+<ol>
+<li>高并发的情况下，如果两个线程同时进入循环，可能导致加锁失败。</li>
+<li>SETNX 是一个耗时操作，因为它需要判断 Key 是否存在，因为会存在性能问题。</li>
+</ol>
+<p>因此，Redis 官方推荐 Redlock 来实现分布式锁。</p>
+<h5 id="利用-redlock"><strong>利用 Redlock</strong></h5>
+<p>通过 Redlock 实现分布式锁比其他算法更加可靠，继续改造上一例的代码。</p>
+<p>1.pom.xml 增加以下依赖：</p>
+<pre><code class="language-javascript">&lt;dependency&gt;
+            &lt;groupId&gt;org.redisson&lt;/groupId&gt;
+            &lt;artifactId&gt;redisson&lt;/artifactId&gt;
+            &lt;version&gt;3.7.0&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>2.增加以下几个类：</p>
+<pre><code class="language-javascript">/**
+ * 获取锁后需要处理的逻辑
+ */
+public interface AquiredLockWorker&lt;T&gt; {
+    T invokeAfterLockAquire() throws Exception;
+}
+/**
+ * 获取锁管理类
+ */
+public interface DistributedLocker {
+
+    /**
+     * 获取锁
+     * @param resourceName  锁的名称
+     * @param worker 获取锁后的处理类
+     * @param &lt;T&gt;
+     * @return 处理完具体的业务逻辑要返回的数据
+     * @throws UnableToAquireLockException
+     * @throws Exception
+     */
+    &lt;T&gt; T lock(String resourceName, AquiredLockWorker&lt;T&gt; worker) throws UnableToAquireLockException, Exception;
+
+    &lt;T&gt; T lock(String resourceName, AquiredLockWorker&lt;T&gt; worker, int lockTime) throws UnableToAquireLockException, Exception;
+
+}
+/**
+ * 异常类
+ */
+public class UnableToAquireLockException extends RuntimeException {
+
+    public UnableToAquireLockException() {
+    }
+
+    public UnableToAquireLockException(String message) {
+        super(message);
+    }
+
+    public UnableToAquireLockException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+/**
+ * 获取RedissonClient连接类
+ */
+@Component
+public class RedissonConnector {
+    RedissonClient redisson;
+    @PostConstruct
+    public void init(){
+        redisson = Redisson.create();
+    }
+
+    public RedissonClient getClient(){
+        return redisson;
+    }
+
+}
+@Component
+public class RedisLocker  implements DistributedLocker{
+
+    private final static String LOCKER_PREFIX = &quot;lock:&quot;;
+
+    @Autowired
+    RedissonConnector redissonConnector;
+    @Override
+    public &lt;T&gt; T lock(String resourceName, AquiredLockWorker&lt;T&gt; worker) throws InterruptedException, UnableToAquireLockException, Exception {
+
+        return lock(resourceName, worker, 100);
+    }
+
+    @Override
+    public &lt;T&gt; T lock(String resourceName, AquiredLockWorker&lt;T&gt; worker, int lockTime) throws UnableToAquireLockException, Exception {
+        RedissonClient redisson= redissonConnector.getClient();
+        RLock lock = redisson.getLock(LOCKER_PREFIX + resourceName);
+        // Wait for 100 seconds seconds and automatically unlock it after lockTime seconds
+        boolean success = lock.tryLock(100, lockTime, TimeUnit.SECONDS);
+        if (success) {
+            try {
+                return worker.invokeAfterLockAquire();
+            } finally {
+                lock.unlock();
+            }
+        }
+        throw new UnableToAquireLockException();
+    }
+}
+</code></pre>
+<p>3.修改 HelloController：</p>
+<pre><code class="language-javascript">@RestController
+public class HelloController {
+
+    @Autowired
+    private DistributedLocker distributedLocker;
+
+    @RequestMapping(&quot;index&quot;)
+    public String index()throws Exception{
+        distributedLocker.lock(&quot;test&quot;,new AquiredLockWorker&lt;Object&gt;() {
+
+            @Override
+            public Object invokeAfterLockAquire() {
+                try {
+                    System.out.println(&quot;执行方法！&quot;);
+                    Thread.sleep(5000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+        });
+        return &quot;hello world!&quot;;
+    }
+}
+</code></pre>
+<p>4.按照上节的测试方法进行测试，我们发现分布式锁也生效了。</p>
+<p>Redlock 是 Redis 官方推荐的一种方案，因此可靠性比较高。</p>
+<h4 id="基于数据库的分布式锁"><strong>基于数据库的分布式锁</strong></h4>
+<h5 id="基于数据库表"><strong>基于数据库表</strong></h5>
+<p>它的基本原理和 Redis 的 SETNX 类似，其实就是创建一个分布式锁表，加锁后，我们就在表增加一条记录，释放锁即把该数据删掉，具体实现，我这里就不再一一举出。</p>
+<p>它同样存在一些问题：</p>
+<ol>
+<li>没有失效时间，容易导致死锁；</li>
+<li>依赖数据库的可用性，一旦数据库挂掉，锁就马上不可用；</li>
+<li>这把锁只能是非阻塞的，因为数据的 insert 操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，要想再次获得锁就要再次触发获得锁操作；</li>
+<li>这把锁是非重入的，同一个线程在没有释放锁之前无法再次获得该锁。因为数据库中数据已经存在了。</li>
+</ol>
+<h5 id="乐观锁"><strong>乐观锁</strong></h5>
+<p>基本原理为：乐观锁一般通过 version 来实现，也就是在数据库表创建一个 version 字段，每次更新成功，则 version+1，读取数据时，我们将 version 字段一并读出，每次更新时将会对版本号进行比较，如果一致则执行此操作，否则更新失败！</p>
+<h5 id="悲观锁排他锁"><strong>悲观锁（排他锁）</strong></h5>
+<p>实现步骤见下面说明。</p>
+<p>1.创建一张数据库表：</p>
+<pre><code class="language-javascript">CREATE TABLE `methodLock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `method_name` varchar(64) NOT NULL DEFAULT '' COMMENT '锁定的方法名',
+  `desc` varchar(1024) NOT NULL DEFAULT '备注信息',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '保存数据时间，自动生成',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_method_name` (`method_name `) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='锁定中的方法';
+</code></pre>
+<p>2.通过数据库的排他锁来实现分布式锁。</p>
+<p>基于MySQL 的 InnoDB 引擎，可以使用以下方法来实现加锁操作：</p>
+<pre><code class="language-javascript">public boolean lock(){
+    connection.setAutoCommit(false)
+    while(true){
+        try{
+            result = select * from methodLock where method_name=xxx for update;
+            if(result==null){
+                return true;
+            }
+        }catch(Exception e){
+
+        }
+        sleep(1000);
+    }
+    return false;
+}
+</code></pre>
+<p>3.我们可以认为获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，再通过以下方法解锁：</p>
+<pre><code class="language-javascript">public void unlock(){
+    connection.commit();
+}
+</code></pre>
+<h4 id="基于-zookeeper-的分布式锁"><strong>基于 Zookeeper 的分布式锁</strong></h4>
+<h5 id="zookeeper-简介"><strong>ZooKeeper 简介</strong></h5>
+<p>ZooKeeper 是一个分布式的，开放源码的分布式应用程序协调服务，是 Google Chubby 的一个开源实现，是 Hadoop 和 Hbase 的重要组件。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<h5 id="分布式锁实现原理"><strong>分布式锁实现原理</strong></h5>
+<p>实现原理为：</p>
+<ol>
+<li>建立一个节点，假如名为 lock 。节点类型为持久节点（Persistent）</li>
+<li>每当进程需要访问共享资源时，会调用分布式锁的 lock() 或 tryLock() 方法获得锁，这个时候会在第一步创建的 lock 节点下建立相应的顺序子节点，节点类型为临时顺序节点（<code>EPHEMERAL_SEQUENTIAL</code>），通过组成特定的名字 name+lock+顺序号。</li>
+<li>在建立子节点后，对 lock 下面的所有以 name 开头的子节点进行排序，判断刚刚建立的子节点顺序号是否是最小的节点，假如是最小节点，则获得该锁对资源进行访问。</li>
+<li>假如不是该节点，就获得该节点的上一顺序节点，并监测该节点是否存在注册监听事件。同时在这里阻塞。等待监听事件的发生，获得锁控制权。</li>
+<li>当调用完共享资源后，调用 unlock() 方法，关闭 ZooKeeper，进而可以引发监听事件，释放该锁。</li>
+</ol>
+<p>实现的分布式锁是严格的按照顺序访问的并发锁。</p>
+<h5 id="代码实现"><strong>代码实现</strong></h5>
+<p>我们继续改造本文的工程。</p>
+<p>1.创建 DistributedLock 类：</p>
+<pre><code class="language-javascript">public class DistributedLock implements Lock, Watcher{
+    private ZooKeeper zk;
+    private String root = &quot;/locks&quot;;//根
+    private String lockName;//竞争资源的标志
+    private String waitNode;//等待前一个锁
+    private String myZnode;//当前锁
+    private CountDownLatch latch;//计数器
+    private CountDownLatch connectedSignal=new CountDownLatch(1);
+    private int sessionTimeout = 30000;
+    /**
+     * 创建分布式锁,使用前请确认config配置的zookeeper服务可用
+     * @param config localhost:2181
+     * @param lockName 竞争资源标志,lockName中不能包含单词_lock_
+     */
+    public DistributedLock(String config, String lockName){
+        this.lockName = lockName;
+        // 创建一个与服务器的连接
+        try {
+            zk = new ZooKeeper(config, sessionTimeout, this);
+            connectedSignal.await();
+            Stat stat = zk.exists(root, false);//此去不执行 Watcher
+            if(stat == null){
+                // 创建根节点
+                zk.create(root, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            }
+        } catch (IOException e) {
+            throw new LockException(e);
+        } catch (KeeperException e) {
+            throw new LockException(e);
+        } catch (InterruptedException e) {
+            throw new LockException(e);
+        }
+    }
+    /**
+     * zookeeper节点的监视器
+     */
+    public void process(WatchedEvent event) {
+        //建立连接用
+        if(event.getState()== Event.KeeperState.SyncConnected){
+            connectedSignal.countDown();
+            return;
+        }
+        //其他线程放弃锁的标志
+        if(this.latch != null) {
+            this.latch.countDown();
+        }
+    }
+
+    public void lock() {
+        try {
+            if(this.tryLock()){
+                System.out.println(&quot;Thread &quot; + Thread.currentThread().getId() + &quot; &quot; +myZnode + &quot; get lock true&quot;);
+                return;
+            }
+            else{
+                waitForLock(waitNode, sessionTimeout);//等待锁
+            }
+        } catch (KeeperException e) {
+            throw new LockException(e);
+        } catch (InterruptedException e) {
+            throw new LockException(e);
+        }
+    }
+    public boolean tryLock() {
+        try {
+            String splitStr = &quot;_lock_&quot;;
+            if(lockName.contains(splitStr))
+                throw new LockException(&quot;lockName can not contains \\u000B&quot;);
+            //创建临时子节点
+            myZnode = zk.create(root + &quot;/&quot; + lockName + splitStr, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL_SEQUENTIAL);
+            System.out.println(myZnode + &quot; is created &quot;);
+            //取出所有子节点
+            List&lt;String&gt; subNodes = zk.getChildren(root, false);
+            //取出所有lockName的锁
+            List&lt;String&gt; lockObjNodes = new ArrayList&lt;String&gt;();
+            for (String node : subNodes) {
+                String _node = node.split(splitStr)[0];
+                if(_node.equals(lockName)){
+                    lockObjNodes.add(node);
+                }
+            }
+            Collections.sort(lockObjNodes);
+
+            if(myZnode.equals(root+&quot;/&quot;+lockObjNodes.get(0))){
+                //如果是最小的节点,则表示取得锁
+                System.out.println(myZnode + &quot;==&quot; + lockObjNodes.get(0));
+                return true;
+            }
+            //如果不是最小的节点，找到比自己小1的节点
+            String subMyZnode = myZnode.substring(myZnode.lastIndexOf(&quot;/&quot;) + 1);
+            waitNode = lockObjNodes.get(Collections.binarySearch(lockObjNodes, subMyZnode) - 1);//找到前一个子节点
+        } catch (KeeperException e) {
+            throw new LockException(e);
+        } catch (InterruptedException e) {
+            throw new LockException(e);
+        }
+        return false;
+    }
+    public boolean tryLock(long time, TimeUnit unit) {
+        try {
+            if(this.tryLock()){
+                return true;
+            }
+            return waitForLock(waitNode,time);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    private boolean waitForLock(String lower, long waitTime) throws InterruptedException, KeeperException {
+        Stat stat = zk.exists(root + &quot;/&quot; + lower,true);//同时注册监听。
+        //判断比自己小一个数的节点是否存在,如果不存在则无需等待锁,同时注册监听
+        if(stat != null){
+            System.out.println(&quot;Thread &quot; + Thread.currentThread().getId() + &quot; waiting for &quot; + root + &quot;/&quot; + lower);
+            this.latch = new CountDownLatch(1);
+            this.latch.await(waitTime, TimeUnit.MILLISECONDS);//等待，这里应该一直等待其他线程释放锁
+            this.latch = null;
+        }
+        return true;
+    }
+    public void unlock() {
+        try {
+            System.out.println(&quot;unlock &quot; + myZnode);
+            zk.delete(myZnode,-1);
+            myZnode = null;
+            zk.close();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        }
+    }
+    public void lockInterruptibly() throws InterruptedException {
+        this.lock();
+    }
+    public Condition newCondition() {
+        return null;
+    }
+
+    public class LockException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+        public LockException(String e){
+            super(e);
+        }
+        public LockException(Exception e){
+            super(e);
+        }
+    }
+}
+</code></pre>
+<p>2.改造 HelloController.java：</p>
+<pre><code class="language-javascript">@RestController
+public class HelloController {
+
+    @RequestMapping(&quot;index&quot;)
+    public String index()throws Exception{
+        DistributedLock lock   = new DistributedLock(&quot;localhost:2181&quot;,&quot;lock&quot;);
+        lock.lock();
+        //共享资源
+        if(lock != null){
+            System.out.println(&quot;执行方法&quot;);
+            Thread.sleep(5000);
+            lock.unlock();
+        }
+        return &quot;hello world!&quot;;
+    }
+}
+</code></pre>
+<p>3.按照本文 Redis 分布式锁的方法测试，我们发现同样成功加锁了。</p>
+<h3 id="总结"><strong>总结</strong></h3>
+<p>通过以上的实例可以得出以下结论：</p>
+<ul>
+<li>通过数据库实现分布式锁是最不可靠的一种方式，对数据库依赖较大，性能较低，不利于处理高并发的场景。</li>
+<li>通过 Redis 的 Redlock 和 ZooKeeper 来加锁，性能有了比较大的提升。</li>
+<li>针对 Redlock，曾经有位大神对其实现的分布式锁提出了质疑，但是 Redis 官方却不认可其说法，所谓公说公有理婆说婆有理，对于分布式锁的解决方案，没有最好，只有最适合的，根据不同的项目采取不同方案才是最合理的。</li>
+</ul>
+<p>最后的最后说明一下：</p>
+<blockquote>
+<p>上面几种方式，哪种方式都无法做到完美。就像CAP一样，在复杂性、可靠性、性能等方面无法同时满足，所以，根据不同的应用场景选择最适合自己的才是王道。</p>
+</blockquote>
+<h4 id="下面是从各个方面进行三种实现方式的对比"><strong>下面是从各个方面进行三种实现方式的对比</strong></h4>
+<p>从理解的难易程度角度（从低到高）</p>
+<blockquote>
+<p>数据库 &gt; 缓存 &gt; Zookeeper</p>
+</blockquote>
+<p>从实现的复杂性角度（从低到高）</p>
+<blockquote>
+<p>Zookeeper &gt;= 缓存 &gt; 数据库</p>
+</blockquote>
+<p>从性能角度（从高到低）</p>
+<blockquote>
+<p>缓存 &gt; Zookeeper &gt;= 数据库</p>
+</blockquote>
+<p>从可靠性角度（从高到低）</p>
+<blockquote>
+<p>Zookeeper &gt; 缓存 &gt; 数据库</p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[炼金术秘籍《翠玉录》]]></title>
         <id>https://kangjn.github.io/post/lian-jin-zhu-mi-ji-lesslesscui-yu-lu-greatergreater-niu-dun-fan-yi-ban-ben/</id>
@@ -5361,70 +6006,6 @@ git push -u origin master  //提交到你的仓库<br>
 <p>在vs中每次更新代码都会要输入账号密码，方便起见，可以配置一下让GIT记住密码账号。</p>
 <pre><code>git config --global credential.helper store   //在Git Bash输入这个命令就可以了
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[刻在骨子里的“教养”]]></title>
-        <id>https://kangjn.github.io/post/ke-zai-gu-zi-li-de-jiao-yang/</id>
-        <link href="https://kangjn.github.io/post/ke-zai-gu-zi-li-de-jiao-yang/">
-        </link>
-        <updated>2021-04-22T09:24:25.000Z</updated>
-        <content type="html"><![CDATA[<p>不责人小过，不发人阴私，不念人旧恶。<br>
-前苏联教育家苏霍姆林斯基曾说：</p>
-<p>“在人类心灵的花园中，最质朴、最美丽和最平凡的花朵，是人的教养。”</p>
-<p>那什么是教养？</p>
-<p>教养是一个人文化品德的修养，是一个人从小就习得的一种规矩，是待人接物处事的一种敬重态度。</p>
-<p>丰一吟在《回忆父亲丰子恺》中说：<br>
-“生而养之，养而教之。教养，是一个家庭传承给孩子的最好礼物。”</p>
-<p>【01】教养，是教育和养成。</p>
-<p>教养，是教育和养成，是文化的传承和后天学习的规范。</p>
-<p>一个人的教养，不是先天就拥有的，而是后天的学习教育和周身氛围所养成的良好品质和行为习惯，是经过人生历练和修行所沉淀下的德性。</p>
-<p>当我们呱呱坠地，生而一张白纸，往后一生的精彩都由自己去涂鸦，而一个人的教养则以自身的学习和规范养成的。</p>
-<p>人都说父母是孩子的第一任老师，而家庭是孩子成长的摇篮。</p>
-<p>家庭环境是孩子健康成长的基本因素，而父母的品行更是影响孩子的教养。</p>
-<p>《三字经》中言，养不教，父之过；教不严，师之惰，人若没有教养，便是父母老师的不称职。</p>
-<p>“昔孟母，择邻处”只为孩子远离那些不良因素，为其创造一个良好的教育环境。</p>
-<p>胡适先生回忆母亲时曾说：“如果我学得了一丝一毫的好脾气，如果我学得了一点点待人接物的和气，如果我能宽恕人，体谅人——我都得感谢我的慈母。”</p>
-<p>可见，自身所处的家庭氛围与父母的品行和行为举止，都会在生活中慢慢渗透于孩子的品行和教养中。</p>
-<p>英国切斯特菲尔德说：</p>
-<p>“所谓良好教养，它们在几乎所有国家中乃至于一个地区里，都不尽相同；每一个明辨事理的人都会模仿他所在之地的良好教养，并与之看齐。”</p>
-<p>正所谓：“玉不琢，不成器；人不学，不知义。”</p>
-<p>人要明辨是非就得学习，做一个品德高尚的人也要学习，而做一个有教养的人更要学习，学习端正己身，立身处世，待人接物。</p>
-<p>【02】教养，是由内散发的文化修养。</p>
-<p>德米特里．利哈乔夫在《论教养》中说：“良好的教养不仅来自家庭和学校，而且可以得之于自身。”</p>
-<p>但是前提是必须了解，什么是真正的教养。</p>
-<p>教养，是发自于内心，是以成长环境，教育基础，自身经历等所综合成一种内在素质。</p>
-<p>一个人是否有教养，不止是行为上彬彬有礼，更注重于其文化内涵和道德修养。</p>
-<p>其中，文化，不单单指文化学识，更是一种以行为习惯和精神价值结合成的意识。</p>
-<p>作家梁晓声说：“文化是根植于内心的修养，无需自觉提醒的自觉；以约束为前提的自由；为别人着想的善良。”</p>
-<p>文化修养是一种由内散发的一种气质，是从自我认知，自我教育，自我学习，且沉淀到一定程度所散发出的一股无形力量。</p>
-<p>一个人有没有文化，不在于其学历高低，而是是否具有这种无形中所沉淀下来的气质修养。</p>
-<p>有文化修养的人，总能发现事物中的美好和希望，更是对光明的未来充满着极大的向往。</p>
-<p>【03】教养，是有别于礼貌却依托于礼貌。</p>
-<p>教养，是发自于内心，是一种经过时间的磨练和规范后综合的内在品质素养，是待人处事上的行为习惯。</p>
-<p>礼貌，是外在的行为，是在模仿和刻意下也能假装出来的一种谦恭有礼的行为表现，它不一定发自于内心。</p>
-<p>有教养的人，总表现的很有礼貌。</p>
-<p>有礼貌的的人却未必是有教养的人。</p>
-<p>一个人若是金玉其外败絮其中，不能内外兼修，这样的人不是有教养，只能称其“伪君子”。</p>
-<p>一个人牙尖嘴利，却背地里又做好事，我们不能说这样的人有教养，只能说其有一副好心肠，刀子嘴豆腐心。<br>
-日常生活中，吵架后，我们总能听到劝架的人说：“你别跟他一般见识，他人就那样，嘴巴坏但心地善良，你也别太介意。”等等之类的。</p>
-<p>但他忘了，说者无心，听者有意，伤人往往也就在那一两句话中，伤过之后便是千疮百孔。</p>
-<p>“良言一句三冬暖，恶语伤人六月寒”，有教养的人不会口无遮拦，也不会以嘴毒心肠好为借口的；反之，有教养的人相处起来是舒服的。</p>
-<p>歌德说：“没有一种礼貌会在外表上叫人一眼就看出教养的不足，正确的教养在于使外表上的彬彬有礼和人的高尚的教养同时表现出来。”</p>
-<p>【04】教养，是自我的约束和将心比心。</p>
-<p>《菜根谭》：“有教养的人，不责人小过，不发人阴私，不念人旧恶。”</p>
-<p>有教养的人不责难别人的小过错，不随便揭露别人的隐私，不念叨别人过去的坏处。</p>
-<p>教养，体现于细节。</p>
-<p>它不是看笑话，更不是让别人感到难堪或轻视。</p>
-<p>洛克说：“教养的本质是在交往中对于任何人不表示任何轻视或侮蔑。”</p>
-<p>有教养的人，不会让别人觉着尴尬困窘，在冒犯了他人后，懂得及时反省自身以及调整自己的行为。</p>
-<p>当你在图书馆看书时，你可以选择自己喜欢的去看，但不能大声喧哗，这是你的个人教养。</p>
-<p>当公共区域有人休息时，你不能总弄出动静，影响他人。不然这就是你素质低，没教养了。</p>
-<p>一个人是否拥有最高级的教养，就看他懂不懂顾忌别人的感受，懂不懂将心比心，会不会让与之交往的人感到亲切舒适和满足。</p>
-<p>格里美尔斯豪森言道：“没有教养、没有学识、没有实践的人的心灵好比一块田地，这块田地即使天生肥沃，但倘若不经耕耘和播种，也是结不出果实来的”</p>
-<p>一个人的教养，是他立足社会的根基。</p>
-<p>内在的修养让人吸引着志同道合的人，外在的行为礼仪拉近彼此距离，而内外兼修的教养，是稳固所有关系的壁垒。</p>
-<p>教养是人生的一大课题，需要我们用一生的时间都去研修。</p>
 ]]></content>
     </entry>
 </feed>
