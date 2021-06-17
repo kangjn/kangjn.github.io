@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kangjn.github.io/</id>
     <title>MyBlog</title>
-    <updated>2021-05-26T01:55:32.162Z</updated>
+    <updated>2021-06-17T06:43:27.562Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://kangjn.github.io/"/>
     <link rel="self" href="https://kangjn.github.io/atom.xml"/>
@@ -10,6 +10,243 @@
     <logo>https://kangjn.github.io/images/avatar.png</logo>
     <icon>https://kangjn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, MyBlog</rights>
+    <entry>
+        <title type="html"><![CDATA[一个WEB程序员发展历程]]></title>
+        <id>https://kangjn.github.io/post/yi-ge-web-cheng-xu-yuan-fa-zhan-li-cheng/</id>
+        <link href="https://kangjn.github.io/post/yi-ge-web-cheng-xu-yuan-fa-zhan-li-cheng/">
+        </link>
+        <updated>2021-06-17T06:36:44.000Z</updated>
+        <content type="html"><![CDATA[<p>做一个静态网页：</p>
+<ul>
+<li>
+<p>HTML：用来布局网页</p>
+</li>
+<li>
+<p>CSS：用来美化网页</p>
+</li>
+<li>
+<p>JavaScript：用来做点击跳转，窗口弹出</p>
+</li>
+</ul>
+<p>真正开发时需要用一些开发框架和组件来快速开发：</p>
+<ul>
+<li>JQUERY：极大简化了JavaScript的编程方式</li>
+<li>BootStrap.js：可直接套用其好看的样式进行快速开发</li>
+</ul>
+<p>浏览器兼容</p>
+<ul>
+<li>
+<p>谷歌浏览器</p>
+</li>
+<li>
+<p>火狐浏览器</p>
+</li>
+<li>
+<p>IE6,7,8,9浏览器</p>
+</li>
+<li>
+<p>360安全浏览器</p>
+</li>
+<li>
+<p>360极速浏览器</p>
+</li>
+</ul>
+<p>网页是静态，需要改成动态的...</p>
+<ul>
+<li>
+<p>Ajax，用来进行前端调后端接口</p>
+</li>
+<li>
+<p>Json，后端接口返回的数据的一种格式</p>
+</li>
+<li>
+<p>Spring：轻量级的快速开发框架</p>
+</li>
+<li>
+<p>Spring MVC：一个快速开发Web应用框架</p>
+</li>
+<li>
+<p>FreeMarker：一种服务端模板引擎</p>
+</li>
+<li>
+<p>HttpClient：一个Java实现的Http请求客户端</p>
+</li>
+<li>
+<p>Mybatis：一款优秀的持久层框架</p>
+</li>
+<li>
+<p>Mysql：一个国内最流行的数据库软件</p>
+</li>
+<li>
+<p>Maven：一个项目管理工具，可以对 Java 项目进行构建、依赖管理</p>
+</li>
+<li>
+<p>Tomcat：使用得最多的Servlet容器，可以用来接收浏览器请求</p>
+<p>管理工具</p>
+</li>
+<li>
+<p>Git：一个代码版本管理工具</p>
+</li>
+<li>
+<p>GitLab：一个项目管理和代码托管平台</p>
+</li>
+<li>
+<p>Nexus：一个强大的Maven仓库管理器，它极大地简化了自己内部仓库的维护和外部仓库的访问</p>
+</li>
+<li>
+<p>禅道：第一款国产的开源项目管理软件，完整地覆盖了项目管理的核心流程</p>
+</li>
+<li>
+<p>jira：Jira融合了项目管理、任务管理和缺陷管理，许多著名的开源项目都采用了JIRA</p>
+</li>
+</ul>
+<p>有了这些管理工具，还需要一些自动化构建工具，这样能使得开发测试上线更加顺利：</p>
+<ul>
+<li>Docker：一个开源的应用容器引擎</li>
+<li>Jenkins：一个开源的、提供友好操作界面的持续集成(CI)工具</li>
+</ul>
+<p>一套自动化开发测试搭建起来了，有了这一整套项目开发管理工具，可以进行小团队合作</p>
+<p>为了上线之后能够有保障的运行，我们需要给我们的网站配套一套监控和日志系统：</p>
+<ul>
+<li>
+<p>Prometheus：一个开源的服务监控系统和时间序列数据库</p>
+</li>
+<li>
+<p>Grafana：一个开源的、功能齐全的度量仪表盘和图形编辑器</p>
+</li>
+<li>
+<p>Zabbix：一个企业级分布式开源监控解决方案</p>
+</li>
+<li>
+<p>ElasticSearch：一个实时的分布式搜索分析引擎</p>
+</li>
+<li>
+<p>Kibana：一个能对日志进行高效的搜索、可视化、分析等各种操作的平台</p>
+</li>
+<li>
+<p>LogStash：一个应用程序日志、事件的传输、处理、管理和搜索的平台</p>
+</li>
+<li>
+<p>Log4j：一个可以控制日志信息输送的目的地的开源组件</p>
+</li>
+<li>
+<p>Logback：og4j创始人设计的另外一个开源日志组件</p>
+</li>
+</ul>
+<p>搭完这一套，网站上线了，一段时间后，网站的用户慢慢在增多，我们通过我们的监控系统，发现有几个核心应用压力在不停地增加，要做负载均衡了：</p>
+<ul>
+<li>
+<p>nginx：一个高性能的HTTP和反向代理web服务器</p>
+</li>
+<li>
+<p>lvs：一个虚拟的服务器集群系统</p>
+</li>
+<li>
+<p>keepalive：一个可以检测web服务器的状态的服务</p>
+</li>
+</ul>
+<p>最后通过使用nginx并增加几台服务器来做了负载均衡，仅仅做负载均衡还不够，可以把热门商品给提前缓存起来：</p>
+<ul>
+<li>
+<p>Redis：一个高性能的key-value数据库，对关系数据库起到很好的补充作用</p>
+</li>
+<li>
+<p>Jedis：一个Redis 官方首选的 Java 客户端开发包</p>
+</li>
+<li>
+<p>Redisson：一个在NIO的基础上，为使用者提供了一系列具有分布式特性的常用工具类</p>
+</li>
+</ul>
+<p>这样，我们的网站访问速度提升了，要做一个订单状态变更短信通知的功能，用消息队列来做，：</p>
+<ul>
+<li>
+<p>RabbitMQ：是一款高性能、搞健壮性以及高伸缩性的消息队列中间件</p>
+</li>
+<li>
+<p>Kafka：是一种高吞吐量的分布式发布订阅消息系统</p>
+</li>
+<li>
+<p>RocketMQ：一款开源的分布式消息系统，基于高可用分布式集群技术，提供低延时的、高可靠的消息发布与订阅服务</p>
+</li>
+</ul>
+<p>最后，选了阿里的RocketMQ</p>
+<p>随着业务的发展，要对我们的项目做一次重构，改成分布式微服务架构：</p>
+<ul>
+<li>
+<p>Dubbo：阿里开源的高性能RPC调用框架</p>
+</li>
+<li>
+<p>Spring Cloud：一个为开发人员快速构建微服务架构的开发框架</p>
+</li>
+<li>
+<p>Zookeeper：一个集中式服务，用于维护配置信息、命名、提供分布式同步和提供组服务</p>
+</li>
+<li>
+<p>Netty：一个高性能网络应用框架</p>
+</li>
+<li>
+<p>Xxl-Job：一个轻量级分布式任务调度平台</p>
+</li>
+<li>
+<p>Elastic-Job：一个分布式调度解决方案</p>
+</li>
+</ul>
+<p>选用Spring Cloud，他所提供的几个组件太强大了，比如：</p>
+<ul>
+<li>
+<p>Nacos：一个动态服务发现、配置和服务管理平台</p>
+</li>
+<li>
+<p>Ribbon：一个在客户侧提供软件负载均衡算法的组件</p>
+</li>
+<li>
+<p>Feign：一个更强大好用的Java HTTP 客户端库</p>
+</li>
+<li>
+<p>Sentinel：一个面向分布式服务架构的高可用流量防护组件</p>
+</li>
+</ul>
+<p>进入了高速发展期：</p>
+<ul>
+<li>
+<p>敏捷开发：一种新型的互联网开发模式</p>
+</li>
+<li>
+<p>迭代：敏捷开发过程中的周期概念</p>
+</li>
+<li>
+<p>看板：敏捷开发过程中最重要的效能工具</p>
+</li>
+<li>
+<p>DDD：一种微服务拆分设计思想</p>
+</li>
+</ul>
+<p>等等开发设计理念...</p>
+<p>直到有一天，出事了...，我们网站瘫痪了，一看监控，数据库压力爆了，通过调整限流等措施，暂时得到了缓解，需要分库分表了：</p>
+<ul>
+<li>Mycat：一个彻底开源的，面向企业应用开发的数据库中间件产品</li>
+<li>ShardingSphere：一套开源的分布式数据库中间件解决方案组成的生态圈</li>
+</ul>
+<p>还要做到自动扩缩容：</p>
+<ul>
+<li>kubernetes：一个来自 Google 云平台的开源容器集群管理系统</li>
+<li>openshift：一个由红帽推出的面向开发人员的Paas</li>
+</ul>
+<p>一些概念：</p>
+<ul>
+<li>
+<p>ServiceMesh架构：下一代微服务架构</p>
+</li>
+<li>
+<p>Serverless架构：用来构建和运行不需要服务器管理的应用程序</p>
+</li>
+<li>
+<p>云原生架构：一种结合云环境，充分利用云资源的架构</p>
+</li>
+</ul>
+<p>进入了平稳期</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[分布式锁 三种实现方式]]></title>
         <id>https://kangjn.github.io/post/fen-bu-shi-suo-san-chong-shi-xian-fang-shi/</id>
@@ -5932,80 +6169,6 @@ https://github.com/xingshaocheng/architect-awesome</p>
 <p>**项目简介：**本项目是基于 .NET Core / ASP.NET Core 开发的跨平台支付 SDK 集，简化了 API 调用及相关通知的处理流程。</p>
 <p>目前支持：支付宝(Alipay)、微信支付(WeChatPay)、QQ钱包(QPay)、京东支付(JDPay)、连连支付(LianLianPay)、银联支付(UnionPay)。</p>
 <p>**项目地址：**https://gitee.com/Essensoft/Payment</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[在VS code中提交项目到码云]]></title>
-        <id>https://kangjn.github.io/post/zai-vs-code-zhong-ti-jiao-xiang-mu-dao-ma-yun/</id>
-        <link href="https://kangjn.github.io/post/zai-vs-code-zhong-ti-jiao-xiang-mu-dao-ma-yun/">
-        </link>
-        <updated>2021-04-23T05:23:04.000Z</updated>
-        <content type="html"><![CDATA[<p>在VS code中提交项目</p>
-<p>首先在VS code中进入到要上传的项目内，比如我的是Angular项目，就是这个样子：</p>
-<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/408314.png" alt="" loading="lazy"></figure>
-<p>然后依次执行如下语句：<br>
-初始化：<br>
-git init<br>
-定向到你的代码仓库：<br>
-git remote add origin https://gitee.com/用户个性地址/HelloGitee.git<br>
-上传并添加评论：<br>
-git add .<br>
-git commit -m &quot;第一次提交&quot;<br>
-git push origin master ——这里注意，如果你项目中有redme文件而且在码云网站上创建仓库时也生成了redme文件话要加上 -f</p>
-<p>将代码放到码云<br>
-到码云里新建一个仓库，完成后码云会有一个命令教程按上面的来就行了<br>
-码云中的使用教程：</p>
-<p>Git 全局设置:<br>
-git config --global user.name &quot;ASxx&quot;<br>
-git config --global user.email &quot;123456789@qq.com&quot;</p>
-<p>创建 git 仓库:</p>
-<p>mkdir wap // 项目在本地的路径<br>
-cd wap<br>
-git init<br>
-touch README.md<br>
-git add README.md<br>
-git commit -m &quot;first commit&quot;<br>
-git remote add origin https://git.oschina.net/name/package.git  // 远程仓库地址<br>
-git push -u origin master</p>
-<p>已有项目：<br>
-cd existing_git_repo<br>
-git remote add origin https://git.oschina.net/name/package.git<br>
-git push -u origin master<br>
-下面说下详细的本地操作步骤：</p>
-<p><strong>1、用vs打开你的项目文件夹</strong></p>
-<figure data-type="image" tabindex="2"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/980552.png" alt="" loading="lazy"></figure>
-<p><strong>2、配置git</strong></p>
-<p>打开Git Bash输入以下命令</p>
-<p>如果还没输入全局配置就先把这个全局配置输入上去</p>
-<p>Git 全局设置:</p>
-<p>git config --global user.name &quot;ASxx&quot;<br>
-git config --global user.email &quot;123456789@qq.com&quot;</p>
-<p>然后开始做提交代码到码云的配置<br>
-cd d:/wamp/www/mall360/wap              //首先指定到你的项目目录下<br>
-git init<br>
-touch README.md<br>
-git add README.md<br>
-git commit -m &quot;first commit&quot;<br>
-git remote add origin https://git.oschina.net/name/package.git   //用你仓库的url<br>
-git push -u origin master  //提交到你的仓库<br>
-正常情况下上面的命令执行完成后，本地文件夹会有一个隐藏的.git文件夹，云端你的仓库里应该会有一个README.md文件。</p>
-<ul>
-<li><strong>3、在vscode中提交代码到仓库</strong></li>
-</ul>
-<p>回到vs code打开git工作区就会看到所有代码显示在这里</p>
-<figure data-type="image" tabindex="3"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/939768.png" alt="img" loading="lazy"></figure>
-<p>点击+号，把所有文件提交到暂存区。</p>
-<p>然后打开菜单选择--提交已暂存的</p>
-<figure data-type="image" tabindex="4"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/104252.png" alt="img" loading="lazy"></figure>
-<p>然后按提示随便在消息框里输入一个消息，再按ctrl+enter提交</p>
-<figure data-type="image" tabindex="5"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/778020.png" alt="img" loading="lazy"></figure>
-<p>然后把所有暂存的代码push云端，</p>
-<figure data-type="image" tabindex="6"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/866213.png" alt="img" loading="lazy"></figure>
-<p>点击后，会弹出让你输入账号密码，把你托管平台的账号密码输入上去就行了。。。</p>
-<p>不出问题的话你整个项目就会提交到云端上了。</p>
-<p>在vs中每次更新代码都会要输入账号密码，方便起见，可以配置一下让GIT记住密码账号。</p>
-<pre><code>git config --global credential.helper store   //在Git Bash输入这个命令就可以了
-</code></pre>
 ]]></content>
     </entry>
 </feed>
