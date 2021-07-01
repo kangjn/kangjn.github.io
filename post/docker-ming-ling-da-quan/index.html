@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta name="referrer" content="never">
+<meta name="keywords" content="">
+<meta name="description" content="欢迎访问[MyBlog]的个人博客">
+<meta name="author" content="kveln">
+<title>docker命令大全 | MyBlog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link
+  href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'>
+<link rel="alternate" type="application/rss+xml" title="docker命令大全 | MyBlog » Feed"
+  href="https://kangjn.github.io//atom.xml">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+<link href="https://kangjn.github.io//styles/main.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/css/live2d.css">
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+  <meta property="og:description" content="docker命令大全" />
+  <meta property="og:url" content="https://kangjn.github.io/post/docker-ming-ling-da-quan/" />
+  <meta property="og:locale" content="zh-CN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MyBlog" />
+  <!-- <script src="../assets/styles/scripts/tocScript.js"></script> -->
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1625108708330"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <!-- Page Header -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="https://kangjn.github.io/">MyBlog</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+      data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+      aria-label="Toggle navigation">
+      Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/">首页</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/archives">归档</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/tags">标签</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          
+          <a class="nav-link" href="/about">关于</a>
+          
+        </li>
+        
+        <li class="nav-item">
+          <div class="gridea-search-container">
+            <form id="gridea-search-form" style="position: relative" data-update="1625108708330"
+              action="/search/index.html">
+              <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+              <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<header class="masthead" style="background-image: url('https://kangjn.github.io//media/images/home-bg.jpg')">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        
+          <!-- 没Title为其他页面Header -->
+          
+            <!-- 没Title并且有headerType为Post：文章Header -->
+            <div class="post-heading">
+              <span class="tags">
+                
+                <a href="https://kangjn.github.io/tag/xyYfRRBrB/" class="tag">docker</a>
+                
+              </span>
+              <h1>docker命令大全</h1>
+              <span class="meta">
+                Posted on
+                2021.07.01，18 min read
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</header>
+  <!-- Post Content -->
+  <article id="post-content-article">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post-content-container">
+          
+          <p>*一、基本命令：</p>
+<p>查看镜像：docker images</p>
+<p>搜索镜像：docker search mysql:5.7.0 (5.7.0：搜索指定的版本)</p>
+<p>列出当前运行的容器：docker ps</p>
+<p>列出所有的容器（包括已停止的）：docker ps -a</p>
+<p>停止容器 ：docker stop 5d034c6ea010 （5d034c6ea010 : 容器id）</p>
+<p>进入容器： docker exec -it 容器id /bin/bash</p>
+<p>下载镜像：docker pull ubuntu（默认latest,最新版）</p>
+<p>下载带版本的镜像：docker pull ubuntu:13.10</p>
+<p>创建容器时，设置自动启动容器：docker run --restart=always 容器id（或者容器名称）如果创建时未指定 --restart=always ,</p>
+<p>​	可通过update 命令设置：docker update --restart=always 容器id（或者容器名称）</p>
+<p>查看docker信息：docker info</p>
+<p>查看容器的日志：docker logs -f 容器ID（-f：可以滚动查看日志的最后几行）</p>
+<p>查看我们的容器与基础镜像有什么不同：docker container diff sample</p>
+<p>A代表新增文件</p>
+<p>C代表修改过的文件</p>
+<p>D代表被删除的文件</p>
+<p>将修改过的容器导出为自己的镜像：docker container commit sample my-alpine</p>
+<p>看本地镜像runoob/ubuntu:v3的创建历史：docker history runoob/ubuntu:v3</p>
+<p>将镜像 runoob/ubuntu:v3 生成 my_ubuntu_v3.tar 文档：</p>
+<p>docker save -o my_ubuntu_v3.tar runoob/ubuntu:v3（-o :输出到的文件）</p>
+<p>导入使用 docker save 命令导出的镜像：</p>
+<p>docker load &lt; busybox.tar.gz</p>
+<p>从镜像归档文件my_ubuntu_v3.tar创建镜像，命名为runoob/ubuntu:v4：</p>
+<p>docker import my_ubuntu_v3.tar runoob/ubuntu:v4</p>
+<p>创建容器：docker run -i -t -v /root/software/:/mnt/software/ 9f38484d220f /bin/bash （-v：表示需要将本地哪个目录挂载到容器中，格式：-v &lt;宿主机目录&gt;:&lt;容器目录&gt;）</p>
+<p>运行容器：docker run --rm -t -i ubuntu:15.10 /bin/bash （/bin/bash：交互式 Shell，-t: 表示容器启动后会进入其命令行，-i: 表示以“交互模式”运行容器，</p>
+<p>--rm:停止容器后直接删除容器）</p>
+<p>数据拷贝： docker cp，此命令用于容器与宿主机之间进行数据拷贝,如 docker cp 5d034c6ea010: /etc/nginx/nginx.conf /dockerData/nginx/conf/nginx.conf 将容器的目录文件拷贝到宿主机指定位置,容器ID可以替换成容器名</p>
+<p>删除镜像：docker rmi 镜像名/镜像id</p>
+<p>删除容器： docker rm 容器id (必须是未启动的容器 )</p>
+<p>强制删除容器 db01、db02：docker rm -f db01 db02</p>
+<p>删除容器 nginx01, 并删除容器挂载的数据卷：docker rm -v nginx01</p>
+<p>移除所有的容器：docker rm -f (docker container ls -aq)</p>
+<p>杀掉一个运行中的容器:docker kill -s KILL mynginx（-s :向容器发送一个信号）</p>
+<p>更新镜像:</p>
+<p>1.从已经创建的容器中更新镜像，并且提交这个镜像，使用 yum update 更新镜像,在完成操作之后，输入 exit 命令来退出这个容器。</p>
+<p>提交镜像： docker commit -m=&quot;has update&quot; -a=&quot;runoob&quot; e218edb10161 runoob/ubuntu:v2，其中： -m: 提交的描述信息 -a: 指定镜像作者 e218edb10161：容器 ID runoob/ubuntu:v2: 指定要创建的目标镜像名</p>
+<p>2、使用 Dockerfile 指令来创建一个新的镜像</p>
+<p>设置镜像标签： docker tag 860c279d2fec ubuntu:dev</p>
+<p>查询最后一次创建的容器： docker ps -l</p>
+<p>容器命名： docker run -d -P --name runoob training/webapp python app.py(--name命令:定义容器别名，其中runoob ：容器名，training/webapp：容器所属的镜像名，python：为启动的容器创建的别名)</p>
+<p>新建网络：docker network create -d bridge test-net，参数说明：-d：参数指定 Docker 网络类型，有 bridge、overlay，其中 overlay 网络类型用于 Swarm mode</p>
+<p>登录docker远程镜像仓库： sudo docker login --username=qweads registry.cn-hangzhou.aliyuncs.com</p>
+<p>退出docker远程镜像仓库：docker logout</p>
+<p>推送镜像到远程仓库：docker push 镜像名/镜像id</p>
+<p>导出容器：docker export 容器id&gt; /地址/容器别名.tar，</p>
+<p>导入容器：cat docker/ubuntu.tar | docker import - test/ubuntu:v1 (将快照文件 ubuntu.tar 导入到镜像 test/ubuntu:v1)</p>
+<p>查看镜像或容器的详细信息：docker inspect 容器id (可以加-f参数只查看某一项信息)</p>
+<p>查看容器IP： docker inspect --format='{{.NetworkSettings.IPAddress}}'CONTAINER_ID/NAME</p>
+<p>查看容器数据卷挂载目录：docker inspect container_id | grep Mounts -A 20</p>
+<p>手动创建数据卷： docker volume create shared-data</p>
+<p>删除数据卷： docker volume rm my-data</p>
+<p>列出目前已有的volume：docker volume ls</p>
+<p>与磁盘空间使用情况相关的命令：docker system df</p>
+<p>移除所有不在运行状态的容器：docker container prune</p>
+<p>清除未被使用到的镜像：docker image prune --force --all</p>
+<p>清除未被使用到的数据卷：docker volume prune</p>
+<p>创建一个自定的网络：docker network create --driver bridge sample-net</p>
+<p>查看所有网络 ：docker network ls</p>
+<p>删除所有未被任何容器或者服务连接的网络：docker network prune</p>
+<p>查看该网络的详细情况：docker network inspect test-network</p>
+<p>将一个容器连接到多个网络：</p>
+<p>第一步：docker run -itd --name test --network test-net mysql /bin/bash ping</p>
+<p>127.0.0.1</p>
+<p>第二步：docker network connect test-net mysql</p>
+<p>从网络中移除容器：docker network disconnect 网络名/id mysql</p>
+<p>删除网络：docker network rm my-network1（删除前,必须确认没有容器在使用该网络）</p>
+<p>修改已启动容器的端口号：</p>
+<p>​    docker ps 查看 Container 的 id</p>
+<p>​    docker stop {container_id}</p>
+<p>​    3.找到 /var/lib/docker/containers/{container_id}/hostconfig.json 修改</p>
+<p>​    sudo service docker restart 重启docker</p>
+<p>​    docker start {container_id} 重新启动 container</p>
+<p>二、dockerfile:</p>
+<p>1、创建Dockerfile文件：mkdir Dockerfile</p>
+<p>2、编辑文件 ：vi Dockerfile</p>
+<p>3、添加脚本如：</p>
+<p>FROM nginx</p>
+<p>RUN echo '这是一个本地构建的nginx镜像' &gt; /usr/share/nginx/html/index.html</p>
+<p>介绍：</p>
+<p>FROM：定制的镜像都是基于 FROM 的镜像，这里的 nginx 就是定制需要的基础镜像。后续的操作都是基于 nginx。</p>
+<p>RUN：用于执行后面跟着的命令行命令。有以下俩种格式：</p>
+<p>shell 格式：RUN &lt;命令行命令&gt;，&lt;命令行命令&gt; 等同于，在终端操作的 shell命令。</p>
+<p>exec 格式：RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</p>
+<p>例如：#RUN [&quot;./test.php&quot;, &quot;dev&quot;, &quot;offline&quot;] 等价于RUN ./test.php dev offline</p>
+<p>​        指令详解</p>
+<p>​        1》COPY</p>
+<p>​        复制指令，从上下文目录中复制文件或者目录到容器里指定路径：</p>
+<p>​        COPY . /app #将上下文目录中所有文件或目录递归拷贝到容器的/app目录下</p>
+<p>​        COPY ./web /app/web #将上下文目录中的web目录下的内容拷贝到容器的/app/web目录下</p>
+<p>​        COPY sample.txt /data/my-sample.txt #拷贝单个文件并重命名</p>
+<p>​        ADD sample.tar /app/bin/ #解压tar包内的文件到指定目录</p>
+<p>​        ADD http://example.com/sample.txt /data/ #拷贝远程文件到指定目录</p>
+<p>​        COPY ./sample* /mydir/ #支持源路径中使用通配符</p>
+<p>​        2》WORKDIR</p>
+<p>​        WORKDIR用来定义工作目录或者上下文目录。常见的问题：</p>
+<p>​        （WORKDIR 指定的工作目录，必须是提前创建好的）。</p>
+<p>​        由于每执行一次RUN，都是在原有镜像上添加一个新层，因此上面的命令只是在root目录下新建了sample.txt文件。</p>
+<p>​        正确的切换至一个目录下，并新建文件，命令如下：</p>
+<p>​        WORKDIR /app/bin</p>
+<p>​        RUN touch sample.txt</p>
+<p>​        3》CMD</p>
+<p>​        类似于 RUN 指令，用于运行程序，但二者运行的时间点不同:</p>
+<p>​        CMD 在docker run 时运行。</p>
+<p>​        RUN 是在 docker build。</p>
+<p>​        作用：为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD 指令指定的程序可被 docker run 命令行参数中指定要运行的程序所覆盖。</p>
+<p>​        如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。</p>
+<p>​        CMD [&quot;&lt;可执行文件或命令&gt;&quot;,&quot;<param1>&quot;,&quot;<param2>&quot;,...]</p>
+<p>​        CMD [&quot;<param1>&quot;,&quot;<param2>&quot;,...] # 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数</p>
+<p>​        4》ENTRYPOINT</p>
+<p>​        类似于 CMD 指令，但其不会被 docker run 的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序。</p>
+<p>​        但是, 如果运行 docker run 时使用了 --entrypoint 选项，此选项的参数可当作要运行的程序覆盖 ENTRYPOINT 指令指定的程序。</p>
+<p>​        假设已通过 Dockerfile 构建了 nginx:test 镜像：</p>
+<p>​        FROM nginx</p>
+<p>​        ENTRYPOINT [&quot;nginx&quot;, &quot;-c&quot;] # 定参</p>
+<p>​        CMD [&quot;/etc/nginx/nginx.conf&quot;] # 变参</p>
+<p>​        1、不传参运行</p>
+<p>​        docker run nginx:test</p>
+<p>​        容器内会默认运行以下命令，启动主进程。</p>
+<p>​        nginx -c /etc/nginx/nginx.conf</p>
+<p>​        2、传参运行</p>
+<p>​        docker run nginx:test -c /etc/nginx/new.conf</p>
+<p>​        容器内会默认运行以下命令，启动主进程(/etc/nginx/new.conf:假设容器内已有此文件)</p>
+<p>​        nginx -c /etc/nginx/new.conf</p>
+<p>​        Dockerfile构建镜像命令：docker build -t nginx:test . （. 代表Dockerfile文件的路径）</p>
+<p>​        当你的配置文件不是默认的名字时，可以使用-f参数指定：</p>
+<p>docker build -t nginx:test -f my-Dockerfile .</p>
+<p>三、docker-compose:</p>
+<p>docker-compose.yml 配置文件：</p>
+<p># <strong>yaml 配置</strong></p>
+<p>version: '3'</p>
+<p>services:</p>
+<p>webapp:</p>
+<p>build: ./dir</p>
+<p>ports:</p>
+<p>- &quot;5000:5000&quot;</p>
+<p>redis:</p>
+<p>image: &quot;redis:alpine&quot;</p>
+<p>介绍：</p>
+<p>docker-compose命令需在docker-compose.yml 所在目录下才能运行</p>
+<p>启动应用程序：docker-compose up -d (-d:在后台启动)</p>
+<p>指定使用的 Compose 模板文件，默认为 docker-compose.yml：</p>
+<p>docker-compose -f docker-compose.yml up -d</p>
+<p>停用移除所有容器以及网络相关：docker-compose down</p>
+<p>docker-compose logs：docker-compose logs</p>
+<p>列出所有容器：docker-compose ps</p>
+<p>构建（重新构建）项目中的服务容器：docker-compose build</p>
+<p>拉取服务依赖的镜像：docker-compose pull</p>
+<p>列出指定服务的容器：docker-compose ps eureka</p>
+<p>删除指定服务的容器：docker-compose rm eureka</p>
+<p>启动指定服务已存在的容器：docker-compose start eureka</p>
+<p>在一个服务上执行一个命令：docker-compose run web bash（这样即可启动一个web服务，同时执行bash命令）</p>
+<p>停止已运行的容器：docker-compose stop eureka</p>
+<p>通过发送SIGKILL 信号停止指定服务的容器：docker-compose kill eureka</p>
+<p>一个web服务形成瓶颈的时候，我们可以快速地的扩充几个web服务出来 ：</p>
+<p>docker-compose up --scale web=3（ports:需要修改为随即映射端口，如 -5000）</p>
+<p>version：指定本 yml 依从的 compose 哪个版本制定的。</p>
+<p>build：指定为从上下文路径 ./dir/Dockerfile 所构建的镜像,</p>
+<p>或者，作为具有在上下文指定的路径的对象，以及可选的 Dockerfile 和 args：</p>
+<p>version: &quot;3.7&quot;</p>
+<p>services:</p>
+<p>webapp:</p>
+<p>build:</p>
+<p>context: ./dir</p>
+<p>dockerfile: Dockerfile-alternate</p>
+<p>args:</p>
+<p>buildno: 1</p>
+<p>labels:</p>
+<p>- &quot;com.example.description=Accounting webapp&quot;</p>
+<p>- &quot;com.example.department=Finance&quot;</p>
+<p>- &quot;com.example.label-with-empty-value&quot;</p>
+<p>target: prod</p>
+<p>context：上下文路径。</p>
+<p>dockerfile：指定构建镜像的 Dockerfile 文件名。</p>
+<p>args：添加构建参数，这是只能在构建过程中访问的环境变量。</p>
+<p>labels：设置构建镜像的标签。</p>
+<p>target：多层构建，可以指定构建哪一层。</p>
+<p>​        depends_on 设置依赖关系:</p>
+<p>​        docker-compose up ：以依赖性顺序启动服务</p>
+<p>​        docker-compose up SERVICE ：自动包含 SERVICE 的依赖项。在以下示例中，docker-compose up web 还将创建并启动 db 和 redis。</p>
+<p>​        docker-compose stop ：按依赖关系顺序停止服务。</p>
+<p>​        docker-compose.yml：</p>
+<p>​        version: &quot;3.7&quot;</p>
+<p>​        services:</p>
+<p>​        web:</p>
+<p>​        build: .</p>
+<p>​        depends_on:</p>
+<p>​        - db</p>
+<p>​        - redis</p>
+<p>​        redis:</p>
+<p>​        image: redis</p>
+<p>​        db:</p>
+<p>​        image: postgres</p>
+<p>​        注意：web 服务不会等待 redis db 完全启动 之后才启动。</p>
+<p>deploy：指定与服务的部署和运行有关的配置。只在 swarm 模式下才会有用。</p>
+<p>docker-compose.yml：</p>
+<p>version: &quot;3.7&quot;</p>
+<p>services:</p>
+<p>redis:</p>
+<p>image: redis:alpine</p>
+<p>deploy:</p>
+<p>mode：replicated</p>
+<p>replicas: 6</p>
+<p>endpoint_mode: dnsrr</p>
+<p>labels:</p>
+<p>description: &quot;This redis service label&quot;</p>
+<p>resources:</p>
+<p>limits:</p>
+<p>cpus: '0.50'</p>
+<p>memory: 50M</p>
+<p>reservations:</p>
+<p>cpus: '0.25'</p>
+<p>memory: 20M</p>
+<p>restart_policy:</p>
+<p>condition: on-failure</p>
+<p>delay: 5s</p>
+<p>max_attempts: 3</p>
+<p>window: 120s</p>
+<p>endpoint_mode：访问集群服务的方式：</p>
+<p>vip：集群服务一个对外的虚拟 ip。所有的请求都会通过这个虚拟 ip 到达集群服务内部的机器。</p>
+<p>dnsrr：DNS 轮询（DNSRR）。所有的请求会自动轮询获取到集群 ip 列表中的一个 ip 地址。</p>
+<p>labels：在服务上设置标签。可以用容器上的 labels（跟 deploy 同级的配置） 覆盖 deploy 下的 labels。</p>
+<p>mode：指定服务提供的模式：</p>
+<p>replicated：复制服务，复制指定服务到集群的机器上</p>
+<p>global：全局服务，服务将部署至集群的每个节点。</p>
+<p>replicas：mode 为 replicated 时，需要使用此参数配置具体运行的节点数量。</p>
+<p>resources：配置服务器资源使用的限制，例如上例子，配置 redis 集群运行需要的 cpu 的百分比 和 内存的占用。避免占用资源过高出现异常。</p>
+<p>restart_policy：配置如何在退出容器时重新启动容器。</p>
+<p>condition：可选 none，on-failure 或者 any（默认值：any）。</p>
+<p>delay：设置多久之后重启（默认值：0）。</p>
+<p>max_attempts：尝试重新启动容器的次数，超出次数，则不再尝试（默 认值：一直重试）。</p>
+<p>window：设置容器重启超时时间（默认值：0）。</p>
+<p>四、docker-machine：</p>
+<p>列出可用的机器：docker-machine ls</p>
+<p>创建一台名为 test 的机器：docker-machine create --driver virtualbox test（--driver：指定用来创建机器的驱动类型。）</p>
+<p>查看机器的 ip：docker-machine ip test</p>
+<p>停止机器： docker-machine stop test</p>
+<p>启动机器：docker-machine start test</p>
+<p>进入机器：docker-machine ssh test</p>
+<p>查看当前激活状态的 Docker 主机：docker-machine active</p>
+<p>查看某一个docker vm主机的信息：docker-machine env test</p>
+<p>删除某台 Docker 主机，对应的虚拟机也会被删除:：docker-machine rm test</p>
+<p>以 json 格式输出指定Docker的详细信息：docker-machine inspect test</p>
+<p>设置当前的环境变量为某一个主机的信息：eval (docker-machine env test) 取消当前环境变量：eval(docker-machine env -u)</p>
+<p>通过 SSH 连接到主机上，执行命令：docker-machine ssh swarm-manager</p>
+<p>五、docker swarm：</p>
+<p>Docker Swarm 是 Docker 的集群管理工具。它将 Docker 主机池转变为单个虚拟 Docker 主机。 Docker Swarm 提供了标准的 Docker API，所有任何已经与 Docker 守护程序通信的工具都可以使用 Swarm 轻松地扩展到多个主机。</p>
+<p>swarm 集群由管理节点（manager）和工作节点（work node）构成。</p>
+<p>swarm mananger：负责整个集群的管理工作包括集群配置、服务管理等所有跟集群有关的工作。</p>
+<p>work node：即图中的 available node，主要负责运行相应的服务来执行任务（task）。</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/kangjun/MyBlogImage/raw/master/0c6eae.png" alt="img" loading="lazy"></figure>
+<p>1、创建 swarm 集群管理节点（manager）</p>
+<p>创建 docker 机器： docker-machine create -d virtualbox swarm-manager</p>
+<p>连接到主机上：docker-machine ssh swarm-manager</p>
+<p>初始化 swarm 集群，进行初始化的这台机器，就是集群的管理节点:</p>
+<p>docker swarm init --advertise-addr 192.168.99.107 #这里的 IP 为创建机器时分配的 ip。</p>
+<p>会输出：</p>
+<p>docker swarm join --token SWMTKN-1-4oogo9qziq768dma0uh3j0z0m5twlm10iynvz7ixza96k6jh9p-ajkb6w7qd06y1e33yrgko64sk 192.168.99.107:2377</p>
+<p>查看集群节点信息: docker node ls</p>
+<p>2、创建 swarm 集群工作节点（worker）</p>
+<p>使用docker-machine 创建swarm-worker1 和 swarm-worker2 两台机器。</p>
+<p>docker-machine create -d virtualbox worker1</p>
+<p>docker-machine create -d virtualbox worker2</p>
+<p>docker-machine ssh swarm-worker1进入机器里</p>
+<p>添加上一步输出的内容。</p>
+<p>3、查看集群信息</p>
+<p>docker-machine ssh swarm-manager进入集群管理节点,执行docker info 可以查看当前集群的信息（Swarm:active,Managers:1,Nodes:3,有三个节点,其中有一个是管理节点）</p>
+<p>4、部署服务到集群中</p>
+<p>注意：跟集群管理有关的任何操作，都是在管理节点上操作的。</p>
+<p>在一个工作节点上创建一个名为 helloworld 的服务，这里是随机指派给一个工作节点：docker service create --replicas 1 --name helloworld alpine ping docker.com</p>
+<p>命令解释：</p>
+<p>docker service create 命令创建一个服务</p>
+<p>--name 服务名称命名为 helloworld</p>
+<p>--replicas 设置启动的示例数</p>
+<p>alpine指的是使用的镜像名称，ping docker.com指的是容器运行的bash</p>
+<p>5、查看服务部署情况</p>
+<p>查看 helloworld 服务运行在哪个节点上，可以看到目前是在 swarm-worker1 节点： docker service ps helloworld</p>
+<p>查看 helloworld 部署的具体信息：docker service inspect --pretty helloworld</p>
+<p>6、扩展集群服务</p>
+<p>将上述的 helloworld 服务扩展到俩个节点：docker service scale helloworld=2</p>
+<p>可以看到已经从一个节点，扩展到两个节点：docker service ps helloworld</p>
+<p>7、删除服务：docker service rm helloworld</p>
+<p>查看是否已删除：docker service ps helloworld</p>
+<p>8、滚动升级服务</p>
+<p>介绍 redis 版本如何滚动升级至更高版本</p>
+<p>创建一个 3.0.6 版本的 redis。</p>
+<p>docker service create --replicas 1 --name redis --update-delay 10s redis:3.0.6</p>
+<p>滚动升级 redis</p>
+<p>docker service update --image redis:3.0.7 redis</p>
+<p>9、停止某个节点接收新的任务</p>
+<p>查看所有的节点：docker node ls</p>
+<p>可以看到目前所有的节点都是 Active, 可以接收新的任务分配。</p>
+<p>停止节点 swarm-worker1：</p>
+<p>docker node update --availability drain swarm-worker1 （Drain：节点状态）</p>
+<p>重新激活swarm-worker1：</p>
+<p>docker node update --availability active swarm-worker1（active ：活跃状态）</p>
+<p>10.退出 Swarm 集群</p>
+<p>如果 Manager 想要退出 Swarm 集群， 在 Manager Node 上执行如下命令：</p>
+<p>docker swarm leave</p>
+<p>就可以退出集群，如果集群中还存在其它的 Worker Node，还希望 Manager 退出集群，则加上一个强制选项，命令行如下所示：docker swarm leave --force</p>
+<p>在 Worker2 上进行退出测试，登录 worker2 节点：</p>
+<p>docker-machine ssh worker2</p>
+<p>执行退出命令：docker swarm leave</p>
+<p>11.重新搭建命令</p>
+<p>使用 VirtualBox 做测试的时候，如果想重复实验可以将实验节点删掉再重来。</p>
+<p>停止虚拟机：docker-machine stop manager1 worker1 worker2</p>
+<p>移除虚拟机：docker-machine rm manager1 worker1 worker2</p>
+<p>停止、删除虚拟主机后，再重新创建即可。</p>
+<ul>
+<li></li>
+</ul>
+
+          <div class="toc-container"></div>
+          
+          <hr />
+          <p class="next-post">下一篇：
+            <a href="https://kangjn.github.io/post/yi-ge-web-cheng-xu-yuan-fa-zhan-li-cheng/">
+              <span class="post-title">
+                一个WEB程序员发展历程&rarr;
+              </span>
+            </a>
+          </p>
+          
+          <div class="comment" style="text-align: center;">
+            
+
+            
+            
+          </div>
+        </div>
+      </div>
+  </article>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <!-- <li class="list-inline-item">
+              <a href="https://kangjn.github.io//atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li> -->
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>MyBlog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://kangjn.github.io//media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  
+  <script src="https://kangjn.github.io//media/scripts/tocScript.js"></script>
+</body>
+
+</html>
