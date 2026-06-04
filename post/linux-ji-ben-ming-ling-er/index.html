@@ -1,0 +1,201 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基本命令（二） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基本命令（二） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="使用权限的符号表示法
+虽然数字表示法简洁，但符号表示法可能更直观，特别是当你只想更改单个权限时。符号表示法使用字母来表示用户、组和其他用户，并使用运算符来添加或删除权限。
+cd ~/project
+echo '#!/bin/bash\nec..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基本命令（二）
+            </h2>
+            <div class="post-info">
+              <span>
+                2025-12-31
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>使用权限的符号表示法</p>
+<p>虽然数字表示法简洁，但符号表示法可能更直观，特别是当你只想更改单个权限时。符号表示法使用字母来表示用户、组和其他用户，并使用运算符来添加或删除权限。<br>
+cd ~/project<br>
+echo '#!/bin/bash\necho &quot;Hello, World&quot;' &gt; script.sh<br>
+这个命令做了两件事：</p>
+<pre><code>它创建了一个名为 script.sh 的新文件。.sh 扩展名通常用于 shell 脚本。shell 脚本是可执行文件，包含一系列按顺序执行的命令。
+它将两行内容写入此文件：
+    #!/bin/bash（称为 shebang）告诉系统这是一个 bash 脚本。shebang 行指定了应该用于执行脚本的解释器。在这种情况下，它是 /bin/bash，这是 Bash 解释器的路径。
+    echo &quot;Hello, World&quot; 是一个命令，当脚本运行时将打印“Hello, World”。echo 命令只是显示跟随它的文本。
+    \n 是一个换行符，确保命令在文件中位于单独的行上。
+</code></pre>
+<p>使用 whoami 命令来识别当前用户。<br>
+使用 uname 命令来显示内核名称。<br>
+使用 uname -a 命令显示所有系统信息。<br>
+使用 uptime 命令显示系统运行时间和负载平均值。<br>
+使用 id 命令来检索你的用户和组标识符。<br>
+使用 top 命令启动监控界面。<br>
+运行 top 后，按 q 键退出并返回到命令提示符。</p>
+<p>使用 &gt; 运算符重定向第一个命令的输出。这将创建文件（如果文件已存在，则会覆盖它）。<br>
+使用 &gt;&gt; 运算符将后续命令的输出 追加 到文件中，而不会删除其现有内容。</p>
+<p>理解 tar 命令<br>
+tar 命令是一个强大的 Linux 工具，用于创建和操作归档文件。&quot;Tar&quot; 最初代表 &quot;Tape Archive&quot;（磁带归档），因为它最初设计用于将数据写入磁带，但如今它常用于在磁盘上创建压缩的归档文件。</p>
+<p>当你使用 tar 时，你本质上是将多个文件捆绑成一个文件（称为归档），并且可以有选择地压缩此归档以节省空间。最常见的压缩格式是 gzip，它会给文件名添加 .gz 扩展名。</p>
+<p>tar 命令使用不同的选项（标志）来控制其行为：</p>
+<p>c: 创建一个新的归档<br>
+z: 使用 gzip 压缩归档<br>
+f: 指定归档的文件名</p>
+<p>grep 命令非常适合在文本文件中搜索模式。<br>
+要将命令的输出保存到文件，你可以使用 &gt; 重定向运算符。如果文件不存在，它将创建该文件；如果文件已存在，它将覆盖该文件。</p>
+<p>dmesg 命令显示内核消息。你可以将它的输出 &quot;管道&quot;（pipe）到另一个命令进行过滤。<br>
+管道符 | 将一个命令的输出发送到另一个命令的输入。<br>
+grep 命令的 -i 选项可以使搜索不区分大小写。<br>
+要一次搜索多个模式（如 fail 或 error），你可以使用 grep -E 'pattern1|pattern2'。<br>
+注意：如果你遇到 &quot;Operation not permitted&quot; 错误，请尝试使用 sudo 运行命令以获得必要的权限。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-ji-ben-ming-ling/">
+              <h3 class="post-title">
+                Linux基本命令（一）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,175 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tomcat部署SSL证书 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Tomcat部署SSL证书 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="一、  安装服务器证书1.  配置Tomcat复制已正确导入认证回复的server.jks文件到Tomcat安装目录下的conf目录。打开conf目录下的server.xml文件，找到并修改以下内容
+      
+&lt;!—      -..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Tomcat部署SSL证书
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-05-21
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>一、  安装服务器证书1.  配置Tomcat复制已正确导入认证回复的server.jks文件到Tomcat安装目录下的conf目录。打开conf目录下的server.xml文件，找到并修改以下内容<br>
+      <br>
+&lt;!—  <Connector protocol="org.apache.coyote.http11.Http11Protocol"               port="8443" SSLEnabled="true"               maxThreads="150" scheme="https" secure="true"               clientAuth="false" sslProtocol="TLS" />    --&gt;<br>
+修改为</p>
+   <Connector protocol="org.apache.coyote.http11.Http11Protocol"                   port="443" SSLEnabled="true"                   maxThreads="150" scheme="https" secure="true"               keystoreFile="conf\keystore.jks" keystorePass="password"               clientAuth="false" sslProtocol="TLS" ciphers="TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256"  /> 
+<p>默认的SSL访问端口号为443，如果使用其他端口号，则您需要使用https://yourdomain:port的方式来访问您的站点。</p>
+<ol start="2">
+<li>访问测试重启Tomcat，访问https://youdomain:port，测试证书的安装。二、  服务器证书的备份及恢复在您成功的安装和配置了服务器证书之后，请务必依据下面的操作流程，备份好您的服务器证书，以防证书丢失给您带来不便。1.  服务器证书的备份备份服务器证书密钥库文件server.jks文件即可完成服务器证书的备份操作。2.  服务器证书的恢复请参照服务器证书安装部分，将服务器证书密钥库server.jks文件恢复到您的服务器上，并修改配置文件，恢复服务器证书的应用。</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-ba/">
+              <h3 class="post-title">
+                Linux基础命令（八）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

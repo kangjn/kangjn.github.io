@@ -1,0 +1,262 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基本命令（四） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基本命令（四） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="列出活动系统进程
+Linux 和类 Unix 操作系统中的 ps（Process Status）命令用于显示当前系统中活动进程状态的命令。它提供了关于系统中正在运行的进程的详细信息，如进程 ID（PID）、父进程 ID（PPID）、运行时间..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基本命令（四）
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-01-04
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>列出活动系统进程<br>
+Linux 和类 Unix 操作系统中的 ps（Process Status）命令用于显示当前系统中活动进程状态的命令。它提供了关于系统中正在运行的进程的详细信息，如进程 ID（PID）、父进程 ID（PPID）、运行时间、使用的 CPU 和内存资源、用户信息、终端信息、进程状态等。<br>
+参数	作用<br>
+-a	显示所有进程（包括其他用户的进程）<br>
+-u	用户以及其他详细信息<br>
+-x	显示没有控制终端的进程<br>
+Linux 系统中有 5 种常见的进程状态，分别为运行、中断、不可中断、僵死与停止，其各自含义如下所示。<br>
+R（运行）：进程正在运行或在运行队列中等待。<br>
+S（中断）：进程处于休眠中，当某个条件形成后或者接收到信号时，则脱离该状态。<br>
+D（不可中断）：进程处于不可中断睡眠状态，通常因等待 IO 资源释放而无法终止。<br>
+Z（僵死）：进程已经终止，但进程描述符依然存在，直到父进程调用 wait4()系统函数将进程释放。<br>
+T（停止）：进程收到停止信号后停止运行。</p>
+<p>显示所有进程，并以完整格式显示：ps -ef</p>
+<p>从所有进程中搜索 mysql 进程的详细信息：<br>
+ps -ef | grep mysql<br>
+过滤特定用户的进程：<br>
+ps -ef | grep username<br>
+显示所有用户的所有进程，并以用户为主的格式显示：<br>
+ps aux<br>
+显示没有控制终端的进程<br>
+ps -x<br>
+显示进程 ID 为 1234 的进程的详细信息：<br>
+ps -p 1234 -f<br>
+自定义显示进程 ID 、父进程 ID 、命令名和内存使用率：<br>
+ps -eo pid,ppid,cmd,%mem<br>
+结合 sort 和 awk 命令，可以按 CPU 使用率排序：<br>
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head</p>
+<p>名称解释<br>
+PID：进程ID，每个进程都有一个唯一的PID。<br>
+PPID：父进程ID，表示创建该进程的父进程的PID。<br>
+C：CPU使用率，表示进程占用的CPU时间百分比。<br>
+STIME：进程启动时间。<br>
+TTY：终端类型，表示进程关联的终端。<br>
+TIME：进程使用的CPU时间。<br>
+CMD：命令名或命令行，表示启动进程的命令。<br>
+%MEM：内存使用率，表示进程占用的物理内存百分比。<br>
+%CPU：CPU使用率，表示进程在当前CPU时间片内占用的百分比。</p>
+<p>监控过程资源使用情况<br>
+在Linux系统中，监控系统资源对于确保系统稳定运行、及时发现并解决问题至关重要。以下是一些常用的命令和工具，用于监控CPU、内存、磁盘I/O以及其他关键系统资源。</p>
+<ol>
+<li>
+<p>CPU使用情况<br>
+top：提供了一个实时的视图，展示了当前正在运行的进程及其CPU和内存使用情况。你可以按不同的列排序，如CPU使用率或内存使用量，以快速识别资源消耗大的进程。<br>
+htop：是top命令的一个增强版本，提供了更友好的交互界面，支持颜色，并允许用户通过箭头键导航和筛选进程列表。</p>
+</li>
+<li>
+<p>内存监控<br>
+free：显示系统总的内存使用情况，包括物理内存、缓冲区、交换空间等。<br>
+vmstat：除了内存使用情况外，还能显示CPU活动、进程、磁盘I/O等信息，是一个全面的系统状态查看工具。</p>
+</li>
+<li>
+<p>磁盘I/O监控<br>
+iostat：报告CPU使用情况和磁盘I/O统计，特别适合于诊断磁盘I/O瓶颈。<br>
+iotop：类似于top，但专注于磁盘I/O活动，显示哪些进程在读写硬盘以及它们的I/O带宽使用情况。</p>
+</li>
+<li>
+<p>系统整体统计与历史数据<br>
+sar（System Activity Reporter）：记录并报告系统活动，可以提供CPU、内存、I/O、网络等资源的详细历史数据。通过配置sar，你可以定期收集数据，并在之后分析系统行为。</p>
+</li>
+<li>
+<p>进程监控与管理<br>
+ps：显示瞬间的进程状态，可以用来查看单个或所有进程的资源使用情况。<br>
+pgrep/pkill：基于名称查找或终止进程，是管理进程的便捷工具。</p>
+</li>
+<li>
+<p>综合监控工具<br>
+atop：提供了一个终端环境下的综合资源监控视图，能够同时显示CPU、内存、网络、I/O和内核活动，特别适用于高负载情况下的快速诊断。<br>
+nmon：一个强大的系统监控工具，可以实时显示系统资源使用情况，也能将数据保存下来供后续分析。</p>
+</li>
+<li>
+<p>高级监控与图形化界面<br>
+Grafana + Prometheus 或 Zabbix：这些是更为高级的监控解决方案，提供了丰富的图形化界面，可以设置警报规则，长期存储和分析监控数据。虽然它们的安装和配置相对复杂，但非常适合大规模系统或需要深入分析的场景。</p>
+</li>
+<li>
+<p>使用示例<br>
+查看CPU使用情况：top 或 htop<br>
+查看内存使用情况：free -h（-h参数用于以人类可读的格式显示大小）<br>
+监控磁盘I/O：iostat -x 5（每隔5秒显示一次详细I/O统计）<br>
+获取系统活动报告：sar -A（显示所有可用的系统活动报告）<br>
+查看特定进程：ps aux | grep &lt;process_name&gt; 或 pgrep &lt;process_name&gt;</p>
+</li>
+</ol>
+<p>综上所述，根据实际需求，可以选择合适的命令或工具进行系统资源的监控。</p>
+<p>pstree 命令<br>
+pstree 命令用于以树状图的形式展示进程之间的关系，英文全称为 process tree，输入该命令后按回车键执行即可。</p>
+<p>nice 命令<br>
+nice 命令用于调整进程的优先级，语法格式为“nice -n 优先级数字 服务名称”。</p>
+<p>pidof 命令<br>
+pidof 命令用于查询某个指定服务进程的 PID，语法格式为“pidof [参数] 服务名称”。<br>
+每个进程在其生命周期内的进程号（PID）是唯一的，可以用于区分正在运行的进程。例如，执行如下命令查询本机上 sshd 服务程序的 PID：<br>
+root@linuxprobe:~# pidof sshd</p>
+<p>kill 命令<br>
+kill 命令用于终止某个指定 PID 的服务进程，语法格式为“kill [参数] 进程的 PID”。<br>
+但有时系统会提示进程无法被终止，此时可以添加参数-9（SIGKILL 信号），此信号为系统中强制终止进程的最高级别命令，进程无法抗拒：</p>
+<p>killall 命令<br>
+killall 命令用于终止指定服务名称对应的所有进程，语法格式为“killall [参数] 服务名称”。</p>
+<p>通常来讲，复杂的服务程序会有多个进程协同为用户提供服务，如果用 kill 命令逐个结束这些进程会比较麻烦，此时可以使用 killall 命令来批量结束某个服务程序带有的全部进程。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-ji-ben-ming-ling-san/">
+              <h3 class="post-title">
+                Linux基本命令（三）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

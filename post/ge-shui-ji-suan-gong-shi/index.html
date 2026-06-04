@@ -1,0 +1,297 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>个税计算公式 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="个税计算公式 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1、查表法
+SELECT ISNULL(T.CurrentMonthTax, 0) AS CurrentMonthTax
+FROM (VALUES(0)) AS Dummy(DefaultVal)
+LEFT JOIN (
+SELECT
+CA..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              个税计算公式
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-06-04
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>1、查表法<br>
+SELECT ISNULL(T.CurrentMonthTax, 0) AS CurrentMonthTax<br>
+FROM (VALUES(0)) AS Dummy(DefaultVal)<br>
+LEFT JOIN (<br>
+SELECT<br>
+CASE<br>
+WHEN CumulativeTax - PreviousCumulativeTax &lt; 0 THEN 0<br>
+ELSE CumulativeTax - PreviousCumulativeTax<br>
+END AS CurrentMonthTax<br>
+FROM (<br>
+SELECT<br>
+c.EmpID,<br>
+c.YYMM,<br>
+c.CumTaxableIncome,<br>
+CASE<br>
+WHEN c.CumTaxableIncome &lt;= 0 THEN 0<br>
+ELSE (c.CumTaxableIncome * (t.TaxRate / 100.0) - t.TakeOut)<br>
+END AS CumulativeTax,<br>
+LAG(<br>
+CASE<br>
+WHEN c.CumTaxableIncome &lt;= 0 THEN 0<br>
+ELSE (c.CumTaxableIncome * (t.TaxRate / 100.0) - t.TakeOut)<br>
+END, 1, 0<br>
+) OVER (PARTITION BY c.EmpID ORDER BY c.YYMM) AS PreviousCumulativeTax<br>
+FROM (<br>
+SELECT<br>
+s.EmpID,<br>
+s.EmpNo,<br>
+s.YYMM,<br>
+s.Salary,<br>
+s.MonthNum,<br>
+s.CumSalary,<br>
+s.BasicDeduction,<br>
+d.CumSpecialDeduction,<br>
+(s.CumSalary - s.BasicDeduction - ISNULL(d.CumSpecialDeduction, 0) * s.MonthNum) AS CumTaxableIncome<br>
+FROM (<br>
+SELECT<br>
+EmpID,<br>
+EmpNo,<br>
+YYMM,<br>
+Salary,<br>
+MonthNum,<br>
+SUM(Salary) OVER (ORDER BY YYMM ROWS UNBOUNDED PRECEDING) AS CumSalary,<br>
+5000 * MonthNum AS BasicDeduction<br>
+FROM (<br>
+SELECT<br>
+EmpID,<br>
+EmpNo,<br>
+YYMM,<br>
+PayNo72 AS Salary,<br>
+ROW_NUMBER() OVER (ORDER BY YYMM) AS MonthNum<br>
+FROM PayMonthData<br>
+WHERE EmpID = @EmpID<br>
+AND YYMM &lt;= @YYMM AND YYMM &gt;= CAST(CAST(LEFT(@YYMM , 4) AS INT) - 1 AS CHAR(4)) + '12'<br>
+) AS SalaryHistory<br>
+) AS s<br>
+LEFT JOIN (<br>
+SELECT TOP 1<br>
+Field001,<br>
+Field003 AS CumSpecialDeduction<br>
+FROM CU003101Data<br>
+WHERE Field001 = (SELECT empno FROM PerEmployee WHERE EmpID =@EmpID)<br>
+AND Field004 &lt;DATEADD(DAY, 1, EOMONTH(CONVERT(DATE,'202604' + '01')))<br>
+ORDER BY Field004 DESC<br>
+) AS d ON s.EmpNo = d.Field001<br>
+) AS c<br>
+OUTER APPLY (<br>
+-- 匹配税率表<br>
+SELECT TaxRate, TakeOut<br>
+FROM PayInComeTax<br>
+WHERE c.CumTaxableIncome &gt;= IncludeBegin AND c.CumTaxableIncome &lt;= IncludeEnd<br>
+) t<br>
+) AS TaxCalculation<br>
+WHERE YYMM = @YYMM<br>
+) AS T ON 1 = 1</p>
+<p>2、直接算<br>
+DECLARE @YYMM VARCHAR(6) = '202302';<br>
+DECLARE @EmpID VARCHAR(20) = '张三';</p>
+<p>WITH MonthlyData AS (<br>
+SELECT<br>
+EmpID,<br>
+YYMM,<br>
+payno69 - ISNULL(payno79, 0) AS NetSalary,       -- 扣除社保公积金后金额<br>
+ISNULL(payno_special, 0) AS SpecialDeduction,      -- 专项附加扣除（替换实际字段）<br>
+ROW_NUMBER() OVER (PARTITION BY EmpID ORDER BY YYMM) AS MonthNo<br>
+FROM PayMonthData<br>
+WHERE EmpID = @EmpID<br>
+AND YYMM &gt;= LEFT(@YYMM, 4) + '01'   -- 同年1月起累计<br>
+AND YYMM &lt;= @YYMM<br>
+),<br>
+Cumulative AS (<br>
+SELECT<br>
+m.EmpID,<br>
+m.YYMM,<br>
+m.NetSalary,<br>
+m.MonthNo,<br>
+SUM(c.NetSalary) AS CumSalary,<br>
+SUM(c.SpecialDeduction) AS CumSpecial,<br>
+SUM(c.NetSalary) - SUM(c.SpecialDeduction) - 5000 * m.MonthNo AS TaxableIncome<br>
+FROM MonthlyData m<br>
+JOIN MonthlyData c ON m.EmpID = c.EmpID AND c.YYMM &gt;= c.YYMM<br>
+GROUP BY m.EmpID, m.YYMM, m.NetSalary, m.MonthNo<br>
+),<br>
+TaxCalc AS (<br>
+SELECT<br>
+*,<br>
+CASE<br>
+WHEN TaxableIncome &lt;= 0 THEN 0<br>
+WHEN TaxableIncome &lt;= 36000  THEN TaxableIncome * 0.03<br>
+WHEN TaxableIncome &lt;= 144000 THEN TaxableIncome * 0.10 - 2520<br>
+WHEN TaxableIncome &lt;= 300000 THEN TaxableIncome * 0.20 - 16920<br>
+WHEN TaxableIncome &lt;= 420000 THEN TaxableIncome * 0.25 - 31920<br>
+WHEN TaxableIncome &lt;= 660000 THEN TaxableIncome * 0.30 - 52920<br>
+WHEN TaxableIncome &lt;= 960000 THEN TaxableIncome * 0.35 - 85920<br>
+ELSE TaxableIncome * 0.45 - 181920<br>
+END AS CumTax<br>
+FROM Cumulative<br>
+)<br>
+SELECT<br>
+EmpID,<br>
+YYMM,<br>
+NetSalary           AS 本月工资,<br>
+CumSalary            AS 累计工资,<br>
+TaxableIncome        AS 累计应纳税所得额,<br>
+CumTax               AS 累计应扣税,<br>
+CumTax - ISNULL(LAG(CumTax) OVER (PARTITION BY EmpID ORDER BY YYMM), 0) AS 本月应扣个税<br>
+FROM TaxCalc<br>
+ORDER BY YYMM;</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/mysql-gao-ji-sql-yu-ju-zhi-nan/">
+              <h3 class="post-title">
+                MySQL 高级 SQL 语句指南
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

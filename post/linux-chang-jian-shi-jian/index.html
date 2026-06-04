@@ -1,0 +1,263 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux常见实践 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux常见实践 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="服务器部署与管理
+安装 Web 服务器：以 Apache 为例
+在 Ubuntu 上安装 Apache：
+sudo apt update
+sudo apt install apache2
+启动与停止 Apache 服务：
+sudo syst..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux常见实践
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-01-04
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>服务器部署与管理<br>
+安装 Web 服务器：以 Apache 为例<br>
+在 Ubuntu 上安装 Apache：<br>
+sudo apt update<br>
+sudo apt install apache2</p>
+<p>启动与停止 Apache 服务：<br>
+sudo systemctl start apache2  # 启动 Apache 服务<br>
+sudo systemctl stop apache2  # 停止 Apache 服务<br>
+sudo systemctl restart apache2  # 重启 Apache 服务</p>
+<p>配置防火墙：以 UFW（Uncomplicated Firewall）为例<br>
+安装 UFW：<br>
+sudo apt install ufw</p>
+<p>允许 Apache 服务通过防火墙：<br>
+sudo ufw allow 'Apache'</p>
+<p>启用 UFW：<br>
+sudo ufw enable</p>
+<p>开发环境搭建<br>
+安装 Python 开发环境<br>
+在 Ubuntu 上安装 Python 和 Pip：<br>
+sudo apt update<br>
+sudo apt install python3 python3-pip</p>
+<p>创建虚拟环境（可选）：<br>
+python3 -m venv myenv<br>
+source myenv/bin/activate  # 激活虚拟环境</p>
+<p>安装 Java 开发环境<br>
+在 Ubuntu 上安装 OpenJDK：<br>
+sudo apt update<br>
+sudo apt install openjdk-11-jdk</p>
+<p>设置 Java 环境变量：<br>
+sudo nano /etc/environment</p>
+<h1 id="在文件中添加以下内容">在文件中添加以下内容</h1>
+<p>JAVA_HOME=&quot;/usr/lib/jvm/java-11-openjdk-amd64&quot;<br>
+PATH=&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><mi>A</mi><mi>T</mi><mi>H</mi><mo>:</mo></mrow><annotation encoding="application/x-tex">PATH:</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span></span></span>JAVA_HOME/bin&quot;</p>
+<h1 id="保存并退出然后使环境变量生效">保存并退出，然后使环境变量生效</h1>
+<p>source /etc/environment</p>
+<p>系统监控与维护<br>
+查看系统资源使用情况：使用 top 命令<br>
+top  # 实时查看系统的 CPU、内存、进程等资源使用情况</p>
+<p>查看磁盘使用情况：使用 df 命令<br>
+df -h  # 以人类可读的格式查看磁盘分区的使用情况</p>
+<p>查看系统日志：使用 journalctl 命令<br>
+journalctl  # 查看系统日志<br>
+journalctl -u apache2  # 查看 Apache 服务的日志</p>
+<p>Linux最佳实践<br>
+安全配置<br>
+更新系统：定期更新系统软件包，修复安全漏洞<br>
+sudo apt update  # 在 Ubuntu 上更新软件包列表<br>
+sudo apt upgrade  # 升级已安装的软件包</p>
+<p>使用 SSH 密钥认证：替代密码认证，提高 SSH 登录安全性<br>
+生成 SSH 密钥对：<br>
+ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</p>
+<p>将公钥添加到远程服务器：<br>
+ssh-copy-id user@server_ip</p>
+<p>限制 root 用户登录：只允许普通用户登录，然后使用 sudo 获得临时管理员权限<br>
+sudo nano /etc/ssh/sshd_config</p>
+<h1 id="将-permitrootlogin-yes-改为-permitrootlogin-no">将 PermitRootLogin yes 改为 PermitRootLogin no</h1>
+<h1 id="保存并退出然后重启-ssh-服务">保存并退出，然后重启 SSH 服务</h1>
+<p>sudo systemctl restart sshd</p>
+<p>性能优化<br>
+优化磁盘 I/O：使用 fstrim 命令清理未使用的磁盘空间<br>
+sudo fstrim -av  # 清理所有支持的文件系统的未使用空间</p>
+<p>调整内核参数：根据系统需求，调整内核参数以优化性能<br>
+sudo nano /etc/sysctl.conf</p>
+<h1 id="添加或修改参数如-netcoresomaxconn-65535">添加或修改参数，如 net.core.somaxconn = 65535</h1>
+<h1 id="保存并退出然后使参数生效">保存并退出，然后使参数生效</h1>
+<p>sudo sysctl -p</p>
+<p>优化服务资源占用：关闭不必要的服务，减少系统资源消耗<br>
+sudo systemctl disable service_name  # 禁止服务开机自启<br>
+sudo systemctl stop service_name  # 停止正在运行的服务</p>
+<p>自动化管理<br>
+使用脚本自动化任务：编写 shell 脚本，自动执行重复性任务<br>
+#!/bin/bash</p>
+<h1 id="这是一个简单的备份脚本">这是一个简单的备份脚本</h1>
+<p>BACKUP_DIR=&quot;/backup&quot;<br>
+DATE=<span class='katex-error' title='ParseError: KaTeX parse error: Expected group after &#039;_&#039; at position 39: …LE_NAME=&quot;backup_̲'>(date +%Y%m%d%H%M%S)
+FILE_NAME=&quot;backup_</span>DATE.tar.gz&quot;<br>
+tar -czvf <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mi>A</mi><mi>C</mi><mi>K</mi><mi>U</mi><msub><mi>P</mi><mi>D</mi></msub><mi>I</mi><mi>R</mi><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">BACKUP_DIR/</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.07847em;">I</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord">/</span></span></span></span>FILE_NAME /data</p>
+<p>保存脚本为 backup.sh，并赋予执行权限：<br>
+chmod +x backup.sh</p>
+<p>可以使用 cron 任务调度器定期执行该脚本：<br>
+crontab -e</p>
+<h1 id="添加以下内容每天凌晨-2-点执行备份脚本">添加以下内容，每天凌晨 2 点执行备份脚本</h1>
+<p>0 2 * * * /path/to/backup.sh</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%9C%A8%E6%96%87%E4%BB%B6%E4%B8%AD%E6%B7%BB%E5%8A%A0%E4%BB%A5%E4%B8%8B%E5%86%85%E5%AE%B9">在文件中添加以下内容</a></li>
+<li><a href="#%E4%BF%9D%E5%AD%98%E5%B9%B6%E9%80%80%E5%87%BA%E7%84%B6%E5%90%8E%E4%BD%BF%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%94%9F%E6%95%88">保存并退出，然后使环境变量生效</a></li>
+<li><a href="#%E5%B0%86-permitrootlogin-yes-%E6%94%B9%E4%B8%BA-permitrootlogin-no">将 PermitRootLogin yes 改为 PermitRootLogin no</a></li>
+<li><a href="#%E4%BF%9D%E5%AD%98%E5%B9%B6%E9%80%80%E5%87%BA%E7%84%B6%E5%90%8E%E9%87%8D%E5%90%AF-ssh-%E6%9C%8D%E5%8A%A1">保存并退出，然后重启 SSH 服务</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E6%88%96%E4%BF%AE%E6%94%B9%E5%8F%82%E6%95%B0%E5%A6%82-netcoresomaxconn-65535">添加或修改参数，如 net.core.somaxconn = 65535</a></li>
+<li><a href="#%E4%BF%9D%E5%AD%98%E5%B9%B6%E9%80%80%E5%87%BA%E7%84%B6%E5%90%8E%E4%BD%BF%E5%8F%82%E6%95%B0%E7%94%9F%E6%95%88">保存并退出，然后使参数生效</a></li>
+<li><a href="#%E8%BF%99%E6%98%AF%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC">这是一个简单的备份脚本</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E4%BB%A5%E4%B8%8B%E5%86%85%E5%AE%B9%E6%AF%8F%E5%A4%A9%E5%87%8C%E6%99%A8-2-%E7%82%B9%E6%89%A7%E8%A1%8C%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC">添加以下内容，每天凌晨 2 点执行备份脚本</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-chang-yong-ming-ling-xing/">
+              <h3 class="post-title">
+                Linux常用命令行
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

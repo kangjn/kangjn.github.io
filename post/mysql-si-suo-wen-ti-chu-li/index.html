@@ -1,0 +1,430 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mysql死锁问题处理 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="mysql死锁问题处理 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+死锁的本质
+
+两个或多个事务互相持有对方需要的锁，形成环路等待，永远无法完成。
+事务 A                          事务 B
+────────                        ────────
+BEG..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              mysql死锁问题处理
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-06-04
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <ol>
+<li>死锁的本质</li>
+</ol>
+<p>两个或多个事务互相持有对方需要的锁，形成环路等待，永远无法完成。</p>
+<p>事务 A                          事务 B<br>
+────────                        ────────<br>
+BEGIN;                          BEGIN;<br>
+UPDATE t SET val=1 WHERE id=1;  UPDATE t SET val=2 WHERE id=2;<br>
+→ 拿到 id=1 的行锁 ✅          → 拿到 id=2 的行锁 ✅</p>
+<p>UPDATE t SET val=1 WHERE id=2;  UPDATE t SET val=2 WHERE id=1;<br>
+→ 等待 id=2 的锁 ⏳             → 等待 id=1 的锁 ⏳<br>
+→ 死锁！MySQL 回滚其中一个 💥</p>
+<ol start="2">
+<li>死锁排查</li>
+</ol>
+<p>2.1 查看最近一次死锁</p>
+<p>SHOW ENGINE INNODB STATUS\G</p>
+<p>关注 LATEST DETECTED DEADLOCK 部分：</p>
+<hr>
+<h2 id="latest-detected-deadlock">LATEST DETECTED DEADLOCK</h2>
+<p>2026-06-04 15:00:00 0x7f8c<br>
+*** (1) TRANSACTION:          ← 事务 1<br>
+TRANSACTION 12345, ACTIVE 3 sec<br>
+LOCK WAIT 2 lock struct(s), heap size 1136<br>
+MySQL thread id 10, OS thread handle 140XXX<br>
+-- 事务 1 在等待的锁：<br>
+TABLE LOCK table <code>db</code>.<code>t</code> trx id 12345 lock mode IX<br>
+RECORD LOCKS space id 100 page no 5 n bits 72 index PRIMARY of table <code>db</code>.<code>t</code><br>
+lock_mode X locks rec but not gap waiting  ← 等待 id=2 的行锁</p>
+<p>*** (2) TRANSACTION:          ← 事务 2<br>
+TRANSACTION 12346, ACTIVE 2 sec<br>
+-- 事务 2 持有的锁 + 在等待的锁：<br>
+RECORD LOCKS space id 100 page no 5 n bits 72 index PRIMARY of table <code>db</code>.<code>t</code><br>
+lock_mode X locks rec but not gap          ← 持有 id=2 的行锁<br>
+RECORD LOCKS space id 100 page no 5 n bits 72 index PRIMARY of table <code>db</code>.<code>t</code><br>
+lock_mode X locks rec but not gap waiting  ← 等待 id=1 的行锁</p>
+<p>*** WE ROLL BACK TRANSACTION (2)  ← InnoDB 选择回滚事务 2</p>
+<p>2.2 实时锁监控（MySQL 8.0）</p>
+<p>-- 当前持有的锁<br>
+SELECT * FROM performance_schema.data_locks;</p>
+<p>-- 当前锁等待<br>
+SELECT * FROM performance_schema.data_lock_waits;</p>
+<p>-- 详细锁等待视图（推荐）<br>
+SELECT<br>
+r.trx_id                AS waiting_trx_id,<br>
+r.trx_mysql_thread_id   AS waiting_thread,<br>
+r.trx_query             AS waiting_query,<br>
+b.trx_id                AS blocking_trx_id,<br>
+b.trx_mysql_thread_id   AS blocking_thread,<br>
+b.trx_query             AS blocking_query,<br>
+b.trx_started           AS blocking_started<br>
+FROM information_schema.innodb_lock_waits w<br>
+JOIN information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id<br>
+JOIN information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;</p>
+<p>-- MySQL 8.0+ 推荐用 sys 库<br>
+SELECT * FROM sys.innodb_lock_waits\G</p>
+<p>2.3 开启死锁日志（更详细的输出）</p>
+<p>SET GLOBAL innodb_print_all_deadlocks = ON;<br>
+-- 所有死锁信息会写入错误日志<br>
+-- 查看日志位置<br>
+SHOW VARIABLES LIKE 'log_error';</p>
+<p>2.4 Performance Schema 监控</p>
+<p>-- 查看死锁发生的次数<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_deadlocks';</p>
+<p>-- 开启锁等待事件采集<br>
+UPDATE performance_schema.setup_consumers<br>
+SET ENABLED = 'YES'<br>
+WHERE NAME = 'events_waits_current';</p>
+<p>-- 查看等待事件<br>
+SELECT * FROM performance_schema.events_waits_current<br>
+WHERE event_name LIKE '%lock%';</p>
+<ol>
+<li>常见死锁场景与解决</li>
+</ol>
+<p>3.1 场景一：不同顺序更新多行</p>
+<p>-- ❌ 事务 A: 先锁 1 再锁 2<br>
+-- ❌ 事务 B: 先锁 2 再锁 1</p>
+<p>-- ✅ 解决：统一按主键升序加锁<br>
+-- 两个事务都按 id 从小到大的顺序更新<br>
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;<br>
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;</p>
+<p>3.2 场景二：INSERT → 唯一索引冲突</p>
+<p>-- 两个事务同时 INSERT 同一个唯一键值<br>
+-- 各自持有 gap lock / insert intention lock，互相等待</p>
+<p>-- ❌ 事务 A: INSERT INTO t (uniq_col) VALUES (100);<br>
+-- ❌ 事务 B: INSERT INTO t (uniq_col) VALUES (100);</p>
+<p>-- ✅ 解决方案：<br>
+-- 方案 1：INSERT IGNORE（冲突时忽略）<br>
+INSERT IGNORE INTO t (uniq_col) VALUES (100);</p>
+<p>-- 方案 2：ON DUPLICATE KEY UPDATE<br>
+INSERT INTO t (uniq_col, val) VALUES (100, 'a')<br>
+ON DUPLICATE KEY UPDATE val = VALUES(val);</p>
+<p>-- 方案 3：REPLACE INTO（先删后插，慎用）<br>
+REPLACE INTO t (uniq_col, val) VALUES (100, 'a');</p>
+<p>-- 方案 4：应用层先查再插（减少冲突概率）<br>
+SELECT id FROM t WHERE uniq_col = 100 FOR UPDATE;<br>
+-- 如果不存在再 INSERT</p>
+<p>3.3 场景三：Gap Lock 范围重叠</p>
+<p>-- RR 隔离级别下，范围查询会产生 Gap Lock<br>
+-- 两个事务的范围重叠时可能死锁</p>
+<p>-- ❌ 事务 A:<br>
+SELECT * FROM orders WHERE customer_id BETWEEN 10 AND 20 FOR UPDATE;<br>
+-- ❌ 事务 B:<br>
+SELECT * FROM orders WHERE customer_id BETWEEN 15 AND 25 FOR UPDATE;</p>
+<p>-- ✅ 解决方案：<br>
+-- 方案 1：降低隔离级别为 READ COMMITTED<br>
+SET SESSION transaction_isolation = 'READ-COMMITTED';<br>
+-- RC 下没有 Gap Lock</p>
+<p>-- 方案 2：缩小范围，减少重叠</p>
+<p>-- 方案 3：用精确条件替代范围<br>
+-- 改为：<br>
+SELECT * FROM orders WHERE customer_id = 15 FOR UPDATE;</p>
+<p>3.4 场景四：事务内混合使用不同索引</p>
+<p>-- 表有两个索引：idx_a(a), idx_b(b)<br>
+-- ❌ 事务 A: UPDATE t SET b = 1 WHERE a = 10;  -- 锁 idx_a<br>
+-- ❌ 事务 B: UPDATE t SET a = 1 WHERE b = 10;  -- 锁 idx_b<br>
+--           然后各自需要对方的锁 → 死锁</p>
+<p>-- ✅ 解决方案：<br>
+-- 用主键统一加锁<br>
+SELECT id FROM t WHERE a = 10 FOR UPDATE;   -- 先拿到所有行的主键锁<br>
+UPDATE t SET b = 1 WHERE id IN (...);        -- 再更新</p>
+<p>3.5 场景五：大事务 + 长时间持有锁</p>
+<p>-- ❌ 事务里做了太多操作（查询、计算、外部 API 调用、再更新）<br>
+BEGIN;<br>
+SELECT * FROM orders WHERE id = 1 FOR UPDATE;<br>
+-- ... 调用了外部支付接口（耗时 5 秒）...<br>
+UPDATE orders SET status = 'paid' WHERE id = 1;<br>
+COMMIT;</p>
+<p>-- ✅ 解决方案：<br>
+-- 1. 把读和写分开，减少锁持有时间<br>
+-- 2. 先完成外部调用，最后再开事务更新<br>
+-- 3. 必须锁的话，设置锁等待超时<br>
+SET innodb_lock_wait_timeout = 3;  -- 等 3 秒就放弃</p>
+<ol start="4">
+<li>死锁预防策略</li>
+</ol>
+<p>4.1 统一加锁顺序</p>
+<p>-- 所有事务按相同顺序操作表和行<br>
+-- 推荐：按主键 ASC 顺序</p>
+<p>-- ✅ 批量更新时排序<br>
+UPDATE accounts SET balance = balance - 100 WHERE id IN (3, 1, 2);<br>
+-- 改为<br>
+UPDATE accounts SET balance = balance - 100 WHERE id IN (1, 2, 3);</p>
+<p>4.2 减小事务粒度</p>
+<p>-- ❌ 大事务<br>
+BEGIN;<br>
+UPDATE t SET a = 1 WHERE id = 1;<br>
+-- ... 很多其他操作 ...<br>
+UPDATE t SET b = 2 WHERE id = 2;<br>
+COMMIT;</p>
+<p>-- ✅ 拆成小事务<br>
+BEGIN; UPDATE t SET a = 1 WHERE id = 1; COMMIT;<br>
+BEGIN; UPDATE t SET b = 2 WHERE id = 2; COMMIT;</p>
+<p>4.3 使用乐观锁替代悲观锁</p>
+<p>-- ❌ 悲观锁：SELECT ... FOR UPDATE（长时间持锁）<br>
+BEGIN;<br>
+SELECT balance FROM accounts WHERE id = 1 FOR UPDATE;<br>
+-- 业务计算...<br>
+UPDATE accounts SET balance = 500 WHERE id = 1;<br>
+COMMIT;</p>
+<p>-- ✅ 乐观锁：用版本号检测冲突<br>
+-- 表结构加 version 字段<br>
+ALTER TABLE accounts ADD COLUMN version INT DEFAULT 0;</p>
+<p>-- 读取<br>
+SELECT balance, version FROM accounts WHERE id = 1;<br>
+-- 假设读到 version = 5, balance = 600</p>
+<p>-- 更新（CAS）<br>
+UPDATE accounts<br>
+SET balance = 500, version = version + 1<br>
+WHERE id = 1 AND version = 5;<br>
+-- 检查 affected rows，如果是 0 说明被别人改了，重试</p>
+<p>4.4 合理设置隔离级别</p>
+<p>-- 查看当前隔离级别<br>
+SELECT @@transaction_isolation;</p>
+<p>-- READ COMMITTED：无 Gap Lock，减少死锁概率<br>
+SET SESSION transaction_isolation = 'READ-COMMITTED';</p>
+<p>-- 权衡：RC 下可能出现不可重复读和幻读<br>
+-- 适合：读多写少、能接受短暂不一致的场景</p>
+<p>4.5 锁等待超时</p>
+<p>-- 不无限等锁，超时就放弃（应用层重试）<br>
+SET SESSION innodb_lock_wait_timeout = 5;  -- 默认 50 秒太长了</p>
+<p>-- 应用层捕获错误码重试<br>
+-- MySQL Error 1213 = Deadlock<br>
+-- MySQL Error 1205 = Lock wait timeout</p>
+<ol start="5">
+<li>死锁处理代码模式<br>
+// Java 应用层重试模式（伪代码）<br>
+int maxRetries = 3;<br>
+for (int i = 0; i &lt; maxRetries; i++) {<br>
+try {<br>
+transferMoney(fromId, toId, amount);<br>
+break;  // 成功<br>
+} catch (MySQLTransactionRollbackException e) {<br>
+if (e.getErrorCode() == 1213 &amp;&amp; i &lt; maxRetries - 1) {<br>
+log.warn(&quot;Deadlock detected, retrying {}/{}&quot;, i + 1, maxRetries);<br>
+Thread.sleep(50 + ThreadLocalRandom.current().nextInt(100));<br>
+continue;<br>
+}<br>
+throw e;<br>
+}<br>
+}</li>
+</ol>
+<p>python</p>
+<h1 id="python-重试模式">Python 重试模式</h1>
+<p>import time, random<br>
+from pymysql import MySQLError</p>
+<p>def execute_with_retry(func, max_retries=3):<br>
+for attempt in range(max_retries):<br>
+try:<br>
+return func()<br>
+except MySQLError as e:<br>
+if e.args[0] == 1213 and attempt &lt; max_retries - 1:  # Deadlock<br>
+time.sleep(0.05 + random.uniform(0, 0.1))<br>
+continue<br>
+raise</p>
+<ol start="6">
+<li>诊断 Checklist</li>
+</ol>
+<p>遇到死锁时，按以下顺序排查：</p>
+<p>□ 1. SHOW ENGINE INNODB STATUS\G<br>
+→ 获取死锁涉及的表、索引、SQL</p>
+<p>□ 2. 确认死锁类型<br>
+□ 同表不同行顺序？→ 统一加锁顺序<br>
+□ 不同表交叉加锁？→ 统一表操作顺序<br>
+□ 唯一索引冲突？→ INSERT IGNORE / ON DUPLICATE KEY<br>
+□ Gap Lock 重叠？→ 降级为 RC / 缩小范围<br>
+□ 混合索引？→ 统一用主键加锁</p>
+<p>□ 3. 检查事务设计<br>
+□ 事务是否太大？→ 拆分<br>
+□ 锁持有时间是否太长？→ 外部操作移到事务外<br>
+□ 是否可以用乐观锁？</p>
+<p>□ 4. 配置检查<br>
+□ innodb_lock_wait_timeout 是否合理？<br>
+□ innodb_print_all_deadlocks 是否开启？<br>
+□ 隔离级别是否合适？</p>
+<p>□ 5. 应用层<br>
+□ 是否有死锁重试机制？<br>
+□ 是否有退避策略（避免反复碰撞）？</p>
+<ol start="7">
+<li>关键参数速查<br>
+-- 查看所有锁相关参数<br>
+SHOW VARIABLES LIKE '%lock%';</li>
+</ol>
+<p>-- 常用调优<br>
+SET GLOBAL innodb_lock_wait_timeout = 5;        -- 锁等待超时（秒）<br>
+SET GLOBAL innodb_deadlock_detect = ON;          -- 死锁检测（默认开）<br>
+SET GLOBAL innodb_print_all_deadlocks = ON;      -- 打印所有死锁到日志<br>
+SET GLOBAL innodb_locks_unsafe_for_binlog = OFF; -- Gap Lock 控制（5.7）</p>
+<p>-- 监控<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_deadlocks';         -- 累计死锁次数<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_row_lock_waits';    -- 行锁等待次数<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_row_lock_time_avg'; -- 平均锁等待时间</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#latest-detected-deadlock">LATEST DETECTED DEADLOCK</a></li>
+</ul>
+</li>
+<li><a href="#python-%E9%87%8D%E8%AF%95%E6%A8%A1%E5%BC%8F">Python 重试模式</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/mysql-cha-xun-you-hua-fen-xi/">
+              <h3 class="post-title">
+                mysql查询优化分析
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

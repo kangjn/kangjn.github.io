@@ -1,0 +1,263 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基本命令（一） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基本命令（一） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Linux文件系统结构
+Linux 文件系统采用树形结构，以根目录（/）为起点，向下分支为各个子目录。常见的目录有：
+/bin：存放系统二进制可执行文件，如常用命令 ls、cd 等。
+/sbin：存放系统管理员专用的二进制可执行文件。
+/e..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基本命令（一）
+            </h2>
+            <div class="post-info">
+              <span>
+                2025-12-31
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Linux文件系统结构<br>
+Linux 文件系统采用树形结构，以根目录（/）为起点，向下分支为各个子目录。常见的目录有：</p>
+<p>/bin：存放系统二进制可执行文件，如常用命令 ls、cd 等。<br>
+/sbin：存放系统管理员专用的二进制可执行文件。<br>
+/etc：存放系统配置文件，如网络配置、用户信息等。<br>
+/home：用户主目录，每个用户都有一个独立的子目录。<br>
+/var：存放系统运行时产生的可变数据，如日志文件、邮件等。</p>
+<p>使用 cd 和 pwd 导航文件系统<br>
+使用 touch 和 mkdir 创建文件和目录<br>
+使用 ls 及其选项列出内容<br>
+ls -a列出所有文件，包括隐藏文件。<br>
+ls -la详细列表，包括隐藏文件。<br>
+ls -lR new-dir<br>
+ls -lR 递归列出 new-dir 的内容。-R 选项（递归）使 ls 列出 new-dir 内的所有文件和子目录及其内容。<br>
+touch 命令创建一个新文件。这个多功能的命令可以创建新的空文件，并更新现有文件的时间戳。可以把它看作是一种快速“触碰”文件的方式，既能创建文件，也能更新其最后访问时间。<br>
+ls -l example.txt<br>
+-rw-rw-r-- 1 root root 0 Jul 29 15:11 example.txt<br>
+-rw-rw-r-- 部分表示文件权限。这就是数字表示法和符号表示法发挥作用的地方。让我们来详细分析一下：</p>
+<pre><code>第一个字符（-）表示这是一个普通文件。其他常见的表示符有：d 表示目录，l 表示符号链接。
+接下来的三个字符（rw-）表示所有者的权限（可读可写，但不可执行）。
+    r 表示读取权限：所有者可以打开并读取文件。
+    w 表示写入权限：所有者可以修改文件。
+    x 表示执行权限：所有者可以运行文件（如果它是一个程序或脚本）。- 表示该权限被拒绝。
+接下来的三个字符（rw-）是针对组的。它们与上述含义相同，但适用于文件所属组的成员。
+最后三个字符（r--）是针对其他用户（其他所有人）的。它们也具有相同的含义，但适用于既不是所有者也不是文件所属组成员的用户。
+</code></pre>
+<p>ls -ld ~/test-dir<br>
+ls -l 中的 -d 选项告诉 ls 列出目录本身，而不是其内容。如果没有 -d，ls 将列出 test-dir 内部的文件和子目录，而目前该目录是空的。<br>
+drwx------ 2 labex labex 4096 Jul 29 15:45 /home/labex/test-dir<br>
+开头的 d 表示这是一个目录。rwx------ 表示所有者具有读取、写入和执行权限<br>
+对于目录：</p>
+<pre><code>读取权限（r）允许你使用 ls 列出目录的内容。
+写入权限（w）允许你在目录中创建新文件和子目录。
+执行权限（x）允许你访问目录中的文件和子目录（即 cd 进入该目录）。
+</code></pre>
+<p>使用 cp 复制文件和目录<br>
+使用 -i 选项进行交互式复制  在复制文件时，你可能会遇到目标位置已存在同名文件的情况。-i 选项使 cp 命令变为交互式，在覆盖现有文件之前会提示你。<br>
+使用 -r 选项进行递归复制 -r 选项允许你递归地复制目录及其内容。这对于备份整个目录结构特别有用。<br>
+使用 -p 选项保留文件属性  在复制文件时，你可能希望保留原始文件的属性，例如时间戳和权限。-p 选项可以帮你实现这一点。<br>
+使用通配符进行选择性复制 通配符允许你根据模式复制多个文件。这在你想复制特定类型或具有特定命名规则的文件时非常有用。</p>
+<p>使用 mv 移动和重命名<br>
+使用 rm 和 rmdir 删除文件和目录</p>
+<p>cat 命令来显示文件的内容，cat -n 查看带行号的文件内容。<br>
+head 用于查看文件的开头部分。<br>
+head -n1 /tmp/hello   这里的 -n1 是一个选项，它告诉 head 只显示第一行。1 可以更改为任意数字以显示相应数量的行。默认情况下，如果没有 -n1 选项，head 会显示文件的前 10 行。</p>
+<p>tail 是 head 的反义词——它显示文件的末尾部分。<br>
+tail -n1 /tmp/hello  这里的 -n1 是一个选项，它告诉 head 只显示第一行。1 可以更改为任意数字以显示相应数量的行。 默认情况下，如果没有 -n1 选项，head 会显示文件的前 10 行。</p>
+<p>查看文件的最后几个字节<br>
+tail 来显示文件末尾的特定字节数。 tail 来显示文件末尾的特定字节数。</p>
+<p>比较文件<br>
+diff 命令来比较两个文件并查看它们之间的差异。<br>
+diff file1 file2<br>
+比较目录  diff -r ~/Desktop ~/Code</p>
+<p>sudo chown root:root example.txt<br>
+这个命令的作用如下：</p>
+<pre><code>sudo 以 root 权限运行命令。系统可能会提示你输入密码。chown 需要提升权限，因为它是一个强大的命令，可能会影响系统安全。没有 sudo，你会得到一个“权限被拒绝”的错误。
+chown 是更改所有权的命令。
+root:root 指定新的所有者和组（都设置为 root）。语法是 所有者:组。
+example.txt 是目标文件。
+</code></pre>
+<p>sudo chown -R root:root new-dir</p>
+<p>-R 选项告诉 chown 进行递归操作，更改 new-dir 内所有文件和子目录的所有权。这一点很关键；没有 -R，只会更改 new-dir 目录的所有权，但其中的文件和子目录仍将由 labex 拥有。</p>
+<p>sudo chmod 700 example.txt</p>
+<p>在这个命令中：</p>
+<pre><code>700 是权限的数字表示：
+    第一个数字（7）表示所有者的权限。
+    第二个数字（0）表示组的权限。
+    第三个数字（0）表示其他用户的权限。
+</code></pre>
+<p>每个数字都是从 0 到 7 的数字，通过将读取（4）、写入（2）和执行（1）权限的值相加得到：</p>
+<pre><code>4：读取权限
+2：写入权限
+1：执行权限
+0：无权限
+</code></pre>
+<p>所以，7（第一个数字）赋予所有者读取（4）、写入（2）和执行（1）权限：4 + 2 + 1 = 7<br>
+0（第二个数字）赋予组无权限（0 + 0 + 0 = 0）。<br>
+0（第三个数字）赋予其他用户无权限（0 + 0 + 0 = 0）。</p>
+<p>因此，700 表示：所有者：可读、可写、可执行。组：无权限。其他用户：无权限。</p>
+<p>chmod -R 755 ~/test-dir</p>
+<p>在这个命令中：</p>
+<pre><code>-R 将更改递归地应用于所有文件和子目录（尽管在这种情况下我们的目录是空的）。在处理目录时，即使它们目前是空的，包含 -R 也是一个好习惯，以防之后添加文件。
+755 赋予所有者读取、写入和执行权限，赋予组和其他用户读取和执行权限。
+</code></pre>
+<p>让我们分析一下 755：</p>
+<pre><code>所有者（7）：读取（4）+ 写入（2）+ 执行（1）= 7
+组（5）：读取（4）+ 执行（1）= 5
+其他用户（5）：读取（4）+ 执行（1）= 5
+</code></pre>
+<p>命令：sudo useradd -m -d /home/jack -g dev -G labex jack<br>
+-m：创建主目录。<br>
+-d /home/jack：指定主目录。<br>
+-g dev：指定主组。<br>
+-G labex：指定辅助组。<br>
+jack：用户名。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/springmvc-de-zhi-xing-liu-cheng-yi-ji-yun-xing-yuan-li/">
+              <h3 class="post-title">
+                SpringMVC的执行流程以及运行原理
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

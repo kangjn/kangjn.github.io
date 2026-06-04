@@ -1,0 +1,264 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基础命令（七） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基础命令（七） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="检测到一台内部服务器上运行着一个不寻常的、未被记录的服务。
+扫描本地监听端口：
+使用命令查看机器上哪些端口正处于监听（LISTEN）状态：
+sudo ss -tulpn
+或者使用 netstat：
+sudo netstat -tulpn
+寻..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基础命令（七）
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-01-21
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>检测到一台内部服务器上运行着一个不寻常的、未被记录的服务。<br>
+扫描本地监听端口：<br>
+使用命令查看机器上哪些端口正处于监听（LISTEN）状态：<br>
+sudo ss -tulpn</p>
+<p>或者使用 netstat：<br>
+sudo netstat -tulpn</p>
+<p>寻找异常端口：<br>
+除了常见的 22 (SSH) 或 80 (HTTP) 之外，关注那些你不熟悉的数字。<br>
+尝试连接：一旦找到了可疑端口（假设端口号是 XXXXX），使用 nc (netcat) 连接它：<br>
+nc 127.0.0.1 XXXXX</p>
+<p>将 stdout 和 stderr 都捕获到同一个文件中。这可以通过几种方式完成。<br>
+方法 1：&gt; file 2&gt;&amp;1<br>
+此方法将 stdout 重定向到一个文件，然后将 stderr 重定向到与 stdout 相同的位置。顺序 2&gt;&amp;1 很重要：它表示“将文件描述符 2（stderr）重定向到与文件描述符 1（stdout）相同的位置”。</p>
+<p>让我们创建一个同时产生标准输出和标准错误的命令。我们将使用 find 在我们有权限的目录和我们没有权限的目录中搜索文件。<br>
+find ~/project /root -name &quot;current_datetime.txt&quot; &gt; combined_output.log 2&gt;&amp;1<br>
+在这里，find ~/project -name &quot;current_datetime.txt&quot; 将产生 stdout（如果找到），而 find /root -name &quot;current_datetime.txt&quot; 可能会由于权限问题而产生 stderr。</p>
+<pre><code>检查 combined_output.log 文件。
+cat combined_output.log
+
+/home/labex/project/current_datetime.txt
+find: ‘/root’: Permission denied
+你可以看到成功的输出（文件的路径）和错误消息都被捕获在同一个文件中。
+</code></pre>
+<p>方法 2：&amp;&gt; file（Bash 特有）<br>
+Bash 提供了一种将 stdout 和 stderr 组合到文件中的简写方式：&amp;&gt;。这等效于 &gt; file 2&gt;&amp;1。<br>
+让我们使用 &amp;&gt; 简写方式尝试相同的 find 命令。<br>
+find ~/project /root -name &quot;file_list.txt&quot; &amp;&gt; combined_output_shorthand.log</p>
+<pre><code>检查 combined_output_shorthand.log 的内容。
+cat combined_output_shorthand.log
+
+/home/labex/project/file_list.txt
+find: ‘/root’: Permission denied
+结果与前一种方法相同，证明了 &amp;&gt; 的便利性。
+</code></pre>
+<p>管道运算符 |（竖线）用于连接管道中的命令。它将其左侧命令的标准输出（stdout）重定向到其右侧命令的标准输入（stdin）。</p>
+<p>使用 grep 过滤输出<br>
+grep 命令通常用于管道中，以过滤匹配特定模式的行。</p>
+<p>使用 sort 和 uniq<br>
+sort 用于对文本行进行排序，而 uniq 用于报告或省略重复的行。它们经常一起使用。<br>
+cat fruits.txt | sort | uniq</p>
+<p>tee 命令<br>
+tee 命令在管道中很特殊。它读取标准输入，将其写入标准输出，并同时将其写入一个或多个文件。它就像管道中的一个“T”形连接，允许数据双向流动。<br>
+ls -l | tee ls_output.txt<br>
+你也可以使用 tee -a 将输出追加到文件。</p>
+<p>设置局部变量：让我们创建一个名为 MY_MESSAGE 的简单变量。<br>
+MY_MESSAGE=&quot;Hello, LabEx!&quot;</p>
+<p>请注意，= 符号周围没有空格。<br>
+访问变量：要访问变量的值，请在其名称前加上 $ 符号。<br>
+echo $MY_MESSAGE<br>
+Hello, LabEx!</p>
+<p>使用大括号进行变量扩展：有时，你需要清楚地分隔变量名，尤其是在它后面跟着其他字符时。为此使用花括号 {}。<br>
+echo &quot;The message is: ${MY_MESSAGE}.&quot;</p>
+<p>The message is: Hello, LabEx!.<br>
+如果你省略大括号，shell 可能会将 MY_MESSAGE. 解释为变量名，而该变量名不存在。</p>
+<p>列出所有已设置的变量：你可以使用 set 命令列出所有当前已设置的 shell 变量和函数。此输出可能很长，因此通常通过管道传递给 less。</p>
+<p>取消设置变量：要删除变量，请使用 unset 命令。<br>
+unset MY_MESSAGE</p>
+<p>环境变量<br>
+环境变量是一种特殊类型的 shell 变量，由子进程继承。这意味着从你当前 shell 启动的任何程序或脚本都将有权访问这些变量。它们通常用于配置应用程序的环境。<br>
+设置环境变量：使用 export 命令将变量设置为环境变量。<br>
+export EDITOR=vim<br>
+这将设置 EDITOR 环境变量，许多程序使用它来确定你喜欢的文本编辑器。<br>
+列出环境变量：使用 env 命令仅列出环境变量。<br>
+env | grep EDITOR<br>
+结果 ：EDITOR=vim<br>
+取消导出变量：你可以使用 export -n 取消导出变量，而无需取消设置它。这使其再次成为局部变量。<br>
+export -n EDITOR<br>
+验证它不再是环境变量。<br>
+env | grep EDITOR</p>
+<pre><code>你应该看不到任何输出。但是，它仍然是一个局部变量：
+echo $EDITOR
+结果：vim
+要完全删除它，请使用 unset。
+unset EDITOR
+</code></pre>
+<p>启动一个 Python HTTP 服务器，它将监听 8000 端口。<br>
+python3 -m http.server 8000 &amp;<br>
+命令末尾的 &amp; 很重要。它会让服务器在后台运行。这意味着在服务器运行时，你可以继续使用终端执行其他任务。<br>
+利用 Nmap 的 -iL 选项从输入文件中读取目标 IP 地址，然后使用诸如 grep 和 awk 之类的工具从 Nmap 输出中提取在线主机的 IP 地址。最后，你将把提取出的 IP 地址重定向到online_hosts.txt 文件中。</p>
+<p>nmap 通过使用 -PS 和 -PA 选项，Nmap 将向指定网络中的每个主机发送 TCP SYN 和 TCP ACK 数据包。这增加了检测活动主机的几率，尤其是在具有严格防火墙的环境中。<br>
+TCP Ping 扫描 (-PS): 向特定端口发送 TCP SYN 数据包，以确定主机是否在线以及这些端口是否开放。<br>
+UDP Ping 扫描 (-PU): 向特定端口发送 UDP 数据包，当 TCP Ping 被阻止时经常使用，通过响应或缺乏响应来推断主机状态。<br>
+跳过 Ping 扫描 (-Pn): 绕过 Nmap 的默认主机发现阶段，强制它假设所有目标主机都处于在线状态，并直接进行端口扫描。</p>
+<p>使用 chage 命令修改这些密码老化参数。chage 命令允许你更改用户密码过期信息。<br>
+让我们为 policyuser 设置一个密码策略，其中包含以下规则：<br>
+密码更改之间的最少天数：7 天（-m 7）<br>
+密码更改之间的最长天数：90 天（-M 90）<br>
+密码过期前的警告期：14 天（-W 14）<br>
+密码过期后账户锁定前的非活动期：30 天（-I 30）</p>
+<pre><code>sudo chage -m 7 -M 90 -W 14 -I 30 policyuser
+要验证这些更改，你可以使用 chage -l（列表）来显示 policyuser 的当前密码老化信息。
+sudo chage -l policyuser
+</code></pre>
+<p>你的 shell 自定义设置永久生效。任何你设置的别名、函数或 shell 选项都是临时的，在你关闭终端会话时会丢失。要永久保存它们，你需要将它们添加到 shell 配置文件中。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-nmap/">
+              <h3 class="post-title">
+                Linux基础命令--Nmap
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

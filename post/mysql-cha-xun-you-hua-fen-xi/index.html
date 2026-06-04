@@ -1,0 +1,422 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mysql查询优化分析 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="mysql查询优化分析 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="发现慢查询
+│
+├── 1. 开启慢查询日志，定位问题 SQL
+│
+├── 2. EXPLAIN 分析执行计划
+│       ├── type 是 ALL？→ 缺索引
+│       ├── key 是 NULL？→ 没用到索引
+│   ..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              mysql查询优化分析
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-06-04
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>发现慢查询<br>
+│<br>
+├── 1. 开启慢查询日志，定位问题 SQL<br>
+│<br>
+├── 2. EXPLAIN 分析执行计划<br>
+│       ├── type 是 ALL？→ 缺索引<br>
+│       ├── key 是 NULL？→ 没用到索引<br>
+│       ├── rows 很大？→ 扫描行数太多<br>
+│       ├── Extra 有 Using filesort/temporary？→ 优化 ORDER BY / GROUP BY<br>
+│<br>
+├── 3. 检查索引设计<br>
+│       ├── WHERE / JOIN / ORDER BY 的列是否有索引<br>
+│       ├── 是否满足最左前缀<br>
+│       ├── 是否存在索引失效（函数、类型转换、模糊）<br>
+│<br>
+├── 4. 考虑重写 SQL<br>
+│       ├── 子查询 → JOIN<br>
+│       ├── OR → UNION<br>
+│       ├── 分页优化<br>
+│       ├── 分批执行<br>
+│<br>
+├── 5. SHOW PROFILE 看各阶段耗时<br>
+│<br>
+└── 6. 上下层排查<br>
+├── 网络延迟？客户端 ↔ MySQL<br>
+├── 服务器资源？CPU / 内存 / IO<br>
+├── 配置？buffer_pool_size / tmp_table_size</p>
+<ol>
+<li>EXPLAIN 执行计划解读<br>
+EXPLAIN SELECT * FROM orders WHERE customer_id = 100;<br>
+EXPLAIN ANALYZE SELECT ...;   -- MySQL 8.0.18+，含实际执行时间<br>
+EXPLAIN FORMAT=JSON SELECT ...;  -- 更详细的信息<br>
+EXPLAIN FORMAT=TREE SELECT ...;  -- 树形执行计划</li>
+</ol>
+<p>各字段含义<br>
++----+-------------+-------+------+---------------+------+---------+------+------+-------+<br>
+| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra |<br>
++----+-------------+-------+------+---------------+------+---------+------+------+-------+</p>
+<p>type（访问类型）— 从好到差：<br>
+system  &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL</p>
+<p>type	含义	示例<br>
+const	主键/唯一索引等值查询，最多一行	WHERE id = 1<br>
+eq_ref	JOIN 时驱动表每一行都通过主键/唯一索引匹配	JOIN ... ON a.id = b.a_id<br>
+ref	非唯一索引等值查询	WHERE name = 'Tom'<br>
+range	索引范围扫描	WHERE id BETWEEN 1 AND 100<br>
+index	全索引扫描（只遍历索引树）	SELECT indexed_col FROM t<br>
+ALL	全表扫描 🔴	SELECT * FROM t WHERE no_index_col = 1</p>
+<p>Extra 常见值：</p>
+<p>Extra	含义	好坏<br>
+Using index	覆盖索引，无需回表	✅<br>
+Using where	Server 层过滤	⚠️<br>
+Using temporary	使用临时表	🔴<br>
+Using filesort	额外排序	🔴<br>
+Using index condition	索引下推 (ICP)	✅<br>
+Using join buffer	JOIN 缓冲	⚠️</p>
+<ol>
+<li>索引优化策略</li>
+</ol>
+<p>2.1 最左前缀原则</p>
+<p>-- 联合索引 idx_a_b_c (a, b, c)</p>
+<p>-- ✅ 命中索引<br>
+WHERE a = 1<br>
+WHERE a = 1 AND b = 2<br>
+WHERE a = 1 AND b = 2 AND c = 3<br>
+WHERE a = 1 AND b &gt; 2 AND c = 3        -- a 等值 + b 范围（c 断了）</p>
+<p>-- ❌ 无法命中<br>
+WHERE b = 2                    -- 跳过了 a<br>
+WHERE c = 3                    -- 跳过了 a, b<br>
+WHERE b = 2 AND c = 3          -- 跳过了 a</p>
+<p>2.2 索引失效场景</p>
+<p>-- ❌ 对索引列做函数/运算<br>
+WHERE YEAR(create_time) = 2026        -- 索引失效<br>
+WHERE create_time + 1 &gt; '2026-01-01'  -- 索引失效<br>
+-- ✅ 改写<br>
+WHERE create_time &gt;= '2026-01-01' AND create_time &lt; '2027-01-01'</p>
+<p>-- ❌ 隐式类型转换<br>
+WHERE phone = 13800138000    -- phone 是 VARCHAR，传了数字 → 全表扫描<br>
+-- ✅<br>
+WHERE phone = '13800138000'</p>
+<p>-- ❌ LIKE 左模糊<br>
+WHERE name LIKE '%Tom'       -- 索引失效<br>
+-- ✅ 右模糊可以<br>
+WHERE name LIKE 'Tom%'</p>
+<p>-- ❌ OR 连接非索引列<br>
+WHERE indexed_col = 1 OR no_index_col = 2  -- 可能全表扫描<br>
+-- ✅ 改用 UNION<br>
+SELECT * FROM t WHERE indexed_col = 1<br>
+UNION<br>
+SELECT * FROM t WHERE no_index_col = 2</p>
+<p>-- ❌ NOT / != / &lt;&gt; / IS NOT NULL（部分场景失效）<br>
+-- ❌ 使用 SELECT *（无法使用覆盖索引）</p>
+<p>2.3 索引设计原则</p>
+<p>-- 1. 区分度高的列放前面<br>
+--    user_id（高区分度）放联合索引前面<br>
+ALTER TABLE orders ADD INDEX idx_user_status (user_id, status);</p>
+<p>-- 2. 覆盖索引：把查询需要的列都放进索引<br>
+--    查询只用 product_id 和 price<br>
+ALTER TABLE products ADD INDEX idx_cover (category_id, price, product_id);<br>
+SELECT product_id, price FROM products WHERE category_id = 10;  -- Using index ✅</p>
+<p>-- 3. 前缀索引：长字符串只取前 N 个字符<br>
+ALTER TABLE users ADD INDEX idx_email (email(10));<br>
+--    验证选择性：<br>
+SELECT<br>
+COUNT(DISTINCT LEFT(email, 10)) / COUNT(<em>) AS sel_10,<br>
+COUNT(DISTINCT LEFT(email, 15)) / COUNT(</em>) AS sel_15,<br>
+COUNT(DISTINCT email) / COUNT(*) AS sel_full<br>
+FROM users;</p>
+<p>-- 4. 索引合并（Index Merge）：MySQL 可能合并多个单列索引<br>
+--    但不如直接建联合索引高效</p>
+<ol>
+<li>慢查询分析</li>
+</ol>
+<p>3.1 开启慢查询日志</p>
+<p>-- 查看当前配置<br>
+SHOW VARIABLES LIKE 'slow_query%';<br>
+SHOW VARIABLES LIKE 'long_query_time';</p>
+<p>-- 开启<br>
+SET GLOBAL slow_query_log = ON;<br>
+SET GLOBAL long_query_time = 1;          -- 超过 1 秒记录<br>
+SET GLOBAL log_queries_not_using_indexes = ON;  -- 记录未使用索引的查询</p>
+<p>-- 查看慢查询条数<br>
+SHOW GLOBAL STATUS LIKE 'Slow_queries';</p>
+<p>3.2 使用 mysqldumpslow 分析</p>
+<h1 id="按查询时间排序取前-10-条">按查询时间排序，取前 10 条</h1>
+<p>mysqldumpslow -s t -t 10 /var/log/mysql/slow.log</p>
+<h1 id="按出现次数排序">按出现次数排序</h1>
+<p>mysqldumpslow -s c -t 10 /var/log/mysql/slow.log</p>
+<h1 id="参数-s-排序方式-t时间-c次数-l锁时间-r行数">参数：-s 排序方式 (t=时间, c=次数, l=锁时间, r=行数)</h1>
+<p>3.3 SHOW PROFILE 分析各阶段耗时</p>
+<p>SET profiling = 1;</p>
+<p>SELECT * FROM orders WHERE customer_id = 100 ORDER BY create_time DESC LIMIT 20;</p>
+<p>SHOW PROFILES;                    -- 查看所有查询 ID<br>
+SHOW PROFILE FOR QUERY 1;        -- 查看详细阶段<br>
+SHOW PROFILE CPU, BLOCK IO FOR QUERY 1;  -- 含 CPU 和 IO</p>
+<p>输出示例：</p>
+<p>+----------------------+----------+<br>
+| Status               | Duration |<br>
++----------------------+----------+<br>
+| starting             | 0.000089 |<br>
+| checking permissions | 0.000013 |<br>
+| Opening tables       | 0.000035 |<br>
+| init                 | 0.000052 |<br>
+| System lock          | 0.000018 |<br>
+| optimizing           | 0.000035 |<br>
+| statistics           | 0.000083 |<br>
+| preparing            | 0.000038 |<br>
+| executing            | 0.000005 |<br>
+| Sending data         | 0.032817  ← 瓶颈在这<br>
+| end                  | 0.000012 |<br>
++----------------------+----------+</p>
+<ol>
+<li>查询重写技巧</li>
+</ol>
+<p>4.1 子查询 → JOIN</p>
+<p>-- ❌ 相关子查询（逐行执行，慢）<br>
+SELECT * FROM orders o<br>
+WHERE o.amount &gt; (<br>
+SELECT AVG(amount) FROM orders WHERE customer_id = o.customer_id<br>
+);</p>
+<p>-- ✅ 先算好平均值再 JOIN<br>
+SELECT o.* FROM orders o<br>
+JOIN (<br>
+SELECT customer_id, AVG(amount) AS avg_amt<br>
+FROM orders GROUP BY customer_id<br>
+) t ON o.customer_id = t.customer_id AND o.amount &gt; t.avg_amt;</p>
+<p>4.2 OR → UNION</p>
+<p>-- ❌ OR 可能导致全表扫描<br>
+SELECT * FROM products WHERE category_id = 5 OR brand_id = 10;</p>
+<p>-- ✅ 分开查再合并（各自走索引）<br>
+SELECT * FROM products WHERE category_id = 5<br>
+UNION ALL<br>
+SELECT * FROM products WHERE brand_id = 10 AND category_id != 5;</p>
+<p>4.3 分页优化</p>
+<p>-- ❌ 深分页（扫描 100 万行丢弃，只取 20 行）<br>
+SELECT * FROM orders ORDER BY id LIMIT 1000000, 20;</p>
+<p>-- ✅ 延迟关联（先在索引上定位 ID，再回表）<br>
+SELECT o.* FROM orders o<br>
+JOIN (SELECT id FROM orders ORDER BY id LIMIT 1000000, 20) t<br>
+ON o.id = t.id;</p>
+<p>-- ✅ 游标分页（最优，需要上一页最后一条的 ID）<br>
+SELECT * FROM orders WHERE id &gt; 1000000 ORDER BY id LIMIT 20;</p>
+<p>-- ✅ 业务层限制：禁止跳到第 N 页，只允许 &quot;加载更多&quot;</p>
+<p>4.4 COUNT 优化</p>
+<p>-- COUNT(<em>) vs COUNT(1) vs COUNT(col)<br>
+-- COUNT(</em>) = COUNT(1)：统计所有行，包括 NULL<br>
+-- COUNT(col)：统计 col 不为 NULL 的行</p>
+<p>-- ✅ 如果不需要精确值，用近似值<br>
+SHOW TABLE STATUS LIKE 'orders';   -- Rows 字段是估算值</p>
+<p>-- ✅ 用汇总表缓存计数<br>
+CREATE TABLE table_counts (<br>
+table_name VARCHAR(64) PRIMARY KEY,<br>
+row_count  BIGINT<br>
+);<br>
+-- 在业务层维护增减</p>
+<p>4.5 UPDATE/DELETE 优化</p>
+<p>-- ❌ 大事务：一次性更新 100 万行<br>
+UPDATE orders SET status = 'archived' WHERE create_time &lt; '2024-01-01';</p>
+<p>-- ✅ 分批执行<br>
+REPEAT<br>
+UPDATE orders SET status = 'archived'<br>
+WHERE create_time &lt; '2024-01-01' AND status != 'archived'<br>
+LIMIT 5000;<br>
+-- 检查 ROW_COUNT()<br>
+UNTIL ROW_COUNT() = 0 END REPEAT;</p>
+<p>-- 用存储过程封装<br>
+DELIMITER //<br>
+CREATE PROCEDURE batch_update()<br>
+BEGIN<br>
+DECLARE affected INT DEFAULT 1;<br>
+WHILE affected &gt; 0 DO<br>
+UPDATE orders SET status = 'archived'<br>
+WHERE create_time &lt; '2024-01-01' AND status != 'archived'<br>
+LIMIT 5000;<br>
+SET affected = ROW_COUNT();<br>
+DO SLEEP(0.1);  -- 降低锁压力<br>
+END WHILE;<br>
+END //<br>
+DELIMITER ;</p>
+<ol>
+<li>索引监控与诊断</li>
+</ol>
+<p>-- 查看索引使用情况（MySQL 8.0）<br>
+SELECT * FROM sys.schema_unused_indexes;       -- 未使用的索引<br>
+SELECT * FROM sys.schema_redundant_indexes;    -- 冗余索引<br>
+SELECT * FROM sys.schema_index_statistics ORDER BY rows_selected DESC;</p>
+<p>-- 查看当前正在执行的查询<br>
+SHOW PROCESSLIST;<br>
+-- 或<br>
+SELECT * FROM information_schema.PROCESSLIST WHERE command != 'Sleep' ORDER BY time DESC;</p>
+<p>-- 锁等待分析（MySQL 8.0）<br>
+SELECT * FROM performance_schema.data_lock_waits;<br>
+SELECT * FROM sys.innodb_lock_waits;</p>
+<p>-- 表的索引信息<br>
+SHOW INDEX FROM orders;<br>
+SELECT * FROM information_schema.STATISTICS<br>
+WHERE TABLE_NAME = 'orders' ORDER BY SEQ_IN_INDEX;</p>
+<p>常用配置调优参考<br>
+-- 查看当前值<br>
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';   -- 建议物理内存的 60-80%<br>
+SHOW VARIABLES LIKE 'innodb_log_file_size';<br>
+SHOW VARIABLES LIKE 'max_connections';<br>
+SHOW VARIABLES LIKE 'tmp_table_size';<br>
+SHOW VARIABLES LIKE 'sort_buffer_size';</p>
+<p>-- InnoDB Buffer Pool 命中率（应 &gt; 99%）<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_buffer_pool_read%';<br>
+-- 命中率 = 1 - (Innodb_buffer_pool_reads / Innodb_buffer_pool_read_requests)</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%8C%89%E6%9F%A5%E8%AF%A2%E6%97%B6%E9%97%B4%E6%8E%92%E5%BA%8F%E5%8F%96%E5%89%8D-10-%E6%9D%A1">按查询时间排序，取前 10 条</a></li>
+<li><a href="#%E6%8C%89%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E6%8E%92%E5%BA%8F">按出现次数排序</a></li>
+<li><a href="#%E5%8F%82%E6%95%B0-s-%E6%8E%92%E5%BA%8F%E6%96%B9%E5%BC%8F-t%E6%97%B6%E9%97%B4-c%E6%AC%A1%E6%95%B0-l%E9%94%81%E6%97%B6%E9%97%B4-r%E8%A1%8C%E6%95%B0">参数：-s 排序方式 (t=时间, c=次数, l=锁时间, r=行数)</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/ge-shui-ji-suan-gong-shi/">
+              <h3 class="post-title">
+                个税计算公式
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

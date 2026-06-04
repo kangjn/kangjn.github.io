@@ -1,0 +1,1423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://kangjn.github.io</id>
+    <title>Gridea</title>
+    <updated>2026-06-04T08:01:56.673Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://kangjn.github.io"/>
+    <link rel="self" href="https://kangjn.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://kangjn.github.io/images/avatar.png</logo>
+    <icon>https://kangjn.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2026, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[mysql死锁问题处理]]></title>
+        <id>https://kangjn.github.io/post/mysql-si-suo-wen-ti-chu-li/</id>
+        <link href="https://kangjn.github.io/post/mysql-si-suo-wen-ti-chu-li/">
+        </link>
+        <updated>2026-06-04T07:54:14.000Z</updated>
+        <content type="html"><![CDATA[<ol>
+<li>死锁的本质</li>
+</ol>
+<p>两个或多个事务互相持有对方需要的锁，形成环路等待，永远无法完成。</p>
+<p>事务 A                          事务 B<br>
+────────                        ────────<br>
+BEGIN;                          BEGIN;<br>
+UPDATE t SET val=1 WHERE id=1;  UPDATE t SET val=2 WHERE id=2;<br>
+→ 拿到 id=1 的行锁 ✅          → 拿到 id=2 的行锁 ✅</p>
+<p>UPDATE t SET val=1 WHERE id=2;  UPDATE t SET val=2 WHERE id=1;<br>
+→ 等待 id=2 的锁 ⏳             → 等待 id=1 的锁 ⏳<br>
+→ 死锁！MySQL 回滚其中一个 💥</p>
+<ol start="2">
+<li>死锁排查</li>
+</ol>
+<p>2.1 查看最近一次死锁</p>
+<p>SHOW ENGINE INNODB STATUS\G</p>
+<p>关注 LATEST DETECTED DEADLOCK 部分：</p>
+<hr>
+<h2 id="latest-detected-deadlock">LATEST DETECTED DEADLOCK</h2>
+<p>2026-06-04 15:00:00 0x7f8c<br>
+*** (1) TRANSACTION:          ← 事务 1<br>
+TRANSACTION 12345, ACTIVE 3 sec<br>
+LOCK WAIT 2 lock struct(s), heap size 1136<br>
+MySQL thread id 10, OS thread handle 140XXX<br>
+-- 事务 1 在等待的锁：<br>
+TABLE LOCK table <code>db</code>.<code>t</code> trx id 12345 lock mode IX<br>
+RECORD LOCKS space id 100 page no 5 n bits 72 index PRIMARY of table <code>db</code>.<code>t</code><br>
+lock_mode X locks rec but not gap waiting  ← 等待 id=2 的行锁</p>
+<p>*** (2) TRANSACTION:          ← 事务 2<br>
+TRANSACTION 12346, ACTIVE 2 sec<br>
+-- 事务 2 持有的锁 + 在等待的锁：<br>
+RECORD LOCKS space id 100 page no 5 n bits 72 index PRIMARY of table <code>db</code>.<code>t</code><br>
+lock_mode X locks rec but not gap          ← 持有 id=2 的行锁<br>
+RECORD LOCKS space id 100 page no 5 n bits 72 index PRIMARY of table <code>db</code>.<code>t</code><br>
+lock_mode X locks rec but not gap waiting  ← 等待 id=1 的行锁</p>
+<p>*** WE ROLL BACK TRANSACTION (2)  ← InnoDB 选择回滚事务 2</p>
+<p>2.2 实时锁监控（MySQL 8.0）</p>
+<p>-- 当前持有的锁<br>
+SELECT * FROM performance_schema.data_locks;</p>
+<p>-- 当前锁等待<br>
+SELECT * FROM performance_schema.data_lock_waits;</p>
+<p>-- 详细锁等待视图（推荐）<br>
+SELECT<br>
+r.trx_id                AS waiting_trx_id,<br>
+r.trx_mysql_thread_id   AS waiting_thread,<br>
+r.trx_query             AS waiting_query,<br>
+b.trx_id                AS blocking_trx_id,<br>
+b.trx_mysql_thread_id   AS blocking_thread,<br>
+b.trx_query             AS blocking_query,<br>
+b.trx_started           AS blocking_started<br>
+FROM information_schema.innodb_lock_waits w<br>
+JOIN information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id<br>
+JOIN information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;</p>
+<p>-- MySQL 8.0+ 推荐用 sys 库<br>
+SELECT * FROM sys.innodb_lock_waits\G</p>
+<p>2.3 开启死锁日志（更详细的输出）</p>
+<p>SET GLOBAL innodb_print_all_deadlocks = ON;<br>
+-- 所有死锁信息会写入错误日志<br>
+-- 查看日志位置<br>
+SHOW VARIABLES LIKE 'log_error';</p>
+<p>2.4 Performance Schema 监控</p>
+<p>-- 查看死锁发生的次数<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_deadlocks';</p>
+<p>-- 开启锁等待事件采集<br>
+UPDATE performance_schema.setup_consumers<br>
+SET ENABLED = 'YES'<br>
+WHERE NAME = 'events_waits_current';</p>
+<p>-- 查看等待事件<br>
+SELECT * FROM performance_schema.events_waits_current<br>
+WHERE event_name LIKE '%lock%';</p>
+<ol>
+<li>常见死锁场景与解决</li>
+</ol>
+<p>3.1 场景一：不同顺序更新多行</p>
+<p>-- ❌ 事务 A: 先锁 1 再锁 2<br>
+-- ❌ 事务 B: 先锁 2 再锁 1</p>
+<p>-- ✅ 解决：统一按主键升序加锁<br>
+-- 两个事务都按 id 从小到大的顺序更新<br>
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;<br>
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;</p>
+<p>3.2 场景二：INSERT → 唯一索引冲突</p>
+<p>-- 两个事务同时 INSERT 同一个唯一键值<br>
+-- 各自持有 gap lock / insert intention lock，互相等待</p>
+<p>-- ❌ 事务 A: INSERT INTO t (uniq_col) VALUES (100);<br>
+-- ❌ 事务 B: INSERT INTO t (uniq_col) VALUES (100);</p>
+<p>-- ✅ 解决方案：<br>
+-- 方案 1：INSERT IGNORE（冲突时忽略）<br>
+INSERT IGNORE INTO t (uniq_col) VALUES (100);</p>
+<p>-- 方案 2：ON DUPLICATE KEY UPDATE<br>
+INSERT INTO t (uniq_col, val) VALUES (100, 'a')<br>
+ON DUPLICATE KEY UPDATE val = VALUES(val);</p>
+<p>-- 方案 3：REPLACE INTO（先删后插，慎用）<br>
+REPLACE INTO t (uniq_col, val) VALUES (100, 'a');</p>
+<p>-- 方案 4：应用层先查再插（减少冲突概率）<br>
+SELECT id FROM t WHERE uniq_col = 100 FOR UPDATE;<br>
+-- 如果不存在再 INSERT</p>
+<p>3.3 场景三：Gap Lock 范围重叠</p>
+<p>-- RR 隔离级别下，范围查询会产生 Gap Lock<br>
+-- 两个事务的范围重叠时可能死锁</p>
+<p>-- ❌ 事务 A:<br>
+SELECT * FROM orders WHERE customer_id BETWEEN 10 AND 20 FOR UPDATE;<br>
+-- ❌ 事务 B:<br>
+SELECT * FROM orders WHERE customer_id BETWEEN 15 AND 25 FOR UPDATE;</p>
+<p>-- ✅ 解决方案：<br>
+-- 方案 1：降低隔离级别为 READ COMMITTED<br>
+SET SESSION transaction_isolation = 'READ-COMMITTED';<br>
+-- RC 下没有 Gap Lock</p>
+<p>-- 方案 2：缩小范围，减少重叠</p>
+<p>-- 方案 3：用精确条件替代范围<br>
+-- 改为：<br>
+SELECT * FROM orders WHERE customer_id = 15 FOR UPDATE;</p>
+<p>3.4 场景四：事务内混合使用不同索引</p>
+<p>-- 表有两个索引：idx_a(a), idx_b(b)<br>
+-- ❌ 事务 A: UPDATE t SET b = 1 WHERE a = 10;  -- 锁 idx_a<br>
+-- ❌ 事务 B: UPDATE t SET a = 1 WHERE b = 10;  -- 锁 idx_b<br>
+--           然后各自需要对方的锁 → 死锁</p>
+<p>-- ✅ 解决方案：<br>
+-- 用主键统一加锁<br>
+SELECT id FROM t WHERE a = 10 FOR UPDATE;   -- 先拿到所有行的主键锁<br>
+UPDATE t SET b = 1 WHERE id IN (...);        -- 再更新</p>
+<p>3.5 场景五：大事务 + 长时间持有锁</p>
+<p>-- ❌ 事务里做了太多操作（查询、计算、外部 API 调用、再更新）<br>
+BEGIN;<br>
+SELECT * FROM orders WHERE id = 1 FOR UPDATE;<br>
+-- ... 调用了外部支付接口（耗时 5 秒）...<br>
+UPDATE orders SET status = 'paid' WHERE id = 1;<br>
+COMMIT;</p>
+<p>-- ✅ 解决方案：<br>
+-- 1. 把读和写分开，减少锁持有时间<br>
+-- 2. 先完成外部调用，最后再开事务更新<br>
+-- 3. 必须锁的话，设置锁等待超时<br>
+SET innodb_lock_wait_timeout = 3;  -- 等 3 秒就放弃</p>
+<ol start="4">
+<li>死锁预防策略</li>
+</ol>
+<p>4.1 统一加锁顺序</p>
+<p>-- 所有事务按相同顺序操作表和行<br>
+-- 推荐：按主键 ASC 顺序</p>
+<p>-- ✅ 批量更新时排序<br>
+UPDATE accounts SET balance = balance - 100 WHERE id IN (3, 1, 2);<br>
+-- 改为<br>
+UPDATE accounts SET balance = balance - 100 WHERE id IN (1, 2, 3);</p>
+<p>4.2 减小事务粒度</p>
+<p>-- ❌ 大事务<br>
+BEGIN;<br>
+UPDATE t SET a = 1 WHERE id = 1;<br>
+-- ... 很多其他操作 ...<br>
+UPDATE t SET b = 2 WHERE id = 2;<br>
+COMMIT;</p>
+<p>-- ✅ 拆成小事务<br>
+BEGIN; UPDATE t SET a = 1 WHERE id = 1; COMMIT;<br>
+BEGIN; UPDATE t SET b = 2 WHERE id = 2; COMMIT;</p>
+<p>4.3 使用乐观锁替代悲观锁</p>
+<p>-- ❌ 悲观锁：SELECT ... FOR UPDATE（长时间持锁）<br>
+BEGIN;<br>
+SELECT balance FROM accounts WHERE id = 1 FOR UPDATE;<br>
+-- 业务计算...<br>
+UPDATE accounts SET balance = 500 WHERE id = 1;<br>
+COMMIT;</p>
+<p>-- ✅ 乐观锁：用版本号检测冲突<br>
+-- 表结构加 version 字段<br>
+ALTER TABLE accounts ADD COLUMN version INT DEFAULT 0;</p>
+<p>-- 读取<br>
+SELECT balance, version FROM accounts WHERE id = 1;<br>
+-- 假设读到 version = 5, balance = 600</p>
+<p>-- 更新（CAS）<br>
+UPDATE accounts<br>
+SET balance = 500, version = version + 1<br>
+WHERE id = 1 AND version = 5;<br>
+-- 检查 affected rows，如果是 0 说明被别人改了，重试</p>
+<p>4.4 合理设置隔离级别</p>
+<p>-- 查看当前隔离级别<br>
+SELECT @@transaction_isolation;</p>
+<p>-- READ COMMITTED：无 Gap Lock，减少死锁概率<br>
+SET SESSION transaction_isolation = 'READ-COMMITTED';</p>
+<p>-- 权衡：RC 下可能出现不可重复读和幻读<br>
+-- 适合：读多写少、能接受短暂不一致的场景</p>
+<p>4.5 锁等待超时</p>
+<p>-- 不无限等锁，超时就放弃（应用层重试）<br>
+SET SESSION innodb_lock_wait_timeout = 5;  -- 默认 50 秒太长了</p>
+<p>-- 应用层捕获错误码重试<br>
+-- MySQL Error 1213 = Deadlock<br>
+-- MySQL Error 1205 = Lock wait timeout</p>
+<ol start="5">
+<li>死锁处理代码模式<br>
+// Java 应用层重试模式（伪代码）<br>
+int maxRetries = 3;<br>
+for (int i = 0; i &lt; maxRetries; i++) {<br>
+try {<br>
+transferMoney(fromId, toId, amount);<br>
+break;  // 成功<br>
+} catch (MySQLTransactionRollbackException e) {<br>
+if (e.getErrorCode() == 1213 &amp;&amp; i &lt; maxRetries - 1) {<br>
+log.warn(&quot;Deadlock detected, retrying {}/{}&quot;, i + 1, maxRetries);<br>
+Thread.sleep(50 + ThreadLocalRandom.current().nextInt(100));<br>
+continue;<br>
+}<br>
+throw e;<br>
+}<br>
+}</li>
+</ol>
+<p>python</p>
+<h1 id="python-重试模式">Python 重试模式</h1>
+<p>import time, random<br>
+from pymysql import MySQLError</p>
+<p>def execute_with_retry(func, max_retries=3):<br>
+for attempt in range(max_retries):<br>
+try:<br>
+return func()<br>
+except MySQLError as e:<br>
+if e.args[0] == 1213 and attempt &lt; max_retries - 1:  # Deadlock<br>
+time.sleep(0.05 + random.uniform(0, 0.1))<br>
+continue<br>
+raise</p>
+<ol start="6">
+<li>诊断 Checklist</li>
+</ol>
+<p>遇到死锁时，按以下顺序排查：</p>
+<p>□ 1. SHOW ENGINE INNODB STATUS\G<br>
+→ 获取死锁涉及的表、索引、SQL</p>
+<p>□ 2. 确认死锁类型<br>
+□ 同表不同行顺序？→ 统一加锁顺序<br>
+□ 不同表交叉加锁？→ 统一表操作顺序<br>
+□ 唯一索引冲突？→ INSERT IGNORE / ON DUPLICATE KEY<br>
+□ Gap Lock 重叠？→ 降级为 RC / 缩小范围<br>
+□ 混合索引？→ 统一用主键加锁</p>
+<p>□ 3. 检查事务设计<br>
+□ 事务是否太大？→ 拆分<br>
+□ 锁持有时间是否太长？→ 外部操作移到事务外<br>
+□ 是否可以用乐观锁？</p>
+<p>□ 4. 配置检查<br>
+□ innodb_lock_wait_timeout 是否合理？<br>
+□ innodb_print_all_deadlocks 是否开启？<br>
+□ 隔离级别是否合适？</p>
+<p>□ 5. 应用层<br>
+□ 是否有死锁重试机制？<br>
+□ 是否有退避策略（避免反复碰撞）？</p>
+<ol start="7">
+<li>关键参数速查<br>
+-- 查看所有锁相关参数<br>
+SHOW VARIABLES LIKE '%lock%';</li>
+</ol>
+<p>-- 常用调优<br>
+SET GLOBAL innodb_lock_wait_timeout = 5;        -- 锁等待超时（秒）<br>
+SET GLOBAL innodb_deadlock_detect = ON;          -- 死锁检测（默认开）<br>
+SET GLOBAL innodb_print_all_deadlocks = ON;      -- 打印所有死锁到日志<br>
+SET GLOBAL innodb_locks_unsafe_for_binlog = OFF; -- Gap Lock 控制（5.7）</p>
+<p>-- 监控<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_deadlocks';         -- 累计死锁次数<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_row_lock_waits';    -- 行锁等待次数<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_row_lock_time_avg'; -- 平均锁等待时间</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[mysql查询优化分析]]></title>
+        <id>https://kangjn.github.io/post/mysql-cha-xun-you-hua-fen-xi/</id>
+        <link href="https://kangjn.github.io/post/mysql-cha-xun-you-hua-fen-xi/">
+        </link>
+        <updated>2026-06-04T07:40:04.000Z</updated>
+        <content type="html"><![CDATA[<p>发现慢查询<br>
+│<br>
+├── 1. 开启慢查询日志，定位问题 SQL<br>
+│<br>
+├── 2. EXPLAIN 分析执行计划<br>
+│       ├── type 是 ALL？→ 缺索引<br>
+│       ├── key 是 NULL？→ 没用到索引<br>
+│       ├── rows 很大？→ 扫描行数太多<br>
+│       ├── Extra 有 Using filesort/temporary？→ 优化 ORDER BY / GROUP BY<br>
+│<br>
+├── 3. 检查索引设计<br>
+│       ├── WHERE / JOIN / ORDER BY 的列是否有索引<br>
+│       ├── 是否满足最左前缀<br>
+│       ├── 是否存在索引失效（函数、类型转换、模糊）<br>
+│<br>
+├── 4. 考虑重写 SQL<br>
+│       ├── 子查询 → JOIN<br>
+│       ├── OR → UNION<br>
+│       ├── 分页优化<br>
+│       ├── 分批执行<br>
+│<br>
+├── 5. SHOW PROFILE 看各阶段耗时<br>
+│<br>
+└── 6. 上下层排查<br>
+├── 网络延迟？客户端 ↔ MySQL<br>
+├── 服务器资源？CPU / 内存 / IO<br>
+├── 配置？buffer_pool_size / tmp_table_size</p>
+<ol>
+<li>EXPLAIN 执行计划解读<br>
+EXPLAIN SELECT * FROM orders WHERE customer_id = 100;<br>
+EXPLAIN ANALYZE SELECT ...;   -- MySQL 8.0.18+，含实际执行时间<br>
+EXPLAIN FORMAT=JSON SELECT ...;  -- 更详细的信息<br>
+EXPLAIN FORMAT=TREE SELECT ...;  -- 树形执行计划</li>
+</ol>
+<p>各字段含义<br>
++----+-------------+-------+------+---------------+------+---------+------+------+-------+<br>
+| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra |<br>
++----+-------------+-------+------+---------------+------+---------+------+------+-------+</p>
+<p>type（访问类型）— 从好到差：<br>
+system  &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL</p>
+<p>type	含义	示例<br>
+const	主键/唯一索引等值查询，最多一行	WHERE id = 1<br>
+eq_ref	JOIN 时驱动表每一行都通过主键/唯一索引匹配	JOIN ... ON a.id = b.a_id<br>
+ref	非唯一索引等值查询	WHERE name = 'Tom'<br>
+range	索引范围扫描	WHERE id BETWEEN 1 AND 100<br>
+index	全索引扫描（只遍历索引树）	SELECT indexed_col FROM t<br>
+ALL	全表扫描 🔴	SELECT * FROM t WHERE no_index_col = 1</p>
+<p>Extra 常见值：</p>
+<p>Extra	含义	好坏<br>
+Using index	覆盖索引，无需回表	✅<br>
+Using where	Server 层过滤	⚠️<br>
+Using temporary	使用临时表	🔴<br>
+Using filesort	额外排序	🔴<br>
+Using index condition	索引下推 (ICP)	✅<br>
+Using join buffer	JOIN 缓冲	⚠️</p>
+<ol>
+<li>索引优化策略</li>
+</ol>
+<p>2.1 最左前缀原则</p>
+<p>-- 联合索引 idx_a_b_c (a, b, c)</p>
+<p>-- ✅ 命中索引<br>
+WHERE a = 1<br>
+WHERE a = 1 AND b = 2<br>
+WHERE a = 1 AND b = 2 AND c = 3<br>
+WHERE a = 1 AND b &gt; 2 AND c = 3        -- a 等值 + b 范围（c 断了）</p>
+<p>-- ❌ 无法命中<br>
+WHERE b = 2                    -- 跳过了 a<br>
+WHERE c = 3                    -- 跳过了 a, b<br>
+WHERE b = 2 AND c = 3          -- 跳过了 a</p>
+<p>2.2 索引失效场景</p>
+<p>-- ❌ 对索引列做函数/运算<br>
+WHERE YEAR(create_time) = 2026        -- 索引失效<br>
+WHERE create_time + 1 &gt; '2026-01-01'  -- 索引失效<br>
+-- ✅ 改写<br>
+WHERE create_time &gt;= '2026-01-01' AND create_time &lt; '2027-01-01'</p>
+<p>-- ❌ 隐式类型转换<br>
+WHERE phone = 13800138000    -- phone 是 VARCHAR，传了数字 → 全表扫描<br>
+-- ✅<br>
+WHERE phone = '13800138000'</p>
+<p>-- ❌ LIKE 左模糊<br>
+WHERE name LIKE '%Tom'       -- 索引失效<br>
+-- ✅ 右模糊可以<br>
+WHERE name LIKE 'Tom%'</p>
+<p>-- ❌ OR 连接非索引列<br>
+WHERE indexed_col = 1 OR no_index_col = 2  -- 可能全表扫描<br>
+-- ✅ 改用 UNION<br>
+SELECT * FROM t WHERE indexed_col = 1<br>
+UNION<br>
+SELECT * FROM t WHERE no_index_col = 2</p>
+<p>-- ❌ NOT / != / &lt;&gt; / IS NOT NULL（部分场景失效）<br>
+-- ❌ 使用 SELECT *（无法使用覆盖索引）</p>
+<p>2.3 索引设计原则</p>
+<p>-- 1. 区分度高的列放前面<br>
+--    user_id（高区分度）放联合索引前面<br>
+ALTER TABLE orders ADD INDEX idx_user_status (user_id, status);</p>
+<p>-- 2. 覆盖索引：把查询需要的列都放进索引<br>
+--    查询只用 product_id 和 price<br>
+ALTER TABLE products ADD INDEX idx_cover (category_id, price, product_id);<br>
+SELECT product_id, price FROM products WHERE category_id = 10;  -- Using index ✅</p>
+<p>-- 3. 前缀索引：长字符串只取前 N 个字符<br>
+ALTER TABLE users ADD INDEX idx_email (email(10));<br>
+--    验证选择性：<br>
+SELECT<br>
+COUNT(DISTINCT LEFT(email, 10)) / COUNT(<em>) AS sel_10,<br>
+COUNT(DISTINCT LEFT(email, 15)) / COUNT(</em>) AS sel_15,<br>
+COUNT(DISTINCT email) / COUNT(*) AS sel_full<br>
+FROM users;</p>
+<p>-- 4. 索引合并（Index Merge）：MySQL 可能合并多个单列索引<br>
+--    但不如直接建联合索引高效</p>
+<ol>
+<li>慢查询分析</li>
+</ol>
+<p>3.1 开启慢查询日志</p>
+<p>-- 查看当前配置<br>
+SHOW VARIABLES LIKE 'slow_query%';<br>
+SHOW VARIABLES LIKE 'long_query_time';</p>
+<p>-- 开启<br>
+SET GLOBAL slow_query_log = ON;<br>
+SET GLOBAL long_query_time = 1;          -- 超过 1 秒记录<br>
+SET GLOBAL log_queries_not_using_indexes = ON;  -- 记录未使用索引的查询</p>
+<p>-- 查看慢查询条数<br>
+SHOW GLOBAL STATUS LIKE 'Slow_queries';</p>
+<p>3.2 使用 mysqldumpslow 分析</p>
+<h1 id="按查询时间排序取前-10-条">按查询时间排序，取前 10 条</h1>
+<p>mysqldumpslow -s t -t 10 /var/log/mysql/slow.log</p>
+<h1 id="按出现次数排序">按出现次数排序</h1>
+<p>mysqldumpslow -s c -t 10 /var/log/mysql/slow.log</p>
+<h1 id="参数-s-排序方式-t时间-c次数-l锁时间-r行数">参数：-s 排序方式 (t=时间, c=次数, l=锁时间, r=行数)</h1>
+<p>3.3 SHOW PROFILE 分析各阶段耗时</p>
+<p>SET profiling = 1;</p>
+<p>SELECT * FROM orders WHERE customer_id = 100 ORDER BY create_time DESC LIMIT 20;</p>
+<p>SHOW PROFILES;                    -- 查看所有查询 ID<br>
+SHOW PROFILE FOR QUERY 1;        -- 查看详细阶段<br>
+SHOW PROFILE CPU, BLOCK IO FOR QUERY 1;  -- 含 CPU 和 IO</p>
+<p>输出示例：</p>
+<p>+----------------------+----------+<br>
+| Status               | Duration |<br>
++----------------------+----------+<br>
+| starting             | 0.000089 |<br>
+| checking permissions | 0.000013 |<br>
+| Opening tables       | 0.000035 |<br>
+| init                 | 0.000052 |<br>
+| System lock          | 0.000018 |<br>
+| optimizing           | 0.000035 |<br>
+| statistics           | 0.000083 |<br>
+| preparing            | 0.000038 |<br>
+| executing            | 0.000005 |<br>
+| Sending data         | 0.032817  ← 瓶颈在这<br>
+| end                  | 0.000012 |<br>
++----------------------+----------+</p>
+<ol>
+<li>查询重写技巧</li>
+</ol>
+<p>4.1 子查询 → JOIN</p>
+<p>-- ❌ 相关子查询（逐行执行，慢）<br>
+SELECT * FROM orders o<br>
+WHERE o.amount &gt; (<br>
+SELECT AVG(amount) FROM orders WHERE customer_id = o.customer_id<br>
+);</p>
+<p>-- ✅ 先算好平均值再 JOIN<br>
+SELECT o.* FROM orders o<br>
+JOIN (<br>
+SELECT customer_id, AVG(amount) AS avg_amt<br>
+FROM orders GROUP BY customer_id<br>
+) t ON o.customer_id = t.customer_id AND o.amount &gt; t.avg_amt;</p>
+<p>4.2 OR → UNION</p>
+<p>-- ❌ OR 可能导致全表扫描<br>
+SELECT * FROM products WHERE category_id = 5 OR brand_id = 10;</p>
+<p>-- ✅ 分开查再合并（各自走索引）<br>
+SELECT * FROM products WHERE category_id = 5<br>
+UNION ALL<br>
+SELECT * FROM products WHERE brand_id = 10 AND category_id != 5;</p>
+<p>4.3 分页优化</p>
+<p>-- ❌ 深分页（扫描 100 万行丢弃，只取 20 行）<br>
+SELECT * FROM orders ORDER BY id LIMIT 1000000, 20;</p>
+<p>-- ✅ 延迟关联（先在索引上定位 ID，再回表）<br>
+SELECT o.* FROM orders o<br>
+JOIN (SELECT id FROM orders ORDER BY id LIMIT 1000000, 20) t<br>
+ON o.id = t.id;</p>
+<p>-- ✅ 游标分页（最优，需要上一页最后一条的 ID）<br>
+SELECT * FROM orders WHERE id &gt; 1000000 ORDER BY id LIMIT 20;</p>
+<p>-- ✅ 业务层限制：禁止跳到第 N 页，只允许 &quot;加载更多&quot;</p>
+<p>4.4 COUNT 优化</p>
+<p>-- COUNT(<em>) vs COUNT(1) vs COUNT(col)<br>
+-- COUNT(</em>) = COUNT(1)：统计所有行，包括 NULL<br>
+-- COUNT(col)：统计 col 不为 NULL 的行</p>
+<p>-- ✅ 如果不需要精确值，用近似值<br>
+SHOW TABLE STATUS LIKE 'orders';   -- Rows 字段是估算值</p>
+<p>-- ✅ 用汇总表缓存计数<br>
+CREATE TABLE table_counts (<br>
+table_name VARCHAR(64) PRIMARY KEY,<br>
+row_count  BIGINT<br>
+);<br>
+-- 在业务层维护增减</p>
+<p>4.5 UPDATE/DELETE 优化</p>
+<p>-- ❌ 大事务：一次性更新 100 万行<br>
+UPDATE orders SET status = 'archived' WHERE create_time &lt; '2024-01-01';</p>
+<p>-- ✅ 分批执行<br>
+REPEAT<br>
+UPDATE orders SET status = 'archived'<br>
+WHERE create_time &lt; '2024-01-01' AND status != 'archived'<br>
+LIMIT 5000;<br>
+-- 检查 ROW_COUNT()<br>
+UNTIL ROW_COUNT() = 0 END REPEAT;</p>
+<p>-- 用存储过程封装<br>
+DELIMITER //<br>
+CREATE PROCEDURE batch_update()<br>
+BEGIN<br>
+DECLARE affected INT DEFAULT 1;<br>
+WHILE affected &gt; 0 DO<br>
+UPDATE orders SET status = 'archived'<br>
+WHERE create_time &lt; '2024-01-01' AND status != 'archived'<br>
+LIMIT 5000;<br>
+SET affected = ROW_COUNT();<br>
+DO SLEEP(0.1);  -- 降低锁压力<br>
+END WHILE;<br>
+END //<br>
+DELIMITER ;</p>
+<ol>
+<li>索引监控与诊断</li>
+</ol>
+<p>-- 查看索引使用情况（MySQL 8.0）<br>
+SELECT * FROM sys.schema_unused_indexes;       -- 未使用的索引<br>
+SELECT * FROM sys.schema_redundant_indexes;    -- 冗余索引<br>
+SELECT * FROM sys.schema_index_statistics ORDER BY rows_selected DESC;</p>
+<p>-- 查看当前正在执行的查询<br>
+SHOW PROCESSLIST;<br>
+-- 或<br>
+SELECT * FROM information_schema.PROCESSLIST WHERE command != 'Sleep' ORDER BY time DESC;</p>
+<p>-- 锁等待分析（MySQL 8.0）<br>
+SELECT * FROM performance_schema.data_lock_waits;<br>
+SELECT * FROM sys.innodb_lock_waits;</p>
+<p>-- 表的索引信息<br>
+SHOW INDEX FROM orders;<br>
+SELECT * FROM information_schema.STATISTICS<br>
+WHERE TABLE_NAME = 'orders' ORDER BY SEQ_IN_INDEX;</p>
+<p>常用配置调优参考<br>
+-- 查看当前值<br>
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';   -- 建议物理内存的 60-80%<br>
+SHOW VARIABLES LIKE 'innodb_log_file_size';<br>
+SHOW VARIABLES LIKE 'max_connections';<br>
+SHOW VARIABLES LIKE 'tmp_table_size';<br>
+SHOW VARIABLES LIKE 'sort_buffer_size';</p>
+<p>-- InnoDB Buffer Pool 命中率（应 &gt; 99%）<br>
+SHOW GLOBAL STATUS LIKE 'Innodb_buffer_pool_read%';<br>
+-- 命中率 = 1 - (Innodb_buffer_pool_reads / Innodb_buffer_pool_read_requests)</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[个税计算公式]]></title>
+        <id>https://kangjn.github.io/post/ge-shui-ji-suan-gong-shi/</id>
+        <link href="https://kangjn.github.io/post/ge-shui-ji-suan-gong-shi/">
+        </link>
+        <updated>2026-06-04T07:34:10.000Z</updated>
+        <content type="html"><![CDATA[<p>1、查表法<br>
+SELECT ISNULL(T.CurrentMonthTax, 0) AS CurrentMonthTax<br>
+FROM (VALUES(0)) AS Dummy(DefaultVal)<br>
+LEFT JOIN (<br>
+SELECT<br>
+CASE<br>
+WHEN CumulativeTax - PreviousCumulativeTax &lt; 0 THEN 0<br>
+ELSE CumulativeTax - PreviousCumulativeTax<br>
+END AS CurrentMonthTax<br>
+FROM (<br>
+SELECT<br>
+c.EmpID,<br>
+c.YYMM,<br>
+c.CumTaxableIncome,<br>
+CASE<br>
+WHEN c.CumTaxableIncome &lt;= 0 THEN 0<br>
+ELSE (c.CumTaxableIncome * (t.TaxRate / 100.0) - t.TakeOut)<br>
+END AS CumulativeTax,<br>
+LAG(<br>
+CASE<br>
+WHEN c.CumTaxableIncome &lt;= 0 THEN 0<br>
+ELSE (c.CumTaxableIncome * (t.TaxRate / 100.0) - t.TakeOut)<br>
+END, 1, 0<br>
+) OVER (PARTITION BY c.EmpID ORDER BY c.YYMM) AS PreviousCumulativeTax<br>
+FROM (<br>
+SELECT<br>
+s.EmpID,<br>
+s.EmpNo,<br>
+s.YYMM,<br>
+s.Salary,<br>
+s.MonthNum,<br>
+s.CumSalary,<br>
+s.BasicDeduction,<br>
+d.CumSpecialDeduction,<br>
+(s.CumSalary - s.BasicDeduction - ISNULL(d.CumSpecialDeduction, 0) * s.MonthNum) AS CumTaxableIncome<br>
+FROM (<br>
+SELECT<br>
+EmpID,<br>
+EmpNo,<br>
+YYMM,<br>
+Salary,<br>
+MonthNum,<br>
+SUM(Salary) OVER (ORDER BY YYMM ROWS UNBOUNDED PRECEDING) AS CumSalary,<br>
+5000 * MonthNum AS BasicDeduction<br>
+FROM (<br>
+SELECT<br>
+EmpID,<br>
+EmpNo,<br>
+YYMM,<br>
+PayNo72 AS Salary,<br>
+ROW_NUMBER() OVER (ORDER BY YYMM) AS MonthNum<br>
+FROM PayMonthData<br>
+WHERE EmpID = @EmpID<br>
+AND YYMM &lt;= @YYMM AND YYMM &gt;= CAST(CAST(LEFT(@YYMM , 4) AS INT) - 1 AS CHAR(4)) + '12'<br>
+) AS SalaryHistory<br>
+) AS s<br>
+LEFT JOIN (<br>
+SELECT TOP 1<br>
+Field001,<br>
+Field003 AS CumSpecialDeduction<br>
+FROM CU003101Data<br>
+WHERE Field001 = (SELECT empno FROM PerEmployee WHERE EmpID =@EmpID)<br>
+AND Field004 &lt;DATEADD(DAY, 1, EOMONTH(CONVERT(DATE,'202604' + '01')))<br>
+ORDER BY Field004 DESC<br>
+) AS d ON s.EmpNo = d.Field001<br>
+) AS c<br>
+OUTER APPLY (<br>
+-- 匹配税率表<br>
+SELECT TaxRate, TakeOut<br>
+FROM PayInComeTax<br>
+WHERE c.CumTaxableIncome &gt;= IncludeBegin AND c.CumTaxableIncome &lt;= IncludeEnd<br>
+) t<br>
+) AS TaxCalculation<br>
+WHERE YYMM = @YYMM<br>
+) AS T ON 1 = 1</p>
+<p>2、直接算<br>
+DECLARE @YYMM VARCHAR(6) = '202302';<br>
+DECLARE @EmpID VARCHAR(20) = '张三';</p>
+<p>WITH MonthlyData AS (<br>
+SELECT<br>
+EmpID,<br>
+YYMM,<br>
+payno69 - ISNULL(payno79, 0) AS NetSalary,       -- 扣除社保公积金后金额<br>
+ISNULL(payno_special, 0) AS SpecialDeduction,      -- 专项附加扣除（替换实际字段）<br>
+ROW_NUMBER() OVER (PARTITION BY EmpID ORDER BY YYMM) AS MonthNo<br>
+FROM PayMonthData<br>
+WHERE EmpID = @EmpID<br>
+AND YYMM &gt;= LEFT(@YYMM, 4) + '01'   -- 同年1月起累计<br>
+AND YYMM &lt;= @YYMM<br>
+),<br>
+Cumulative AS (<br>
+SELECT<br>
+m.EmpID,<br>
+m.YYMM,<br>
+m.NetSalary,<br>
+m.MonthNo,<br>
+SUM(c.NetSalary) AS CumSalary,<br>
+SUM(c.SpecialDeduction) AS CumSpecial,<br>
+SUM(c.NetSalary) - SUM(c.SpecialDeduction) - 5000 * m.MonthNo AS TaxableIncome<br>
+FROM MonthlyData m<br>
+JOIN MonthlyData c ON m.EmpID = c.EmpID AND c.YYMM &gt;= c.YYMM<br>
+GROUP BY m.EmpID, m.YYMM, m.NetSalary, m.MonthNo<br>
+),<br>
+TaxCalc AS (<br>
+SELECT<br>
+*,<br>
+CASE<br>
+WHEN TaxableIncome &lt;= 0 THEN 0<br>
+WHEN TaxableIncome &lt;= 36000  THEN TaxableIncome * 0.03<br>
+WHEN TaxableIncome &lt;= 144000 THEN TaxableIncome * 0.10 - 2520<br>
+WHEN TaxableIncome &lt;= 300000 THEN TaxableIncome * 0.20 - 16920<br>
+WHEN TaxableIncome &lt;= 420000 THEN TaxableIncome * 0.25 - 31920<br>
+WHEN TaxableIncome &lt;= 660000 THEN TaxableIncome * 0.30 - 52920<br>
+WHEN TaxableIncome &lt;= 960000 THEN TaxableIncome * 0.35 - 85920<br>
+ELSE TaxableIncome * 0.45 - 181920<br>
+END AS CumTax<br>
+FROM Cumulative<br>
+)<br>
+SELECT<br>
+EmpID,<br>
+YYMM,<br>
+NetSalary           AS 本月工资,<br>
+CumSalary            AS 累计工资,<br>
+TaxableIncome        AS 累计应纳税所得额,<br>
+CumTax               AS 累计应扣税,<br>
+CumTax - ISNULL(LAG(CumTax) OVER (PARTITION BY EmpID ORDER BY YYMM), 0) AS 本月应扣个税<br>
+FROM TaxCalc<br>
+ORDER BY YYMM;</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[MySQL 高级 SQL 语句指南]]></title>
+        <id>https://kangjn.github.io/post/mysql-gao-ji-sql-yu-ju-zhi-nan/</id>
+        <link href="https://kangjn.github.io/post/mysql-gao-ji-sql-yu-ju-zhi-nan/">
+        </link>
+        <updated>2026-06-04T07:31:24.000Z</updated>
+        <content type="html"><![CDATA[<p>MySQL 高级 SQL 语句指南</p>
+<ol>
+<li>窗口函数 (Window Functions)<br>
+-- 排名：RANK 有并列跳号，DENSE_RANK 不跳号，ROW_NUMBER 不并列<br>
+SELECT<br>
+name, department, salary,<br>
+RANK()       OVER (PARTITION BY department ORDER BY salary DESC) AS rnk,<br>
+DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dense_rnk,<br>
+ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS row_num<br>
+FROM employees;</li>
+</ol>
+<p>-- 累计求和<br>
+SELECT<br>
+order_date, amount,<br>
+SUM(amount) OVER (ORDER BY order_date ROWS UNBOUNDED PRECEDING) AS running_total<br>
+FROM orders;</p>
+<p>-- 移动平均（前后各2行）<br>
+SELECT<br>
+order_date, amount,<br>
+AVG(amount) OVER (ORDER BY order_date ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING) AS moving_avg<br>
+FROM orders;</p>
+<p>-- LAG / LEAD：取前一行/后一行的值<br>
+SELECT<br>
+month, revenue,<br>
+LAG(revenue, 1)  OVER (ORDER BY month) AS prev_month,<br>
+revenue - LAG(revenue, 1) OVER (ORDER BY month) AS growth<br>
+FROM monthly_sales;</p>
+<p>-- NTILE：将数据等分为 N 组<br>
+SELECT name, salary,<br>
+NTILE(4) OVER (ORDER BY salary DESC) AS quartile<br>
+FROM employees;</p>
+<ol start="2">
+<li>CTE (公用表表达式)<br>
+-- 基础 CTE<br>
+WITH dept_stats AS (<br>
+SELECT department_id, AVG(salary) AS avg_salary<br>
+FROM employees<br>
+GROUP BY department_id<br>
+)<br>
+SELECT e.name, e.salary, d.avg_salary<br>
+FROM employees e<br>
+JOIN dept_stats d ON e.department_id = d.department_id<br>
+WHERE e.salary &gt; d.avg_salary;</li>
+</ol>
+<p>-- 递归 CTE：组织架构层级查询<br>
+WITH RECURSIVE org_tree AS (<br>
+-- 锚点：顶层（无上级）<br>
+SELECT id, name, manager_id, 1 AS level, CAST(name AS CHAR(500)) AS path<br>
+FROM employees WHERE manager_id IS NULL<br>
+UNION ALL<br>
+-- 递归<br>
+SELECT e.id, e.name, e.manager_id, t.level + 1,<br>
+CONCAT(t.path, ' → ', e.name)<br>
+FROM employees e<br>
+JOIN org_tree t ON e.manager_id = t.id<br>
+)<br>
+SELECT * FROM org_tree ORDER BY path;</p>
+<ol>
+<li>高级 JOIN 技巧<br>
+-- 自连接：找同部门薪资更高的员工<br>
+SELECT a.name, a.salary, b.name AS higher_earner<br>
+FROM employees a<br>
+JOIN employees b ON a.department_id = b.department_id AND b.salary &gt; a.salary;</li>
+</ol>
+<p>-- 交叉连接生成日历（补零）<br>
+WITH RECURSIVE calendar AS (<br>
+SELECT '2026-01-01' AS dt<br>
+UNION ALL<br>
+SELECT DATE_ADD(dt, INTERVAL 1 DAY) FROM calendar WHERE dt &lt; '2026-12-31'<br>
+)<br>
+SELECT c.dt, COALESCE(SUM(o.amount), 0) AS daily_sales<br>
+FROM calendar c<br>
+LEFT JOIN orders o ON DATE(o.order_date) = c.dt<br>
+GROUP BY c.dt;</p>
+<p>-- LATERAL JOIN（MySQL 8.0.14+）：每组取 Top N<br>
+SELECT d.name, top3.*<br>
+FROM departments d<br>
+CROSS JOIN LATERAL (<br>
+SELECT e.name AS emp_name, e.salary<br>
+FROM employees e<br>
+WHERE e.department_id = d.id<br>
+ORDER BY e.salary DESC<br>
+LIMIT 3<br>
+) top3;</p>
+<ol>
+<li>条件表达式与聚合</li>
+</ol>
+<p>-- 行转列（PIVOT）<br>
+SELECT<br>
+student_name,<br>
+MAX(CASE WHEN subject = '数学' THEN score END) AS math,<br>
+MAX(CASE WHEN subject = '英语' THEN score END) AS english,<br>
+MAX(CASE WHEN subject = '物理' THEN score END) AS physics<br>
+FROM scores<br>
+GROUP BY student_name;</p>
+<p>-- 列转行（UNPIVOT）<br>
+SELECT id, 'Q1' AS quarter, q1_sales AS sales FROM sales_data<br>
+UNION ALL<br>
+SELECT id, 'Q2', q2_sales FROM sales_data<br>
+UNION ALL<br>
+SELECT id, 'Q3', q3_sales FROM sales_data;</p>
+<p>-- GROUPING SETS 模拟（MySQL 不原生支持）<br>
+SELECT department, job_title, SUM(salary)<br>
+FROM employees<br>
+GROUP BY department, job_title<br>
+UNION ALL<br>
+SELECT department, NULL, SUM(salary)<br>
+FROM employees<br>
+GROUP BY department<br>
+UNION ALL<br>
+SELECT NULL, NULL, SUM(salary)<br>
+FROM employees;</p>
+<ol>
+<li>
+<p>存储过程与游标<br>
+DELIMITER //<br>
+CREATE PROCEDURE generate_report(IN dept_id INT, OUT total DECIMAL(12,2))<br>
+BEGIN<br>
+DECLARE done INT DEFAULT FALSE;<br>
+DECLARE emp_salary DECIMAL(10,2);<br>
+DECLARE cur CURSOR FOR<br>
+SELECT salary FROM employees WHERE department_id = dept_id;<br>
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;</p>
+<p>SET total = 0;<br>
+OPEN cur;<br>
+read_loop: LOOP<br>
+FETCH cur INTO emp_salary;<br>
+IF done THEN LEAVE read_loop; END IF;<br>
+SET total = total + emp_salary;<br>
+END LOOP;<br>
+CLOSE cur;<br>
+END //<br>
+DELIMITER ;</p>
+</li>
+</ol>
+<p>-- 调用<br>
+CALL generate_report(10, @total);<br>
+SELECT @total;</p>
+<ol>
+<li>高级子查询<br>
+-- EXISTS vs IN（大数据集 EXISTS 通常更快）<br>
+SELECT * FROM customers c<br>
+WHERE EXISTS (<br>
+SELECT 1 FROM orders o<br>
+WHERE o.customer_id = c.id AND o.amount &gt; 1000<br>
+);</li>
+</ol>
+<p>-- 相关子查询：每个部门薪资最高的人<br>
+SELECT * FROM employees e<br>
+WHERE salary = (<br>
+SELECT MAX(salary) FROM employees<br>
+WHERE department_id = e.department_id<br>
+);</p>
+<p>-- ALL / ANY<br>
+SELECT name, salary FROM employees<br>
+WHERE salary &gt; ALL (<br>
+SELECT salary FROM employees WHERE department_id = 5<br>
+);</p>
+<ol>
+<li>性能优化写法</li>
+</ol>
+<p>-- 覆盖索引查询：只查索引列，避免回表<br>
+SELECT department_id, COUNT(*) FROM employees<br>
+WHERE department_id BETWEEN 1 AND 10<br>
+GROUP BY department_id;</p>
+<p>-- 避免 SELECT *，只取需要的列<br>
+-- 避免在 WHERE 中对列做函数操作（会导致索引失效）<br>
+-- ✗  WHERE YEAR(order_date) = 2026<br>
+-- ✓  WHERE order_date &gt;= '2026-01-01' AND order_date &lt; '2027-01-01'</p>
+<p>-- 分页优化（深分页）<br>
+-- ✗  SELECT * FROM orders LIMIT 1000000, 20;<br>
+-- ✓  使用游标分页<br>
+SELECT * FROM orders<br>
+WHERE id &gt; 1000000   -- 上一页最后一条的 ID<br>
+ORDER BY id<br>
+LIMIT 20;</p>
+<p>-- USING 代替 ON（同名字段时更简洁）<br>
+SELECT * FROM orders JOIN customers USING (customer_id);</p>
+<ol>
+<li>其他实用技巧<br>
+-- UPSERT（存在则更新，不存在则插入）<br>
+INSERT INTO product_stats (product_id, view_count)<br>
+VALUES (101, 1)<br>
+ON DUPLICATE KEY UPDATE view_count = view_count + 1;</li>
+</ol>
+<p>-- 生成序列号<br>
+SELECT<br>
+@rownum := @rownum + 1 AS seq,<br>
+e.*<br>
+FROM employees e, (SELECT @rownum := 0) r<br>
+ORDER BY e.hire_date;</p>
+<p>-- JSON 操作（MySQL 5.7+）<br>
+SELECT<br>
+id,<br>
+JSON_EXTRACT(metadata, '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">.</mi><mi>t</mi><mi>a</mi><mi>g</mi><msup><mi>s</mi><mo mathvariant="normal">′</mo></msup><mo>)</mo><mi>A</mi><mi>S</mi><mi>t</mi><mi>a</mi><mi>g</mi><mi>s</mi><mo separator="true">,</mo><mi>J</mi><mi>S</mi><mi>O</mi><msub><mi>N</mi><mi>U</mi></msub><mi>N</mi><mi>Q</mi><mi>U</mi><mi>O</mi><mi>T</mi><mi>E</mi><mo>(</mo><mi>J</mi><mi>S</mi><mi>O</mi><msub><mi>N</mi><mi>E</mi></msub><mi>X</mi><mi>T</mi><mi>R</mi><mi>A</mi><mi>C</mi><mi>T</mi><mo>(</mo><mi>m</mi><mi>e</mi><mi>t</mi><mi>a</mi><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><msup><mo separator="true">,</mo><mo mathvariant="normal">′</mo></msup></mrow><annotation encoding="application/x-tex">.tags&#x27;) AS tags,
+    JSON_UNQUOTE(JSON_EXTRACT(metadata, &#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord">.</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">U</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">Q</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mpunct"><span class="mpunct">,</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>.name')) AS name<br>
+FROM products<br>
+WHERE JSON_CONTAINS(metadata-&gt;'$.tags', '&quot;new&quot;');</p>
+<p>-- GROUP_CONCAT：将多行合并为一行<br>
+SELECT department_id,<br>
+GROUP_CONCAT(name ORDER BY salary DESC SEPARATOR ', ') AS members<br>
+FROM employees<br>
+GROUP BY department_id;</p>
+<p>-- 窗口函数实现分组内百分比<br>
+SELECT<br>
+name, department, salary,<br>
+ROUND(salary / SUM(salary) OVER (PARTITION BY department) * 100, 2) AS pct<br>
+FROM employees;</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[服务器常用操作]]></title>
+        <id>https://kangjn.github.io/post/fu-wu-qi-chang-yong-cao-zuo/</id>
+        <link href="https://kangjn.github.io/post/fu-wu-qi-chang-yong-cao-zuo/">
+        </link>
+        <updated>2026-05-21T04:01:35.000Z</updated>
+        <content type="html"><![CDATA[<p>windows服务器测试网络通不通</p>
+<p>使用windows自带的Powershell<br>
+示例：Test-NetConnection -ComputerName kktest.legendholdings.com.cn -Port 8000</p>
+<p>SSL证书转换（Tomcat）<br>
+###将crt和key转换成p12文件<br>
+1、openssl pkcs12 -export -in ChamcDv_com.crt -inkey ChamcDv_com.key -out ChamcDv_com.p12<br>
+###从p12文件生成jks证书<br>
+2、keytool -importkeystore -v -srckeystore ChamcDv_com.p12 -srcstoretype pkcs12 -destkeystore ChamcDv_com.jks -deststoretype jks<br>
+###查看jks证书信息<br>
+3、keytool -v -list -keystore ChamcDv_com.jks<br>
+###查看crt证书信息<br>
+4、openssl x509 -in ChamcDv_com.crt -text -noout</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Tomcat部署SSL证书]]></title>
+        <id>https://kangjn.github.io/post/tomcat-bu-shu-ssl-zheng-shu/</id>
+        <link href="https://kangjn.github.io/post/tomcat-bu-shu-ssl-zheng-shu/">
+        </link>
+        <updated>2026-05-21T04:00:53.000Z</updated>
+        <content type="html"><![CDATA[<p>一、  安装服务器证书1.  配置Tomcat复制已正确导入认证回复的server.jks文件到Tomcat安装目录下的conf目录。打开conf目录下的server.xml文件，找到并修改以下内容<br>
+      <br>
+&lt;!—  <Connector protocol="org.apache.coyote.http11.Http11Protocol"               port="8443" SSLEnabled="true"               maxThreads="150" scheme="https" secure="true"               clientAuth="false" sslProtocol="TLS" />    --&gt;<br>
+修改为</p>
+   <Connector protocol="org.apache.coyote.http11.Http11Protocol"                   port="443" SSLEnabled="true"                   maxThreads="150" scheme="https" secure="true"               keystoreFile="conf\keystore.jks" keystorePass="password"               clientAuth="false" sslProtocol="TLS" ciphers="TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256"  /> 
+<p>默认的SSL访问端口号为443，如果使用其他端口号，则您需要使用https://yourdomain:port的方式来访问您的站点。</p>
+<ol start="2">
+<li>访问测试重启Tomcat，访问https://youdomain:port，测试证书的安装。二、  服务器证书的备份及恢复在您成功的安装和配置了服务器证书之后，请务必依据下面的操作流程，备份好您的服务器证书，以防证书丢失给您带来不便。1.  服务器证书的备份备份服务器证书密钥库文件server.jks文件即可完成服务器证书的备份操作。2.  服务器证书的恢复请参照服务器证书安装部分，将服务器证书密钥库server.jks文件恢复到您的服务器上，并修改配置文件，恢复服务器证书的应用。</li>
+</ol>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux基础命令（八）]]></title>
+        <id>https://kangjn.github.io/post/linux-ji-chu-ming-ling-ba/</id>
+        <link href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-ba/">
+        </link>
+        <updated>2026-02-03T03:36:47.000Z</updated>
+        <content type="html"><![CDATA[<p>1、连接数<br>
+假设Tomcat接收http请求的端口是8083，则可以使用如下语句查看连接情况：<br>
+netstat –nat | grep 8083</p>
+<p>2、线程<br>
+ps命令可以查看进程状态，如执行如下命令：<br>
+ps –e | grep java</p>
+<p>通过如下命令，可以看到该进程内有多少个线程；其中，nlwp含义是number of light-weight process。<br>
+ps –o nlwp 27989</p>
+<p>要想获得真正在running的线程数量，可以通过以下语句完成：<br>
+ps -eLo pid ,stat | grep 27989 | grep running | wc -l</p>
+<p>Samba 实现文件共享及用户管理</p>
+<ol>
+<li>添加 Linux 用户<br>
+因为 Samba 用户必须是 Linux 中的用户，所以首先需要创建一个新的 Linux 用户。该用户将用于 Samba 登录。<br>
+sudo useradd &lt;用户名&gt;</li>
+<li>添加 Samba 用户及其密码<br>
+在 Linux 用户添加完成后，我们需要将其添加为 Samba 用户。执行以下命令为该用户创建 Samba 账户和密码：<br>
+sudo smbpasswd -a &lt;用户名&gt;</li>
+<li>检查用户是否添加成功<br>
+使用 pdbedit 命令可以查看当前 Samba 中的所有用户，确保步骤二中添加的用户成功添加：<br>
+pdbedit -L<br>
+. 删除 Samba 用户<br>
+如果需要删除某个 Samba 用户，可以使用以下命令：<br>
+sudo smbpasswd -x &lt;用户名&gt;</li>
+</ol>
+<p>配置 Samba 共享文件夹<br>
+为了让 Samba 用户有一个独立的共享文件夹，我们需要手动创建一个目录并设置相应的权限。</p>
+<ol>
+<li>创建共享文件夹<br>
+进入你在 Samba 配置文件 /etc/samba/smb.conf 中指定的共享目录。例如，如果共享目录为 /srv/samba，你可以使用以下命令：<br>
+cd /srv/samba</li>
+</ol>
+<p>然后为每个用户创建一个专属的文件夹，建议文件夹名称与用户名一致：<br>
+mkdir &lt;用户名&gt;</p>
+<ol start="2">
+<li>设置文件夹权限<br>
+设置文件夹权限非常重要，只有正确的权限设置才能保证文件夹的安全性和可访问性。以下是常用的权限配置：</li>
+</ol>
+<p>700 权限：仅允许文件夹的所有者具有读写和执行权限，其他用户无权访问。<br>
+chmod 700 &lt;文件夹名称&gt;<br>
+3. 修改文件夹所属用户和用户组<br>
+Samba 共享目录的文件夹必须属于相应的用户。我们使用 chown 命令来更改文件夹的所有者和用户组：</p>
+<p>chown &lt;用户名&gt;:&lt;用户组&gt; &lt;文件夹名称&gt;<br>
+四、配置 Samba 服务<br>
+在完成上述步骤后，你需要修改 Samba 的配置文件 /etc/samba/smb.conf 来添加新创建的共享目录。你可以添加如下的共享配置：</p>
+<p>[alice]<br>
+path = /srv/samba/alice<br>
+valid users = alice<br>
+read only = no<br>
+browsable = yes<br>
+在上述配置中：</p>
+<p>path 指定共享文件夹的路径。<br>
+valid users 定义可以访问此共享文件夹的用户。<br>
+read only 设置为 no，表示此共享文件夹对用户是可写的。<br>
+browsable 设置为 yes，表示此共享文件夹是可见的。<br>
+保存配置文件后，重启 Samba 服务以使更改生效：</p>
+<p>sudo systemctl restart smbd</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux基础命令（七）]]></title>
+        <id>https://kangjn.github.io/post/linux-ji-chu-ming-ling-qi/</id>
+        <link href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-qi/">
+        </link>
+        <updated>2026-01-21T00:54:16.000Z</updated>
+        <content type="html"><![CDATA[<p>检测到一台内部服务器上运行着一个不寻常的、未被记录的服务。<br>
+扫描本地监听端口：<br>
+使用命令查看机器上哪些端口正处于监听（LISTEN）状态：<br>
+sudo ss -tulpn</p>
+<p>或者使用 netstat：<br>
+sudo netstat -tulpn</p>
+<p>寻找异常端口：<br>
+除了常见的 22 (SSH) 或 80 (HTTP) 之外，关注那些你不熟悉的数字。<br>
+尝试连接：一旦找到了可疑端口（假设端口号是 XXXXX），使用 nc (netcat) 连接它：<br>
+nc 127.0.0.1 XXXXX</p>
+<p>将 stdout 和 stderr 都捕获到同一个文件中。这可以通过几种方式完成。<br>
+方法 1：&gt; file 2&gt;&amp;1<br>
+此方法将 stdout 重定向到一个文件，然后将 stderr 重定向到与 stdout 相同的位置。顺序 2&gt;&amp;1 很重要：它表示“将文件描述符 2（stderr）重定向到与文件描述符 1（stdout）相同的位置”。</p>
+<p>让我们创建一个同时产生标准输出和标准错误的命令。我们将使用 find 在我们有权限的目录和我们没有权限的目录中搜索文件。<br>
+find ~/project /root -name &quot;current_datetime.txt&quot; &gt; combined_output.log 2&gt;&amp;1<br>
+在这里，find ~/project -name &quot;current_datetime.txt&quot; 将产生 stdout（如果找到），而 find /root -name &quot;current_datetime.txt&quot; 可能会由于权限问题而产生 stderr。</p>
+<pre><code>检查 combined_output.log 文件。
+cat combined_output.log
+
+/home/labex/project/current_datetime.txt
+find: ‘/root’: Permission denied
+你可以看到成功的输出（文件的路径）和错误消息都被捕获在同一个文件中。
+</code></pre>
+<p>方法 2：&amp;&gt; file（Bash 特有）<br>
+Bash 提供了一种将 stdout 和 stderr 组合到文件中的简写方式：&amp;&gt;。这等效于 &gt; file 2&gt;&amp;1。<br>
+让我们使用 &amp;&gt; 简写方式尝试相同的 find 命令。<br>
+find ~/project /root -name &quot;file_list.txt&quot; &amp;&gt; combined_output_shorthand.log</p>
+<pre><code>检查 combined_output_shorthand.log 的内容。
+cat combined_output_shorthand.log
+
+/home/labex/project/file_list.txt
+find: ‘/root’: Permission denied
+结果与前一种方法相同，证明了 &amp;&gt; 的便利性。
+</code></pre>
+<p>管道运算符 |（竖线）用于连接管道中的命令。它将其左侧命令的标准输出（stdout）重定向到其右侧命令的标准输入（stdin）。</p>
+<p>使用 grep 过滤输出<br>
+grep 命令通常用于管道中，以过滤匹配特定模式的行。</p>
+<p>使用 sort 和 uniq<br>
+sort 用于对文本行进行排序，而 uniq 用于报告或省略重复的行。它们经常一起使用。<br>
+cat fruits.txt | sort | uniq</p>
+<p>tee 命令<br>
+tee 命令在管道中很特殊。它读取标准输入，将其写入标准输出，并同时将其写入一个或多个文件。它就像管道中的一个“T”形连接，允许数据双向流动。<br>
+ls -l | tee ls_output.txt<br>
+你也可以使用 tee -a 将输出追加到文件。</p>
+<p>设置局部变量：让我们创建一个名为 MY_MESSAGE 的简单变量。<br>
+MY_MESSAGE=&quot;Hello, LabEx!&quot;</p>
+<p>请注意，= 符号周围没有空格。<br>
+访问变量：要访问变量的值，请在其名称前加上 $ 符号。<br>
+echo $MY_MESSAGE<br>
+Hello, LabEx!</p>
+<p>使用大括号进行变量扩展：有时，你需要清楚地分隔变量名，尤其是在它后面跟着其他字符时。为此使用花括号 {}。<br>
+echo &quot;The message is: ${MY_MESSAGE}.&quot;</p>
+<p>The message is: Hello, LabEx!.<br>
+如果你省略大括号，shell 可能会将 MY_MESSAGE. 解释为变量名，而该变量名不存在。</p>
+<p>列出所有已设置的变量：你可以使用 set 命令列出所有当前已设置的 shell 变量和函数。此输出可能很长，因此通常通过管道传递给 less。</p>
+<p>取消设置变量：要删除变量，请使用 unset 命令。<br>
+unset MY_MESSAGE</p>
+<p>环境变量<br>
+环境变量是一种特殊类型的 shell 变量，由子进程继承。这意味着从你当前 shell 启动的任何程序或脚本都将有权访问这些变量。它们通常用于配置应用程序的环境。<br>
+设置环境变量：使用 export 命令将变量设置为环境变量。<br>
+export EDITOR=vim<br>
+这将设置 EDITOR 环境变量，许多程序使用它来确定你喜欢的文本编辑器。<br>
+列出环境变量：使用 env 命令仅列出环境变量。<br>
+env | grep EDITOR<br>
+结果 ：EDITOR=vim<br>
+取消导出变量：你可以使用 export -n 取消导出变量，而无需取消设置它。这使其再次成为局部变量。<br>
+export -n EDITOR<br>
+验证它不再是环境变量。<br>
+env | grep EDITOR</p>
+<pre><code>你应该看不到任何输出。但是，它仍然是一个局部变量：
+echo $EDITOR
+结果：vim
+要完全删除它，请使用 unset。
+unset EDITOR
+</code></pre>
+<p>启动一个 Python HTTP 服务器，它将监听 8000 端口。<br>
+python3 -m http.server 8000 &amp;<br>
+命令末尾的 &amp; 很重要。它会让服务器在后台运行。这意味着在服务器运行时，你可以继续使用终端执行其他任务。<br>
+利用 Nmap 的 -iL 选项从输入文件中读取目标 IP 地址，然后使用诸如 grep 和 awk 之类的工具从 Nmap 输出中提取在线主机的 IP 地址。最后，你将把提取出的 IP 地址重定向到online_hosts.txt 文件中。</p>
+<p>nmap 通过使用 -PS 和 -PA 选项，Nmap 将向指定网络中的每个主机发送 TCP SYN 和 TCP ACK 数据包。这增加了检测活动主机的几率，尤其是在具有严格防火墙的环境中。<br>
+TCP Ping 扫描 (-PS): 向特定端口发送 TCP SYN 数据包，以确定主机是否在线以及这些端口是否开放。<br>
+UDP Ping 扫描 (-PU): 向特定端口发送 UDP 数据包，当 TCP Ping 被阻止时经常使用，通过响应或缺乏响应来推断主机状态。<br>
+跳过 Ping 扫描 (-Pn): 绕过 Nmap 的默认主机发现阶段，强制它假设所有目标主机都处于在线状态，并直接进行端口扫描。</p>
+<p>使用 chage 命令修改这些密码老化参数。chage 命令允许你更改用户密码过期信息。<br>
+让我们为 policyuser 设置一个密码策略，其中包含以下规则：<br>
+密码更改之间的最少天数：7 天（-m 7）<br>
+密码更改之间的最长天数：90 天（-M 90）<br>
+密码过期前的警告期：14 天（-W 14）<br>
+密码过期后账户锁定前的非活动期：30 天（-I 30）</p>
+<pre><code>sudo chage -m 7 -M 90 -W 14 -I 30 policyuser
+要验证这些更改，你可以使用 chage -l（列表）来显示 policyuser 的当前密码老化信息。
+sudo chage -l policyuser
+</code></pre>
+<p>你的 shell 自定义设置永久生效。任何你设置的别名、函数或 shell 选项都是临时的，在你关闭终端会话时会丢失。要永久保存它们，你需要将它们添加到 shell 配置文件中。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux基础命令--Nmap]]></title>
+        <id>https://kangjn.github.io/post/linux-ji-chu-ming-ling-nmap/</id>
+        <link href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-nmap/">
+        </link>
+        <updated>2026-01-15T07:35:04.000Z</updated>
+        <content type="html"><![CDATA[<p>Nmap（Network Mapper）是一款开源的网络探测和安全审核工具，被广泛用于网络发现和安全审计<br>
+检查 Nmap 是否可用<br>
+$ nmap</p>
+<h1 id="输出-nmap-版本信息证明-nmap-可用">输出 Nmap 版本信息，证明 Nmap 可用</h1>
+<p>在 Kali Linux 的命令行中可以直接使用 nmap 命令</p>
+<p>基本端口扫描<br>
+扫描主机的开放端口，默认扫描1000个常用端口<br>
+$ nmap 192.168.31.180</p>
+<p>指定端口扫描<br>
+使用 -p 参数扫描指定端口，可以扫描单个端口、多个端口或端口范围<br>
+$ nmap 192.168.31.180 -p 80<br>
+扫描单个端口<br>
+$ nmap 192.168.31.180 -p 1-80<br>
+扫描端口范围<br>
+$ nmap 192.168.31.180 -p 80,3389,22,21<br>
+扫描多个指定端口<br>
+$ nmap 192.168.31.180 -p-<br>
+扫描所有端口（1-65535）</p>
+<p>指定扫描方式<br>
+TCP全连接扫描（-sT）<br>
+使用完整的三次握手建立链接，能够建立链接就判定端口开放<br>
+$ nmap 192.168.31.180 -p 80 -sT<br>
+端口开放<br>
+进行完整的三次握手，成功建立链接，STATE字段显示为 open<br>
+端口关闭<br>
+只能进行一次握手，无法建立链接，STATE字段显示为 closed</p>
+<p>SYN半链接扫描（-sS）<br>
+只进行两次握手，对方返回确认帧（ACK=1）就判定端口开放<br>
+$ nmap 192.168.31.180 -p 80 -sS</p>
+<p>隐秘扫描<br>
+只适用于Linux系统，发送特殊TCP包进行扫描<br>
+$ nmap 127.0.0.1 -p 80 -sF<br>
+Fin扫描<br>
+$ nmap 127.0.0.1 -p 80 -sN<br>
+Null扫描<br>
+$ nmap 127.0.0.1 -p 80 -sX<br>
+Xmas扫描<br>
+注意：如果收到RST响应包，就判定端口关闭，否则就判定端口开放或被屏蔽（open/filtered）</p>
+<p>扫描网段中的存活主机<br>
+使用 -sP 参数，不扫描端口，只扫描存活主机。本质上是Ping扫描，能Ping通有回包，就判定主机在线<br>
+$nmap -sP 192.168.31.0/24</p>
+<p>识别具体的服务版本<br>
+扫描端口时，默认显示端口对应的服务，但不显示服务版本。使用 -sV 参数可以识别具体的服务版本<br>
+$nmap 192.168.31.180 -p 80 -sV</p>
+<p>识别操作系统版本<br>
+使用 -O 参数可以识别目标主机的操作系统版本<br>
+$ nmap 192.168.31.180 -p 80 -O</p>
+<p>保存扫描结果<br>
+Nmap的扫描结果可以保存到文件中，支持文本格式和XML格式</p>
+<p>文本格式导出<br>
+将扫描结果原样保存为文本文件<br>
+$ nmap 192.168.31.180 -p 80 -oN result.txt</p>
+<p>XML格式导出<br>
+将扫描结果保存为XML格式，便于程序处理<br>
+$ nmap 192.168.31.180 -p 80 -oX result.xml</p>
+<p>快速参考<br>
+参数	功能	示例<br>
+-p	指定端口	nmap 192.168.1.1 -p 80<br>
+-sT	TCP全连接扫描	nmap 192.168.1.1 -sT<br>
+-sS	SYN半链接扫描	nmap 192.168.1.1 -sS<br>
+-sP	主机探测	nmap -sP 192.168.1.0/24<br>
+-sV	服务版本识别	nmap 192.168.1.1 -sV<br>
+-O	操作系统识别	nmap 192.168.1.1 -O<br>
+-oN	保存为文本格式	nmap 192.168.1.1 -oN result.txt<br>
+-oX	保存为XML格式	nmap 192.168.1.1 -oX result.xml</p>
+<p>Wireshark 过滤器表达式规则</p>
+<ol>
+<li>
+<p>抓包过滤器语法和实例<br>
+抓包过滤器包含以下元素：类型（Type，如 host、net、port）、方向（Dir，如 src、dst）、协议（Proto，如 ether、ip、tcp、udp、http、icmp、ftp 等）以及逻辑运算符（&amp;&amp; 与、|| 或、！非）。<br>
+协议过滤：直接在抓包过滤框中输入协议名。例如：<br>
+tcp：仅显示 TCP 协议的数据包。<br>
+http：仅显示 HTTP 协议的数据包。<br>
+icmp：仅显示 ICMP 协议的数据包。<br>
+IP 过滤：<br>
+host 192.168.1.104：捕获与 192.168.1.104 相关的所有数据包。<br>
+src host 192.168.1.104：仅捕获源地址为 192.168.1.104 的数据包。<br>
+dst host 192.168.1.104：仅捕获目标地址为 192.168.1.104 的数据包。<br>
+端口过滤：<br>
+port 80：捕获端口为 80 的数据包。<br>
+src port 80：仅捕获源端口为 80 的数据包。<br>
+dst port 80：仅捕获目标端口为 80 的数据包。<br>
+逻辑运算符：<br>
+src host 192.168.1.104 &amp;&amp; dst port 80：捕获源地址为 192.168.1.104 且目标端口为 80 的数据包。<br>
+host 192.168.1.104 || host 192.168.1.102：捕获主机地址为 192.168.1.104 或 192.168.1.102 的数据包。<br>
+!broadcast：不捕获广播数据包。</p>
+</li>
+<li>
+<p>显示过滤器语法和实例<br>
+比较操作符：包括 ==（等于）、!=（不等于）、&gt;（大于）、&lt;（小于）、&gt;=（大于等于）、&lt;=（小于等于）。<br>
+协议过滤：直接在过滤框中输入协议名，注意协议名称需小写。例如：<br>
+tcp：仅显示 TCP 协议的数据包。<br>
+http：仅显示 HTTP 协议的数据包。<br>
+icmp：仅显示 ICMP 协议的数据包。<br>
+IP 过滤：<br>
+ip.src == 192.168.1.104：显示源地址为 192.168.1.104 的数据包。<br>
+ip.dst == 192.168.1.104：显示目标地址为 192.168.1.104 的数据包。<br>
+ip.addr == 192.168.1.104：显示源 IP 地址或目标 IP 地址为 192.168.1.104 的数据包。<br>
+端口过滤：<br>
+tcp.port == 80：显示源主机或目标主机端口为 80 的数据包。<br>
+tcp.srcport == 80：仅显示 TCP 协议的源主机端口为 80 的数据包。<br>
+tcp.dstport == 80：仅显示 TCP 协议的目标主机端口为 80 的数据包。<br>
+Http 模式过滤：<br>
+http.request.method == &quot;GET&quot;：仅显示 HTTP GET 方法的数据包。<br>
+逻辑运算符：and、or、not。例如，ip.addr == 192.168.1.104 and icmp 表示获取 IP 地址为 192.168.1.104 的 ICMP 数据包。</p>
+<p>数据包内容过滤：假设需要根据 ICMP 层的内容进行过滤，可单击选中界面中的码流，在下方进行选中数据。右键单击选中后，选择 Select，在过滤器中显示条件表达式。例如，过滤出数据包中包含 &quot;abcd&quot; 内容的数据流，条件表达式为 contains &quot;abcd&quot;。</p>
+</li>
+</ol>
+<p>Wireshark 抓包分析 TCP 三次握手</p>
+<ol>
+<li>
+<p>TCP 三次握手连接建立过程<br>
+Step 1：客户端发送一个 SYN=1、ACK=0 标志的数据包给服务端，请求建立连接。<br>
+Step 2：服务端收到请求并允许连接后，发送一个 SYN=1、ACK=1 标志的数据包给客户端，告知可以通信，并要求客户端发送确认数据包。<br>
+Step 3：客户端发送一个 SYN=0、ACK=1 的数据包给服务端，确认连接已建立，TCP 连接成功，开始通信。</p>
+</li>
+<li>
+<p>Wireshark 抓包获取访问指定服务端数据包<br>
+Step 1：启动 Wireshark 抓包，打开浏览器输入 www.huawei.com。<br>
+Step 2：使用 ping www.huawei.com 获取 IP 地址。<br>
+Step 3：输入过滤条件 ip.addr == 211.162.2.183 获取待分析数据包列表。</p>
+</li>
+</ol>
+<p>从图中可以看到，Wireshark 截获了三次握手的三个数据包。第四个包才是 HTTP 数据包，这表明 HTTP 确实是通过 TCP 建立连接的。<br>
+第一次握手数据包</p>
+<p>客户端发送一个 TCP 数据包，标志位为 SYN，序列号为 0，表示客户端请求建立连接。</p>
+<p>关键属性：<br>
+SYN：标志位，表示请求建立连接。<br>
+Seq = 0：初始建立连接值为 0，数据包的相对序列号从 0 开始，表示当前尚未发送数据。<br>
+Ack = 0：初始建立连接值为 0，表示尚未接收到数据。</p>
+<p>第二次握手的数据包<br>
+服务器发回确认包，标志位为 SYN, ACK，将确认序号设置为客户端的初始序列号加 1，即 0+1=1。</p>
+<p>关键属性：<br>
+[SYN + ACK]：标志位，表示同意建立连接并回送 SYN+ACK。<br>
+Seq = 0：初始建立值为 0，表示尚未发送数据。<br>
+Ack = 1：表示当前端成功接收的数据位数。虽然客户端尚未发送任何有效数据，但确认号仍被加 1，因为包含 SYN 或 FIN 标志位的包不携带有效数据。</p>
+<p>第三次握手的数据包<br>
+客户端再次发送确认包（ACK），SYN 标志位为 0，ACK 标志位为 1。客户端将服务器发来的 ACK 序号字段加 1，并将其放在确认字段中发送给对方。</p>
+<p>关键属性：<br>
+ACK：标志位，表示已收到记录。<br>
+Seq = 1：表示当前已发送 1 个数据。<br>
+Ack = 1：表示当前端成功接收的数据位数。虽然服务端尚未发送任何有效数据，但确认号仍被加 1，因为包含 SYN 或 FIN 标志位的包不携带有效数据。</p>
+<p>通过 TCP 三次握手，连接建立成功，开始进行数据交互。<br>
+数据交互过程的数据包说明</p>
+<p>数据包关键属性：<br>
+Seq: 1：表示当前已发送 1 字节数据。<br>
+Ack: 1：表示当前共收到 1 字节数据。<br>
+Seq: 1：表示当前已发送 1 字节数据。<br>
+Ack: 951：表示服务端共收到 951 字节数据。</p>
+<p>在 TCP 层，FLAGS 字段包含以下标识：SYN、FIN、ACK、PSH、RST、URG。其中，日常分析中常用的字段为前五个，其含义如下：<br>
+SYN：表示建立连接。<br>
+FIN：表示关闭连接。<br>
+ACK：表示响应。<br>
+PSH：表示有数据传输。<br>
+RST：表示连接重置。</p>
+<p>数据包详细信息（Packet Details Pane）：显示选定数据包的所有详细信息，是分析协议字段的关键部分。信息行包括：<br>
+Frame：物理层的数据帧概况。<br>
+Ethernet II：数据链路层以太网帧头部信息。<br>
+Internet Protocol Version 4：互联网层 IP 包头部信息。<br>
+Transmission Control Protocol：传输层 TCP 数据段头部信息。<br>
+Hypertext Transfer Protocol：应用层 HTTP 协议信息。</p>
+<p>使用 getent 命令。getent 是一个实用程序，用于从各种系统数据库（例如本例中的组数据库）中检索条目。在你的终端中运行以下命令：<br>
+getent group wireshark</p>
+<p>chgrp 命令用于更改文件或目录的组所有权。<br>
+sudo chgrp wireshark /usr/bin/dumpcap</p>
+<p>gpasswd 命令用于管理 /etc/group 和 /etc/gshadow 文件。<br>
+sudo gpasswd -a <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>U</mi><mi>S</mi><mi>E</mi><mi>R</mi><mi>w</mi><mi>i</mi><mi>r</mi><mi>e</mi><mi>s</mi><mi>h</mi><mi>a</mi><mi>r</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">USER wireshark
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">h</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>USER 变量是一个 shell 变量，其中包含当前用户的用户名。</p>
+<p>sudo chmod 4755 /usr/bin/dumpcap<br>
+此命令在二进制文件上设置 setuid 位（设置用户 ID 位）。setuid 位允许二进制文件以所有者（root）的权限执行，而不管谁在运行它。4755 权限可以分解如下：<br>
+4 - 设置 setuid 位。这意味着当执行二进制文件时，它将以所有者（root）的权限运行。<br>
+7 - 所有者（root）具有读取、写入和执行权限。这允许所有者读取、修改和运行二进制文件。<br>
+5 - 组具有读取和执行权限。这允许 wireshark 组的成员读取和运行二进制文件。<br>
+5 - 其他人具有读取和执行权限。这允许系统上的其他用户读取和运行二进制文件。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux基础命令（六）--压缩和解压缩命令]]></title>
+        <id>https://kangjn.github.io/post/linux-ji-chu-ming-ling-liu/</id>
+        <link href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-liu/">
+        </link>
+        <updated>2026-01-15T05:55:52.000Z</updated>
+        <content type="html"><![CDATA[<p>Linux 压缩和解压缩命令（详细总结）<br>
+在 Linux 中可以识别的常见压缩格式有十几种，比如：&quot;.zip&quot;、&quot;.gz&quot;、&quot;.bz2&quot;、“tar”、&quot;.tar.gz&quot;、&quot;.tar.bz2&quot;等等<br>
+1、&quot;.zip&quot; 格式<br>
+&quot;.zip&quot; 是 Windows 中最常用的压缩格式，Linux 也可正确识别 &quot;.zip&quot; 格式，这可以方便的和 Windows 系统通用压缩文件。</p>
+<p>&quot;.zip&quot; 格式压缩命令：<br>
+zip [选项] 压缩包名 源文件或源目录<br>
+选项：<br>
+​ -r：压缩目录<br>
+[root@hepingfly hepingfly]# zip mytxt.zip abc.txt abd.txt bcd.txt<br>
+adding: abc.txt (deflated 6%)<br>
+adding: abd.txt (stored 0%)<br>
+adding: bcd.txt (stored 0%)</p>
+<h1 id="把三个-txt-文件压缩成一个-zip-文件">把三个 txt 文件压缩成一个 zip 文件</h1>
+<p>&quot;.zip&quot; 格式解压缩命令：<br>
+unzip [选项] 压缩包名<br>
+选项：<br>
+​ -d：指定解压缩位置</p>
+<p>[root@hepingfly hepingfly]# unzip -d /home/hepingfly/abc/ mytxt.zip<br>
+Archive:  mytxt.zip<br>
+inflating: /home/hepingfly/abc/abc.txt<br>
+extracting: /home/hepingfly/abc/abd.txt<br>
+extracting: /home/hepingfly/abc/bcd.txt</p>
+<h1 id="如果不指定-d-参数默认解压到当前目录下">如果不指定 -d 参数，默认解压到当前目录下</h1>
+<p>2、&quot;.gz&quot; 格式（不能打包）<br>
+&quot;.gz&quot; 格式压缩命令：<br>
+gzip [选项] 源文件<br>
+选项：<br>
+​ -c：将压缩数据输出到标准输出中，可以用于保留源文件<br>
+​ -d：解压缩<br>
+​ -r：压缩目录<br>
+gzip 压缩文件后会把源文件删除掉，它是不支持保留源文件的</p>
+<p>[root@hepingfly hepingfly]# gzip abc.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 12<br>
+-rw-rw-r--. 1 hepingfly hepingfly   60 2月  22 01:33 abc.txt.gz</p>
+<h1 id="压缩完之后源文件也会被删除掉">压缩完之后源文件也会被删除掉</h1>
+<hr>
+<p>[root@hepingfly hepingfly]# gzip -c bcd.txt &gt; bcd.txt.gz<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 16<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-r--r--. 1 root      root        28 2月  25 00:55 bcd.txt.gz</p>
+<h1 id="你使用-gzip-c-bcdtxt-命令会把压缩数据输出到屏幕上现在我不让它输出到屏幕上而是重定向到一个压缩文件中这样就实现了在压缩你文件的同时不删除源文件">你使用 gzip -c bcd.txt 命令，会把压缩数据输出到屏幕上，现在我不让它输出到屏幕上，而是重定向到一个压缩文件中，这样就实现了在压缩你文件的同时不删除源文件</h1>
+<hr>
+<p>[root@hepingfly hepingfly]# gzip -r aaaa/<br>
+[root@hepingfly hepingfly]# ll aaaa/<br>
+总用量 8<br>
+-rw-r--r--. 1 root root 26 2月  25 01:02 a.txt.gz<br>
+-rw-r--r--. 1 root root 26 2月  25 01:02 b.txt.gz</p>
+<h1 id="你使用-gzip-r-命令它是把这个目录下的所有文件都压缩而不会把这个目录压缩不能打包">你使用 gzip -r 命令，它是把这个目录下的所有文件都压缩，而不会把这个目录压缩(不能打包)</h1>
+<p>&quot;.gz&quot; 格式解压缩命令：<br>
+gzip -d 压缩包名<br>
+gunzip 压缩包名<br>
+上面两个命令都可以</p>
+<p>3、&quot;.bz2 格式（不能压缩目录）&quot;<br>
+&quot;.bz2&quot; 格式，是 Linux 的另一种压缩格式，从理论上来讲，&quot;.bz2&quot; 格式的算法更先进、压缩比更好；而 &quot;.gz&quot; 格式相对来讲压缩时间更快</p>
+<p>&quot;.bz2&quot; 格式压缩命令：<br>
+bzip2 [选项] 源文件<br>
+选项：<br>
+​ -d：解压缩<br>
+​ -k：压缩时保留源文件<br>
+​ -v：显示压缩的详细信息</p>
+<p>[root@hepingfly hepingfly]# bzip2 -k bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 20<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-------. 1 hepingfly hepingfly   14 2月  21 00:37 bcd.txt.bz2</p>
+<h1 id="保留源文件压缩">保留源文件压缩</h1>
+<p>注：这条命令不能压缩目录，压缩目录就会报错。前面的 gzip 命令是不能打包，你用 gzip 命令压缩目录，它会把你目录下的文件进行压缩，不会把你这个目录进行压缩</p>
+<p>&quot;.bz2&quot; 格式解压缩命令：<br>
+bzip2 -d 压缩包<br>
+bunzip2 压缩包<br>
+上面两个命令都可以</p>
+<p>4、&quot;.tar &quot; 格式（打包不会压缩）<br>
+&quot;.tar&quot; 格式的打包和解打包都使用 tar 命令，区别只是选项不同。<br>
+&quot;.tar&quot; 格式打包命令：<br>
+tar [选项] [-f 压缩包名] 源文件或目录<br>
+选项：<br>
+​ -c：打包<br>
+​ -f：指定压缩包的文件名。压缩包的扩展名是用来给管理员识别格式的，所以一定要正确指定扩展名。<br>
+​ -v：显示打包文件过程<br>
+[root@hepingfly hepingfly]# tar -cvf test.tar abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt</p>
+<p>&quot;.tar&quot; 格式解打包命令：<br>
+tar [选项] 压缩包<br>
+选项：<br>
+​ -x：解打包<br>
+​ -f：指定压缩包的文件名<br>
+​ -v：显示解打包文件过程<br>
+[root@hepingfly hepingfly]# tar -xvf test.tar<br>
+abd.txt<br>
+bcd.txt</p>
+<p>5、&quot;.tar.gz&quot; 和 &quot;.tar.bz2&quot; 格式<br>
+使用 tar 命令直接打包压缩<br>
+tar [选项] 压缩包 源文件或目录<br>
+选项：<br>
+​ -z：压缩和解压缩 &quot;.tar.gz&quot; 格式<br>
+​ -j： 压缩和解压缩 &quot;.tar.bz2&quot; 格式</p>
+<h1 id="压缩">压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-jcvf-testgzbz2-abdtxt-bcdtxtabdtxtbcdtxtroothepingfly-hepingfly-ll总用量-24-rw-r-r-1-root-root-160-2月-25-2311-testgzbz2">[root@hepingfly hepingfly]# tar -jcvf test.gz.bz2 abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 24<br>
+-rw-r--r--. 1 root      root        160 2月  25 23:11 test.gz.bz2</h2>
+<h1 id="解压缩">解压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-jxvf-testgzbz2abdtxtbcdtxt">[root@hepingfly hepingfly]# tar -jxvf test.gz.bz2<br>
+abd.txt<br>
+bcd.txt</h2>
+<h1 id="压缩-2">压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-zcvf-testtargz-abdtxt-bcdtxtabdtxtbcdtxtroothepingfly-hepingfly-ll总用量-12-rw-r-r-1-root-root-0-2月-22-0209-abdtxt-rw-1-hepingfly-hepingfly-0-2月-21-0037-bcdtxt-rw-r-r-1-root-root-154-2月-25-2314-testtargz">[root@hepingfly hepingfly]# tar -zcvf test.tar.gz abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 12<br>
+-rw-r--r--. 1 root      root         0 2月  22 02:09 abd.txt<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-r--r--. 1 root      root       154 2月  25 23:14 test.tar.gz</h2>
+<h1 id="解压缩-2">解压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-zxvf-testtargzabdtxtbcdtxt">[root@hepingfly hepingfly]# tar -zxvf test.tar.gz<br>
+abd.txt<br>
+bcd.txt</h2>
+<h1 id="只查看不解压">只查看不解压</h1>
+<h2 id="roothepingfly-hepingfly-tar-ztvf-testtargz-rw-r-r-rootroot-0-2019-02-22-0209-abdtxt-rw-hepingflyhepingfly-0-2019-02-21-0037-bcdtxt">[root@hepingfly hepingfly]# tar -ztvf test.tar.gz<br>
+-rw-r--r-- root/root         0 2019-02-22 02:09 abd.txt<br>
+-rw------- hepingfly/hepingfly 0 2019-02-21 00:37 bcd.txt</h2>
+<h1 id="解压到指定目录-c-一定要跟在压缩包后面">解压到指定目录(-C 一定要跟在压缩包后面)</h1>
+<h2 id="roothepingfly-hepingfly-tar-zxvf-testtargz-c-aaaaabdtxtbcdtxt">[root@hepingfly hepingfly]# tar -zxvf test.tar.gz -C aaaa/<br>
+abd.txt<br>
+bcd.txt</h2>
+<h1 id="解压指定文件">解压指定文件</h1>
+<p>[root@hepingfly hepingfly]# tar -ztvf test.tar.gz         # 我先查看这个压缩包里面有哪些文件<br>
+-rw-r--r-- root/root         0 2019-02-22 02:09 abd.txt<br>
+-rw------- hepingfly/hepingfly 0 2019-02-21 00:37 bcd.txt<br>
+[root@hepingfly hepingfly]# tar -zxvf test.tar.gz -C aaaa/ abd.txt<br>
+abd.txt</p>
+<h1 id="我只把-abdtxt-文件解压到-aaaa-目录下">我只把 abd.txt 文件解压到 aaaa 目录下</h1>
+<p>释义：<br>
+-z : 使用 gzip 来压缩和解压文件<br>
+-v : –verbose 详细的列出处理的文件<br>
+-f : –file=ARCHIVE 使用档案文件或设备，这个选项通常是必选的<br>
+-c : –create 创建一个新的归档（压缩包）<br>
+-x : 从压缩包中解出文件</p>
+<h1 id="压缩文件-file1-和目录-dir2-到-testtargz">压缩文件 file1 和目录 dir2 到 test.tar.gz</h1>
+<p>tar -zcvf test.tar.gz file1 dir2</p>
+<h1 id="解压-testtargz将-c-换成-x-即可">解压 test.tar.gz（将 c 换成 x 即可）</h1>
+<p>tar -zxvf test.tar.gz</p>
+<h1 id="列出压缩文件的内容">列出压缩文件的内容</h1>
+<p>tar -ztvf test.tar.gz</p>
+]]></content>
+    </entry>
+</feed>

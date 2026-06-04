@@ -1,0 +1,377 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MySQL 高级 SQL 语句指南 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="MySQL 高级 SQL 语句指南 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="MySQL 高级 SQL 语句指南
+
+窗口函数 (Window Functions)
+-- 排名：RANK 有并列跳号，DENSE_RANK 不跳号，ROW_NUMBER 不并列
+SELECT
+name, department, salar..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              MySQL 高级 SQL 语句指南
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-06-04
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>MySQL 高级 SQL 语句指南</p>
+<ol>
+<li>窗口函数 (Window Functions)<br>
+-- 排名：RANK 有并列跳号，DENSE_RANK 不跳号，ROW_NUMBER 不并列<br>
+SELECT<br>
+name, department, salary,<br>
+RANK()       OVER (PARTITION BY department ORDER BY salary DESC) AS rnk,<br>
+DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dense_rnk,<br>
+ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS row_num<br>
+FROM employees;</li>
+</ol>
+<p>-- 累计求和<br>
+SELECT<br>
+order_date, amount,<br>
+SUM(amount) OVER (ORDER BY order_date ROWS UNBOUNDED PRECEDING) AS running_total<br>
+FROM orders;</p>
+<p>-- 移动平均（前后各2行）<br>
+SELECT<br>
+order_date, amount,<br>
+AVG(amount) OVER (ORDER BY order_date ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING) AS moving_avg<br>
+FROM orders;</p>
+<p>-- LAG / LEAD：取前一行/后一行的值<br>
+SELECT<br>
+month, revenue,<br>
+LAG(revenue, 1)  OVER (ORDER BY month) AS prev_month,<br>
+revenue - LAG(revenue, 1) OVER (ORDER BY month) AS growth<br>
+FROM monthly_sales;</p>
+<p>-- NTILE：将数据等分为 N 组<br>
+SELECT name, salary,<br>
+NTILE(4) OVER (ORDER BY salary DESC) AS quartile<br>
+FROM employees;</p>
+<ol start="2">
+<li>CTE (公用表表达式)<br>
+-- 基础 CTE<br>
+WITH dept_stats AS (<br>
+SELECT department_id, AVG(salary) AS avg_salary<br>
+FROM employees<br>
+GROUP BY department_id<br>
+)<br>
+SELECT e.name, e.salary, d.avg_salary<br>
+FROM employees e<br>
+JOIN dept_stats d ON e.department_id = d.department_id<br>
+WHERE e.salary &gt; d.avg_salary;</li>
+</ol>
+<p>-- 递归 CTE：组织架构层级查询<br>
+WITH RECURSIVE org_tree AS (<br>
+-- 锚点：顶层（无上级）<br>
+SELECT id, name, manager_id, 1 AS level, CAST(name AS CHAR(500)) AS path<br>
+FROM employees WHERE manager_id IS NULL<br>
+UNION ALL<br>
+-- 递归<br>
+SELECT e.id, e.name, e.manager_id, t.level + 1,<br>
+CONCAT(t.path, ' → ', e.name)<br>
+FROM employees e<br>
+JOIN org_tree t ON e.manager_id = t.id<br>
+)<br>
+SELECT * FROM org_tree ORDER BY path;</p>
+<ol>
+<li>高级 JOIN 技巧<br>
+-- 自连接：找同部门薪资更高的员工<br>
+SELECT a.name, a.salary, b.name AS higher_earner<br>
+FROM employees a<br>
+JOIN employees b ON a.department_id = b.department_id AND b.salary &gt; a.salary;</li>
+</ol>
+<p>-- 交叉连接生成日历（补零）<br>
+WITH RECURSIVE calendar AS (<br>
+SELECT '2026-01-01' AS dt<br>
+UNION ALL<br>
+SELECT DATE_ADD(dt, INTERVAL 1 DAY) FROM calendar WHERE dt &lt; '2026-12-31'<br>
+)<br>
+SELECT c.dt, COALESCE(SUM(o.amount), 0) AS daily_sales<br>
+FROM calendar c<br>
+LEFT JOIN orders o ON DATE(o.order_date) = c.dt<br>
+GROUP BY c.dt;</p>
+<p>-- LATERAL JOIN（MySQL 8.0.14+）：每组取 Top N<br>
+SELECT d.name, top3.*<br>
+FROM departments d<br>
+CROSS JOIN LATERAL (<br>
+SELECT e.name AS emp_name, e.salary<br>
+FROM employees e<br>
+WHERE e.department_id = d.id<br>
+ORDER BY e.salary DESC<br>
+LIMIT 3<br>
+) top3;</p>
+<ol>
+<li>条件表达式与聚合</li>
+</ol>
+<p>-- 行转列（PIVOT）<br>
+SELECT<br>
+student_name,<br>
+MAX(CASE WHEN subject = '数学' THEN score END) AS math,<br>
+MAX(CASE WHEN subject = '英语' THEN score END) AS english,<br>
+MAX(CASE WHEN subject = '物理' THEN score END) AS physics<br>
+FROM scores<br>
+GROUP BY student_name;</p>
+<p>-- 列转行（UNPIVOT）<br>
+SELECT id, 'Q1' AS quarter, q1_sales AS sales FROM sales_data<br>
+UNION ALL<br>
+SELECT id, 'Q2', q2_sales FROM sales_data<br>
+UNION ALL<br>
+SELECT id, 'Q3', q3_sales FROM sales_data;</p>
+<p>-- GROUPING SETS 模拟（MySQL 不原生支持）<br>
+SELECT department, job_title, SUM(salary)<br>
+FROM employees<br>
+GROUP BY department, job_title<br>
+UNION ALL<br>
+SELECT department, NULL, SUM(salary)<br>
+FROM employees<br>
+GROUP BY department<br>
+UNION ALL<br>
+SELECT NULL, NULL, SUM(salary)<br>
+FROM employees;</p>
+<ol>
+<li>
+<p>存储过程与游标<br>
+DELIMITER //<br>
+CREATE PROCEDURE generate_report(IN dept_id INT, OUT total DECIMAL(12,2))<br>
+BEGIN<br>
+DECLARE done INT DEFAULT FALSE;<br>
+DECLARE emp_salary DECIMAL(10,2);<br>
+DECLARE cur CURSOR FOR<br>
+SELECT salary FROM employees WHERE department_id = dept_id;<br>
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;</p>
+<p>SET total = 0;<br>
+OPEN cur;<br>
+read_loop: LOOP<br>
+FETCH cur INTO emp_salary;<br>
+IF done THEN LEAVE read_loop; END IF;<br>
+SET total = total + emp_salary;<br>
+END LOOP;<br>
+CLOSE cur;<br>
+END //<br>
+DELIMITER ;</p>
+</li>
+</ol>
+<p>-- 调用<br>
+CALL generate_report(10, @total);<br>
+SELECT @total;</p>
+<ol>
+<li>高级子查询<br>
+-- EXISTS vs IN（大数据集 EXISTS 通常更快）<br>
+SELECT * FROM customers c<br>
+WHERE EXISTS (<br>
+SELECT 1 FROM orders o<br>
+WHERE o.customer_id = c.id AND o.amount &gt; 1000<br>
+);</li>
+</ol>
+<p>-- 相关子查询：每个部门薪资最高的人<br>
+SELECT * FROM employees e<br>
+WHERE salary = (<br>
+SELECT MAX(salary) FROM employees<br>
+WHERE department_id = e.department_id<br>
+);</p>
+<p>-- ALL / ANY<br>
+SELECT name, salary FROM employees<br>
+WHERE salary &gt; ALL (<br>
+SELECT salary FROM employees WHERE department_id = 5<br>
+);</p>
+<ol>
+<li>性能优化写法</li>
+</ol>
+<p>-- 覆盖索引查询：只查索引列，避免回表<br>
+SELECT department_id, COUNT(*) FROM employees<br>
+WHERE department_id BETWEEN 1 AND 10<br>
+GROUP BY department_id;</p>
+<p>-- 避免 SELECT *，只取需要的列<br>
+-- 避免在 WHERE 中对列做函数操作（会导致索引失效）<br>
+-- ✗  WHERE YEAR(order_date) = 2026<br>
+-- ✓  WHERE order_date &gt;= '2026-01-01' AND order_date &lt; '2027-01-01'</p>
+<p>-- 分页优化（深分页）<br>
+-- ✗  SELECT * FROM orders LIMIT 1000000, 20;<br>
+-- ✓  使用游标分页<br>
+SELECT * FROM orders<br>
+WHERE id &gt; 1000000   -- 上一页最后一条的 ID<br>
+ORDER BY id<br>
+LIMIT 20;</p>
+<p>-- USING 代替 ON（同名字段时更简洁）<br>
+SELECT * FROM orders JOIN customers USING (customer_id);</p>
+<ol>
+<li>其他实用技巧<br>
+-- UPSERT（存在则更新，不存在则插入）<br>
+INSERT INTO product_stats (product_id, view_count)<br>
+VALUES (101, 1)<br>
+ON DUPLICATE KEY UPDATE view_count = view_count + 1;</li>
+</ol>
+<p>-- 生成序列号<br>
+SELECT<br>
+@rownum := @rownum + 1 AS seq,<br>
+e.*<br>
+FROM employees e, (SELECT @rownum := 0) r<br>
+ORDER BY e.hire_date;</p>
+<p>-- JSON 操作（MySQL 5.7+）<br>
+SELECT<br>
+id,<br>
+JSON_EXTRACT(metadata, '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">.</mi><mi>t</mi><mi>a</mi><mi>g</mi><msup><mi>s</mi><mo mathvariant="normal">′</mo></msup><mo>)</mo><mi>A</mi><mi>S</mi><mi>t</mi><mi>a</mi><mi>g</mi><mi>s</mi><mo separator="true">,</mo><mi>J</mi><mi>S</mi><mi>O</mi><msub><mi>N</mi><mi>U</mi></msub><mi>N</mi><mi>Q</mi><mi>U</mi><mi>O</mi><mi>T</mi><mi>E</mi><mo>(</mo><mi>J</mi><mi>S</mi><mi>O</mi><msub><mi>N</mi><mi>E</mi></msub><mi>X</mi><mi>T</mi><mi>R</mi><mi>A</mi><mi>C</mi><mi>T</mi><mo>(</mo><mi>m</mi><mi>e</mi><mi>t</mi><mi>a</mi><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><msup><mo separator="true">,</mo><mo mathvariant="normal">′</mo></msup></mrow><annotation encoding="application/x-tex">.tags&#x27;) AS tags,
+    JSON_UNQUOTE(JSON_EXTRACT(metadata, &#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord">.</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">U</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord mathdefault">Q</span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mord mathdefault">d</span><span class="mord mathdefault">a</span><span class="mord mathdefault">t</span><span class="mord mathdefault">a</span><span class="mpunct"><span class="mpunct">,</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>.name')) AS name<br>
+FROM products<br>
+WHERE JSON_CONTAINS(metadata-&gt;'$.tags', '&quot;new&quot;');</p>
+<p>-- GROUP_CONCAT：将多行合并为一行<br>
+SELECT department_id,<br>
+GROUP_CONCAT(name ORDER BY salary DESC SEPARATOR ', ') AS members<br>
+FROM employees<br>
+GROUP BY department_id;</p>
+<p>-- 窗口函数实现分组内百分比<br>
+SELECT<br>
+name, department, salary,<br>
+ROUND(salary / SUM(salary) OVER (PARTITION BY department) * 100, 2) AS pct<br>
+FROM employees;</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/fu-wu-qi-chang-yong-cao-zuo/">
+              <h3 class="post-title">
+                服务器常用操作
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

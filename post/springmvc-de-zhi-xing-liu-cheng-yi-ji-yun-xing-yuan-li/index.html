@@ -1,0 +1,297 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SpringMVC的执行流程以及运行原理 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="SpringMVC的执行流程以及运行原理 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="什么是MVC？
+MVC 是 Model、View 和 Controller 的缩写，分别代表 Web 应用程序中的 3 种职责，MVC是一种软件设计规范。它将业务逻辑、数据、显示分离的方法来组织代码，降低了视图与业务逻辑之间的双向耦合。
+M..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              SpringMVC的执行流程以及运行原理
+            </h2>
+            <div class="post-info">
+              <span>
+                2025-12-30
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>什么是MVC？<br>
+MVC 是 Model、View 和 Controller 的缩写，分别代表 Web 应用程序中的 3 种职责，MVC是一种软件设计规范。它将业务逻辑、数据、显示分离的方法来组织代码，降低了视图与业务逻辑之间的双向耦合。</p>
+<pre><code>Model(模型)：数据模型，提供要展示的数据，因此包含数据和行为，可以认为是领域模型或JavaBean组件（包含数据和行为），不过现在一般都分离开来：Value Object（数据Dao） 和 服务层（行为Service）。也就是模型提供了模型数据查询和模型数据的状态更新等功能，包括数据和业务。
+View(视图)：负责进行模型的展示，一般就是我们见到的用户界面，客户想看到的东西。
+Controller(控制器)：接收用户请求，委托给模型进行处理（状态改变），处理完毕后把返回的模型数据返回给视图，由视图负责展示。也就是说控制器做了个调度员的工作。
+</code></pre>
+<p>最典型的MVC模式就是JSP+Servlet+JavaBean的模式。<br>
+在这里插入图片描述<br>
+什么是SpringMVC？</p>
+<pre><code>SpringMVC是一个基于MVC模式的Web框架，是Spring框架的一个模块 。
+它以SpringIOC容器为基础，并利用容器的特性来简化它的配置，所以 SpringMVC 和 Spring 可直接整合使用。
+SpringMVC 对 MVC 流程进行了封装，屏蔽掉很多底层代码，让开发者可以更加轻松快捷的完成基于 MVC 模式的 Web 开发。
+总的来说：Spring MVC是Spring Framework的一部分，是基于Java实现MVC的轻量级Web框架。
+</code></pre>
+<p>SpringMVC的特点：</p>
+<pre><code>轻量级，简单易学
+高效 , 基于请求响应的MVC框架
+与Spring兼容性好，无缝结合
+约定优于配置
+功能强大：RESTful、数据验证、格式化、本地化、主题等
+简洁灵活
+</code></pre>
+<p>SpringMVC中的核心组件</p>
+<p>（1）前端控制器：DispactherServlet<br>
+（2）处理器映射器：HandlerMapping<br>
+（3）处理器适配器：HandlerAdapter<br>
+（4）处理器：Handler，<br>
+（5）视图解析器：ViewResolver<br>
+（6）视图：View<br>
+组件的介绍</p>
+<pre><code>前端控制器：接收请求、响应结果，相当于转发器，它是SpringMVC框架最核心的组件，有了它就能减少其他组件之间的耦合度。（不需要程序员开发）
+处理器映射器：根据配置的映射规则（根据请求的URL），找到对应的处理器。（不需要程序员开发）
+处理器适配器：适配调用具体的处理器，并且执行处理器中处理请求的方法，执行完毕之后返回一个ModelAndView对象。
+处理器：（需要程序员手动开发）。
+视图解析器：会根据传递过来的ModelAndView对象进行视图解析，根据视图解析名解析称真正的视图View。（不需要程序员开发）
+视图：View是一个接口，它的实现类支持不同类型的视图。比如：JSP、freemarker、Thymeleaf等等。
+</code></pre>
+<p>SpringMVC的执行流程</p>
+<!-- more -->
+<p>（1）当用户通过浏览器发起一个HTTP请求，请求直接到前端控制器DispatcherServlet；<br>
+（2）前端控制器接收到请求以后调用处理器映射器HandlerMapping，处理器映射器根据请求的URL找到具体的Handler，并将它返回给前端控制器；<br>
+（3）前端控制器调用处理器适配器HandlerAdapter去适配调用Handler；<br>
+（4）处理器适配器会根据Handler去调用真正的处理器去处理请求，并且处理对应的业务逻辑；<br>
+（5）当处理器处理完业务之后，会返回一个ModelAndView对象给处理器适配器，HandlerAdapter再将该对象返回给前端控制器；这里的Model是返回的数据对象，View是逻辑上的View。<br>
+（6）前端控制器DispatcherServlet将返回的ModelAndView对象传给视图解析器ViewResolver进行解析，解析完成之后就会返回一个具体的视图View给前端控制器。（ViewResolver根据逻辑的View查找具体的View）<br>
+（7）前端控制器DispatcherServlet将具体的视图进行渲染，渲染完成之后响应给用户（浏览器显示）。<br>
+关于DispatcherServlet的配置说明</p>
+<p>使用SpringMVC时，第一步就是web.xml中配置DispatcherServlet，DispatcherServlet实际上就是一个Servlet，因此我们可以配置多个DispatcherServlet，它是前端控制器，在web.xml文件中配置时，还需要配置拦截匹配的请求，以及Springmvc的配置文件的加载，还有启动顺序的配置，使得该servlet随着Servlet容器的启动而启动，以下就是关于DispatcherServlet的常规配置：</p>
+<!--配置前端控制器-->
+<pre><code>&lt;servlet&gt;
+    &lt;servlet-name&gt;DispactherServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+        &lt;!--配置加载Springmvc的配置文件--&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;classpath:springmvc-config.xml&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    &lt;!--配置启动顺序，数字越小启动优先级越高--&gt;
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;DispactherServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</code></pre>
+<p>以上指明了配置文件的文件名，不使用默认配置文件名，而使用springmvc-config.xml配置文件。<br>
+其中**.xml 这里可以使用多种写法<br>
+1、不写,使用默认值:/WEB-INF/-servlet.xml<br>
+2、/WEB-INF/classes/springMVC.xml<br>
+3、classpath*:springmvc-config.xml<br>
+4、多个值用逗号分隔<br>
+关于SpringMVC的配置文件以及常用部分注解解释</p>
+<p>代码为：</p>
+<?xml version="1.0" encoding="UTF-8"?>
+<p><beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd"><br>
+<!--自动扫描指定的包，下面所有注解类交给IOC容器处理--><br>
+&lt;context:component-scan base-package=&quot;com.oldou.controller&quot;/&gt;<br>
+<!--配置注解驱动--><br>
+<a href="mvc:annotation-driven/">mvc:annotation-driven/</a><br>
+<!--配置视图解析器--><br>
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"><br>
+<!--前缀--><br>
+<property name="prefix" value="/WEB-INF/jsp/"/><br>
+<!--后缀--><br>
+<property name="suffix" value=".jsp"/><br>
+</bean><br>
+<!--配置对静态资源的访问(方式一) 2选1--><br>
+<a href="mvc:default-servlet-handler/">mvc:default-servlet-handler/</a>  	<br>
+<!--配置对静态资源的访问(方式二) 2选1--><br>
+&lt;mvc:resources mapping=&quot;/js/<strong>&quot; location=&quot;/WEB-INF/js/&quot;/&gt;<br>
+&lt;mvc:resources mapping=&quot;/img/</strong>&quot; location=&quot;/WEB-INF/img/&quot;/&gt;<br>
+&lt;mvc:resources mapping=&quot;/css/<strong>&quot; location=&quot;/WEB-INF/css/&quot;/&gt;<br>
+<!--配置拦截器--><br>
+<a href="mvc:interceptors">mvc:interceptors</a><br>
+<a href="mvc:interceptor">mvc:interceptor</a><br>
+<!--/** 包括路径及其子路径--><br>
+<!--/admin/* 拦截的是/admin/add等等这种 , /admin/add/user不会被拦截--><br>
+<!--/admin/** 拦截的是/admin/下的所有--><br>
+&lt;mvc:mapping path=&quot;/</strong>&quot;/&gt;<br>
+<!--bean配置的就是拦截器--><br>
+<bean class="com.oldou.Interceptor.MyInterceptor"/><br>
+&lt;/mvc:interceptor&gt;<br>
+&lt;/mvc:interceptors&gt;</p>
+<!--文件上传配置-->
+<bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+   <!-- 请求的编码格式，必须和jSP的pageEncoding属性一致，以便正确读取表单的内容，默认为ISO-8859-1 -->
+   <property name="defaultEncoding" value="utf-8"/>
+   <!-- 上传文件大小上限，单位为字节（10485760=10M） -->
+   <property name="maxUploadSize" value="10485760"/>
+   <property name="maxInMemorySize" value="40960"/>
+</bean>
+</beans>
+<p>以上配置中，配置了扫描Controller层的注解扫描以及注解的驱动支持，还有视图解析器、静态资源映射器、拦截器等等，里面还可以配置文件的上传等等。</p>
+<p>对于<a href="mvc:annotation-driven/">mvc:annotation-driven/</a>扫描指定的包中的类上的注解，常用的注解如下所示：</p>
+<pre><code>@Controller 声明Controller组件，通常作用在控制层（如 Spring MVC 的 Controller），用于将控制层的类标识为 Spring 中的 Bean，其功能与 @Component 相同。
+@Service 声明Service组件 @Service(“myMovieLister”) ，通常作用在业务层（Service 层），用于将业务层的类标识为 Spring 中的 Bean，其功能与 @Component 相同。
+@Repository 声明Dao组件，将数据访问层（DAO 层）的类标识为 Spring 中的 Bean，其功能与 @Component 相同。
+@Component 泛指组件, 可以使用此注解描述 Spring 中的 Bean，但它是一个泛化的概念，仅仅表示一个组件（Bean），并且可以作用在任何层次。使用时只需将该注解标注在相应类上即可。
+@RequestMapping(&quot;/menu&quot;) 请求映射，用于映射url到控制器类或一个特定的处理程序方法。可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。
+@Resource 用于注入，( j2ee提供的 ) 默认按名称装配， @Resource(name=“beanName”)
+@Autowired 用于注入，(srping提供的) 默认按类型装配
+@Transactional( rollbackFor={Exception.class}) 事务管理
+@RequestBody：注解实现接收http请求的json数据，将json转换为java对象。
+@ResponseBody：注解实现将conreoller方法返回对象转化为json对象响应给客户。
+@Scope(“prototype”) 设定bean的作用域
+@GetMapping：它是 @RequestMapping(method =RequestMethod.GET) 的一个快捷方式，只能处理 Get 类型请求。
+@PostMapping： 它是@RequestMapping(method =RequestMethod.POST) 的一个快捷方式，只能处理 Post 类型请求。
+@RequestParam ：将请求参数绑定到控制器的方法参数上
+@Configuration：声明当前类为配置类，相当于 xml 形式的 Spring 配置中的，该注解需要添加到类上。
+</code></pre>
+<!-- more -->
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

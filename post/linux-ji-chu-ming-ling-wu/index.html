@@ -1,0 +1,204 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基础命令（五） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基础命令（五） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="系统状态检测命令
+1．ifconfig命令
+ifconfig 命令用于获取网卡配置与网络状态等信息，英文全称为 interface configurator， 语法格式为“ifconfig [参数] [网络设备]”。
+使用ifconfig ..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基础命令（五）
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-01-07
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>系统状态检测命令<br>
+1．ifconfig命令<br>
+ifconfig 命令用于获取网卡配置与网络状态等信息，英文全称为 interface configurator， 语法格式为“ifconfig [参数] [网络设备]”。</p>
+<p>使用ifconfig 命令查看本机当前的网卡配置与网络状态等信息时，其实主要查看的就是网卡名称、inet 参数后面的 IP 地址、ether 参数后面的网卡物理地址（又称为 MAC 地址），以及 RX 的接收数据包的个数、TX 的发送数据包的个数、累计流量。<br>
+root@linuxprobe:~# ifconfig</p>
+<p>2．uname命令<br>
+uname 命令用于查看系统内核版本与系统架构等信息，英文全称为 UNIX Name，语法格式为“uname [参数]”。<br>
+在使用 uname 命令时，一般要固定搭配-a 参数来完整地查看当前系统的内核名称、主机名、内核发行版本、节点名、编译时间、硬件名称、硬件平台、处理器类型以及操作系统名称等信息：<br>
+root@linuxprobe:~# uname -a</p>
+<p>如果要查看当前系统版本的详细信息，则需要查看 redhat-release 文件， 其命令以及相应的结果如下：<br>
+root@linuxprobe:~# cat /etc/redhat-release</p>
+<p>3．uptime命令<br>
+uptime 命令用于查看系统的负载信息，输入该命令后按回车键执行即可。<br>
+uptime 命令真的很棒，它可以显示当前系统时间、系统已运行时间、启用终端数量以及平均负载值等信息。平均负载值指的是系统在最近 1 分钟、5 分钟、15 分钟内的压力情况（下面加粗的信息部分），负载值越低越好：<br>
+root@linuxprobe:~# uptime</p>
+<p>4．free命令<br>
+free 命令用于显示当前系统中内存的使用量信息，语法格式为“free [参数]”。</p>
+<p>为了保证 Linux 系统不会因资源耗尽而突然宕机，运维人员需要时刻关注内存的使用量。在使用 free 命令时，可以结合使用-h 参数以更人性化的方式输出当前内存的实时使用量信息。表 2-9 所示为在刘遄老师的计算机上执行 free -h 命令之后的输出信息。需要注意的是，输出信息中的中文注释是作者自行添加的内容，实际输出时没有相应的参数解释。<br>
+root@linuxprobe:~# free -h</p>
+<p>5．who命令<br>
+who 命令用于查看当前登录主机的用户终端信息，输入该命令后按回车键执行即可。<br>
+这 3 个简单的字母可以快速显示出所有正在登录本机的用户名称以及他们正在开启的终端信息；如果有远程用户，还会显示远程用户的 IP 地址。表 2-10 所示为执行 who 命令后的结果。<br>
+root@linuxprobe:~# who</p>
+<p>6．last命令<br>
+last 命令用于查看主机的历史登录记录，输入该命令后按回车键执行即可。<br>
+Linux 系统会将每次的登录信息都记录到日志文件中，如果哪天想翻阅了，直接执行这条命令就行：<br>
+root@linuxprobe:~# last</p>
+<p>7．ping命令<br>
+ping 命令用于测试主机之间的网络连通性，语法格式为“ping [参数] 主机地址”。<br>
+ping 命令的常见参数以及作用<br>
+参数	作用<br>
+-c	总共发送次数<br>
+-i	每次间隔时间（秒）<br>
+-W	最长等待时间（秒）</p>
+<p>8．tracepath命令<br>
+tracepath 命令用于显示数据包到达目的主机时途中经过的所有路由信息，语法格式为“tracepath [参数] IP 地址或域名”。<br>
+当两台主机之间无法正常 ping 通时，要考虑两台主机之间是否有错误的路由信息，导致数据被某一台设备错误地丢弃。这时便可以使用 tracepath 命令追踪数据包到达目的主机时途中的所有路由信息，以分析是哪台设备出了问题。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-vi-bian-ji-ming-ling/">
+              <h3 class="post-title">
+                Linux vi 编辑命令
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

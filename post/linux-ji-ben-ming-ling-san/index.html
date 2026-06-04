@@ -1,0 +1,234 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基本命令（三） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基本命令（三） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Linux 系统中的 /etc/passwd 文件，是系统用户配置文件，存储了系统中所有用户的基本信息，并且所有用户都可以对此文件执行读操作。
+[root@localhost ~]# vi /etc/passwd
+#查看一下文件内容
+roo..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基本命令（三）
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-01-04
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Linux 系统中的 /etc/passwd 文件，是系统用户配置文件，存储了系统中所有用户的基本信息，并且所有用户都可以对此文件执行读操作。</p>
+<p>[root@localhost ~]# vi /etc/passwd<br>
+#查看一下文件内容<br>
+root❌0:0:root:/root:/bin/bash<br>
+bin❌1:1:bin:/bin:/sbin/nologin<br>
+daemon❌2:2:daemon:/sbin:/sbin/nologin<br>
+adm❌3:4:adm:/var/adm:/sbin/nologin<br>
+...省略部分输出...<br>
+每行用户信息都以 &quot;：&quot; 作为分隔符，划分为 7 个字段，每个字段所表示的含义如下：<br>
+用户名：密码：UID（用户ID）：GID（组ID）：描述性信息：主目录：默认Shell</p>
+<p>UID，也就是用户 ID。每个用户都有唯一的一个 UID，Linux 系统通过 UID 来识别不同的用户。<br>
+实际上，UID 就是一个 0~65535 之间的数，不同范围的数字表示不同的用户身份。<br>
+0	超级用户。UID 为 0 就代表这个账号是管理员账号。在 Linux 中，如何把普通用户升级成管理员呢？只需把其他用户的 UID 修改为 0 就可以了，这一点和 Windows 是不同的。不过不建议建立多个管理员账号。</p>
+<p>1~499	系统用户（伪用户）。也就是说，此范围的 UID 保留给系统使用。其中，1~99 用于系统自行创建的账号；100~499 分配给有系统账号需求的用户。<br>
+其实，除了 0 之外，其他的 UID 并无不同，这里只是默认 500 以下的数字给系统作为保留账户，只是一个公认的习惯而已。</p>
+<p>500~65535	普通用户。通常这些 UID 已经足够用户使用了。但不够用也没关系，2.6.x 内核之后的 Linux 系统已经可以支持 232 个 UID 了。</p>
+<p>主目录：也就是用户登录后有操作权限的访问目录，通常称为用户的主目录。</p>
+<p>1、/etc/shadow 是干嘛用的？<br>
+/etc/shadow 文件，用于存储 Linux 系统中用户的密码信息，又称为“影子文件”。</p>
+<p>早期的 UNIX 密码放在 /etc/passwd 文件中，由于该文件允许所有用户读取，易导致用户密码泄露，因此从 /etc/passwd 文件中分离出来，并单独放到了此文件中。/etc/shadow 文件只有 root 用户拥有读权限，保证了用户密码的安全性。<br>
+我们先看看 /etc/shadow 文件中有什么吧<br>
+root:!:17826:0:99999:7:::<br>
+daemon:<em>:17737:0:99999:7:::<br>
+bin:</em>:17737:0:99999:7:::<br>
+...太多了，省略一部分...<br>
+skx:<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>jP$V1agVNyLfEYwNQLc6IrJt0:17826:0:99999:7:::<br>
+lilei:<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>6</mn></mrow><annotation encoding="application/x-tex">6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">6</span></span></span></span>zvt9aWzy$aoZDNPL0.mXFfsJczn.9gZtHZwmFTAFIbe4qHZd48zeB1mIka7jOsrmGvGMBV8LUV.iUdr6bk0hQZyGSOPiTy/:18420:0:99999:7:::<br>
+文件中每行代表一个用户，使用 “:” 分隔，每行的用户信息有 9 个字段，格式如下：<br>
+用户名：加密密码：最后一次修改时间：最小修改时间间隔：密码有效期：密码需要变更前的警告天数：密码过期后的宽限时间：账号失效时间：保留字段<br>
+字段详解<br>
+2.1 用户名<br>
+root, skx, lilei 这些都是用户。</p>
+<p>2.2 加密密码<br>
+这里保存的是真正加密的密码，以 lilei 的密码为例</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>6</mn></mrow><annotation encoding="application/x-tex">6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">6</span></span></span></span>zvt9aWzy$aoZDNPL0.mXFfsJczn.9gZtHZwmFTAFIbe4qHZd48zeB1mIka7jOsrmGvGMBV8LUV.iUdr6bk0hQZyGSOPiTy/</p>
+<p>这个密码，是单向不可逆的。目前 Linux 的密码采用的是 SHA512 散列加密算法，原来采用的是 MD5 或 DES 加密算法。SHA512 散列加密算法的加密等级更高，也更加安全。</p>
+<p>注意，这串密码产生的乱码不能手工修改，如果手工修改，系统将无法识别密码，导致密码失效。很多软件透过这个功能，在密码串前加上 “!”、&quot;*&quot; 或 “x” 使密码暂时失效。</p>
+<p>所有伪用户的密码都是 “!!” 或 “*”，代表没有密码是不能登录的。当然，新创建的用户如果不设定密码，那么它的密码项也是 “!!”，代表这个用户没有密码，不能登录。</p>
+<p>2.3 最后一次修改时间<br>
+此字段表示最后一次修改密码的时间，数字的含义是从 1970 年 1 月 1 日到现在的天数，1970 年 1 月 1 日作为 1，过一天加 1，上面 root 账号最后一次修改时间为 17826，这是哪一天呢，可以使用如下命令进行换算：</p>
+<p>root@ubuntu:~# date -d &quot;1970-01-01 17826 days&quot;<br>
+2018年 10月 22日 星期一 00:00:00 +08</p>
+<p>2.4 最小修改时间间隔<br>
+设置了这个值，则表示从变更密码的日期算起，多少天内无法再次修改密码，如果是 0 的话，则没有限制</p>
+<p>2.5 密码有效期<br>
+该字段的默认值为 99999，也就是 273 年，可认为是永久生效。如果改为 90，则表示密码被修改 90 天之后必须再次修改，否则该用户即将过期。可以通过这个字段强制用户定期修改密码。</p>
+<p>2.6 密码需要变更前的警告天数<br>
+密码快过期了，系统就会给出警告了，提醒用户 “再过 n 天你的密码就要过期了，请尽快重新设置你的密码！”。该字段的默认值是 7。</p>
+<p>2.7 密码过期后的宽限天数<br>
+在密码过期后，不是立即失效，则在此字段规定的宽限天数内，用户还是可以登录系统的；如果过了宽限天数，系统将不再让此账户登陆，也不会提示账户过期，是完全禁用。</p>
+<p>假设这个字段设置为 10，则代表密码过期 10 天后失效；如果是 0，则代表密码过期后立即失效；如果是 -1，则代表密码永远不会失效。</p>
+<p>2.8 账号失效时间<br>
+过了这个日期账号就无法使用。使用自 1970 年 1 月 1 日以来的总天数作为账户的失效时间。该字段通常被使用在具有收费服务的系统中。</p>
+<p>2.9 保留<br>
+这个字段目前没有使用，等待新功能的加入。</p>
+<h1 id="vipw-修改passwd">vipw 修改passwd</h1>
+<h1 id="vipw-s修改shadow">vipw -s修改shadow</h1>
+<h1 id="vigr-修改group">vigr  修改group</h1>
+<h1 id="vigr-s修改gshadow">vigr -s修改gshadow</h1>
+<h1 id="visudo修改sudoers">visudo修改sudoers</h1>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#vipw-%E4%BF%AE%E6%94%B9passwd">vipw 修改passwd</a></li>
+<li><a href="#vipw-s%E4%BF%AE%E6%94%B9shadow">vipw -s修改shadow</a></li>
+<li><a href="#vigr-%E4%BF%AE%E6%94%B9group">vigr  修改group</a></li>
+<li><a href="#vigr-s%E4%BF%AE%E6%94%B9gshadow">vigr -s修改gshadow</a></li>
+<li><a href="#visudo%E4%BF%AE%E6%94%B9sudoers">visudo修改sudoers</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-ji-ben-ming-ling-er/">
+              <h3 class="post-title">
+                Linux基本命令（二）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

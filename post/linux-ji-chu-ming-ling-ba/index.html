@@ -1,0 +1,227 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基础命令（八） | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基础命令（八） | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1、连接数
+假设Tomcat接收http请求的端口是8083，则可以使用如下语句查看连接情况：
+netstat –nat | grep 8083
+2、线程
+ps命令可以查看进程状态，如执行如下命令：
+ps –e | grep java
+通过..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基础命令（八）
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-02-03
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>1、连接数<br>
+假设Tomcat接收http请求的端口是8083，则可以使用如下语句查看连接情况：<br>
+netstat –nat | grep 8083</p>
+<p>2、线程<br>
+ps命令可以查看进程状态，如执行如下命令：<br>
+ps –e | grep java</p>
+<p>通过如下命令，可以看到该进程内有多少个线程；其中，nlwp含义是number of light-weight process。<br>
+ps –o nlwp 27989</p>
+<p>要想获得真正在running的线程数量，可以通过以下语句完成：<br>
+ps -eLo pid ,stat | grep 27989 | grep running | wc -l</p>
+<p>Samba 实现文件共享及用户管理</p>
+<ol>
+<li>添加 Linux 用户<br>
+因为 Samba 用户必须是 Linux 中的用户，所以首先需要创建一个新的 Linux 用户。该用户将用于 Samba 登录。<br>
+sudo useradd &lt;用户名&gt;</li>
+<li>添加 Samba 用户及其密码<br>
+在 Linux 用户添加完成后，我们需要将其添加为 Samba 用户。执行以下命令为该用户创建 Samba 账户和密码：<br>
+sudo smbpasswd -a &lt;用户名&gt;</li>
+<li>检查用户是否添加成功<br>
+使用 pdbedit 命令可以查看当前 Samba 中的所有用户，确保步骤二中添加的用户成功添加：<br>
+pdbedit -L<br>
+. 删除 Samba 用户<br>
+如果需要删除某个 Samba 用户，可以使用以下命令：<br>
+sudo smbpasswd -x &lt;用户名&gt;</li>
+</ol>
+<p>配置 Samba 共享文件夹<br>
+为了让 Samba 用户有一个独立的共享文件夹，我们需要手动创建一个目录并设置相应的权限。</p>
+<ol>
+<li>创建共享文件夹<br>
+进入你在 Samba 配置文件 /etc/samba/smb.conf 中指定的共享目录。例如，如果共享目录为 /srv/samba，你可以使用以下命令：<br>
+cd /srv/samba</li>
+</ol>
+<p>然后为每个用户创建一个专属的文件夹，建议文件夹名称与用户名一致：<br>
+mkdir &lt;用户名&gt;</p>
+<ol start="2">
+<li>设置文件夹权限<br>
+设置文件夹权限非常重要，只有正确的权限设置才能保证文件夹的安全性和可访问性。以下是常用的权限配置：</li>
+</ol>
+<p>700 权限：仅允许文件夹的所有者具有读写和执行权限，其他用户无权访问。<br>
+chmod 700 &lt;文件夹名称&gt;<br>
+3. 修改文件夹所属用户和用户组<br>
+Samba 共享目录的文件夹必须属于相应的用户。我们使用 chown 命令来更改文件夹的所有者和用户组：</p>
+<p>chown &lt;用户名&gt;:&lt;用户组&gt; &lt;文件夹名称&gt;<br>
+四、配置 Samba 服务<br>
+在完成上述步骤后，你需要修改 Samba 的配置文件 /etc/samba/smb.conf 来添加新创建的共享目录。你可以添加如下的共享配置：</p>
+<p>[alice]<br>
+path = /srv/samba/alice<br>
+valid users = alice<br>
+read only = no<br>
+browsable = yes<br>
+在上述配置中：</p>
+<p>path 指定共享文件夹的路径。<br>
+valid users 定义可以访问此共享文件夹的用户。<br>
+read only 设置为 no，表示此共享文件夹对用户是可写的。<br>
+browsable 设置为 yes，表示此共享文件夹是可见的。<br>
+保存配置文件后，重启 Samba 服务以使更改生效：</p>
+<p>sudo systemctl restart smbd</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/linux-ji-chu-ming-ling-qi/">
+              <h3 class="post-title">
+                Linux基础命令（七）
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

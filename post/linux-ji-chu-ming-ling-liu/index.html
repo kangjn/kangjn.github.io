@@ -1,0 +1,378 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux基础命令（六）--压缩和解压缩命令 | Gridea</title>
+<link rel="shortcut icon" href="https://kangjn.github.io/favicon.ico?v=1780559851153">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://kangjn.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux基础命令（六）--压缩和解压缩命令 | Gridea - Atom Feed" href="https://kangjn.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Linux 压缩和解压缩命令（详细总结）
+在 Linux 中可以识别的常见压缩格式有十几种，比如：&quot;.zip&quot;、&quot;.gz&quot;、&quot;.bz2&quot;、“tar”、&quot;.tar.gz&q..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://kangjn.github.io">
+  <img class="avatar" src="https://kangjn.github.io/images/avatar.png?v=1780559851153" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux基础命令（六）--压缩和解压缩命令
+            </h2>
+            <div class="post-info">
+              <span>
+                2026-01-15
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Linux 压缩和解压缩命令（详细总结）<br>
+在 Linux 中可以识别的常见压缩格式有十几种，比如：&quot;.zip&quot;、&quot;.gz&quot;、&quot;.bz2&quot;、“tar”、&quot;.tar.gz&quot;、&quot;.tar.bz2&quot;等等<br>
+1、&quot;.zip&quot; 格式<br>
+&quot;.zip&quot; 是 Windows 中最常用的压缩格式，Linux 也可正确识别 &quot;.zip&quot; 格式，这可以方便的和 Windows 系统通用压缩文件。</p>
+<p>&quot;.zip&quot; 格式压缩命令：<br>
+zip [选项] 压缩包名 源文件或源目录<br>
+选项：<br>
+​ -r：压缩目录<br>
+[root@hepingfly hepingfly]# zip mytxt.zip abc.txt abd.txt bcd.txt<br>
+adding: abc.txt (deflated 6%)<br>
+adding: abd.txt (stored 0%)<br>
+adding: bcd.txt (stored 0%)</p>
+<h1 id="把三个-txt-文件压缩成一个-zip-文件">把三个 txt 文件压缩成一个 zip 文件</h1>
+<p>&quot;.zip&quot; 格式解压缩命令：<br>
+unzip [选项] 压缩包名<br>
+选项：<br>
+​ -d：指定解压缩位置</p>
+<p>[root@hepingfly hepingfly]# unzip -d /home/hepingfly/abc/ mytxt.zip<br>
+Archive:  mytxt.zip<br>
+inflating: /home/hepingfly/abc/abc.txt<br>
+extracting: /home/hepingfly/abc/abd.txt<br>
+extracting: /home/hepingfly/abc/bcd.txt</p>
+<h1 id="如果不指定-d-参数默认解压到当前目录下">如果不指定 -d 参数，默认解压到当前目录下</h1>
+<p>2、&quot;.gz&quot; 格式（不能打包）<br>
+&quot;.gz&quot; 格式压缩命令：<br>
+gzip [选项] 源文件<br>
+选项：<br>
+​ -c：将压缩数据输出到标准输出中，可以用于保留源文件<br>
+​ -d：解压缩<br>
+​ -r：压缩目录<br>
+gzip 压缩文件后会把源文件删除掉，它是不支持保留源文件的</p>
+<p>[root@hepingfly hepingfly]# gzip abc.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 12<br>
+-rw-rw-r--. 1 hepingfly hepingfly   60 2月  22 01:33 abc.txt.gz</p>
+<h1 id="压缩完之后源文件也会被删除掉">压缩完之后源文件也会被删除掉</h1>
+<hr>
+<p>[root@hepingfly hepingfly]# gzip -c bcd.txt &gt; bcd.txt.gz<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 16<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-r--r--. 1 root      root        28 2月  25 00:55 bcd.txt.gz</p>
+<h1 id="你使用-gzip-c-bcdtxt-命令会把压缩数据输出到屏幕上现在我不让它输出到屏幕上而是重定向到一个压缩文件中这样就实现了在压缩你文件的同时不删除源文件">你使用 gzip -c bcd.txt 命令，会把压缩数据输出到屏幕上，现在我不让它输出到屏幕上，而是重定向到一个压缩文件中，这样就实现了在压缩你文件的同时不删除源文件</h1>
+<hr>
+<p>[root@hepingfly hepingfly]# gzip -r aaaa/<br>
+[root@hepingfly hepingfly]# ll aaaa/<br>
+总用量 8<br>
+-rw-r--r--. 1 root root 26 2月  25 01:02 a.txt.gz<br>
+-rw-r--r--. 1 root root 26 2月  25 01:02 b.txt.gz</p>
+<h1 id="你使用-gzip-r-命令它是把这个目录下的所有文件都压缩而不会把这个目录压缩不能打包">你使用 gzip -r 命令，它是把这个目录下的所有文件都压缩，而不会把这个目录压缩(不能打包)</h1>
+<p>&quot;.gz&quot; 格式解压缩命令：<br>
+gzip -d 压缩包名<br>
+gunzip 压缩包名<br>
+上面两个命令都可以</p>
+<p>3、&quot;.bz2 格式（不能压缩目录）&quot;<br>
+&quot;.bz2&quot; 格式，是 Linux 的另一种压缩格式，从理论上来讲，&quot;.bz2&quot; 格式的算法更先进、压缩比更好；而 &quot;.gz&quot; 格式相对来讲压缩时间更快</p>
+<p>&quot;.bz2&quot; 格式压缩命令：<br>
+bzip2 [选项] 源文件<br>
+选项：<br>
+​ -d：解压缩<br>
+​ -k：压缩时保留源文件<br>
+​ -v：显示压缩的详细信息</p>
+<p>[root@hepingfly hepingfly]# bzip2 -k bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 20<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-------. 1 hepingfly hepingfly   14 2月  21 00:37 bcd.txt.bz2</p>
+<h1 id="保留源文件压缩">保留源文件压缩</h1>
+<p>注：这条命令不能压缩目录，压缩目录就会报错。前面的 gzip 命令是不能打包，你用 gzip 命令压缩目录，它会把你目录下的文件进行压缩，不会把你这个目录进行压缩</p>
+<p>&quot;.bz2&quot; 格式解压缩命令：<br>
+bzip2 -d 压缩包<br>
+bunzip2 压缩包<br>
+上面两个命令都可以</p>
+<p>4、&quot;.tar &quot; 格式（打包不会压缩）<br>
+&quot;.tar&quot; 格式的打包和解打包都使用 tar 命令，区别只是选项不同。<br>
+&quot;.tar&quot; 格式打包命令：<br>
+tar [选项] [-f 压缩包名] 源文件或目录<br>
+选项：<br>
+​ -c：打包<br>
+​ -f：指定压缩包的文件名。压缩包的扩展名是用来给管理员识别格式的，所以一定要正确指定扩展名。<br>
+​ -v：显示打包文件过程<br>
+[root@hepingfly hepingfly]# tar -cvf test.tar abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt</p>
+<p>&quot;.tar&quot; 格式解打包命令：<br>
+tar [选项] 压缩包<br>
+选项：<br>
+​ -x：解打包<br>
+​ -f：指定压缩包的文件名<br>
+​ -v：显示解打包文件过程<br>
+[root@hepingfly hepingfly]# tar -xvf test.tar<br>
+abd.txt<br>
+bcd.txt</p>
+<p>5、&quot;.tar.gz&quot; 和 &quot;.tar.bz2&quot; 格式<br>
+使用 tar 命令直接打包压缩<br>
+tar [选项] 压缩包 源文件或目录<br>
+选项：<br>
+​ -z：压缩和解压缩 &quot;.tar.gz&quot; 格式<br>
+​ -j： 压缩和解压缩 &quot;.tar.bz2&quot; 格式</p>
+<h1 id="压缩">压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-jcvf-testgzbz2-abdtxt-bcdtxtabdtxtbcdtxtroothepingfly-hepingfly-ll总用量-24-rw-r-r-1-root-root-160-2月-25-2311-testgzbz2">[root@hepingfly hepingfly]# tar -jcvf test.gz.bz2 abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 24<br>
+-rw-r--r--. 1 root      root        160 2月  25 23:11 test.gz.bz2</h2>
+<h1 id="解压缩">解压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-jxvf-testgzbz2abdtxtbcdtxt">[root@hepingfly hepingfly]# tar -jxvf test.gz.bz2<br>
+abd.txt<br>
+bcd.txt</h2>
+<h1 id="压缩-2">压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-zcvf-testtargz-abdtxt-bcdtxtabdtxtbcdtxtroothepingfly-hepingfly-ll总用量-12-rw-r-r-1-root-root-0-2月-22-0209-abdtxt-rw-1-hepingfly-hepingfly-0-2月-21-0037-bcdtxt-rw-r-r-1-root-root-154-2月-25-2314-testtargz">[root@hepingfly hepingfly]# tar -zcvf test.tar.gz abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 12<br>
+-rw-r--r--. 1 root      root         0 2月  22 02:09 abd.txt<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-r--r--. 1 root      root       154 2月  25 23:14 test.tar.gz</h2>
+<h1 id="解压缩-2">解压缩</h1>
+<h2 id="roothepingfly-hepingfly-tar-zxvf-testtargzabdtxtbcdtxt">[root@hepingfly hepingfly]# tar -zxvf test.tar.gz<br>
+abd.txt<br>
+bcd.txt</h2>
+<h1 id="只查看不解压">只查看不解压</h1>
+<h2 id="roothepingfly-hepingfly-tar-ztvf-testtargz-rw-r-r-rootroot-0-2019-02-22-0209-abdtxt-rw-hepingflyhepingfly-0-2019-02-21-0037-bcdtxt">[root@hepingfly hepingfly]# tar -ztvf test.tar.gz<br>
+-rw-r--r-- root/root         0 2019-02-22 02:09 abd.txt<br>
+-rw------- hepingfly/hepingfly 0 2019-02-21 00:37 bcd.txt</h2>
+<h1 id="解压到指定目录-c-一定要跟在压缩包后面">解压到指定目录(-C 一定要跟在压缩包后面)</h1>
+<h2 id="roothepingfly-hepingfly-tar-zxvf-testtargz-c-aaaaabdtxtbcdtxt">[root@hepingfly hepingfly]# tar -zxvf test.tar.gz -C aaaa/<br>
+abd.txt<br>
+bcd.txt</h2>
+<h1 id="解压指定文件">解压指定文件</h1>
+<p>[root@hepingfly hepingfly]# tar -ztvf test.tar.gz         # 我先查看这个压缩包里面有哪些文件<br>
+-rw-r--r-- root/root         0 2019-02-22 02:09 abd.txt<br>
+-rw------- hepingfly/hepingfly 0 2019-02-21 00:37 bcd.txt<br>
+[root@hepingfly hepingfly]# tar -zxvf test.tar.gz -C aaaa/ abd.txt<br>
+abd.txt</p>
+<h1 id="我只把-abdtxt-文件解压到-aaaa-目录下">我只把 abd.txt 文件解压到 aaaa 目录下</h1>
+<p>释义：<br>
+-z : 使用 gzip 来压缩和解压文件<br>
+-v : –verbose 详细的列出处理的文件<br>
+-f : –file=ARCHIVE 使用档案文件或设备，这个选项通常是必选的<br>
+-c : –create 创建一个新的归档（压缩包）<br>
+-x : 从压缩包中解出文件</p>
+<h1 id="压缩文件-file1-和目录-dir2-到-testtargz">压缩文件 file1 和目录 dir2 到 test.tar.gz</h1>
+<p>tar -zcvf test.tar.gz file1 dir2</p>
+<h1 id="解压-testtargz将-c-换成-x-即可">解压 test.tar.gz（将 c 换成 x 即可）</h1>
+<p>tar -zxvf test.tar.gz</p>
+<h1 id="列出压缩文件的内容">列出压缩文件的内容</h1>
+<p>tar -ztvf test.tar.gz</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%8A%8A%E4%B8%89%E4%B8%AA-txt-%E6%96%87%E4%BB%B6%E5%8E%8B%E7%BC%A9%E6%88%90%E4%B8%80%E4%B8%AA-zip-%E6%96%87%E4%BB%B6">把三个 txt 文件压缩成一个 zip 文件</a></li>
+<li><a href="#%E5%A6%82%E6%9E%9C%E4%B8%8D%E6%8C%87%E5%AE%9A-d-%E5%8F%82%E6%95%B0%E9%BB%98%E8%AE%A4%E8%A7%A3%E5%8E%8B%E5%88%B0%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E4%B8%8B">如果不指定 -d 参数，默认解压到当前目录下</a></li>
+<li><a href="#%E5%8E%8B%E7%BC%A9%E5%AE%8C%E4%B9%8B%E5%90%8E%E6%BA%90%E6%96%87%E4%BB%B6%E4%B9%9F%E4%BC%9A%E8%A2%AB%E5%88%A0%E9%99%A4%E6%8E%89">压缩完之后源文件也会被删除掉</a></li>
+<li><a href="#%E4%BD%A0%E4%BD%BF%E7%94%A8-gzip-c-bcdtxt-%E5%91%BD%E4%BB%A4%E4%BC%9A%E6%8A%8A%E5%8E%8B%E7%BC%A9%E6%95%B0%E6%8D%AE%E8%BE%93%E5%87%BA%E5%88%B0%E5%B1%8F%E5%B9%95%E4%B8%8A%E7%8E%B0%E5%9C%A8%E6%88%91%E4%B8%8D%E8%AE%A9%E5%AE%83%E8%BE%93%E5%87%BA%E5%88%B0%E5%B1%8F%E5%B9%95%E4%B8%8A%E8%80%8C%E6%98%AF%E9%87%8D%E5%AE%9A%E5%90%91%E5%88%B0%E4%B8%80%E4%B8%AA%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6%E4%B8%AD%E8%BF%99%E6%A0%B7%E5%B0%B1%E5%AE%9E%E7%8E%B0%E4%BA%86%E5%9C%A8%E5%8E%8B%E7%BC%A9%E4%BD%A0%E6%96%87%E4%BB%B6%E7%9A%84%E5%90%8C%E6%97%B6%E4%B8%8D%E5%88%A0%E9%99%A4%E6%BA%90%E6%96%87%E4%BB%B6">你使用 gzip -c bcd.txt 命令，会把压缩数据输出到屏幕上，现在我不让它输出到屏幕上，而是重定向到一个压缩文件中，这样就实现了在压缩你文件的同时不删除源文件</a></li>
+<li><a href="#%E4%BD%A0%E4%BD%BF%E7%94%A8-gzip-r-%E5%91%BD%E4%BB%A4%E5%AE%83%E6%98%AF%E6%8A%8A%E8%BF%99%E4%B8%AA%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6%E9%83%BD%E5%8E%8B%E7%BC%A9%E8%80%8C%E4%B8%8D%E4%BC%9A%E6%8A%8A%E8%BF%99%E4%B8%AA%E7%9B%AE%E5%BD%95%E5%8E%8B%E7%BC%A9%E4%B8%8D%E8%83%BD%E6%89%93%E5%8C%85">你使用 gzip -r 命令，它是把这个目录下的所有文件都压缩，而不会把这个目录压缩(不能打包)</a></li>
+<li><a href="#%E4%BF%9D%E7%95%99%E6%BA%90%E6%96%87%E4%BB%B6%E5%8E%8B%E7%BC%A9">保留源文件压缩</a></li>
+<li><a href="#%E5%8E%8B%E7%BC%A9">压缩</a>
+<ul>
+<li><a href="#roothepingfly-hepingfly-tar-jcvf-testgzbz2-abdtxt-bcdtxtabdtxtbcdtxtroothepingfly-hepingfly-ll%E6%80%BB%E7%94%A8%E9%87%8F-24-rw-r-r-1-root-root-160-2%E6%9C%88-25-2311-testgzbz2">[root@hepingfly hepingfly]# tar -jcvf test.gz.bz2 abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 24<br>
+-rw-r--r--. 1 root      root        160 2月  25 23:11 test.gz.bz2</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A7%A3%E5%8E%8B%E7%BC%A9">解压缩</a>
+<ul>
+<li><a href="#roothepingfly-hepingfly-tar-jxvf-testgzbz2abdtxtbcdtxt">[root@hepingfly hepingfly]# tar -jxvf test.gz.bz2<br>
+abd.txt<br>
+bcd.txt</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8E%8B%E7%BC%A9-2">压缩</a>
+<ul>
+<li><a href="#roothepingfly-hepingfly-tar-zcvf-testtargz-abdtxt-bcdtxtabdtxtbcdtxtroothepingfly-hepingfly-ll%E6%80%BB%E7%94%A8%E9%87%8F-12-rw-r-r-1-root-root-0-2%E6%9C%88-22-0209-abdtxt-rw-1-hepingfly-hepingfly-0-2%E6%9C%88-21-0037-bcdtxt-rw-r-r-1-root-root-154-2%E6%9C%88-25-2314-testtargz">[root@hepingfly hepingfly]# tar -zcvf test.tar.gz abd.txt bcd.txt<br>
+abd.txt<br>
+bcd.txt<br>
+[root@hepingfly hepingfly]# ll<br>
+总用量 12<br>
+-rw-r--r--. 1 root      root         0 2月  22 02:09 abd.txt<br>
+-rw-------. 1 hepingfly hepingfly    0 2月  21 00:37 bcd.txt<br>
+-rw-r--r--. 1 root      root       154 2月  25 23:14 test.tar.gz</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A7%A3%E5%8E%8B%E7%BC%A9-2">解压缩</a>
+<ul>
+<li><a href="#roothepingfly-hepingfly-tar-zxvf-testtargzabdtxtbcdtxt">[root@hepingfly hepingfly]# tar -zxvf test.tar.gz<br>
+abd.txt<br>
+bcd.txt</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%AA%E6%9F%A5%E7%9C%8B%E4%B8%8D%E8%A7%A3%E5%8E%8B">只查看不解压</a>
+<ul>
+<li><a href="#roothepingfly-hepingfly-tar-ztvf-testtargz-rw-r-r-rootroot-0-2019-02-22-0209-abdtxt-rw-hepingflyhepingfly-0-2019-02-21-0037-bcdtxt">[root@hepingfly hepingfly]# tar -ztvf test.tar.gz<br>
+-rw-r--r-- root/root         0 2019-02-22 02:09 abd.txt<br>
+-rw------- hepingfly/hepingfly 0 2019-02-21 00:37 bcd.txt</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A7%A3%E5%8E%8B%E5%88%B0%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95-c-%E4%B8%80%E5%AE%9A%E8%A6%81%E8%B7%9F%E5%9C%A8%E5%8E%8B%E7%BC%A9%E5%8C%85%E5%90%8E%E9%9D%A2">解压到指定目录(-C 一定要跟在压缩包后面)</a>
+<ul>
+<li><a href="#roothepingfly-hepingfly-tar-zxvf-testtargz-c-aaaaabdtxtbcdtxt">[root@hepingfly hepingfly]# tar -zxvf test.tar.gz -C aaaa/<br>
+abd.txt<br>
+bcd.txt</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A7%A3%E5%8E%8B%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6">解压指定文件</a></li>
+<li><a href="#%E6%88%91%E5%8F%AA%E6%8A%8A-abdtxt-%E6%96%87%E4%BB%B6%E8%A7%A3%E5%8E%8B%E5%88%B0-aaaa-%E7%9B%AE%E5%BD%95%E4%B8%8B">我只把 abd.txt 文件解压到 aaaa 目录下</a></li>
+<li><a href="#%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6-file1-%E5%92%8C%E7%9B%AE%E5%BD%95-dir2-%E5%88%B0-testtargz">压缩文件 file1 和目录 dir2 到 test.tar.gz</a></li>
+<li><a href="#%E8%A7%A3%E5%8E%8B-testtargz%E5%B0%86-c-%E6%8D%A2%E6%88%90-x-%E5%8D%B3%E5%8F%AF">解压 test.tar.gz（将 c 换成 x 即可）</a></li>
+<li><a href="#%E5%88%97%E5%87%BA%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6%E7%9A%84%E5%86%85%E5%AE%B9">列出压缩文件的内容</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://kangjn.github.io/post/kali-linux-xi-tong-qing-li-yu-you-hua-quan-gong-lue/">
+              <h3 class="post-title">
+                Kali Linux系统清理与优化全攻略
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://kangjn.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
